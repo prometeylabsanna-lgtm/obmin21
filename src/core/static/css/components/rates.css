@@ -1,0 +1,154 @@
+.rates-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--container-pad);
+  border-bottom: var(--border-w) solid var(--glass-border);
+}
+
+.rates-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.rates-tabs__btn {
+  min-height: var(--touch-min);
+  padding: 10px 14px;
+  border: var(--border-w) solid var(--glass-border);
+  margin-right: -2px;
+  margin-bottom: -2px;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  background: rgba(242, 239, 230, 0.05);
+  color: var(--color-text);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  transition:
+    background var(--dur-luxe-fast) var(--ease-luxe-out),
+    color var(--dur-luxe-fast) var(--ease-luxe-out),
+    box-shadow var(--dur-luxe-fast) var(--ease-luxe-out),
+    border-color var(--dur-luxe-fast) var(--ease-luxe-out);
+}
+
+.rates-tabs__btn.is-active {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border-color: var(--color-accent);
+  box-shadow: 0 8px 24px rgba(245, 196, 0, 0.28);
+}
+
+.rates-tabs__btn:hover:not(.is-active),
+.rates-tabs__btn:focus-visible:not(.is-active) {
+  color: var(--color-accent);
+  border-color: rgba(245, 196, 0, 0.55);
+  background: rgba(245, 196, 0, 0.1);
+  box-shadow: 0 0 18px rgba(245, 196, 0, 0.22);
+}
+
+.rates-updated {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+}
+
+#rates-panel {
+  background-color: var(--glass-bg);
+  background-image: var(--glass-frost);
+  border: var(--border-w) solid var(--glass-border);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-panel);
+}
+
+.rates-table {
+  padding: 0 var(--container-pad);
+}
+
+.rates-table__head,
+.rates-table__row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: var(--space-2);
+  align-items: center;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.rates-table__row {
+  transition: background var(--dur-luxe-fast) var(--ease-luxe-out);
+}
+
+.rates-table__row:hover {
+  background: rgba(242, 239, 230, 0.03);
+}
+
+.rates-table__head {
+  border-bottom: var(--border-w) solid var(--glass-border);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  padding-top: 18px;
+}
+
+.rates-table__code {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+.rates-table__name {
+  display: none;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.rates-table__value {
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.rates-table__action {
+  display: none;
+}
+
+.rates-note {
+  padding: 22px 0;
+  font-size: 12px;
+  color: rgba(242, 239, 230, 0.4);
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .rates-table__head,
+  .rates-table__row {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+
+  .rates-table__name {
+    display: inline;
+    margin-left: 12px;
+  }
+
+  .rates-table__action {
+    display: block;
+    text-align: right;
+  }
+
+  .rates-table__value {
+    font-size: 24px;
+  }
+
+  .rates-table__code {
+    font-size: 20px;
+  }
+}

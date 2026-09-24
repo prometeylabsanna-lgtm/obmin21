@@ -1,0 +1,94 @@
+/* Shared frosted glass — stronger blur + matte fill */
+.glass-panel {
+  background-color: var(--glass-bg);
+  background-image: var(--glass-frost);
+  border: var(--border-w) solid var(--glass-border);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-panel);
+}
+
+.glass-panel--soft {
+  background-color: var(--glass-bg);
+  background-image: var(--glass-frost);
+  border: var(--border-w) solid var(--glass-border);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-panel-soft);
+}
+
+.glass-panel--float {
+  background-color: var(--glass-bg-strong);
+  background-image: var(--glass-frost);
+  border: var(--border-w) solid var(--glass-border);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-float);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel,
+  .glass-panel--soft,
+  .glass-panel--float {
+    background-color: rgba(10, 14, 24, 0.96);
+    background-image: none;
+  }
+}
+
+/* Rate digits entrance */
+.rates-table__value[data-rate-animate] {
+  display: inline-block;
+  min-width: 4.5ch;
+  font-variant-numeric: tabular-nums;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rates-table__value[data-rate-animate]:not(.is-revealed):not(.is-animating) {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    filter: blur(3px);
+  }
+}
+
+.rates-table__value.is-animating {
+  opacity: 0.28;
+  transform: translate3d(0, 12px, 0);
+  filter: blur(3px);
+}
+
+.rates-table__value.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+  transition:
+    opacity var(--dur-luxe) var(--ease-luxe),
+    transform var(--dur-luxe) var(--ease-luxe),
+    filter var(--dur-luxe) var(--ease-luxe);
+}
+
+.rates-table__row.is-rate-enter {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+}
+
+.rates-table__row.is-rate-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity var(--dur-luxe-fast) var(--ease-luxe-out),
+    transform var(--dur-luxe-fast) var(--ease-luxe-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rates-table__value[data-rate-animate]:not(.is-revealed):not(.is-animating),
+  .rates-table__value.is-animating,
+  .rates-table__value.is-revealed,
+  .rates-table__row.is-rate-enter,
+  .rates-table__row.is-rate-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

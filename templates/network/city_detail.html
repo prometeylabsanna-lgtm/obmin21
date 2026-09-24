@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section">
+  <h1 class="section__title">{{ city.name }}</h1>
+  {% include 'partials/contacts_panel.html' with city_branches=branches %}
+  <div class="u-mt-5">
+    <a class="btn btn--accent" href="{% url 'network:select_city' city.slug %}">Обрати це місто</a>
+    <button type="button" class="btn btn--ghost" data-open-modal="{% url 'leads:request_modal' %}">Заявка</button>
+  </div>
+</section>
+{% endblock %}

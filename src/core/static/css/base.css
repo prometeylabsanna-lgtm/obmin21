@@ -1,0 +1,131 @@
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: local("JetBrains Mono"), local("Menlo"), local("Consolas");
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: local("Archivo"), local("Avenir Next"), local("Segoe UI");
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-regular);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+a {
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+.page__shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-bottom: calc(var(--sidenav-h) + var(--safe-bottom));
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.page__main {
+  flex: 1 0 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.u-muted {
+  color: var(--color-text-muted);
+}
+
+.u-accent {
+  color: var(--color-accent);
+}
+
+.u-upper {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.u-mb-4 {
+  margin-bottom: var(--space-4);
+}
+
+.u-mb-5 {
+  margin-bottom: var(--space-5);
+}
+
+.u-mb-6 {
+  margin-bottom: var(--space-6);
+}
+
+.u-mt-5 {
+  margin-top: var(--space-5);
+}
+
+.u-mt-6 {
+  margin-top: var(--space-6);
+}
+
+.u-text-sm {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.u-text-xs {
+  font-size: 12px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-top: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .page__shell {
+    padding-left: var(--sidenav-w);
+    padding-bottom: 0;
+  }
+}

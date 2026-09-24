@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% block title %}{% if page_title %}{{ page_title }} · {% endif %}{{ site_settings.site_name }}{% endblock %}
+  </title>
+  {% if page_description %}
+  <meta name="description" content="{{ page_description }}">{% endif %}
+  <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+  <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+  <link rel="stylesheet" href="{% static 'css/site-bg.css' %}">
+  <link rel="stylesheet" href="{% static 'css/effects.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/buttons.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/header.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/breadcrumbs.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/sidenav.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/footer.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/rates.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/cards.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/blog.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/modal.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/faq.css' %}">
+  <link rel="stylesheet" href="{% static 'css/ticker.css' %}">
+  <link rel="stylesheet" href="{% static 'css/contacts-panel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/detail-page.css' %}">
+  {% block page_css %}{% endblock %}
+
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/utils.js' %}" defer></script>
+  <script src="{% static 'js/nav.js' %}" defer></script>
+  <script src="{% static 'js/modal.js' %}" defer></script>
+  <script src="{% static 'js/calc.js' %}" defer></script>
+  <script src="{% static 'js/parallax.js' %}" defer></script>
+  <script src="{% static 'js/reveal.js' %}" defer></script>
+  <script src="{% static 'js/rates-animate.js' %}" defer></script>
+  {% block page_js %}{% endblock %}
+</head>
+
+<body class="page" data-qa="page">
+  <div class="site-bg" aria-hidden="true">
+    <div class="site-bg__frame">
+      <img class="site-bg__img" src="{% static 'images/bg-currency.jpg' %}" alt="" width="2000" height="1332"
+        decoding="async" fetchpriority="low">
+    </div>
+    <div class="site-bg__overlay"></div>
+  </div>
+  {% include 'partials/sidenav.html' %}
+  <div class="page__shell">
+    {% include 'partials/header.html' %}
+    {% if breadcrumb_items %}
+    {% include 'partials/breadcrumbs.html' %}
+    {% endif %}
+    <main class="page__main" id="main">
+      {% block content %}{% endblock %}
+    </main>
+    {% include 'partials/footer.html' %}
+  </div>
+  <div id="modal-root" class="modal-root" hidden></div>
+</body>
+
+</html>

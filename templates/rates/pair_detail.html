@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load content_format %}
+
+{% block title %}{{ pair.seo_title|default:pair.code }} · {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<article class="detail-page" data-qa="pair-detail">
+  <header class="detail-page__header">
+    <h1 class="detail-page__title">{{ pair.code }}/UAH</h1>
+    <p class="detail-page__lead">
+      {{ pair.name }}{% if active_city %} · {{ active_city.name }}{% endif %}
+    </p>
+  </header>
+
+  {% if quote %}
+  <div class="detail-page__rates">
+    <div class="detail-page__rate">
+      <div class="detail-page__rate-label">Купівля</div>
+      <div class="detail-page__rate-value">{{ quote.buy }}</div>
+    </div>
+    <div class="detail-page__rate">
+      <div class="detail-page__rate-label">Продаж</div>
+      <div class="detail-page__rate-value">{{ quote.sell }}</div>
+    </div>
+  </div>
+  <div class="detail-page__actions detail-page__actions--tight-top">
+    <button type="button"
+            class="btn btn--accent"
+            data-open-modal="{% url 'leads:request_modal' %}?pair={{ pair.pk }}&rate_fixed={{ quote.buy }}&direction=sell">
+      Створити заявку
+    </button>
+    <a class="btn btn--ghost" href="{% url 'core:home' %}#exchange">Уся таблиця</a>
+  </div>
+  {% endif %}
+
+  {% if pair.intro %}
+  <div class="detail-page__panel">
+    <div class="detail-page__body">
+      {{ pair.intro|format_body }}
+    </div>
+  </div>
+  {% endif %}
+</article>
+{% endblock %}

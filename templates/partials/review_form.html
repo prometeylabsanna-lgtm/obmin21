@@ -1,0 +1,18 @@
+<form class="form form--compact"
+      method="post"
+      action="{% url 'reviews:review_submit' %}"
+      hx-post="{% url 'reviews:review_submit' %}"
+      hx-target="closest form"
+      hx-swap="outerHTML"
+      data-qa="review-form">
+  {% csrf_token %}
+  <label class="form__label">Імʼя {{ form.name }}</label>
+  <label class="form__label">Місто {{ form.city_name }}</label>
+  <label class="form__label">Відгук {{ form.text }}</label>
+  <label class="form__check">
+    {{ form.consent }}
+    <span>Згоден з <a class="link-accent" href="{% url 'content:privacy' %}">політикою конфіденційності</a></span>
+  </label>
+  {% if form.errors %}<div class="form__error">Перевірте поля форми</div>{% endif %}
+  <button type="submit" class="btn btn--accent">Залишити відгук</button>
+</form>

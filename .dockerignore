@@ -1,0 +1,12 @@
+.venv
+__pycache__
+*.pyc
+.git
+.env
+media
+staticfiles
+db.sqlite3
+docs
+*.dc.html
+image-slot.js
+support.js

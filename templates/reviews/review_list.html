@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} · {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <h1 class="section__title">Відгуки</h1>
+  <div class="card-grid card-grid--3 u-mb-6">
+    {% for rev in reviews %}
+    <article class="card">
+      <div class="review-card__head">
+        <span class="review-card__avatar">{{ rev.initial }}</span>
+        <div>
+          <div class="card__heading">{{ rev.name }}</div>
+          <div class="card__meta">{{ rev.city_name }} · {{ rev.published_at|date:"d.m.Y" }}</div>
+        </div>
+      </div>
+      <p class="card__text">{{ rev.text }}</p>
+    </article>
+    {% empty %}
+    <div class="card u-muted">Поки немає опублікованих відгуків</div>
+    {% endfor %}
+  </div>
+  <h2 class="section__title">Залишити відгук</h2>
+  {% include 'partials/review_form.html' %}
+</section>
+{% endblock %}

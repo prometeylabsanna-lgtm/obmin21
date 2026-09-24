@@ -1,0 +1,15 @@
+<div class="branch-list" id="branch-list" data-qa="branch-list">
+  {% for b in city_branches %}
+  <div class="branch-list__item">
+    <div>
+      <div class="branch-list__addr">{{ b.address }}</div>
+      <div class="branch-list__meta">{{ b.hours }}{% if b.phone %} · {{ b.phone }}{% endif %}</div>
+    </div>
+    {% if b.map_url %}
+    <a class="link-accent" href="{{ b.map_url }}" target="_blank" rel="noopener noreferrer">На карті</a>
+    {% endif %}
+  </div>
+  {% empty %}
+  <div class="branch-list__item u-muted">Відділення для цього міста зʼявляться незабаром</div>
+  {% endfor %}
+</div>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; background: #0b1220; }
+    ::selection { background: #f5c400; color: #0b1220; }
+    @keyframes flapTopFold { 0% { transform: rotateX(0deg); } 100% { transform: rotateX(-90deg); } }
+    @keyframes flapBottomUnfold { 0% { transform: rotateX(90deg); } 100% { transform: rotateX(0deg); } }
+    .side-nav-item:hover .side-badge { background: #f2efe6; }
+    .side-nav-item:hover .side-badge span { color: #0b1220 !important; }
+    * { box-sizing: border-box; }
+    input { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</helmet>
+
+<div style="font-family: 'JetBrains Mono', monospace; background: #0b1220; color: #f2efe6; min-height: 100vh; padding-left: 92px;">
+
+  <!-- SIDEBAR -->
+  <aside style="position: fixed; left: 0; top: 0; bottom: 0; width: 92px; border-right: 2px solid #f2efe6; background: #0b1220; z-index: 60; display: flex; flex-direction: column;">
+    <a href="#rates" class="side-nav-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #f2efe6; text-decoration: none; border-bottom: 1px solid rgba(242,239,230,0.2);">
+      <span class="side-badge" style="width: 42px; height: 42px; border: 2px solid {{ accent }}; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease;"><span style="font-family: 'Archivo Black', sans-serif; font-size: 15px; color: {{ accent }};">KP</span></span>
+      <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Курси</span>
+    </a>
+    <a href="#cities" class="side-nav-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #f2efe6; text-decoration: none; border-bottom: 1px solid rgba(242,239,230,0.2);">
+      <span class="side-badge" style="width: 42px; height: 42px; border: 2px solid {{ accent }}; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease;"><span style="font-family: 'Archivo Black', sans-serif; font-size: 15px; color: {{ accent }};">МІ</span></span>
+      <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Міста</span>
+    </a>
+    <a href="#advantages" class="side-nav-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #f2efe6; text-decoration: none; border-bottom: 1px solid rgba(242,239,230,0.2);">
+      <span class="side-badge" style="width: 42px; height: 42px; border: 2px solid {{ accent }}; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease;"><span style="font-family: 'Archivo Black', sans-serif; font-size: 15px; color: {{ accent }};">ПЕ</span></span>
+      <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Переваги</span>
+    </a>
+    <a href="#contacts" class="side-nav-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #f2efe6; text-decoration: none; border-bottom: 1px solid rgba(242,239,230,0.2);">
+      <span class="side-badge" style="width: 42px; height: 42px; border: 2px solid {{ accent }}; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease;"><span style="font-family: 'Archivo Black', sans-serif; font-size: 15px; color: {{ accent }};">КО</span></span>
+      <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Контакти</span>
+    </a>
+    <a href="#news" class="side-nav-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #f2efe6; text-decoration: none;">
+      <span class="side-badge" style="width: 42px; height: 42px; border: 2px solid {{ accent }}; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease;"><span style="font-family: 'Archivo Black', sans-serif; font-size: 15px; color: {{ accent }};">НО</span></span>
+      <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Новини</span>
+    </a>
+  </aside>
+
+  <!-- HEADER -->
+  <header style="position: sticky; top: 0; z-index: 50; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; padding: 20px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; background: #0b1220;">
+    <div></div>
+    <div style="font-family: 'Archivo Black', sans-serif; font-size: 24px; letter-spacing: -0.5px; justify-self: center;">ОБМІН<span style="color: {{ accent }};">21</span></div>
+    <div style="display: flex; align-items: center; gap: 18px; justify-self: end;">
+      <div style="border: 2px solid #f2efe6; padding: 8px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="color: {{ accent }};">◆</span>{{ activeCity }}
+      </div>
+      <a href="tel:+380991234567" style="color: #f2efe6; text-decoration: none; font-size: 13px; font-weight: 700;">+38 (099) 123-45-67</a>
+      <a href="#calc" style="background: {{ accent }}; color: #0b1220; padding: 10px 20px; text-decoration: none; font-weight: 800; font-size: 13px; text-transform: uppercase;">Заявка</a>
+    </div>
+  </header>
+
+  <!-- RATES : TABS -->
+  <section id="rates" ref="{{ refRates }}" data-reveal-id="rates" style="opacity: {{ ratesOpacity }};">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 24px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6;">
+      <div style="display: flex; gap: 0; flex-wrap: wrap;">
+        <sc-for list="{{ rateTabs }}" as="t" hint-placeholder-count="4">
+          <button onClick="{{ t.onSelect }}" style="{{ t.style }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+      <div style="font-size: 12px; color: rgba(242,239,230,0.55); font-weight: 700; text-transform: uppercase;">Курс оновлено {{ rateUpdatedAt }}</div>
+    </div>
+
+    <div style="padding: 0 clamp(16px,3vw,48px);">
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 18px 0; border-bottom: 2px solid #f2efe6; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: rgba(242,239,230,0.5); font-weight: 700;">
+        <div>Валюта</div>
+        <div>Купівля</div>
+        <div>Продаж</div>
+        <div></div>
+      </div>
+      <sc-for list="{{ rateRows }}" as="row" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; align-items: center; padding: 26px 0; border-bottom: 1px solid rgba(242,239,230,0.2); opacity: {{ row.style.opacity }}; transform: {{ row.style.transform }}; transition: {{ row.style.transition }};">
+          <div style="display: flex; align-items: baseline; gap: 16px;">
+            <span style="font-family: 'Archivo Black', sans-serif; font-size: 20px;">{{ row.code }}</span>
+            <span style="font-size: 13px; color: rgba(242,239,230,0.55); text-transform: uppercase;">{{ row.name }}</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <div style="position: relative; height: 34px; width: 96px; perspective: 220px;">
+              <div style="position: absolute; inset: 0; display: flex; align-items: center; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; z-index: 1;">{{ row.buyNew }}</div>
+              <div ref="{{ row.refBuyTop }}" style="position: absolute; left: 0; right: 0; top: 0; height: 50%; overflow: hidden; background: #0b1220; transform-origin: bottom; backface-visibility: hidden; z-index: 3;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ row.buyOld }}</div>
+              </div>
+              <div ref="{{ row.refBuyBottom }}" style="position: absolute; left: 0; right: 0; bottom: 0; height: 50%; overflow: hidden; background: #0b1220; transform-origin: top; backface-visibility: hidden; z-index: 2;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ row.buyNew }}</div>
+              </div>
+              <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(11,18,32,0.7); z-index: 4;"></div>
+            </div>
+            <span style="color: {{ row.buyArrow.color }}; font-size: 20px; font-weight: 800; margin-left: 4px;">{{ row.buyArrow.ch }}</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <div style="position: relative; height: 34px; width: 96px; perspective: 220px;">
+              <div style="position: absolute; inset: 0; display: flex; align-items: center; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; z-index: 1;">{{ row.sellNew }}</div>
+              <div ref="{{ row.refSellTop }}" style="position: absolute; left: 0; right: 0; top: 0; height: 50%; overflow: hidden; background: #0b1220; transform-origin: bottom; backface-visibility: hidden; z-index: 3;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ row.sellOld }}</div>
+              </div>
+              <div ref="{{ row.refSellBottom }}" style="position: absolute; left: 0; right: 0; bottom: 0; height: 50%; overflow: hidden; background: #0b1220; transform-origin: top; backface-visibility: hidden; z-index: 2;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ row.sellNew }}</div>
+              </div>
+              <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(11,18,32,0.7); z-index: 4;"></div>
+            </div>
+            <span style="color: {{ row.sellArrow.color }}; font-size: 20px; font-weight: 800; margin-left: 4px;">{{ row.sellArrow.ch }}</span>
+          </div>
+          <div style="text-align: right;">
+            <a href="#calc" style="border: 2px solid #f2efe6; color: #f2efe6; text-decoration: none; font-weight: 700; font-size: 12px; padding: 10px 16px; text-transform: uppercase; display: inline-block;">Створити заявку</a>
+          </div>
+        </div>
+      </sc-for>
+      <div style="padding: 18px 0; font-size: 12px; color: rgba(242,239,230,0.4); text-transform: uppercase;">* можливі обмеження за сумою операції</div>
+    </div>
+  </section>
+
+  <!-- PARALLAX BANNER 1 -->
+  <div style="height: 260px; overflow: hidden; position: relative; border-bottom: 2px solid #f2efe6;">
+    <div style="position: absolute; left: 0; right: 0; top: -220px; bottom: -220px; transform: translateY({{ parallax1 }}px);">
+      <image-slot id="banner-exchange" shape="rect" placeholder="Фото: пункт обміну валют" style="width: 100%; height: 100%;"></image-slot>
+    </div>
+  </div>
+
+  <!-- CITIES -->
+  <section id="cities" ref="{{ refCities }}" data-reveal-id="cities" style="padding: 60px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; opacity: {{ citiesOpacity }};">
+    <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(26px,3.5vw,44px); margin: 0 0 8px; text-transform: uppercase;">Оберіть місто</h2>
+    <p style="font-size: 13px; color: rgba(242,239,230,0.55); margin: 0 0 36px; text-transform: uppercase; letter-spacing: 0.5px;">Обмінка Обмін21 працює у {{ cityCount }} містах України</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0; border-top: 2px solid #f2efe6; border-left: 2px solid #f2efe6;">
+      <sc-for list="{{ cities }}" as="c" hint-placeholder-count="10">
+        <button onClick="{{ c.onSelect }}" style="{{ c.style }}">{{ c.name }}</button>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section id="calc" ref="{{ refCalc }}" data-reveal-id="calc" style="padding: 60px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; opacity: {{ calcOpacity }};">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 2px solid #f2efe6;">
+      <div style="padding: 44px; border-right: 2px solid #f2efe6;">
+        <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(24px,2.8vw,34px); margin: 0 0 18px; text-transform: uppercase;">Калькулятор обміну</h2>
+        <p style="font-size: 14px; line-height: 1.7; color: rgba(242,239,230,0.6); margin: 0;">Вкажіть суму — побачите скільки гривень отримаєте зараз. Курс фіксується на 30 хвилин у відділенні.</p>
+      </div>
+      <div style="padding: 44px;">
+        <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: rgba(242,239,230,0.5); margin-bottom: 10px; font-weight: 700;">Ви віддаєте</div>
+        <input value="{{ calcAmount }}" onChange="{{ onAmountChange }}" style="width: 100%; background: transparent; border: 2px solid #f2efe6; color: #f2efe6; font-size: 24px; font-weight: 700; padding: 12px 16px; margin-bottom: 20px;"/>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px;">
+          <sc-for list="{{ calcCodes }}" as="cc" hint-placeholder-count="6">
+            <button onClick="{{ cc.onSelect }}" style="{{ cc.style }}">{{ cc.code }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: rgba(242,239,230,0.5); margin-bottom: 10px; font-weight: 700;">Ви отримуєте</div>
+        <div style="font-family: 'Archivo Black', sans-serif; font-size: 40px; color: {{ accent }};">{{ calcResult }} UAH</div>
+        <div style="font-size: 12px; color: rgba(242,239,230,0.4); margin-top: 8px; text-transform: uppercase;">за курсом {{ calcRateLabel }}</div>
+        <a href="#contacts" style="margin-top: 28px; display: block; text-align: center; background: {{ accent }}; color: #0b1220; padding: 16px; text-decoration: none; font-weight: 800; text-transform: uppercase;">Зафіксувати курс</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADVANTAGES -->
+  <section id="advantages" ref="{{ refAdvantages }}" data-reveal-id="advantages" style="padding: 60px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; opacity: {{ advantagesOpacity }};">
+    <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(26px,3.5vw,44px); margin: 0 0 36px; text-transform: uppercase;">Переваги</h2>
+    <div style="display: flex; gap: 0; border-bottom: 2px solid #f2efe6; margin-bottom: 0;">
+      <sc-for list="{{ advTabs }}" as="tab" hint-placeholder-count="3">
+        <button onClick="{{ tab.onSelect }}" style="{{ tab.style }}">{{ tab.label }}</button>
+      </sc-for>
+    </div>
+    <div style="border-left: 2px solid #f2efe6; border-right: 2px solid #f2efe6;">
+      <sc-for list="{{ activeAdvItems }}" as="item" hint-placeholder-count="4">
+        <div style="display: flex; align-items: center; gap: 32px; padding: 30px 28px; border-bottom: 2px solid #f2efe6;" style-hover="background: rgba(242,239,230,0.08);">
+          <span style="font-family: 'Archivo Black', sans-serif; font-size: 42px; color: {{ accent }}; min-width: 70px;">{{ item.n }}</span>
+          <span style="font-size: 18px; font-weight: 700; text-transform: uppercase; line-height: 1.35;">{{ item.text }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- PARALLAX BANNER 2 -->
+  <div style="height: 260px; overflow: hidden; position: relative; border-bottom: 2px solid #f2efe6;">
+    <div style="position: absolute; left: 0; right: 0; top: -220px; bottom: -220px; transform: translateY({{ parallax2 }}px);">
+      <image-slot id="banner-service" shape="rect" placeholder="Фото: обслуговування клієнтів" style="width: 100%; height: 100%;"></image-slot>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section ref="{{ refServices }}" data-reveal-id="services" style="padding: 60px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; opacity: {{ servicesOpacity }};">
+    <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(26px,3.5vw,44px); margin: 0 0 36px; text-transform: uppercase;">Послуги</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid #f2efe6; border-left: 2px solid #f2efe6;">
+      <sc-for list="{{ services }}" as="svc" hint-placeholder-count="3">
+        <div style="padding: 32px; border-right: 2px solid #f2efe6; border-bottom: 2px solid #f2efe6;">
+          <div style="font-family: 'Archivo Black', sans-serif; font-size: 19px; margin-bottom: 14px; text-transform: uppercase;">{{ svc.title }}</div>
+          <p style="font-size: 14px; line-height: 1.6; color: rgba(242,239,230,0.6); margin: 0 0 20px;">{{ svc.desc }}</p>
+          <a href="#" style="color: {{ accent }}; text-decoration: none; font-weight: 800; font-size: 13px; text-transform: uppercase;">Детальніше →</a>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- CONTACTS -->
+  <section id="contacts" ref="{{ refContacts }}" data-reveal-id="contacts" style="padding: 60px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; opacity: {{ contactsOpacity }};">
+    <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(26px,3.5vw,44px); margin: 0 0 36px; text-transform: uppercase;">Контакти в {{ activeCity }}</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 2px solid #f2efe6;">
+      <div>
+        <sc-for list="{{ branches }}" as="b" hint-placeholder-count="4">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 22px 24px; border-bottom: 1px solid rgba(242,239,230,0.2); gap: 20px;">
+            <div>
+              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">{{ b.address }}</div>
+              <div style="font-size: 12px; color: rgba(242,239,230,0.5); text-transform: uppercase;">{{ b.hours }} · {{ b.phone }}</div>
+            </div>
+            <a href="#" style="white-space: nowrap; font-size: 12px; font-weight: 800; color: {{ accent }}; text-decoration: none; text-transform: uppercase;">На карті</a>
+          </div>
+        </sc-for>
+      </div>
+      <image-slot id="contacts-map" shape="rect" placeholder="Карта відділень" style="width: 100%; height: 100%; min-height: 300px;"></image-slot>
+    </div>
+  </section>
+
+  <!-- NEWS -->
+  <section id="news" ref="{{ refNews }}" data-reveal-id="news" style="padding: 60px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; opacity: {{ newsOpacity }};">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 36px; flex-wrap: wrap; gap: 16px;">
+      <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(26px,3.5vw,44px); margin: 0; text-transform: uppercase;">Новини</h2>
+      <a href="#" style="color: {{ accent }}; text-decoration: none; font-weight: 800; font-size: 13px; text-transform: uppercase;">Всі статті →</a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid #f2efe6; border-left: 2px solid #f2efe6;">
+      <sc-for list="{{ newsItems }}" as="n" hint-placeholder-count="3">
+        <div style="border-right: 2px solid #f2efe6; border-bottom: 2px solid #f2efe6; padding: 24px;">
+          <image-slot id="{{ n.imgId }}" shape="rect" placeholder="Фото" style="width: 100%; height: 160px; margin-bottom: 18px;"></image-slot>
+          <div style="font-size: 12px; color: rgba(242,239,230,0.5); margin-bottom: 8px; text-transform: uppercase;">{{ n.date }}</div>
+          <div style="font-size: 17px; font-weight: 700; line-height: 1.4;">{{ n.title }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section ref="{{ refTestimonials }}" data-reveal-id="testimonials" style="padding: 60px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; opacity: {{ testimonialsOpacity }};">
+    <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(26px,3.5vw,44px); margin: 0 0 36px; text-transform: uppercase;">Відгуки</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid #f2efe6; border-left: 2px solid #f2efe6;">
+      <sc-for list="{{ testimonials }}" as="t" hint-placeholder-count="3">
+        <div style="padding: 28px; border-right: 2px solid #f2efe6; border-bottom: 2px solid #f2efe6;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <span style="width: 36px; height: 36px; border: 2px solid #f2efe6; display: flex; align-items: center; justify-content: center; font-family: 'Archivo Black', sans-serif; font-size: 15px;">{{ t.initial }}</span>
+            <div>
+              <div style="font-weight: 700; font-size: 14px;">{{ t.name }}</div>
+              <div style="font-size: 11px; color: rgba(242,239,230,0.5); text-transform: uppercase;">{{ t.date }}</div>
+            </div>
+          </div>
+          <p style="font-size: 14px; line-height: 1.6; margin: 0; color: rgba(242,239,230,0.75);">{{ t.text }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section ref="{{ refCta }}" data-reveal-id="cta" style="position: relative; padding: 80px clamp(16px,3vw,48px); border-bottom: 2px solid #f2efe6; opacity: {{ ctaOpacity }}; overflow: hidden;">
+    <div style="position: absolute; left: 0; right: 0; top: -180px; bottom: -180px; transform: translateY({{ parallax3 }}px); opacity: 0.3; z-index: 0;">
+      <image-slot id="banner-cta" shape="rect" placeholder="Фото: гроші / валюта" style="width: 100%; height: 100%;"></image-slot>
+    </div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,18,32,0.5), rgba(11,18,32,0.9)); z-index: 1;"></div>
+    <div style="position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;">
+      <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(28px,4vw,52px); margin: 0; text-transform: uppercase; max-width: 700px;">Зафіксуй курс. Забронюй онлайн.</h2>
+      <a href="#calc" style="background: {{ accent }}; color: #0b1220; padding: 20px 40px; text-decoration: none; font-weight: 800; text-transform: uppercase; font-size: 15px;">Залишити заявку</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="padding: 40px clamp(16px,3vw,48px); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div style="font-family: 'Archivo Black', sans-serif; font-size: 18px;">ОБМІН<span style="color: {{ accent }};">21</span></div>
+    <div style="font-size: 12px; color: rgba(242,239,230,0.5); text-transform: uppercase;">© 2021–2026 Обмін21</div>
+    <div style="display: flex; gap: 20px; font-size: 12px; text-transform: uppercase;">
+      <a href="#" style="color: rgba(242,239,230,0.6); text-decoration: none;">TG</a>
+      <a href="#" style="color: rgba(242,239,230,0.6); text-decoration: none;">IG</a>
+      <a href="#" style="color: rgba(242,239,230,0.6); text-decoration: none;">FB</a>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1440}, &quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#f5c400&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#f5c400&quot;, &quot;#ff5b1f&quot;, &quot;#2fd67a&quot;]}, &quot;defaultRateMode&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;retail&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;retail&quot;, &quot;wholesale&quot;]}}">
+
+class Component extends DCLogic {
+  state = {
+    rateMode: this.props.defaultRateMode === 'wholesale' ? 'wholesale' : 'retail',
+    advTab: 0,
+    calcAmount: '100',
+    calcCode: 'USD',
+    activeCity: 'Харків',
+    revealed: {},
+    scrollY: 0,
+    tick: 0
+  };
+
+  cityList = ['Харків', 'Київ', 'Одеса', 'Дніпро', 'Полтава', 'Суми', 'Черкаси', 'Кременчук', 'Івано-Франківськ', 'Кривий Ріг'];
+
+  ratesData = {
+    retail: [
+      { code: 'USD', name: 'Долар США', buy: '41.20', sell: '41.60' },
+      { code: 'EUR', name: 'Євро', buy: '43.80', sell: '44.30' },
+      { code: 'GBP', name: 'Фунт стерлінгів', buy: '52.10', sell: '52.90' },
+      { code: 'PLN', name: 'Злотий', buy: '10.35', sell: '10.68' },
+      { code: 'CHF', name: 'Швейцарський франк', buy: '46.90', sell: '47.55' },
+      { code: 'CNY', name: 'Юань', buy: '5.62', sell: '5.94' }
+    ],
+    wholesale: [
+      { code: 'USD', name: 'Долар США', buy: '41.35', sell: '41.48' },
+      { code: 'EUR', name: 'Євро', buy: '43.95', sell: '44.12' },
+      { code: 'GBP', name: 'Фунт стерлінгів', buy: '52.30', sell: '52.65' },
+      { code: 'PLN', name: 'Злотий', buy: '10.42', sell: '10.58' },
+      { code: 'CHF', name: 'Швейцарський франк', buy: '47.05', sell: '47.30' },
+      { code: 'CNY', name: 'Юань', buy: '5.70', sell: '5.84' }
+    ],
+    cross: [
+      { code: 'EUR/USD', name: 'Крос-курс', buy: '1.1600', sell: '1.1640' }
+    ],
+    crypto: [
+      { code: 'BTC', name: 'Bitcoin', buy: '2 410 000', sell: '2 450 000' },
+      { code: 'USDT', name: 'Tether', buy: '41.10', sell: '41.70' }
+    ]
+  };
+
+  advantagesData = [
+    { label: 'Городянам', items: [
+      'Обмін валют за найвигіднішим курсом',
+      'Фіксація курсу заздалегідь по телефону або онлайн',
+      'Приймаємо зношені та пошкоджені банкноти',
+      'Без черг і зайвої паперової тяганини'
+    ]},
+    { label: 'Гостям міста', items: [
+      'Обмін валюти без зайвих запитань',
+      'Один з найкращих курсів у місті',
+      'Попередня фіксація курсу по телефону',
+      'Є всі основні світові валюти'
+    ]},
+    { label: 'Бізнесменам', items: [
+      'Супровід до автомобіля за потреби',
+      'Фіксація курсу по телефону заздалегідь',
+      'Замовлення потрібної суми онлайн наперед',
+      'Особливі умови для постійних клієнтів'
+    ]}
+  ];
+
+  componentDidMount() {
+    this.io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const id = e.target.getAttribute('data-reveal-id');
+          this.setState((s) => ({ revealed: { ...s.revealed, [id]: true } }));
+          this.io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    Object.values(this.sectionRefs || {}).forEach((el) => el && this.io.observe(el));
+
+    this.onScroll = () => this.setState({ scrollY: window.scrollY });
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+
+    this.flipTimer = setInterval(() => {
+      this.setState((s) => ({ tick: s.tick + 1 }), () => {
+        Object.keys(this.numRefs || {}).forEach((key) => {
+          const el = this.numRefs[key];
+          if (!el) return;
+          const isTop = key.includes('-top-');
+          el.style.animation = 'none';
+          void el.offsetHeight;
+          if (isTop) {
+            el.style.animation = 'flapTopFold 0.22s ease-in forwards';
+          } else {
+            el.style.animation = 'flapBottomUnfold 0.22s ease-out 0.22s forwards';
+          }
+        });
+      });
+    }, 3200);
+  }
+
+  componentWillUnmount() {
+    if (this.io) this.io.disconnect();
+    if (this.onScroll) window.removeEventListener('scroll', this.onScroll);
+    if (this.flipTimer) clearInterval(this.flipTimer);
+  }
+
+  registerSection = (id, el) => {
+    this.sectionRefs = this.sectionRefs || {};
+    this.sectionRefs[id] = el;
+  };
+
+  registerNumRef = (key, el) => {
+    this.numRefs = this.numRefs || {};
+    if (el) this.numRefs[key] = el;
+  };
+
+  jitter(baseStr, tick, seed) {
+    const decimals = (baseStr.split('.')[1] || '').length;
+    const num = parseFloat(baseStr);
+    const idx = ((tick + seed) % 6 + 6) % 6;
+    const wiggle = [0, 0.01, -0.01, 0.01, 0, -0.01][idx];
+    return (num + wiggle).toFixed(decimals);
+  }
+
+  op(id) { return this.state.revealed[id] ? 1 : 0; }
+
+  rowStyle(sectionId, index) {
+    const on = !!this.state.revealed[sectionId];
+    return {
+      opacity: on ? 1 : 0,
+      transform: on ? 'translateY(0)' : 'translateY(16px)',
+      transition: `opacity 0.5s ease ${index * 60}ms, transform 0.5s ease ${index * 60}ms`
+    };
+  }
+
+  renderVals() {
+    const accent = this.props.accentColor || '#f5c400';
+    const mode = ['retail', 'wholesale'].includes(this.state.rateMode) ? this.state.rateMode : 'retail';
+    const rowsSource = this.ratesData[this.state.rateMode] || this.ratesData.retail;
+    const jitterable = mode === 'retail' || mode === 'wholesale';
+    const rows = rowsSource.map((r, i) => ({
+      ...r,
+      buyNew: jitterable ? this.jitter(r.buy, this.state.tick, i * 2) : r.buy,
+      buyOld: jitterable ? this.jitter(r.buy, this.state.tick - 1, i * 2) : r.buy,
+      sellNew: jitterable ? this.jitter(r.sell, this.state.tick, i * 2 + 1) : r.sell,
+      sellOld: jitterable ? this.jitter(r.sell, this.state.tick - 1, i * 2 + 1) : r.sell,
+      buyArrow: jitterable ? (parseFloat(this.jitter(r.buy, this.state.tick, i * 2)) >= parseFloat(this.jitter(r.buy, this.state.tick - 1, i * 2)) ? { ch: '▲', color: '#4fbf6b' } : { ch: '▼', color: '#e0524a' }) : { ch: '—', color: 'rgba(242,239,230,0.4)' },
+      sellArrow: jitterable ? (parseFloat(this.jitter(r.sell, this.state.tick, i * 2 + 1)) >= parseFloat(this.jitter(r.sell, this.state.tick - 1, i * 2 + 1)) ? { ch: '▲', color: '#4fbf6b' } : { ch: '▼', color: '#e0524a' }) : { ch: '—', color: 'rgba(242,239,230,0.4)' },
+      style: this.rowStyle('rates', i),
+      refBuyTop: (el) => this.registerNumRef(`buy-top-${i}`, el),
+      refBuyBottom: (el) => this.registerNumRef(`buy-bottom-${i}`, el),
+      refSellTop: (el) => this.registerNumRef(`sell-top-${i}`, el),
+      refSellBottom: (el) => this.registerNumRef(`sell-bottom-${i}`, el)
+    }));
+
+    const tabBtnStyle = (active) => ({
+      padding: '12px 22px', border: '2px solid #f2efe6', borderRight: 'none',
+      background: active ? accent : 'transparent', color: active ? '#0b1220' : '#f2efe6',
+      fontWeight: 800, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px', cursor: 'pointer'
+    });
+
+    const rateTabsDef = [
+      { key: 'retail', label: 'Роздріб' },
+      { key: 'wholesale', label: 'Опт' },
+      { key: 'cross', label: 'Крос-курси' },
+      { key: 'crypto', label: 'Крипто' }
+    ];
+    const rateTabs = rateTabsDef.map((t, i) => ({
+      label: t.label,
+      onSelect: () => this.setState({ rateMode: t.key }),
+      style: { ...tabBtnStyle(this.state.rateMode === t.key), borderRight: i === rateTabsDef.length - 1 ? '2px solid #f2efe6' : 'none' }
+    }));
+
+    const cityBtnStyle = (active) => ({
+      padding: '18px 16px', border: 'none', borderRight: '2px solid #f2efe6', borderBottom: '2px solid #f2efe6',
+      background: active ? accent : 'transparent', color: active ? '#0b1220' : '#f2efe6',
+      fontWeight: 700, fontSize: '13px', textTransform: 'uppercase', cursor: 'pointer', textAlign: 'left'
+    });
+    const cities = this.cityList.map((name) => ({
+      name, onSelect: () => this.setState({ activeCity: name }), style: cityBtnStyle(this.state.activeCity === name)
+    }));
+
+    const calcBase = this.ratesData.retail.concat(this.ratesData.wholesale).length ? this.ratesData[mode] : this.ratesData.retail;
+    const calcCodes = calcBase.map((r) => ({
+      code: r.code,
+      onSelect: () => this.setState({ calcCode: r.code }),
+      style: {
+        padding: '9px 14px', fontSize: '12px', fontWeight: 800, cursor: 'pointer', textTransform: 'uppercase',
+        border: this.state.calcCode === r.code ? `2px solid ${accent}` : '2px solid rgba(242,239,230,0.3)',
+        background: this.state.calcCode === r.code ? accent : 'transparent',
+        color: this.state.calcCode === r.code ? '#0b1220' : '#f2efe6'
+      }
+    }));
+
+    const activeRate = calcBase.find((r) => r.code === this.state.calcCode) || calcBase[0];
+    const amountNum = parseFloat(String(this.state.calcAmount).replace(',', '.')) || 0;
+    const sellNum = parseFloat(String(activeRate.sell).replace(/\s/g, '')) || 0;
+    const result = (amountNum * sellNum).toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const advTabBtnStyle = (active) => ({
+      padding: '14px 22px', border: 'none', borderBottom: active ? `3px solid ${accent}` : '3px solid transparent',
+      background: 'transparent', color: active ? '#f2efe6' : 'rgba(242,239,230,0.5)',
+      fontWeight: 800, fontSize: '13px', textTransform: 'uppercase', cursor: 'pointer'
+    });
+    const advTabs = this.advantagesData.map((t, i) => ({
+      label: t.label, onSelect: () => this.setState({ advTab: i }), style: advTabBtnStyle(this.state.advTab === i)
+    }));
+
+    return {
+      accent,
+      refRates: (el) => this.registerSection('rates', el),
+      refCities: (el) => this.registerSection('cities', el),
+      refCalc: (el) => this.registerSection('calc', el),
+      refAdvantages: (el) => this.registerSection('advantages', el),
+      refServices: (el) => this.registerSection('services', el),
+      refContacts: (el) => this.registerSection('contacts', el),
+      refNews: (el) => this.registerSection('news', el),
+      refTestimonials: (el) => this.registerSection('testimonials', el),
+      refCta: (el) => this.registerSection('cta', el),
+
+      ratesOpacity: 1,
+      citiesOpacity: this.op('cities'),
+      calcOpacity: this.op('calc'),
+      advantagesOpacity: this.op('advantages'),
+      servicesOpacity: this.op('services'),
+      contactsOpacity: this.op('contacts'),
+      newsOpacity: this.op('news'),
+      testimonialsOpacity: this.op('testimonials'),
+      ctaOpacity: this.op('cta'),
+
+      activeCity: this.state.activeCity,
+      cityCount: this.cityList.length,
+      cities,
+
+      rateTabs,
+      rateRows: rows,
+      rateUpdatedAt: '15.09.2026 14:32',
+
+      calcAmount: this.state.calcAmount,
+      onAmountChange: (e) => this.setState({ calcAmount: e.target.value }),
+      calcCodes,
+      calcResult: result,
+      calcRateLabel: `1 ${activeRate.code} = ${activeRate.sell} UAH`,
+
+      advTabs,
+      activeAdvItems: this.advantagesData[this.state.advTab].items.map((text, i) => ({ n: String(i + 1).padStart(2, '0'), text })),
+
+      parallax1: (this.state.scrollY * 0.35).toFixed(1),
+      parallax2: (this.state.scrollY * -0.3).toFixed(1),
+      parallax3: (this.state.scrollY * 0.25).toFixed(1),
+
+      services: [
+        { title: 'Грошові перекази по Україні', desc: 'Швидко відправляйте та отримуйте кошти у будь-якому з наших відділень.' },
+        { title: 'Міжнародні перекази', desc: 'Надійні канали для переказів за кордон і з-за кордону.' },
+        { title: 'Обмін електронних валют', desc: 'Обмін популярних криптовалют на готівку за прозорим курсом.' }
+      ],
+
+      branches: [
+        { address: 'вул. Сумська, 15', hours: 'Пн–Нд 08:00–20:00', phone: '+38 (099) 123-45-67' },
+        { address: 'просп. Науки, 29', hours: 'Пн–Нд 09:00–19:00', phone: '+38 (099) 123-45-68' },
+        { address: 'просп. Героїв Харкова, 70', hours: 'Пн–Нд 08:00–21:00', phone: '+38 (099) 123-45-69' },
+        { address: 'вул. Полтавський Шлях, 56', hours: 'Пн–Нд 09:00–18:00', phone: '+38 (099) 123-45-70' }
+      ],
+
+      newsItems: [
+        { imgId: 'news-1', date: '8 січня 2026', title: 'Як обміняти зношені купюри без втрат' },
+        { imgId: 'news-2', date: '29 грудня 2025', title: 'Оптовий обмін валюти: коли це вигідно' },
+        { imgId: 'news-3', date: '23 грудня 2025', title: '5 порад для вигідного обміну валюти' }
+      ],
+
+      testimonials: [
+        { initial: 'О', name: 'Олександр', date: '9 січня 2026', text: 'Залишив заявку онлайн, курс зафіксували — приїхав, все вже було готово.' },
+        { initial: 'М', name: 'Марія', date: '3 січня 2026', text: 'Обмінюю валюту тут вже рік, курс завжди чесний, без прихованих комісій.' },
+        { initial: 'Д', name: 'Дмитро', date: '23 грудня 2025', text: 'Знадобився оптовий обмін — оформили швидко і без черги.' }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

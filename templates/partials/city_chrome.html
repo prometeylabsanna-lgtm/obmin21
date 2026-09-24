@@ -1,0 +1,30 @@
+<div class="site-header__actions" id="city-chrome">
+  <div class="city-select" data-city-select>
+    <button type="button" class="city-select__btn" data-city-toggle data-qa="city-toggle" aria-expanded="false" aria-haspopup="listbox">
+      <span class="u-accent">◆</span>
+      <span data-city-label>{{ active_city.name|default:"Місто" }}</span>
+    </button>
+    <div class="city-select__menu" data-city-menu hidden role="listbox">
+      {% for c in cities %}
+      <form method="post" action="{% url 'network:set_city' %}"
+            hx-post="{% url 'network:set_city' %}"
+            hx-target="#city-chrome"
+            hx-swap="outerHTML">
+        {% csrf_token %}
+        <input type="hidden" name="city" value="{{ c.slug }}">
+        <button type="submit" class="city-select__option{% if active_city.slug == c.slug %} is-active{% endif %}" data-qa="city-option">{{ c.name }}</button>
+      </form>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if active_phone %}
+  <a class="site-header__phone" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}" data-qa="phone" id="header-phone">{{ active_phone }}</a>
+  {% endif %}
+
+  <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}" data-qa="cta-request">
+    Заявка
+  </button>
+
+  <button type="button" class="site-header__menu-toggle" data-menu-toggle aria-label="Меню" data-qa="menu-toggle">☰</button>
+</div>

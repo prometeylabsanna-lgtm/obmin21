@@ -1,0 +1,92 @@
+:root {
+  --color-bg: #060910;
+  --color-text: #f2efe6;
+  --color-text-muted: rgba(242, 239, 230, 0.52);
+  --color-text-soft: rgba(242, 239, 230, 0.72);
+  --color-border: #f2efe6;
+  --color-border-soft: rgba(242, 239, 230, 0.16);
+  --color-accent: #f5c400;
+  --color-accent-ink: #060910;
+  --color-champagne: #d4c4a0;
+  --color-champagne-soft: rgba(212, 196, 160, 0.85);
+  --color-up: #2fd67a;
+  --color-down: #ff5b1f;
+  --color-sidenav-idle: #6ea3d8;
+
+  --font-display: "Archivo", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 18px;
+  --space-5: 28px;
+  --space-6: 40px;
+  --space-7: 56px;
+  --space-8: 72px;
+
+  --border-w: 2px;
+  --radius: 0;
+  --header-h: 64px;
+  --sidenav-h: 56px;
+  --sidenav-w: 0px;
+  --container-pad: 20px;
+  --touch-min: 44px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  --glass-bg: rgba(10, 14, 24, 0.58);
+  --glass-bg-strong: rgba(12, 16, 28, 0.72);
+  --glass-border: rgba(242, 239, 230, 0.24);
+  --glass-highlight: rgba(242, 239, 230, 0.14);
+  --glass-blur: blur(44px) saturate(145%);
+  --glass-surface: rgba(8, 12, 22, 0.62);
+  --glass-frost: linear-gradient(
+    165deg,
+    rgba(242, 239, 230, 0.08) 0%,
+    rgba(242, 239, 230, 0.03) 45%,
+    rgba(6, 9, 16, 0.12) 100%
+  );
+
+  --shadow-panel:
+    0 1px 0 var(--glass-highlight) inset,
+    0 20px 52px rgba(0, 0, 0, 0.48),
+    0 6px 18px rgba(0, 0, 0, 0.34);
+  --shadow-panel-soft:
+    0 1px 0 var(--glass-highlight) inset,
+    0 12px 32px rgba(0, 0, 0, 0.36),
+    0 3px 10px rgba(0, 0, 0, 0.26);
+  --shadow-float:
+    0 1px 0 var(--glass-highlight) inset,
+    0 28px 64px rgba(0, 0, 0, 0.55),
+    0 10px 24px rgba(0, 0, 0, 0.38);
+
+  --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-luxe-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-luxe: 1.35s;
+  --dur-luxe-fast: 0.55s;
+
+  --reveal-duration: 720ms;
+  --reveal-delay: 0ms;
+  --reveal-easing: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --container-pad: 32px;
+    --header-h: 72px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --sidenav-w: 100px;
+    --sidenav-h: 0px;
+    --container-pad: clamp(28px, 4vw, 64px);
+  }
+}

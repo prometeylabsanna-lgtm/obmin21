@@ -1,0 +1,46 @@
+{% load static %}
+<div id="blog-list" data-qa="blog-list">
+  <div class="blog-feed">
+    {% for post in posts %}
+    <article class="blog-card">
+      <div class="blog-card__body">
+        <div class="card__meta">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
+        <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+        {% if post.excerpt %}
+        <p class="card__text">{{ post.excerpt }}</p>
+        {% endif %}
+        <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати →</a>
+      </div>
+      <div class="blog-card__media">
+        {% if post.cover %}
+        <img src="{{ post.cover.url }}" alt="" width="900" height="560" loading="lazy" decoding="async">
+        {% else %}
+        {% cycle 'images/blog-laptop.jpg' 'images/blog-charts.jpg' 'images/blog-trading.jpg' as blog_img silent %}
+        <img src="{% static blog_img %}" alt="" width="900" height="560" loading="lazy" decoding="async">
+        {% endif %}
+      </div>
+    </article>
+    {% empty %}
+    <div class="card u-muted">Статей поки немає</div>
+    {% endfor %}
+  </div>
+  {% if page_obj.has_other_pages %}
+  <nav class="pagination" aria-label="Пагінація">
+    {% if page_obj.has_previous %}
+    <a class="btn btn--ghost"
+       hx-get="?page={{ page_obj.previous_page_number }}"
+       hx-target="#blog-list"
+       hx-swap="outerHTML"
+       href="?page={{ page_obj.previous_page_number }}">Назад</a>
+    {% endif %}
+    <span class="u-muted">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a class="btn btn--ghost"
+       hx-get="?page={{ page_obj.next_page_number }}"
+       hx-target="#blog-list"
+       hx-swap="outerHTML"
+       href="?page={{ page_obj.next_page_number }}">Далі</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+</div>

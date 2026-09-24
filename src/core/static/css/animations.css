@@ -1,0 +1,75 @@
+/* Reveal + hover motion — adapted from ProTokolArt */
+
+.reveal {
+  opacity: 0;
+  transition:
+    opacity var(--reveal-duration) var(--reveal-easing) var(--reveal-delay),
+    transform var(--reveal-duration) var(--reveal-easing) var(--reveal-delay);
+}
+
+.reveal--up {
+  transform: translate3d(0, 28px, 0);
+}
+
+.reveal--scale {
+  transform: scale(0.96);
+}
+
+.reveal--right {
+  transform: translate3d(-20px, 0, 0);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.hover-lift {
+  transition:
+    transform var(--dur-luxe-fast) var(--ease-luxe-out),
+    box-shadow var(--dur-luxe-fast) var(--ease-luxe-out);
+}
+
+.hover-lift:hover {
+  transform: translate3d(0, -3px, 0);
+  box-shadow: var(--shadow-panel);
+}
+
+.hover-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.hover-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background-color: var(--color-accent);
+  transition: width var(--dur-luxe-fast) var(--ease-luxe-out);
+}
+
+.hover-underline:hover::after {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hover-lift,
+  .hover-lift:hover,
+  .hover-underline::after {
+    transition: none;
+    transform: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}

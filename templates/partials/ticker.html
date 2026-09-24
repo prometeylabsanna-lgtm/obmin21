@@ -1,0 +1,42 @@
+<div class="ticker" data-qa="ticker" aria-label="Стрічка курсів">
+  <div class="ticker__viewport">
+    <div class="ticker__track">
+      {% with items=rate_rows %}
+      <div class="ticker__group">
+        {% for row in items %}
+        <span class="ticker__item">
+          <span class="ticker__code">{{ row.pair.code }}</span>
+          <span class="ticker__sep">·</span>
+          <span class="ticker__val">куп {{ row.quote.buy }}</span>
+          <span class="ticker__sep">/</span>
+          <span class="ticker__val">прод {{ row.quote.sell }}</span>
+        </span>
+        {% empty %}
+        <span class="ticker__item"><span class="ticker__code">USD</span> · куп 41.20 / прод 41.55</span>
+        <span class="ticker__item"><span class="ticker__code">EUR</span> · куп 44.80 / прод 45.30</span>
+        <span class="ticker__item"><span class="ticker__code">GBP</span> · куп 52.10 / прод 52.90</span>
+        <span class="ticker__item"><span class="ticker__code">PLN</span> · куп 10.40 / прод 10.75</span>
+        <span class="ticker__item"><span class="ticker__code">CHF</span> · куп 46.20 / прод 46.90</span>
+        {% endfor %}
+      </div>
+      <div class="ticker__group" aria-hidden="true">
+        {% for row in items %}
+        <span class="ticker__item">
+          <span class="ticker__code">{{ row.pair.code }}</span>
+          <span class="ticker__sep">·</span>
+          <span class="ticker__val">куп {{ row.quote.buy }}</span>
+          <span class="ticker__sep">/</span>
+          <span class="ticker__val">прод {{ row.quote.sell }}</span>
+        </span>
+        {% empty %}
+        <span class="ticker__item"><span class="ticker__code">USD</span> · куп 41.20 / прод 41.55</span>
+        <span class="ticker__item"><span class="ticker__code">EUR</span> · куп 44.80 / прод 45.30</span>
+        <span class="ticker__item"><span class="ticker__code">GBP</span> · куп 52.10 / прод 52.90</span>
+        <span class="ticker__item"><span class="ticker__code">PLN</span> · куп 10.40 / прод 10.75</span>
+        <span class="ticker__item"><span class="ticker__code">CHF</span> · куп 46.20 / прод 46.90</span>
+        {% endfor %}
+      </div>
+      {% endwith %}
+    </div>
+  </div>
+</div>

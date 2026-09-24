@@ -1,0 +1,47 @@
+{# Demo map until real branch coords are set #}
+{% with demo_q="вул.+Хрещатик,+1,+Київ,+Україна" demo_label="вул. Хрещатик, 1, Київ" %}
+<div class="contacts-panel" data-qa="contacts-panel">
+  <div class="contacts-panel__info">
+    {% with b=city_branches.0 %}
+    <p class="contacts-panel__eyebrow">Відділення{% if active_city %} · {{ active_city.name }}{% endif %}</p>
+    <h3 class="contacts-panel__addr">{{ demo_label }}</h3>
+    <ul class="contacts-panel__details">
+      <li>
+        <span class="contacts-panel__label">Графік</span>
+        <span class="contacts-panel__value">{% if b %}{{ b.hours }}{% else %}Пн–Пт 09:00–19:00, Сб 10:00–16:00{% endif %}</span>
+      </li>
+      <li>
+        <span class="contacts-panel__label">Телефон</span>
+        {% if b and b.phone %}
+        <a class="contacts-panel__value contacts-panel__phone" href="tel:{{ b.phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">{{ b.phone }}</a>
+        {% else %}
+        <span class="contacts-panel__value">+38 (099) 222-22-22</span>
+        {% endif %}
+      </li>
+      <li>
+        <span class="contacts-panel__label">Адреса</span>
+        <span class="contacts-panel__value">{{ demo_label }} · демо до заміни</span>
+      </li>
+    </ul>
+    <div class="contacts-panel__actions">
+      <a class="btn btn--accent"
+         href="https://www.google.com/maps/search/?api=1&query={{ demo_q }}"
+         target="_blank"
+         rel="noopener noreferrer">На карті</a>
+      <button type="button"
+              class="btn btn--ghost"
+              data-open-modal="{% url 'leads:request_modal' %}">Заявка</button>
+    </div>
+    {% endwith %}
+  </div>
+  <div class="contacts-panel__map">
+    <iframe
+      class="contacts-panel__iframe"
+      title="Карта відділення · {{ demo_label }}"
+      src="https://maps.google.com/maps?q={{ demo_q }}&hl=uk&z=16&output=embed"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen></iframe>
+  </div>
+</div>
+{% endwith %}

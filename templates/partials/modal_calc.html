@@ -1,0 +1,31 @@
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="calc-title" data-qa="modal-calc">
+  <div class="modal__head">
+    <h2 class="modal__title" id="calc-title">Калькулятор обміну</h2>
+    <button type="button" class="modal__close" data-close-modal aria-label="Закрити">×</button>
+  </div>
+  <div class="modal__body" data-calc data-qa="calc">
+    <p class="modal__lead">Вкажіть суму — побачите скільки отримаєте зараз.</p>
+    <label class="form__label">
+      Ви віддаєте
+      <input class="form__input" type="text" inputmode="decimal" data-calc-amount value="100" autocomplete="off">
+    </label>
+    <div class="calc-codes" data-calc-codes>
+      {% for row in calc_rows %}
+      <button type="button"
+              class="calc-codes__btn{% if forloop.first %} is-active{% endif %}"
+              data-calc-code="{{ row.pair.code }}"
+              data-buy="{{ row.quote.buy }}"
+              data-sell="{{ row.quote.sell }}"
+              data-pair-id="{{ row.pair.pk }}">{{ row.pair.code }}</button>
+      {% endfor %}
+    </div>
+    <div class="calc-result-block">
+      <div class="form__label">Ви отримуєте</div>
+      <div class="calc-result"><span data-calc-result>0</span> UAH</div>
+      <div class="u-muted u-upper u-text-xs" data-calc-rate-label></div>
+    </div>
+    <div class="modal__actions">
+      <button type="button" class="btn btn--accent" data-calc-continue data-qa="calc-continue">Зафіксувати курс</button>
+    </div>
+  </div>
+</div>

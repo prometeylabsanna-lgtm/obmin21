@@ -1,0 +1,21 @@
+<form class="form form--compact"
+      method="post"
+      action="{% url 'leads:contact_submit' %}"
+      hx-post="{% url 'leads:contact_submit' %}"
+      hx-target="closest form"
+      hx-swap="outerHTML"
+      data-qa="contact-form"
+      id="contact-form">
+  {% csrf_token %}
+  <label class="form__label">Імʼя {{ form.name }}{% if form.name.errors %}<span class="form__error">{{ form.name.errors.0 }}</span>{% endif %}</label>
+  <label class="form__label">Телефон {{ form.phone }}{% if form.phone.errors %}<span class="form__error">{{ form.phone.errors.0 }}</span>{% endif %}</label>
+  <label class="form__label">Повідомлення {{ form.message }}{% if form.message.errors %}<span class="form__error">{{ form.message.errors.0 }}</span>{% endif %}</label>
+  <label class="form__check">
+    {{ form.consent }}
+    <span>Згоден з <a class="link-accent" href="{% url 'content:privacy' %}">політикою конфіденційності</a></span>
+  </label>
+  {% if form.consent.errors %}<span class="form__error">{{ form.consent.errors.0 }}</span>{% endif %}
+  <div class="form__actions">
+    <button type="submit" class="btn btn--accent">Надіслати</button>
+  </div>
+</form>

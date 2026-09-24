@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load content_format %}
+
+{% block title %}{{ service.seo_title|default:service.title }} · {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<article class="detail-page detail-page--center" data-qa="service-detail">
+  <div class="detail-page__inner detail-page__inner--wide">
+    <header class="detail-page__header">
+      <h1 class="detail-page__title">{{ service.title }}</h1>
+      {% if service.short_desc %}
+      <p class="detail-page__lead">{{ service.short_desc }}</p>
+      {% endif %}
+    </header>
+
+    <div class="detail-split">
+      <div class="detail-split__main">
+        {% if service.body %}
+        <div class="detail-page__panel">
+          <div class="detail-page__body">
+            {{ service.body|format_body }}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <aside class="detail-split__aside">
+        {% if other_services %}
+        <div class="detail-aside-cards">
+          {% for svc in other_services %}
+          <article class="card detail-aside-card">
+            <h3 class="card__title">{{ svc.title }}</h3>
+            <p class="card__text">{{ svc.short_desc|truncatechars:90 }}</p>
+            <a class="link-accent" href="{% url 'content:service_detail' svc.slug %}">Детальніше →</a>
+          </article>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="detail-page__actions detail-page__actions--stack">
+          <a class="btn btn--ghost" href="{% url 'content:contacts' %}">Контакти</a>
+          <a class="btn btn--ghost" href="{% url 'content:services' %}">Усі послуги</a>
+          <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Залишити заявку</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</article>
+{% endblock %}

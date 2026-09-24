@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load content_format %}
+
+{% block title %}{{ post.seo_title|default:post.title }} · {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<article class="detail-page detail-page--center" data-qa="post-detail">
+  <div class="detail-page__inner detail-page__inner--wide">
+    <header class="detail-page__header">
+      <div class="card__meta u-mb-4">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
+      <h1 class="detail-page__title">{{ post.title }}</h1>
+      {% if post.excerpt %}
+      <p class="detail-page__lead">{{ post.excerpt }}</p>
+      {% endif %}
+    </header>
+
+    <div class="detail-split detail-split--article">
+      <div class="detail-split__main">
+        <div class="detail-page__panel">
+          <div class="detail-page__body">
+            {{ post.body|format_body }}
+          </div>
+        </div>
+
+        {% if post.faq %}
+        <div class="detail-page__panel detail-page__panel--spaced">
+          <h2 class="detail-page__related-title">FAQ</h2>
+          <div class="detail-page__body">
+            {{ post.faq|format_body }}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <aside class="detail-split__aside">
+        <figure class="article-media">
+          {% if post.cover %}
+          <img
+            class="article-media__img"
+            src="{{ post.cover.url }}"
+            alt=""
+            width="900"
+            height="600"
+            loading="lazy"
+            decoding="async"
+          >
+          {% elif post.category.slug == 'novyny' %}
+          <img
+            class="article-media__img"
+            src="{% static 'images/blog-laptop.jpg' %}"
+            alt=""
+            width="900"
+            height="600"
+            loading="lazy"
+            decoding="async"
+          >
+          {% elif post.category.slug == 'posluhy' %}
+          <img
+            class="article-media__img"
+            src="{% static 'images/blog-charts.jpg' %}"
+            alt=""
+            width="900"
+            height="600"
+            loading="lazy"
+            decoding="async"
+          >
+          {% else %}
+          <img
+            class="article-media__img"
+            src="{% static 'images/blog-trading.jpg' %}"
+            alt=""
+            width="900"
+            height="600"
+            loading="lazy"
+            decoding="async"
+          >
+          {% endif %}
+        </figure>
+
+        <div class="detail-page__actions detail-page__actions--aside">
+          <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Заявка на обмін</button>
+          <a class="btn btn--ghost" href="{% url 'blog:post_list' %}">Усі статті</a>
+        </div>
+      </aside>
+    </div>
+
+    {% if related %}
+    <div class="detail-page__related">
+      <h2 class="detail-page__related-title">Читайте також</h2>
+      <div class="related-feed">
+        {% for item in related %}
+        <a class="related-card" href="{% url 'blog:post_detail' item.slug %}">
+          <div class="card__meta">{{ item.published_at|date:"d.m.Y" }}</div>
+          <div class="related-card__title">{{ item.title }}</div>
+          {% if item.excerpt %}
+          <p class="card__text">{{ item.excerpt }}</p>
+          {% endif %}
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</article>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ post.title|escapejs }}",
+  "datePublished": "{{ post.published_at|date:'c' }}",
+  "dateModified": "{{ post.updated_at|date:'c' }}"
+}
+</script>
+{% endblock %}

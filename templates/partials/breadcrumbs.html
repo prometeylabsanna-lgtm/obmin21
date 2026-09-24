@@ -1,0 +1,16 @@
+<nav class="breadcrumbs" aria-label="Хлібні крихти" data-qa="breadcrumbs">
+  <ol class="breadcrumbs__list">
+    {% for item in breadcrumb_items %}
+    <li class="breadcrumbs__item">
+      {% if not forloop.first %}
+      <span class="breadcrumbs__sep" aria-hidden="true">/</span>
+      {% endif %}
+      {% if item.url and not forloop.last %}
+      <a href="{{ item.url }}">{{ item.title }}</a>
+      {% else %}
+      <span class="breadcrumbs__current"{% if forloop.last %} aria-current="page"{% endif %}>{{ item.title }}</span>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</nav>

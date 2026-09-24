@@ -1,0 +1,37 @@
+<div class="modal modal--wide" role="dialog" aria-modal="true" aria-labelledby="request-title" data-qa="modal-request">
+  <div class="modal__head">
+    <h2 class="modal__title" id="request-title">Заявка на обмін</h2>
+    <button type="button" class="modal__close" data-close-modal aria-label="Закрити">×</button>
+  </div>
+  <form class="form modal__body modal__grid"
+        method="post"
+        action="{% url 'leads:request_modal' %}"
+        hx-post="{% url 'leads:request_modal' %}"
+        hx-target="closest .modal"
+        hx-swap="outerHTML"
+        data-qa="request-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="form__error form__label--full">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <label class="form__label">Імʼя {{ form.name }}{% if form.name.errors %}<span class="form__error">{{ form.name.errors.0 }}</span>{% endif %}</label>
+    <label class="form__label">Телефон {{ form.phone }}{% if form.phone.errors %}<span class="form__error">{{ form.phone.errors.0 }}</span>{% endif %}</label>
+    <label class="form__label">Месенджер {{ form.messenger }}</label>
+    <label class="form__label">Валютна пара {{ form.pair }}{% if form.pair.errors %}<span class="form__error">{{ form.pair.errors.0 }}</span>{% endif %}</label>
+    <label class="form__label">Дошка {{ form.board }}</label>
+    <label class="form__label">Напрямок {{ form.direction }}</label>
+    <label class="form__label">Віддаєте {{ form.amount_give }}</label>
+    <label class="form__label">Отримуєте {{ form.amount_receive }}</label>
+    {{ form.rate_fixed }}
+    <label class="form__label form__label--full">Відділення {{ form.branch }}{% if form.branch.errors %}<span class="form__error">{{ form.branch.errors.0 }}</span>{% endif %}</label>
+    <label class="form__check">
+      {{ form.consent }}
+      <span>Згоден з <a class="link-accent" href="{% url 'content:privacy' %}" target="_blank">політикою конфіденційності</a></span>
+    </label>
+    {% if form.consent.errors %}<span class="form__error form__label--full">{{ form.consent.errors.0 }}</span>{% endif %}
+    <div class="modal__actions">
+      <button type="submit" class="btn btn--accent">Надіслати заявку</button>
+    </div>
+  </form>
+</div>

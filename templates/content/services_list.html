@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<section class="detail-page" data-qa="services-list">
+  <header class="detail-page__header">
+    <h1 class="detail-page__title">{{ page.title }}</h1>
+    {% if page.intro %}
+    <p class="detail-page__lead">{{ page.intro }}</p>
+    {% endif %}
+  </header>
+  <div class="card-grid card-grid--3">
+    {% for svc in services %}
+    <article class="card">
+      <h2 class="card__title">{{ svc.title }}</h2>
+      <p class="card__text">{{ svc.short_desc }}</p>
+      <a class="link-accent" href="{% url 'content:service_detail' svc.slug %}">Детальніше →</a>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

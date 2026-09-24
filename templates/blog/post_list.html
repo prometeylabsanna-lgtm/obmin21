@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} · {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section__head">
+    <h1 class="section__title">Блог</h1>
+  </div>
+  <div class="adv-tabs u-mb-5">
+    <a class="adv-tabs__btn{% if not active_category %} is-active{% endif %}" href="{% url 'blog:post_list' %}">Усі</a>
+    {% for cat in categories %}
+    <a class="adv-tabs__btn{% if active_category.slug == cat.slug %} is-active{% endif %}" href="{% url 'blog:category' cat.slug %}">{{ cat.name }}</a>
+    {% endfor %}
+  </div>
+  {% include 'partials/blog_list.html' %}
+</section>
+{% endblock %}
