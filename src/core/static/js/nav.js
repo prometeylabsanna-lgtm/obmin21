@@ -113,6 +113,13 @@
     if (panel && window.htmx) {
       window.htmx.ajax('GET', '/partials/rates/', { target: '#rates-panel', swap: 'outerHTML' });
     }
+    var label = document.querySelector('[data-city-label]');
+    var cityName = label ? label.textContent.trim() : '';
+    if (cityName) {
+      document.querySelectorAll('[data-live-city-name]').forEach(function (el) {
+        el.textContent = cityName;
+      });
+    }
     var branches = document.getElementById('branch-list');
     if (branches) {
       window.location.reload();

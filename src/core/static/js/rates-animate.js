@@ -1,7 +1,6 @@
 (function () {
   'use strict';
 
-  var hasAnimated = false;
   var DURATION = 620;
   var ROW_STAGGER = 36;
   var VALUE_STAGGER = 40;
@@ -27,7 +26,11 @@
   }
 
   function formatRate(value, decimals) {
-    return value.toFixed(decimals);
+    var text = value.toFixed(decimals);
+    if (text.indexOf('.') !== -1) {
+      text = text.replace(/0+$/, '').replace(/\.$/, '');
+    }
+    return text;
   }
 
   function animateValue(el, target, delay) {
@@ -78,29 +81,30 @@
     }, delay);
   }
 
-  function animateRatesOnce(root) {
-    if (hasAnimated) {
-      return;
-    }
-
+  function animateRates(root) {
     var scope = root || document;
-    var values = scope.querySelectorAll('[data-rate-animate]');
+    var values = scope.querySelectorAll(
+      '[data-rate-animate]:not(.is-revealed):not(.is-animating)'
+    );
     if (!values.length) {
       return;
     }
 
-    hasAnimated = true;
-
     if (prefersReducedMotion()) {
       values.forEach(function (el) {
         el.classList.add('is-revealed');
+      });
+      scope.querySelectorAll('.rates-table__row[data-qa="rate-row"]').forEach(function (row) {
+        row.classList.add('is-rate-visible');
       });
       return;
     }
 
     var rows = scope.querySelectorAll('.rates-table__row[data-qa="rate-row"]');
     rows.forEach(function (row, index) {
-      revealRow(row, index * ROW_STAGGER);
+      if (!row.classList.contains('is-rate-visible')) {
+        revealRow(row, index * ROW_STAGGER);
+      }
     });
 
     values.forEach(function (el, index) {
@@ -116,8 +120,21 @@
     });
   }
 
+  function resolveRatesRoot(target) {
+    if (!target) {
+      return null;
+    }
+    if (target.id === 'rates-panel') {
+      return target;
+    }
+    if (target.querySelector) {
+      return target.querySelector('#rates-panel');
+    }
+    return null;
+  }
+
   function boot() {
-    animateRatesOnce(document);
+    animateRates(document);
   }
 
   if (document.readyState === 'loading') {
@@ -126,6 +143,14 @@
     boot();
   }
 
+  document.body.addEventListener('htmx:afterSwap', function (evt) {
+    var panel = resolveRatesRoot(evt.target);
+    if (panel) {
+      animateRates(panel);
+    }
+  });
+
   window.Obmin21 = window.Obmin21 || {};
-  window.Obmin21.animateRatesOnce = animateRatesOnce;
+  window.Obmin21.animateRatesOnce = animateRates;
+  window.Obmin21.animateRates = animateRates;
 })();

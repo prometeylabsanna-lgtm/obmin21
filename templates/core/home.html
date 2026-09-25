@@ -6,7 +6,7 @@
 
 <section class="section section--tight" id="exchange" data-qa="section-exchange">
   <div class="section__head">
-    <h1 class="section__title">Курси{% if active_city %} · {{ active_city.name }}{% endif %}</h1>
+    <h1 class="section__title">Курси{% if active_city %} · <span data-live-city-name>{{ active_city.name }}</span>{% endif %}</h1>
   </div>
   {% include 'partials/rates_table.html' %}
 </section>
@@ -15,7 +15,7 @@
 
 <section class="section" id="contacts" data-qa="section-contacts">
   <div class="section__head">
-    <h2 class="section__title">Контакти{% if active_city %} в {{ active_city.name }}{% endif %}</h2>
+    <h2 class="section__title">Контакти{% if active_city %} в <span data-live-city-name>{{ active_city.name }}</span>{% endif %}</h2>
     <a class="link-accent" href="{% url 'content:contacts' %}">Дізнатись більше →</a>
   </div>
   {% include 'partials/contacts_panel.html' %}

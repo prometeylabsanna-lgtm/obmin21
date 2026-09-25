@@ -37,12 +37,12 @@
   text-transform: uppercase;
   letter-spacing: 0.03em;
   line-height: 1.35;
-  color: var(--color-champagne);
+  color: #a89858;
   transition: color var(--dur-luxe-fast) var(--ease-luxe-out);
 }
 
 .faq-item:hover .faq-item__q {
-  color: var(--color-champagne-soft);
+  color: #b8a66a;
 }
 
 .faq-item__a {

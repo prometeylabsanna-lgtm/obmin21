@@ -4,7 +4,7 @@
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
 <section class="section">
-  <h1 class="section__title">{{ page.title }}{% if active_city %} · {{ active_city.name }}{% endif %}</h1>
+  <h1 class="section__title">{{ page.title }}{% if active_city %} · <span data-live-city-name>{{ active_city.name }}</span>{% endif %}</h1>
   {% if page.intro %}<p class="u-muted u-mb-5">{{ page.intro|brand_mark }}</p>{% endif %}
   {% include 'partials/rates_table.html' with hide_full_table_link=True %}
   <div class="u-mt-5">

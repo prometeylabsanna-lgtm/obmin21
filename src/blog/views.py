@@ -37,7 +37,12 @@ def post_detail(request, slug):
         slug=slug,
         status=Post.Status.PUBLISHED,
     )
-    related = get_published_posts().exclude(pk=post.pk).filter(category=post.category)[:3]
+    published = get_published_posts().exclude(pk=post.pk)
+    related = list(published.filter(category=post.category)[:3])
+    if len(related) < 3:
+        related_ids = {item.pk for item in related}
+        extras = published.exclude(pk__in=related_ids)[: 3 - len(related)]
+        related.extend(extras)
     return render(request, 'blog/post_detail.html', {
         'post': post,
         'related': related,

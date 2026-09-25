@@ -15,11 +15,11 @@
   <div class="detail-page__rates">
     <div class="detail-page__rate">
       <div class="detail-page__rate-label">Купівля</div>
-      <div class="detail-page__rate-value">{{ quote.buy }}</div>
+      <div class="detail-page__rate-value">{{ quote.buy|format_rate:"auto" }}</div>
     </div>
     <div class="detail-page__rate">
       <div class="detail-page__rate-label">Продаж</div>
-      <div class="detail-page__rate-value">{{ quote.sell }}</div>
+      <div class="detail-page__rate-value">{{ quote.sell|format_rate:"auto" }}</div>
     </div>
   </div>
   <div class="detail-page__actions detail-page__actions--tight-top">

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
+from src.core.templatetags.content_format import format_rate
 from src.leads.forms import ContactMessageForm, ExchangeRequestForm
 from src.leads.services import create_contact_message, create_exchange_request
 from src.rates.models import CurrencyPair, RateBoard
@@ -33,7 +34,12 @@ def exchange_request_modal(request):
         form = ExchangeRequestForm(city=city)
         for key, value in initial.items():
             if value and key in form.fields:
-                form.fields[key].initial = value
+                if key in ('amount_give', 'amount_receive'):
+                    form.fields[key].initial = format_rate(value, 'compact')
+                elif key == 'rate_fixed':
+                    form.fields[key].initial = format_rate(value, 'auto')
+                else:
+                    form.fields[key].initial = value
         pair_id = initial.get('pair')
         if pair_id and not initial.get('rate_fixed'):
             pair = CurrencyPair.objects.filter(pk=pair_id).first()
@@ -41,9 +47,8 @@ def exchange_request_modal(request):
                 quote = get_quote(pair, city, initial.get('board') or RateBoard.RETAIL)
                 if quote:
                     direction = initial.get('direction') or 'sell'
-                    form.fields['rate_fixed'].initial = (
-                        quote.buy if direction == 'sell' else quote.sell
-                    )
+                    rate = quote.buy if direction == 'sell' else quote.sell
+                    form.fields['rate_fixed'].initial = format_rate(rate, 'auto')
 
     return render(request, 'partials/modal_request.html', {
         'form': form,

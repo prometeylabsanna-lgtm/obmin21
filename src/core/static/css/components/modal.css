@@ -3,9 +3,14 @@
   inset: 0;
   z-index: 100;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: calc(12px + var(--safe-top)) var(--space-3) calc(12px + var(--safe-bottom) + var(--sidenav-h));
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 0 var(--space-3);
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -13,6 +18,20 @@
   background: rgba(10, 15, 14, 0.58);
   -webkit-backdrop-filter: blur(10px) saturate(120%);
   backdrop-filter: blur(10px) saturate(120%);
+}
+
+/* Spacers: center when short, collapse when tall — no phantom scrollbar */
+.modal-root::before,
+.modal-root::after {
+  content: '';
+  flex: 1 0 0;
+  width: 100%;
+  min-height: calc(8px + var(--safe-top));
+  pointer-events: none;
+}
+
+.modal-root::after {
+  min-height: calc(8px + var(--safe-bottom));
 }
 
 .modal-root[hidden] {
@@ -24,8 +43,9 @@
   z-index: 1;
   box-sizing: border-box;
   width: min(100%, 480px);
+  flex: 0 0 auto;
   overflow: visible;
-  margin: 8px auto;
+  margin: 0;
   padding: var(--space-4);
   padding-top: var(--space-5);
   background-color: var(--glass-bg-strong);
@@ -42,7 +62,7 @@
 .modal::before {
   content: '';
   position: absolute;
-  inset: -6px;
+  inset: 0;
   border: 1px solid rgba(220, 225, 218, 0.14);
   pointer-events: none;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
@@ -244,11 +264,10 @@
 @media (max-height: 720px) {
   .modal {
     padding: var(--space-3);
-    margin: 0 auto;
   }
 
   .modal::before {
-    inset: -5px;
+    inset: 0;
   }
 
   .modal__head {
@@ -280,12 +299,11 @@
 @media (max-width: 479px) {
   .modal {
     width: 100%;
-    margin: 0;
     padding: var(--space-3);
   }
 
   .modal::before {
-    inset: -4px;
+    inset: 0;
   }
 
   .modal__head {
@@ -293,20 +311,30 @@
     padding: 0 0 var(--space-2);
   }
 
+  /* Keep 2 columns so the form fits without scroll on phones */
   .modal__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .modal .form__input {
+    min-height: 36px;
+    padding: 6px 10px;
+    font-size: 14px;
   }
 }
 
 @media (min-width: 768px) {
   .modal-root {
-    align-items: flex-start;
-    justify-content: center;
-    padding: var(--space-6);
+    padding: 0 var(--space-6);
+  }
+
+  .modal-root::before,
+  .modal-root::after {
+    min-height: var(--space-6);
   }
 
   .modal {
-    margin-block: auto;
     padding: var(--space-5);
   }
 

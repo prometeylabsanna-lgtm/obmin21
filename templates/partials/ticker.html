@@ -1,4 +1,5 @@
 <div class="ticker" data-qa="ticker" aria-label="Стрічка курсів">
+{% load content_format %}
   <div class="ticker__viewport">
     <div class="ticker__track">
       {% with items=rate_rows %}
@@ -7,9 +8,9 @@
         <span class="ticker__item">
           <span class="ticker__code">{{ row.pair.code }}</span>
           <span class="ticker__sep">·</span>
-          <span class="ticker__val">куп {{ row.quote.buy }}</span>
+          <span class="ticker__val">куп {{ row.quote.buy|format_rate }}</span>
           <span class="ticker__sep">/</span>
-          <span class="ticker__val">прод {{ row.quote.sell }}</span>
+          <span class="ticker__val">прод {{ row.quote.sell|format_rate }}</span>
         </span>
         {% empty %}
         <span class="ticker__item"><span class="ticker__code">USD</span> · куп 41.20 / прод 41.55</span>
@@ -24,9 +25,9 @@
         <span class="ticker__item">
           <span class="ticker__code">{{ row.pair.code }}</span>
           <span class="ticker__sep">·</span>
-          <span class="ticker__val">куп {{ row.quote.buy }}</span>
+          <span class="ticker__val">куп {{ row.quote.buy|format_rate }}</span>
           <span class="ticker__sep">/</span>
-          <span class="ticker__val">прод {{ row.quote.sell }}</span>
+          <span class="ticker__val">прод {{ row.quote.sell|format_rate }}</span>
         </span>
         {% empty %}
         <span class="ticker__item"><span class="ticker__code">USD</span> · куп 41.20 / прод 41.55</span>

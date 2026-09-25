@@ -1,4 +1,5 @@
 <div id="rates-panel" data-qa="rates-panel">
+{% load content_format %}
   <div class="rates-toolbar">
     <div class="rates-tabs" role="tablist">
       {% for value, label in boards %}
@@ -30,8 +31,8 @@
         <a href="{% url 'rates:pair_detail' row.pair.slug %}" class="rates-table__code">{{ row.pair.code }}</a>
         <span class="rates-table__name">{{ row.pair.name }}</span>
       </div>
-      <div class="rates-table__value" data-rate-animate>{{ row.quote.buy }}</div>
-      <div class="rates-table__value" data-rate-animate>{{ row.quote.sell }}</div>
+      <div class="rates-table__value" data-rate-animate>{% if active_board == 'crypto' %}{{ row.quote.buy|format_rate:"compact" }}{% else %}{{ row.quote.buy|format_rate }}{% endif %}</div>
+      <div class="rates-table__value" data-rate-animate>{% if active_board == 'crypto' %}{{ row.quote.sell|format_rate:"compact" }}{% else %}{{ row.quote.sell|format_rate }}{% endif %}</div>
       <div class="rates-table__action">
         <button type="button"
                 class="btn btn--ghost"

@@ -37,8 +37,9 @@
 
 /* Rate digits entrance */
 .rates-table__value[data-rate-animate] {
-  display: inline-block;
-  min-width: 4.5ch;
+  display: block;
+  width: 100%;
+  min-width: 0;
   font-variant-numeric: tabular-nums;
   will-change: transform, opacity;
 }

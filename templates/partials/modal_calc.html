@@ -1,4 +1,5 @@
 <div class="modal" role="dialog" aria-modal="true" aria-labelledby="calc-title" data-qa="modal-calc">
+{% load content_format %}
   <div class="modal__head">
     <h2 class="modal__title" id="calc-title">Калькулятор обміну</h2>
     <button type="button" class="modal__close" data-close-modal aria-label="Закрити">×</button>
@@ -14,8 +15,8 @@
       <button type="button"
               class="calc-codes__btn{% if forloop.first %} is-active{% endif %}"
               data-calc-code="{{ row.pair.code }}"
-              data-buy="{{ row.quote.buy }}"
-              data-sell="{{ row.quote.sell }}"
+              data-buy="{{ row.quote.buy|format_rate:"auto" }}"
+              data-sell="{{ row.quote.sell|format_rate:"auto" }}"
               data-pair-id="{{ row.pair.pk }}">{{ row.pair.code }}</button>
       {% endfor %}
     </div>

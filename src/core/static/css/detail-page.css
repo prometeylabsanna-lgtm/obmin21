@@ -57,6 +57,7 @@
   line-height: 1.1;
   letter-spacing: 0.02em;
   margin: 0 0 var(--space-4);
+  color: var(--color-heading);
 }
 
 .detail-page__lead {
@@ -114,7 +115,7 @@
   line-height: 1.35;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #ab974f;
+  color: var(--color-subhead);
 }
 
 .detail-page__body > .detail-page__subhead:first-child {

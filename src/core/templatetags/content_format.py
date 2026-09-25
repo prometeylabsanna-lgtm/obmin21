@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal, InvalidOperation
 
 from django import template
 from django.utils.html import escape
@@ -49,6 +50,35 @@ def brand_mark(value):
         return ''
     lines = str(value).split('\n')
     return mark_safe('<br>'.join(mark_brand(line) for line in lines))
+
+
+@register.filter(name='format_rate')
+def format_rate(value, style='fixed4'):
+    """
+    Format exchange rate for display.
+    - fixed4: always 4 decimals (41.2000) — retail/wholesale/cross
+    - compact: strip trailing zeros (2410000, 41.2) — crypto / money amounts
+    - auto: compact if |value| >= 1000, else fixed4
+    """
+    if value is None or value == '':
+        return ''
+    try:
+        amount = Decimal(str(value).replace(',', '.').replace(' ', ''))
+    except (InvalidOperation, ValueError, TypeError):
+        return str(value)
+
+    mode = (style or 'fixed4').strip().lower()
+    if mode == 'auto':
+        mode = 'compact' if abs(amount) >= Decimal('1000') else 'fixed4'
+
+    if mode == 'compact':
+        text = format(amount.normalize(), 'f')
+        if '.' in text:
+            text = text.rstrip('0').rstrip('.')
+        return text
+
+    quantized = amount.quantize(Decimal('0.0001'))
+    return format(quantized, 'f')
 
 
 @register.filter(name='format_body')
