@@ -2,11 +2,13 @@
 __pycache__/
 *.py[cod]
 *.sqlite3
-db.sqlite3
+# Seed DB for Vercel test deploy (ephemeral /tmp copy at runtime)
+!db.sqlite3
 .env
 media/*
 !media/.gitkeep
 staticfiles/
+.vercel/
 *.egg-info/
 .DS_Store
 .coverage
