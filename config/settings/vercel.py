@@ -6,17 +6,20 @@ import os
 import shutil
 from pathlib import Path
 
-# Defaults before base import — python-decouple has no .env on Vercel.
-os.environ.setdefault(
-    'SECRET_KEY',
-    'vercel-test-only-insecure-key-do-not-use-on-digitalocean',
-)
-os.environ.setdefault('ALLOWED_HOSTS', '.vercel.app,localhost,127.0.0.1')
-os.environ.setdefault('RATE_HOLD_MINUTES', '30')
-os.environ.setdefault('DEFAULT_FROM_EMAIL', 'noreply@obmin21.vercel.app')
-os.environ.setdefault('TELEGRAM_BOT_TOKEN', '')
-os.environ.setdefault('TELEGRAM_CHAT_ID', '')
-os.environ.setdefault('SECURE_SSL_REDIRECT', 'True')
+# Force values — Vercel may set empty strings; decouple then ignores defaults.
+_TEST_ENV = {
+    'SECRET_KEY': 'vercel-test-only-insecure-key-do-not-use-on-digitalocean',
+    'ALLOWED_HOSTS': '.vercel.app,localhost,127.0.0.1',
+    'RATE_HOLD_MINUTES': '30',
+    'DEFAULT_FROM_EMAIL': 'noreply@obmin21.vercel.app',
+    'TELEGRAM_BOT_TOKEN': '',
+    'TELEGRAM_CHAT_ID': '',
+    'SECURE_SSL_REDIRECT': 'True',
+    'DJANGO_LOG_LEVEL': 'INFO',
+}
+for _key, _value in _TEST_ENV.items():
+    if not os.environ.get(_key):
+        os.environ[_key] = _value
 
 from .base import *  # noqa: E402, F403
 
