@@ -1,8 +1,12 @@
 <div class="site-header__actions" id="city-chrome">
   <div class="city-select" data-city-select>
     <button type="button" class="city-select__btn" data-city-toggle data-qa="city-toggle" aria-expanded="false" aria-haspopup="listbox">
-      <span class="u-accent">◆</span>
       <span data-city-label>{{ active_city.name|default:"Місто" }}</span>
+      <span class="city-select__icon" aria-hidden="true">
+        <svg class="city-select__chevron" viewBox="0 0 16 16" width="12" height="12" fill="none" focusable="false">
+          <path d="M3.5 5.75 8 10.25l4.5-4.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
     </button>
     <div class="city-select__menu" data-city-menu hidden role="listbox">
       {% for c in cities %}
@@ -26,5 +30,13 @@
     Заявка
   </button>
 
-  <button type="button" class="site-header__menu-toggle" data-menu-toggle aria-label="Меню" data-qa="menu-toggle">☰</button>
+  <button
+    type="button"
+    class="site-header__menu-toggle"
+    data-menu-toggle
+    aria-label="Меню"
+    aria-expanded="false"
+    aria-controls="mobile-nav"
+    data-qa="menu-toggle"
+  >☰</button>
 </div>

@@ -68,7 +68,7 @@ textarea:focus-visible {
 }
 
 .page__main {
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   min-width: 0;
   max-width: 100%;
 }
@@ -79,6 +79,10 @@ textarea:focus-visible {
 
 .u-accent {
   color: var(--color-accent);
+}
+
+.brand-mark {
+  font-weight: var(--font-weight-semibold);
 }
 
 .u-upper {
@@ -125,7 +129,7 @@ textarea:focus-visible {
 
 @media (min-width: 1024px) {
   .page__shell {
-    padding-left: var(--sidenav-w);
-    padding-bottom: 0;
+    padding-left: 0;
+    padding-bottom: calc(var(--sidenav-h) + var(--safe-bottom));
   }
 }

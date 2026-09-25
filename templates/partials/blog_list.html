@@ -1,13 +1,13 @@
-{% load static %}
+{% load static content_format %}
 <div id="blog-list" data-qa="blog-list">
   <div class="blog-feed">
     {% for post in posts %}
     <article class="blog-card">
       <div class="blog-card__body">
         <div class="card__meta">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
-        <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+        <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
         {% if post.excerpt %}
-        <p class="card__text">{{ post.excerpt }}</p>
+        <p class="card__text">{{ post.excerpt|brand_mark }}</p>
         {% endif %}
         <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати →</a>
       </div>

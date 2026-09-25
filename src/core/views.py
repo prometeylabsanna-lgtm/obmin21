@@ -43,6 +43,7 @@ def rates_partial(request):
         'rate_updated_at': updated_at,
         'active_board': board,
         'boards': RateBoard.choices,
+        'hide_full_table_link': request.GET.get('hide_full') == '1',
     })
 
 

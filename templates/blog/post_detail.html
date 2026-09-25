@@ -8,9 +8,9 @@
   <div class="detail-page__inner detail-page__inner--wide">
     <header class="detail-page__header">
       <div class="card__meta u-mb-4">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
-      <h1 class="detail-page__title">{{ post.title }}</h1>
+      <h1 class="detail-page__title">{{ post.title|brand_mark }}</h1>
       {% if post.excerpt %}
-      <p class="detail-page__lead">{{ post.excerpt }}</p>
+      <p class="detail-page__lead">{{ post.excerpt|brand_mark }}</p>
       {% endif %}
     </header>
 
@@ -91,9 +91,9 @@
         {% for item in related %}
         <a class="related-card" href="{% url 'blog:post_detail' item.slug %}">
           <div class="card__meta">{{ item.published_at|date:"d.m.Y" }}</div>
-          <div class="related-card__title">{{ item.title }}</div>
+          <div class="related-card__title">{{ item.title|brand_mark }}</div>
           {% if item.excerpt %}
-          <p class="card__text">{{ item.excerpt }}</p>
+          <p class="card__text">{{ item.excerpt|brand_mark }}</p>
           {% endif %}
         </a>
         {% endfor %}

@@ -1,0 +1,32 @@
+<div
+  class="site-header__drawer"
+  id="mobile-nav"
+  data-menu-drawer
+  hidden
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Меню сайту"
+>
+  <button
+    type="button"
+    class="site-header__drawer-close"
+    data-menu-close
+    aria-label="Закрити меню"
+    data-qa="menu-close"
+  >✕</button>
+
+  <nav class="site-header__drawer-nav" aria-label="Мобільне меню">
+    <a href="{% url 'core:home' %}">Головна</a>
+    <a href="{% url 'rates:rates_page' %}">Курси</a>
+    <a href="{% url 'network:city_list' %}">Міста</a>
+    <a href="{% url 'content:contacts' %}">Контакти</a>
+    <a href="{% url 'content:services' %}">Послуги</a>
+    <a href="{% url 'content:advantages' %}">Переваги</a>
+    <a href="{% url 'blog:post_list' %}">Блог</a>
+    <a href="{% url 'reviews:review_list' %}">Відгуки</a>
+    <a href="{% url 'content:faq' %}">FAQ</a>
+    <a href="{% url 'content:privacy' %}">Політика</a>
+    <a href="{% url 'core:home' %}#seo-block">Інфо</a>
+  </nav>
+</div>

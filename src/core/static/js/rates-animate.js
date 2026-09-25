@@ -2,9 +2,9 @@
   'use strict';
 
   var hasAnimated = false;
-  var DURATION = 1350;
-  var ROW_STAGGER = 70;
-  var VALUE_STAGGER = 90;
+  var DURATION = 620;
+  var ROW_STAGGER = 36;
+  var VALUE_STAGGER = 40;
 
   function prefersReducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

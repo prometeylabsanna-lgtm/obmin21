@@ -1,7 +1,7 @@
 .breadcrumbs {
   padding: var(--space-3) var(--container-pad);
   border-bottom: var(--border-w) solid var(--glass-border);
-  background-color: rgba(8, 10, 16, 0.35);
+  background-color: rgba(23, 29, 28, 0.4);
 }
 
 .breadcrumbs__list {

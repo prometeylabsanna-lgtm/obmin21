@@ -1,27 +1,30 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static content_format %}
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
 <section class="section">
   <h1 class="section__title">{{ page.title }}</h1>
-  {% if page.intro %}<p class="u-muted u-mb-5">{{ page.intro }}</p>{% endif %}
+  {% if page.intro %}<p class="u-muted u-mb-5">{{ page.intro|brand_mark }}</p>{% endif %}
   <div class="adv-tabs" data-adv-tabs>
     {% for value, label in audiences %}
     <button type="button" class="adv-tabs__btn{% if forloop.first %} is-active{% endif %}" data-adv-tab="{{ value }}">{{ label }}</button>
     {% endfor %}
   </div>
-  <div class="adv-list">
-    {% regroup items by audience as audience_list %}
-    {% for group in audience_list %}
-      {% for item in group.list %}
-      <div class="adv-list__item" data-adv-panel="{{ group.grouper }}" {% if not forloop.parentloop.first %}hidden{% endif %}>
-        <span class="adv-list__n">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
-        <span class="adv-list__text">{{ item.text }}</span>
+  {% regroup items by audience as audience_list %}
+  {% for group in audience_list %}
+  <div class="adv-list" data-adv-panel="{{ group.grouper }}" {% if not forloop.first %}hidden{% endif %}>
+    {% for item in group.list %}
+    <div class="adv-list__item">
+      <span class="adv-list__n">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
+      <div class="adv-list__body">
+        <span class="adv-list__text">{{ item.text|brand_mark }}</span>
+        {% if item.description %}<p class="adv-list__desc">{{ item.description|brand_mark }}</p>{% endif %}
       </div>
-      {% endfor %}
+    </div>
     {% endfor %}
   </div>
+  {% endfor %}
   <div class="u-mt-6">
     <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Залишити заявку</button>
   </div>

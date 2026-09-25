@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 
 from src.content.models import (
     AdvantageItem,
@@ -10,29 +10,16 @@ from src.content.models import (
     Service,
     ServicesPage,
 )
-from src.core.breadcrumbs import safe_reverse, trail
 from src.leads.forms import ContactMessageForm
 
 
 def services_list(request):
+    page = ServicesPage.load()
     return render(request, 'content/services_list.html', {
-        'page': ServicesPage.load(),
+        'page': page,
         'services': Service.objects.filter(is_active=True),
-    })
-
-
-def service_detail(request, slug):
-    service = get_object_or_404(Service, slug=slug, is_active=True)
-    other = Service.objects.filter(is_active=True).exclude(pk=service.pk)[:4]
-    return render(request, 'content/service_detail.html', {
-        'service': service,
-        'other_services': other,
-        'page_title': service.seo_title or service.title,
-        'page_description': service.seo_description or service.short_desc[:160],
-        'breadcrumb_items': trail(
-            ('Послуги', safe_reverse('content:services')),
-            (service.title, None),
-        ),
+        'page_title': page.seo_title or page.title,
+        'page_description': page.seo_description or page.intro[:160],
     })
 
 

@@ -25,12 +25,12 @@
 
 .blog-card:hover {
   transform: translate3d(0, -2px, 0);
-  border-color: rgba(212, 196, 160, 0.42);
+  border-color: rgba(184, 184, 161, 0.42);
   background-color: var(--glass-bg-strong);
   box-shadow:
     0 1px 0 var(--glass-highlight) inset,
     0 14px 32px rgba(0, 0, 0, 0.36),
-    0 0 18px rgba(212, 196, 160, 0.06);
+    0 0 18px rgba(184, 184, 161, 0.06);
 }
 
 .blog-card__body {
@@ -81,7 +81,7 @@
   height: 140px;
   border-top: var(--border-w) solid var(--glass-border);
   overflow: hidden;
-  background: rgba(6, 9, 16, 0.45);
+  background: rgba(23, 29, 28, 0.45);
 }
 
 .blog-card__media img {

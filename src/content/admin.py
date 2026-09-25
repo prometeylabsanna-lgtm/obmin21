@@ -60,6 +60,8 @@ class AdvantageItemAdmin(admin.ModelAdmin):
     list_display = ('text', 'audience', 'sort_order', 'is_active')
     list_filter = ('audience', 'is_active')
     list_editable = ('sort_order', 'is_active')
+    search_fields = ('text', 'description')
+    fields = ('audience', 'text', 'description', 'sort_order', 'is_active')
 
 
 @admin.register(ContactsPage)

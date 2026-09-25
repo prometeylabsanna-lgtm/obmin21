@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load content_format %}
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
@@ -8,7 +9,7 @@
   </header>
   <div class="detail-page__panel">
     <div class="detail-page__body">
-      {{ page.body|linebreaks }}
+      {{ page.body|format_body }}
     </div>
   </div>
 </article>

@@ -6,7 +6,7 @@
               class="rates-tabs__btn{% if active_board == value %} is-active{% endif %}"
               role="tab"
               aria-selected="{% if active_board == value %}true{% else %}false{% endif %}"
-              hx-get="{% url 'core:rates_partial' %}?board={{ value }}"
+              hx-get="{% url 'core:rates_partial' %}?board={{ value }}{% if hide_full_table_link %}&hide_full=1{% endif %}"
               hx-target="#rates-panel"
               hx-swap="outerHTML"
               data-qa="rates-tab-{{ value }}">{{ label }}</button>
@@ -42,6 +42,6 @@
     {% empty %}
     <div class="rates-table__row u-muted">Немає курсів для цієї вкладки</div>
     {% endfor %}
-    <div class="rates-note">* можливі обмеження за сумою операції · <a class="link-accent" href="{% url 'rates:rates_page' %}">Уся таблиця</a></div>
+    <div class="rates-note">* можливі обмеження за сумою операції{% if not hide_full_table_link %} · <a class="link-accent" href="{% url 'rates:rates_page' %}">Уся таблиця</a>{% endif %}</div>
   </div>
 </div>

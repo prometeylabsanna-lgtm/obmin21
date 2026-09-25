@@ -30,7 +30,7 @@
       }
       el.classList.add('reveal', 'reveal--up');
       if (!el.hasAttribute('data-reveal-delay')) {
-        var delay = Math.min(index * 70, 280);
+        var delay = Math.min(index * 40, 160);
         if (delay > 0) {
           el.setAttribute('data-reveal-delay', String(delay));
         }
@@ -40,7 +40,7 @@
 
     document.querySelectorAll('.page__main .card:not(.reveal)').forEach(function (card, i) {
       card.classList.add('reveal', 'reveal--up', 'hover-lift');
-      card.setAttribute('data-reveal-delay', String(Math.min(i * 80, 320)));
+      card.setAttribute('data-reveal-delay', String(Math.min(i * 40, 160)));
     });
 
     document.querySelectorAll('.link-accent:not(.hover-underline)').forEach(function (link) {

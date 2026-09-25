@@ -2,7 +2,6 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
 from src.blog.models import Post
-from src.content.models import Service
 from src.network.models import City
 from src.rates.models import CurrencyPair
 
@@ -65,21 +64,9 @@ class CitySitemap(Sitemap):
         return reverse('network:city_detail', kwargs={'slug': obj.slug})
 
 
-class ServiceSitemap(Sitemap):
-    changefreq = 'monthly'
-    priority = 0.6
-
-    def items(self):
-        return Service.objects.filter(is_active=True)
-
-    def location(self, obj):
-        return reverse('content:service_detail', kwargs={'slug': obj.slug})
-
-
 sitemaps = {
     'static': StaticSitemap,
     'posts': PostSitemap,
     'pairs': PairSitemap,
     'cities': CitySitemap,
-    'services': ServiceSitemap,
 }

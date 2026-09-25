@@ -1,23 +1,42 @@
 .sidenav {
   position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 60;
   display: flex;
-  background: rgba(6, 9, 16, 0.62);
-  border-color: var(--glass-border);
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0;
+  height: calc(var(--sidenav-h) + var(--safe-bottom));
+  min-height: calc(var(--sidenav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  padding-inline: 6px;
+  border-top: 1px solid var(--glass-border);
+  background-color: var(--glass-bg-strong);
+  background-image: var(--glass-frost);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
-  box-shadow: var(--shadow-panel-soft);
+  box-shadow:
+    0 1px 0 var(--glass-highlight) inset,
+    0 -12px 36px rgba(0, 0, 0, 0.28);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .sidenav__item {
   display: flex;
+  flex: 1 1 0;
   align-items: center;
   justify-content: center;
   gap: 8px;
   color: var(--color-text);
   text-decoration: none;
   min-height: var(--touch-min);
-  min-width: var(--touch-min);
+  min-width: 0;
   position: relative;
   background: transparent;
   border: none;
@@ -28,12 +47,12 @@
 }
 
 .sidenav__badge {
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-  min-height: 30px;
-  max-width: 30px;
-  max-height: 30px;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  max-width: 34px;
+  max-height: 34px;
   aspect-ratio: 1 / 1;
   border: 1px solid var(--color-sidenav-idle);
   border-radius: 50%;
@@ -56,10 +75,10 @@
 }
 
 .sidenav__icon {
-  width: 15px;
-  height: 15px;
-  max-width: 15px;
-  max-height: 15px;
+  width: 17px;
+  height: 17px;
+  max-width: 17px;
+  max-height: 17px;
   display: block;
   flex-shrink: 0;
   overflow: visible;
@@ -85,7 +104,9 @@
   background: transparent;
   color: var(--color-accent);
   border-color: var(--color-accent);
-  box-shadow: 0 0 16px rgba(245, 196, 0, 0.28);
+  box-shadow:
+    0 0 16px rgba(var(--color-accent-rgb), 0.28),
+    0 8px 18px rgba(var(--color-accent-rgb), 0.12);
   transform: translate3d(0, -1px, 0);
 }
 
@@ -95,113 +116,88 @@
 }
 
 .sidenav__item.is-active::before {
-  content: "";
-  position: absolute;
-  background: var(--color-accent);
-}
-
-/* Mobile: bottom bar */
-.sidenav {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(var(--sidenav-h) + var(--safe-bottom));
-  padding-bottom: var(--safe-bottom);
-  border-top: 1px solid var(--glass-border);
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  gap: 4px;
-  padding-inline: 6px;
-}
-
-.sidenav__item.is-active::before {
-  left: 50%;
-  top: 0;
-  width: 24px;
-  height: 2px;
-  transform: translateX(-50%);
+  content: none;
+  display: none;
 }
 
 .sidenav__social {
   display: none;
 }
 
+.sidenav__item--desktop-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .sidenav {
+    padding-inline: 10px;
+  }
+
+  .sidenav__badge {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+  }
+
+  .sidenav__icon {
+    width: 19px;
+    height: 19px;
+    max-width: 19px;
+    max-height: 19px;
+  }
+}
+
 @media (min-width: 1024px) {
   .sidenav {
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: auto;
-    width: var(--sidenav-w);
-    height: auto;
-    padding: 0 0 var(--space-5);
-    border-top: none;
-    border-right: 1px solid var(--glass-border);
-    flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 0;
-    padding-inline: 0;
+    padding-inline: 16px;
   }
 
   .sidenav__item {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     flex-direction: column;
-    width: 100%;
-    gap: 10px;
-    padding: 18px 10px;
-    border-bottom: 1px solid var(--color-border-soft);
+    gap: 6px;
+    min-width: 0;
+    padding: 6px 4px;
   }
 
-  /* Перший пункт = висота хедера, нижні лінії збігаються */
-  .sidenav__item:first-child {
-    flex: 0 0 auto;
-    height: calc(var(--header-h) + var(--safe-top));
-    min-height: calc(var(--header-h) + var(--safe-top));
-    padding: 0 10px;
+  .sidenav__item--desktop-only {
+    display: flex;
   }
 
   .sidenav__label {
     display: block;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-align: center;
   }
 
   .sidenav__badge {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    min-height: 32px;
-    max-width: 32px;
-    max-height: 32px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    max-width: 48px;
+    max-height: 48px;
   }
 
   .sidenav__icon {
-    width: 15px;
-    height: 15px;
-    max-width: 15px;
-    max-height: 15px;
-  }
-
-  .sidenav__item.is-active::before {
-    left: 0;
-    top: 50%;
-    width: 2px;
-    height: 28px;
-    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    max-width: 22px;
+    max-height: 22px;
   }
 
   .sidenav__social {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: auto;
-    padding-top: var(--space-4);
-  }
-
-  .sidenav__social .sidenav__item {
-    flex: 0 0 auto;
-    min-height: 52px;
-    padding: 12px 10px;
-    border-bottom: none;
+    display: none;
   }
 }
 

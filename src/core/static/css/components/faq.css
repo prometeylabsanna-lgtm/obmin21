@@ -20,12 +20,12 @@
 
 .faq-item:hover {
   transform: translate3d(0, -3px, 0);
-  border-color: rgba(212, 196, 160, 0.45);
+  border-color: rgba(184, 184, 161, 0.45);
   background-color: var(--glass-bg-strong);
   box-shadow:
     0 1px 0 var(--glass-highlight) inset,
     0 18px 40px rgba(0, 0, 0, 0.42),
-    0 0 24px rgba(212, 196, 160, 0.08);
+    0 0 24px rgba(184, 184, 161, 0.08);
 }
 
 .faq-item__q {

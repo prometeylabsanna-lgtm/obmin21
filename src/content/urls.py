@@ -6,7 +6,6 @@ app_name = 'content'
 
 urlpatterns = [
     path('posluhy/', views.services_list, name='services'),
-    path('posluhy/<slug:slug>/', views.service_detail, name='service_detail'),
     path('perevahy/', views.advantages_page, name='advantages'),
     path('kontakty/', views.contacts_page, name='contacts'),
     path('faq/', views.faq_page, name='faq'),

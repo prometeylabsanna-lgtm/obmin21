@@ -20,7 +20,7 @@
 .ticker__track {
   display: flex;
   width: max-content;
-  animation: ticker-scroll 42s linear infinite;
+  animation: ticker-scroll 24s linear infinite;
   will-change: transform;
 }
 

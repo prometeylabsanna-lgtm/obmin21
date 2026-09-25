@@ -113,6 +113,7 @@ class AdvantageItem(models.Model):
 
     audience = models.CharField('Аудиторія', max_length=16, choices=Audience.choices)
     text = models.CharField('Текст', max_length=255)
+    description = models.CharField('Короткий опис', max_length=320, blank=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     is_active = models.BooleanField('Активний', default=True)
 

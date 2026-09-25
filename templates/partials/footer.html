@@ -1,7 +1,7 @@
 <footer class="site-footer" data-qa="footer">
   <div class="site-footer__main">
     <div class="site-footer__logo">
-      {{ site_settings.logo_text }}<span class="u-accent">{{ site_settings.logo_accent }}</span>
+      <span class="brand-mark">{{ site_settings.logo_text }}<span class="u-accent">{{ site_settings.logo_accent }}</span></span>
     </div>
     <nav class="site-footer__nav" aria-label="Підвал">
       <a href="{% url 'content:contacts' %}">Контакти</a>
@@ -45,7 +45,7 @@
 
   <div class="site-footer__bar">
     <a class="site-footer__credit" href="{% url 'core:home' %}">
-      @{{ site_settings.logo_text|lower }}<span class="u-accent">{{ site_settings.logo_accent }}</span> 2026
+      @<span class="brand-mark">{{ site_settings.logo_text|lower }}<span class="u-accent">{{ site_settings.logo_accent }}</span></span> 2026
     </a>
   </div>
 </footer>

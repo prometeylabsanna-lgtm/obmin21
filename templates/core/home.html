@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static content_format %}
 
 {% block title %}{{ page.seo_title|default:site_settings.site_name }}{% endblock %}
 {% block content %}
@@ -30,8 +30,7 @@
     {% for svc in services %}
     <article class="card">
       <h3 class="card__title">{{ svc.title }}</h3>
-      <p class="card__text">{{ svc.short_desc }}</p>
-      <a class="link-accent" href="{% url 'content:service_detail' svc.slug %}">Детальніше →</a>
+      <p class="card__text">{{ svc.short_desc|brand_mark }}</p>
     </article>
     {% endfor %}
   </div>
@@ -54,17 +53,20 @@
       role="tab">{{ label }}</button>
     {% endfor %}
   </div>
-  <div class="adv-list">
-    {% regroup advantage_items by audience as audience_list %}
-    {% for group in audience_list %}
+  {% regroup advantage_items by audience as audience_list %}
+  {% for group in audience_list %}
+  <div class="adv-list" data-adv-panel="{{ group.grouper }}" {% if not forloop.first %}hidden{% endif %}>
     {% for item in group.list %}
-    <div class="adv-list__item" data-adv-panel="{{ group.grouper }}" {% if not forloop.parentloop.first %}hidden{% endif %}>
+    <div class="adv-list__item">
       <span class="adv-list__n">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
-      <span class="adv-list__text">{{ item.text }}</span>
+      <div class="adv-list__body">
+        <span class="adv-list__text">{{ item.text|brand_mark }}</span>
+        {% if item.description %}<p class="adv-list__desc">{{ item.description|brand_mark }}</p>{% endif %}
+      </div>
     </div>
     {% endfor %}
-    {% endfor %}
   </div>
+  {% endfor %}
 </section>
 
 <section class="section" id="news" data-qa="section-news">
@@ -78,9 +80,9 @@
     <article class="card news-grid__feature">
       <div class="news-grid__feature-body">
         <div class="card__meta">{{ feature.published_at|date:"d.m.Y" }}</div>
-        <a class="card__heading news-grid__feature-title" href="{% url 'blog:post_detail' feature.slug %}">{{ feature.title }}</a>
+        <a class="card__heading news-grid__feature-title" href="{% url 'blog:post_detail' feature.slug %}">{{ feature.title|brand_mark }}</a>
         {% if feature.excerpt %}
-        <p class="card__text">{{ feature.excerpt }}</p>
+        <p class="card__text">{{ feature.excerpt|brand_mark }}</p>
         {% endif %}
         <a class="link-accent" href="{% url 'blog:post_detail' feature.slug %}">Читати →</a>
       </div>
@@ -99,9 +101,9 @@
     {% for post in news_posts|slice:"1:3" %}
     <article class="card">
       <div class="card__meta">{{ post.published_at|date:"d.m.Y" }}</div>
-      <a class="card__heading" href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+      <a class="card__heading" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
       {% if post.excerpt %}
-      <p class="card__text">{{ post.excerpt }}</p>
+      <p class="card__text">{{ post.excerpt|brand_mark }}</p>
       {% endif %}
       <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати →</a>
     </article>
@@ -150,7 +152,7 @@
 <section class="section" id="seo-block" data-qa="section-seo">
   <h2 class="section__title">{{ page.seo_block_title }}</h2>
   <div class="seo-block">
-    {{ page.seo_block_body|linebreaks }}
+    {{ page.seo_block_body|format_body }}
   </div>
 </section>
 {% endblock %}
