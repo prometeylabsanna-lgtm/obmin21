@@ -1,10 +1,6 @@
 :root {
   /* Graphite + Warm White + Deep Emerald */
   --color-bg: #101514;
-  --color-bg-elevated: #171d1c;
-  --color-graphite-2: #202725;
-  --color-graphite-3: #29312e;
-  --color-graphite-4: #3c4541;
 
   --color-text: #f1eee7;
   --color-text-muted: #a9ada7;
@@ -17,17 +13,13 @@
   --color-accent-ink: #f1eee7;
   --color-accent-hover: #00a87d;
   --color-accent-soft: #b9d8ca;
-  --color-accent-soft-rgb: 185, 216, 202;
 
   --color-heading: #f1eee7;
   --color-subhead: #3c8c6c;
 
   --color-champagne: #b9d8ca;
-  --color-champagne-soft: rgba(185, 216, 202, 0.85);
-  --color-up: #00a87d;
   --color-down: #ff5b1f;
   --color-sidenav-idle: #3c4541;
-  --color-sidenav-idle-rgb: 60, 69, 65;
 
   --font-display: "Archivo", "Avenir Next", "Segoe UI", sans-serif;
   --font-body: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
@@ -35,7 +27,6 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
 
-  --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 18px;
@@ -45,10 +36,8 @@
   --space-8: 72px;
 
   --border-w: 1px;
-  --radius: 0;
   --header-h: 64px;
   --sidenav-h: 88px;
-  --sidenav-w: 0px;
   --container-pad: 20px;
   --touch-min: 44px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -59,7 +48,6 @@
   --glass-rgb: 35, 43, 41;
   --glass-bg: rgba(var(--glass-rgb), 0.68);
   --glass-bg-strong: rgba(var(--glass-rgb), 0.78);
-  --glass-bg-soft: rgba(55, 64, 60, 0.55);
   --glass-border: rgba(220, 225, 218, 0.18);
   --glass-highlight: rgba(241, 238, 231, 0.1);
   --glass-blur: blur(22px) saturate(120%);
@@ -79,10 +67,6 @@
     0 1px 0 var(--glass-highlight) inset,
     0 10px 28px rgba(0, 0, 0, 0.26),
     0 2px 8px rgba(0, 0, 0, 0.18);
-  --shadow-float:
-    0 1px 0 var(--glass-highlight) inset,
-    0 24px 56px rgba(0, 0, 0, 0.4),
-    0 8px 20px rgba(0, 0, 0, 0.28);
 
   --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-luxe-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -103,7 +87,6 @@
 
 @media (min-width: 1024px) {
   :root {
-    --sidenav-w: 0px;
     --sidenav-h: 100px;
     --container-pad: clamp(28px, 4vw, 64px);
   }

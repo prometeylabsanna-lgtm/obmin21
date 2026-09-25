@@ -1,6 +1,5 @@
 from django import forms
 
-from src.leads.services import validate_phone
 from src.reviews.models import Review
 
 

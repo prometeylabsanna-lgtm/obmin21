@@ -1,4 +1,3 @@
-/* Running rates ticker */
 .ticker {
   border-bottom: var(--border-w) solid var(--glass-border);
   background-color: var(--glass-bg);

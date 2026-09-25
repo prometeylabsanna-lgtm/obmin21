@@ -1,4 +1,3 @@
-/* Detail pages — glass panels, readable body */
 .detail-page {
   padding: var(--space-7) var(--container-pad);
   border-bottom: var(--border-w) solid var(--color-border);
@@ -16,32 +15,6 @@
 
 .detail-page__inner--wide {
   max-width: 68rem;
-}
-
-.detail-page__crumb {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: var(--space-5);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
-}
-
-.detail-page__crumb a {
-  color: var(--color-text-soft);
-  transition: color var(--dur-luxe-fast) var(--ease-luxe-out);
-}
-
-.detail-page__crumb a:hover,
-.detail-page__crumb a:focus-visible {
-  color: var(--color-accent);
-}
-
-.detail-page__crumb-sep {
-  color: var(--color-text-muted);
 }
 
 .detail-page__header {
@@ -131,35 +104,6 @@
 .detail-split__aside {
   display: grid;
   gap: var(--space-4);
-}
-
-.detail-aside-cards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-3);
-}
-
-.detail-aside-card {
-  padding: var(--space-4);
-  transition:
-    transform var(--dur-luxe-fast) var(--ease-luxe-out),
-    border-color var(--dur-luxe-fast) var(--ease-luxe-out),
-    box-shadow var(--dur-luxe-fast) var(--ease-luxe-out),
-    background var(--dur-luxe-fast) var(--ease-luxe-out);
-}
-
-.detail-aside-card:hover {
-  transform: translate3d(0, -2px, 0);
-}
-
-.detail-aside-card .card__title {
-  font-size: 15px;
-  margin-bottom: var(--space-2);
-}
-
-.detail-aside-card .card__text {
-  font-size: 13px;
-  margin-bottom: var(--space-3);
 }
 
 .article-media {
@@ -338,16 +282,6 @@
   justify-content: center;
 }
 
-.detail-page__actions--stack {
-  margin-top: 0;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.detail-page__actions--stack .btn {
-  width: 100%;
-}
-
 .detail-page__actions--tight-top {
   margin-top: 0;
   margin-bottom: var(--space-6);
@@ -393,11 +327,6 @@
     gap: var(--space-5);
   }
 
-  .detail-aside-cards {
-    grid-template-columns: 1fr 1fr;
-    grid-auto-rows: 1fr;
-  }
-
   .detail-page__rates {
     grid-template-columns: 1fr 1fr;
   }
@@ -425,8 +354,6 @@
 @media (prefers-reduced-motion: reduce) {
   .detail-page__panel,
   .detail-page__panel:hover,
-  .detail-aside-card,
-  .detail-aside-card:hover,
   .related-card,
   .related-card:hover {
     transition: none;

@@ -1,5 +1,3 @@
-/* Reveal + hover motion — adapted from ProTokolArt */
-
 .reveal {
   opacity: 0;
   transition:
@@ -9,14 +7,6 @@
 
 .reveal--up {
   transform: translate3d(0, 28px, 0);
-}
-
-.reveal--scale {
-  transform: scale(0.96);
-}
-
-.reveal--right {
-  transform: translate3d(-20px, 0, 0);
 }
 
 .reveal.is-visible {

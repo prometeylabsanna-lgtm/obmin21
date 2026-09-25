@@ -7,10 +7,6 @@ def get_active_pairs():
     return CurrencyPair.objects.filter(is_active=True)
 
 
-def get_pair_by_slug(slug):
-    return CurrencyPair.objects.filter(slug=slug, is_active=True).first()
-
-
 def get_quotes_for_city(city, board=RateBoard.RETAIL):
     city_id = city.id if city else None
     pairs = list(get_active_pairs())
@@ -44,12 +40,8 @@ def get_quotes_for_city(city, board=RateBoard.RETAIL):
         quote = by_pair.get(pair.id)
         if quote is None:
             continue
-        if board in (RateBoard.CROSS, RateBoard.CRYPTO) or pair.base_code == 'UAH' or board != RateBoard.RETAIL:
-            rows.append({'pair': pair, 'quote': quote})
-        else:
-            rows.append({'pair': pair, 'quote': quote})
+        rows.append({'pair': pair, 'quote': quote})
 
-    # Filter pairs that belong to board visually: show all with quotes for board
     return rows, updated_at
 
 

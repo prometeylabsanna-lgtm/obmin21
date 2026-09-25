@@ -3,6 +3,7 @@ from django import forms
 from src.leads.models import ContactMessage, ExchangeRequest
 from src.leads.services import validate_phone
 from src.network.models import Branch
+from src.network.selectors import get_city_branches
 from src.rates.models import CurrencyPair, RateBoard
 from src.rates.selectors import get_quote
 
@@ -62,10 +63,7 @@ class ExchangeRequestForm(forms.ModelForm):
         self.fields['board'].choices = RateBoard.choices
         self.fields['rate_fixed'].required = False
         if city is not None:
-            self.fields['branch'].queryset = Branch.objects.filter(
-                city=city,
-                is_active=True,
-            )
+            self.fields['branch'].queryset = get_city_branches(city)
         else:
             self.fields['branch'].queryset = Branch.objects.none()
 

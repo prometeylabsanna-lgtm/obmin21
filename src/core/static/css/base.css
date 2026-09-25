@@ -106,15 +106,6 @@ textarea:focus-visible {
   margin-top: var(--space-5);
 }
 
-.u-mt-6 {
-  margin-top: var(--space-6);
-}
-
-.u-text-sm {
-  font-size: 13px;
-  line-height: 1.6;
-}
-
 .u-text-xs {
   font-size: 12px;
 }

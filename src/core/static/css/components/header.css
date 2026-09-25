@@ -419,10 +419,6 @@ html.is-menu-open body {
   .site-header__phone {
     display: inline;
   }
-
-  .site-header__cta-label {
-    display: inline;
-  }
 }
 
 @media (min-width: 1024px) {

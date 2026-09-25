@@ -574,26 +574,6 @@
     align-items: center;
     justify-content: space-between;
   }
-
-  .contacts-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border: var(--border-w) solid var(--glass-border);
-    background-color: var(--glass-bg);
-    background-image: var(--glass-frost);
-    -webkit-backdrop-filter: var(--glass-blur);
-    backdrop-filter: var(--glass-blur);
-    box-shadow: var(--shadow-panel);
-  }
-
-  .contacts-grid .branch-list {
-    border: none;
-    background: transparent;
-    background-image: none;
-    box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
 }
 
 @media (min-width: 1024px) {

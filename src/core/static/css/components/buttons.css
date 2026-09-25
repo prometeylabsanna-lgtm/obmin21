@@ -33,11 +33,6 @@
   backdrop-filter: blur(20px) saturate(140%);
 }
 
-.btn--block {
-  width: 100%;
-  max-width: 20rem;
-}
-
 .btn:hover {
   background: rgba(var(--color-accent-rgb), 0.16);
   color: var(--color-accent);

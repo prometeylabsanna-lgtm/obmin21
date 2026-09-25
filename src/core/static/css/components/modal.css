@@ -165,13 +165,6 @@
   gap: var(--space-2);
 }
 
-.modal .btn--block {
-  width: auto;
-  max-width: none;
-  justify-self: start;
-  min-width: 11rem;
-}
-
 .modal__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

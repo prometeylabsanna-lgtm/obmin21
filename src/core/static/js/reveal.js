@@ -10,7 +10,6 @@
       '.page__main > .banner-slot',
       '.page__main .section__head',
       '.page__main .card-grid',
-      '.page__main .contacts-grid',
       '.page__main .adv-list',
       '.page__main .seo-block',
       '.page__main .form',
