@@ -1,4 +1,4 @@
-/* Home — pixel match Obmin21.dc.html */
+/* Home hero — 1:1 from Obmin21.dc.html mStyles */
 
 .hero {
   position: relative;
@@ -6,7 +6,7 @@
 
 .hero__banner {
   position: relative;
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
   min-height: 680px;
   padding: 24px 16px 16px;
@@ -24,7 +24,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 28%;
   display: block;
 }
 
@@ -65,15 +64,26 @@
 
 .hero__cta {
   margin-top: auto;
-  padding-top: 20px;
   pointer-events: auto;
   display: flex;
+  align-self: stretch;
 }
 
 .hero__fix-btn {
   width: 100%;
+  background: #ca8d42;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
   padding: 16px 42px;
+  text-align: center;
   border-radius: 6px;
+  min-height: 0;
+}
+
+.hero__fix-btn:hover {
+  background: #b87b2c;
+  color: #fff;
 }
 
 .hero__rates {
@@ -84,47 +94,131 @@
 }
 
 .hero__rates .rates-card {
+  background: #fff;
   border-radius: 8px;
   padding: 16px 16px 14px;
   box-shadow: 0 4px 24px rgba(11, 27, 63, 0.08);
 }
 
 .hero__rates .rates-tabs {
+  display: flex;
   gap: 20px;
 }
 
 .hero__rates .rates-tabs__btn {
-  flex: 1 1 auto;
   width: calc(50% - 10px);
+  height: 40px;
   min-width: 0;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #f2f3f5;
+  background: #f2f3f5;
+  color: #052145;
+  padding: 0;
+}
+
+.hero__rates .rates-tabs__btn.is-active,
+.hero__rates .rates-tabs__btn[aria-selected="true"] {
+  border: 1px solid #ca8d42;
+  background: #fff;
+  color: #ca8d42;
+  font-weight: 400;
 }
 
 .hero__rates .rates-table {
-  margin-top: 24px;
+  margin-top: 30px;
 }
 
-.hero__rates .rates-table__head,
-.hero__rates .rates-table__row {
+.hero__rates .rates-table__head {
+  display: grid;
   grid-template-columns: 1.7fr 1fr 1fr 44px;
-  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.hero__rates .rates-table__head > div:first-child {
+  color: #b3b4b6;
+}
+
+.hero__rates .rates-table__head > div:nth-child(2),
+.hero__rates .rates-table__head > div:nth-child(3) {
+  color: #052145;
+}
+
+.hero__rates .rates-table__row {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr 44px;
+  align-items: center;
+  height: 56px;
+  min-height: 56px;
+  font-size: 15px;
+  border-top: 1px solid #eef0f3;
+  gap: 0;
 }
 
 .hero__rates .rates-table__pair {
-  gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 500;
 }
 
 .hero__rates .rates-table__code {
   font-size: 13px;
   font-weight: 600;
+  color: #052145;
 }
 
-.hero__rates .rates-table__row {
-  min-height: 56px;
-  font-size: 15px;
+.hero__rates .rates-table__value {
+  color: #052145;
+}
+
+.hero__rates .rates-action-text {
+  display: none;
+}
+
+.hero__rates .rates-action-icon {
+  display: inline-flex;
+}
+
+.hero__rates .rates-table__action .btn {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 8px;
+  background: #052145;
+  border: 0;
+}
+
+.hero__rates .rates-table__action .btn:hover {
+  background: #1c2f5c;
+}
+
+.hero__rates .rates-table__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .hero__rates .rates-updated {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b3b4b6;
   font-size: 11px;
+}
+
+.hero__rates .link-accent {
+  color: #ca8d42;
+  font-weight: 600;
+  font-size: 15px;
 }
 
 .hero__rates .flag {
@@ -132,6 +226,7 @@
   height: 26px;
   border-radius: 3px;
   flex: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
 .calc-head {
@@ -704,12 +799,11 @@
 
   .hero__cta {
     margin-top: 40px;
-    padding-top: 0;
+    align-self: flex-start;
   }
 
   .hero__fix-btn {
     width: auto;
-    align-self: flex-start;
   }
 
   .hero__rates {
@@ -726,12 +820,8 @@
   }
 
   .hero__rates .rates-tabs__btn {
-    flex: none;
     width: 190px;
-  }
-
-  .hero__rates .rates-table {
-    margin-top: 30px;
+    flex: none;
   }
 
   .hero__rates .rates-table__head,
@@ -746,10 +836,6 @@
 
   .hero__rates .rates-table__row {
     font-size: 17px;
-  }
-
-  .hero__rates .rates-updated {
-    font-size: 13px;
   }
 
   .hero__rates .rates-action-icon {
@@ -770,10 +856,13 @@
     font-weight: 600;
   }
 
+  .hero__rates .rates-updated {
+    font-size: 13px;
+  }
+
   .hero__rates .flag {
     width: 52px;
     height: 36px;
-    border-radius: 4px;
   }
 
   .calc-head__coin,
