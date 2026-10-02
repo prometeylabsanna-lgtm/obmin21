@@ -18,6 +18,12 @@ class HomeView(TemplateView):
         if board not in RateBoard.values:
             board = RateBoard.RETAIL
         rows, updated_at = get_quotes_for_city(city, board)
+        if board == RateBoard.RETAIL:
+            preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
+            rows = sorted(
+                rows,
+                key=lambda r: preferred.get(r['pair'].code.split('/')[0], 90),
+            )
         ctx.update({
             'page': HomePage.load(),
             'rate_rows': rows,
@@ -40,13 +46,20 @@ def rates_partial(request):
     if board not in RateBoard.values:
         board = RateBoard.RETAIL
     rows, updated_at = get_quotes_for_city(request.city, board)
+    home_compact = request.GET.get('home') == '1'
+    if home_compact and board == RateBoard.RETAIL:
+        preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
+        rows = sorted(
+            rows,
+            key=lambda r: preferred.get(r['pair'].code.split('/')[0], 90),
+        )
     return render(request, 'partials/rates_table.html', {
         'rate_rows': rows,
         'rate_updated_at': updated_at,
         'active_board': board,
         'boards': RateBoard.choices,
         'hide_full_table_link': request.GET.get('hide_full') == '1',
-        'home_rates_compact': request.GET.get('home') == '1',
+        'home_rates_compact': home_compact,
     })
 
 

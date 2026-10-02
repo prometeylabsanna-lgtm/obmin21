@@ -45,11 +45,13 @@
       {% endfor %}
     </div>
     <div class="map-block__frame">
-      {% if branches.0.map_url %}
-      <iframe src="{{ branches.0.map_url }}" title="Карта" loading="lazy"></iframe>
-      {% elif page.map_image %}
-      <img src="{{ page.map_image.url }}" alt="Карта" loading="lazy">
-      {% endif %}
+      <iframe
+        src="https://maps.google.com/maps?q=%D0%9A%D0%B8%D1%97%D0%B2%2C+%D0%B2%D1%83%D0%BB.+%D0%A5%D1%80%D0%B5%D1%89%D0%B0%D1%82%D0%B8%D0%BA%2C+1&hl=uk&z=16&output=embed"
+        title="Карта: Київ, вул. Хрещатик, 1"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
     </div>
   </div>
 </section>

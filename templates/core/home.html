@@ -7,19 +7,19 @@
 <section class="hero" id="exchange" data-qa="section-exchange">
   <div class="hero__banner">
     <div class="hero__bg" aria-hidden="true">
-      <img src="{% static 'images/hero-kyiv.png' %}" alt="" width="1600" height="900" decoding="async" fetchpriority="high">
+      <img src="{% static 'images/hero-kyiv.png' %}?v=10" alt="" width="1600" height="900" decoding="async" fetchpriority="high">
     </div>
     <div class="hero__overlay" aria-hidden="true"></div>
     <div class="hero__content">
       <h1 class="hero__title">Обмін валют<br>{% if active_city %}{% if active_city.slug == 'kyiv' or active_city.name == 'Київ' %}у Києві{% else %}у {{ active_city.name }}{% endif %} {% endif %}за вигідним курсом</h1>
       <p class="hero__lead">Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>
       <div class="hero__cta">
-        <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Зафіксувати курс</button>
+        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">Зафіксувати курс</button>
       </div>
     </div>
-    <div class="hero__rates">
-      {% include 'partials/rates_table.html' with home_rates_compact=1 %}
-    </div>
+  </div>
+  <div class="hero__rates">
+    {% include 'partials/rates_table.html' with home_rates_compact=1 %}
   </div>
 </section>
 
@@ -109,9 +109,9 @@
 </section>
 
 <section class="map-section" id="contacts" data-qa="section-map">
-  {% with branch=city_branches.0 %}
+  {% with branch=city_branches.0 map_query="Київ, вул. Хрещатик, 1" map_embed="https://maps.google.com/maps?q=%D0%9A%D0%B8%D1%97%D0%B2%2C+%D0%B2%D1%83%D0%BB.+%D0%A5%D1%80%D0%B5%D1%89%D0%B0%D1%82%D0%B8%D0%BA%2C+1&hl=uk&z=16&output=embed" map_link="https://maps.google.com/?q=%D0%9A%D0%B8%D1%97%D0%B2%2C+%D0%B2%D1%83%D0%BB.+%D0%A5%D1%80%D0%B5%D1%89%D0%B0%D1%82%D0%B8%D0%BA%2C+1" %}
   <div class="map-section__info">
-    <span class="pill">Відділення{% if active_city %} В {{ active_city.name|upper }}{% endif %}</span>
+    <span class="pill">Відділення В Києві</span>
     <h2 class="map-section__title">Знайдіть нас<br><span class="u-accent">на карті</span></h2>
     <div class="map-section__details">
       <div>
@@ -124,21 +124,19 @@
       </div>
       <div>
         <div class="map-section__label">Адреса:</div>
-        <div>{% if branch %}{{ branch.address }}{% else %}вул. Хрещатик, 1{% endif %}{% if active_city %}, {{ active_city.name }}{% endif %}</div>
+        <div>вул. Хрещатик, 1, Київ · демо до заміни</div>
       </div>
     </div>
-    {% if branch.map_url %}
-    <a class="btn map-section__btn" href="{{ branch.map_url }}" target="_blank" rel="noopener noreferrer">Відкрити в Google Maps</a>
-    {% else %}
-    <a class="btn map-section__btn" href="https://maps.google.com/?q={{ active_city.name|default:'Київ' }}" target="_blank" rel="noopener noreferrer">Відкрити в Google Maps</a>
-    {% endif %}
+    <a class="btn map-section__btn" href="{{ map_link }}" target="_blank" rel="noopener noreferrer">Відкрити в Google Maps</a>
   </div>
   <div class="map-section__frame">
-    {% if branch.map_url %}
-    <iframe src="{{ branch.map_url }}" title="Карта відділення" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    {% else %}
-    <iframe src="https://maps.google.com/maps?q={{ active_city.name|default:'Kyiv' }}&z=12&output=embed" title="Карта" loading="lazy"></iframe>
-    {% endif %}
+    <iframe
+      src="{{ map_embed }}"
+      title="Карта: {{ map_query }}"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen
+    ></iframe>
   </div>
   {% endwith %}
 </section>
