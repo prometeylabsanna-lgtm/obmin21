@@ -18,17 +18,18 @@
   font-family: inherit;
   font-size: 14px;
   cursor: pointer;
-  border: 1px solid var(--color-border);
-  background: #fff;
+  border: 1px solid transparent;
+  background: var(--color-surface);
   color: var(--color-navy);
   padding: 0 16px;
 }
 
 .rates-tabs__btn.is-active,
 .rates-tabs__btn[aria-selected="true"] {
-  border-color: var(--color-navy);
-  background: var(--color-navy);
-  color: #fff;
+  border-color: var(--color-accent);
+  background: #fff;
+  color: var(--color-accent);
+  font-weight: 600;
 }
 
 .rates-table {

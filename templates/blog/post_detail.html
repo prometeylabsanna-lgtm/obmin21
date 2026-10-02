@@ -11,12 +11,10 @@
   <div class="article-hero" style="margin-top:28px">
     {% if post.cover %}
     <img src="{{ post.cover.url }}" alt="" loading="lazy">
-    {% elif post.category.slug == 'novyny' %}
-    <img src="{% static 'images/blog-laptop.jpg' %}" alt="" loading="lazy">
-    {% elif post.category.slug == 'posluhy' %}
-    <img src="{% static 'images/blog-charts.jpg' %}" alt="" loading="lazy">
     {% else %}
-    <img src="{% static 'images/blog-trading.jpg' %}" alt="" loading="lazy">
+    <span class="blog-card__placeholder blog-card__placeholder--hero" aria-hidden="true">
+      <img src="{% static 'images/coins.png' %}" alt="" loading="lazy">
+    </span>
     {% endif %}
   </div>
 

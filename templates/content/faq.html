@@ -1,23 +1,33 @@
 {% extends 'base.html' %}
-{% load content_format %}
+{% load static content_format %}
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="page-hero">
-  <h1 class="page-hero__title">Відповіді на поширені <span class="u-accent">запитання</span></h1>
-  {% if page.intro %}<p class="page-hero__lead">{{ page.intro|brand_mark }}</p>{% endif %}
-</section>
+<section class="faq-section" data-qa="faq-page" style="margin-top:24px">
+  <div class="faq-section__head">
+    <span class="pill">Відповіді</span>
+    <h2 class="faq-section__title">
+      <span class="calc-head__coin faq-section__coin" aria-hidden="true">
+        <span class="coin-spin">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+        </span>
+      </span>
+      Відповіді на <span class="u-accent">поширені запитання</span>
+    </h2>
+    {% if page.intro %}<p class="services-section__lead">{{ page.intro|brand_mark }}</p>{% endif %}
+  </div>
 
-<section data-qa="faq-page">
   {% if items %}
-  <div class="faq-list faq-list--2" data-faq>
+  <div class="faq-section__grid" data-faq>
     {% for item in items %}
-    <div class="faq-item{% if forloop.first %} is-open{% endif %}">
-      <button type="button" class="faq-item__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+    <div class="faq-card{% if forloop.first %} is-open{% endif %}">
+      <button type="button" class="faq-card__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
         <span>{{ item.question|brand_mark }}</span>
-        <span class="faq-item__icon" aria-hidden="true">+</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
       </button>
-      <div class="faq-item__a">{{ item.answer|format_body }}</div>
+      <div class="faq-card__a">{{ item.answer|format_body }}</div>
     </div>
     {% endfor %}
   </div>

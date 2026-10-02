@@ -28,9 +28,9 @@ class HomeView(TemplateView):
             'services': Service.objects.filter(is_active=True)[:6],
             'advantage_items': AdvantageItem.objects.filter(is_active=True),
             'advantage_audiences': AdvantageItem.Audience.choices,
-            'faq_items': FaqItem.objects.filter(is_active=True)[:6],
-            'news_posts': list(get_published_posts()[:3]),
-            'home_reviews': list(get_published_reviews()[:3]),
+            'faq_items': FaqItem.objects.filter(is_active=True)[:8],
+            'news_posts': list(get_published_posts()[:8]),
+            'home_reviews': list(get_published_reviews()[:8]),
         })
         return ctx
 

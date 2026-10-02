@@ -7,19 +7,19 @@
 <section class="hero" id="exchange" data-qa="section-exchange">
   <div class="hero__banner">
     <div class="hero__bg" aria-hidden="true">
-      <img src="{% static 'images/bg-currency.jpg' %}" alt="" width="1600" height="900" decoding="async">
+      <img src="{% static 'images/hero-kyiv.png' %}" alt="" width="1600" height="900" decoding="async" fetchpriority="high">
     </div>
     <div class="hero__overlay" aria-hidden="true"></div>
     <div class="hero__content">
-      <h1 class="hero__title">Обмін валют<br>{% if active_city %}в {{ active_city.name }} {% endif %}за вигідним курсом</h1>
+      <h1 class="hero__title">Обмін валют<br>{% if active_city %}{% if active_city.slug == 'kyiv' or active_city.name == 'Київ' %}у Києві{% else %}у {{ active_city.name }}{% endif %} {% endif %}за вигідним курсом</h1>
       <p class="hero__lead">Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>
       <div class="hero__cta">
         <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Зафіксувати курс</button>
       </div>
     </div>
-  </div>
-  <div class="hero__rates">
-    {% include 'partials/rates_table.html' with home_rates_compact=1 %}
+    <div class="hero__rates">
+      {% include 'partials/rates_table.html' with home_rates_compact=1 %}
+    </div>
   </div>
 </section>
 
@@ -35,7 +35,7 @@
     </span>
     <span>Розрахуйте <span class="u-accent">обмін</span></span>
   </h2>
-  <p class="section__lead" style="margin-left:auto;margin-right:auto;text-align:center">Дізнайтесь, скільки ви отримаєте та зафіксуйте курс онлайн</p>
+  <p class="calc-head__lead">Дізнайтесь, скільки ви отримаєте та зафіксуйте курс онлайн</p>
 </section>
 
 <section class="calc-box" data-calc data-qa="home-calc">
@@ -45,29 +45,22 @@
       <input type="text" inputmode="decimal" value="1000" data-calc-amount aria-label="Сума">
       <div class="calc-codes" hidden>
         {% for row in rate_rows %}
-        <button type="button"
-                class="calc-codes__btn{% if forloop.first %} is-active{% endif %}"
-                data-calc-code="{{ row.pair.code }}"
-                data-pair-id="{{ row.pair.pk }}"
-                data-buy="{{ row.quote.buy }}"
-                data-sell="{{ row.quote.sell }}">{{ row.pair.code }}</button>
+        <button type="button" class="calc-codes__btn{% if forloop.first %} is-active{% endif %}"
+                data-calc-code="{{ row.pair.code }}" data-pair-id="{{ row.pair.pk }}"
+                data-buy="{{ row.quote.buy }}" data-sell="{{ row.quote.sell }}">{{ row.pair.code }}</button>
         {% endfor %}
       </div>
       <button type="button" class="field-currency" data-calc-from-toggle aria-haspopup="listbox">
-        <span class="flag" data-calc-from-flag>{{ rate_rows.0.pair.code|default:"USD"|slice:":3" }}</span>
+        <span class="flag flag--usd" data-calc-from-flag aria-hidden="true"></span>
         <span data-calc-from-code>{{ rate_rows.0.pair.code|default:"USD" }}</span>
         <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
       </button>
       <div class="currency-menu" data-calc-from-menu hidden>
         {% for row in rate_rows %}
-        <button type="button" class="{% if forloop.first %}is-active{% endif %}"
-                data-calc-pick
-                data-pair-id="{{ row.pair.pk }}"
-                data-code="{{ row.pair.code }}"
-                data-name="{{ row.pair.name }}"
-                data-buy="{{ row.quote.buy }}"
-                data-sell="{{ row.quote.sell }}">
-          <span class="flag">{{ row.pair.code|slice:":3" }}</span>
+        <button type="button" class="{% if forloop.first %}is-active{% endif %}" data-calc-pick
+                data-pair-id="{{ row.pair.pk }}" data-code="{{ row.pair.code }}" data-name="{{ row.pair.name }}"
+                data-buy="{{ row.quote.buy }}" data-sell="{{ row.quote.sell }}">
+          <span class="flag"></span>
           <span class="code">{{ row.pair.code }}</span>
           <span class="name">{{ row.pair.name }}</span>
         </button>
@@ -88,7 +81,7 @@
     <div class="field-row">
       <div class="field-value" data-calc-result>0</div>
       <button type="button" class="field-currency" disabled>
-        <span class="flag">UAH</span>
+        <span class="flag flag--uah" aria-hidden="true"></span>
         <span>UAH</span>
       </button>
     </div>
@@ -108,103 +101,120 @@
     <img src="{% static 'images/coins.png' %}" alt="" width="640" height="480" loading="lazy">
   </div>
   <div class="promo-banner__content">
-    <h2 class="promo-banner__title">Вигідний курс на USD та EUR</h2>
-    <p class="promo-banner__text">Зафіксуйте курс онлайн — він діятиме 30 хвилин у відділенні</p>
-    <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{% url 'leads:request_modal' %}">Зафіксувати курс</button>
+    <span class="pill pill--light">USD та EUR</span>
+    <h2 class="promo-banner__title">Вигідний курс<br>на <span class="u-accent">USD та EUR</span></h2>
+    <p class="promo-banner__text">Обмінюйте валюту за актуальним курсом без зайвих кроків</p>
+    <a href="{% url 'rates:rates_page' %}" class="btn btn--accent promo-banner__cta">Обрати валюту</a>
   </div>
 </section>
 
-<section class="map-block section" id="contacts" data-qa="section-map">
-  <div class="section__head">
-    <h2 class="section__title">Знайдіть нас на <span class="u-accent">карті</span></h2>
-    <a class="link-accent" href="{% url 'content:contacts' %}">Усі відділення
-      <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
-    </a>
-  </div>
+<section class="map-section" id="contacts" data-qa="section-map">
   {% with branch=city_branches.0 %}
-  <div class="map-block__frame">
+  <div class="map-section__info">
+    <span class="pill">Відділення{% if active_city %} В {{ active_city.name|upper }}{% endif %}</span>
+    <h2 class="map-section__title">Знайдіть нас<br><span class="u-accent">на карті</span></h2>
+    <div class="map-section__details">
+      <div>
+        <div class="map-section__label">Графік:</div>
+        <div>{% if branch.hours %}{{ branch.hours }}{% else %}Пн–Пт 09:00–19:00, Сб 10:00–16:00{% endif %}</div>
+      </div>
+      <div>
+        <div class="map-section__label">Телефон:</div>
+        <div>{% if branch.phone %}{{ branch.phone }}{% elif active_phone %}{{ active_phone }}{% else %}+38 (099) 111-11-11{% endif %}</div>
+      </div>
+      <div>
+        <div class="map-section__label">Адреса:</div>
+        <div>{% if branch %}{{ branch.address }}{% else %}вул. Хрещатик, 1{% endif %}{% if active_city %}, {{ active_city.name }}{% endif %}</div>
+      </div>
+    </div>
     {% if branch.map_url %}
-    <iframe src="{{ branch.map_url }}" title="Карта відділення" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    {% elif page.banner_exchange %}
-    <img src="{{ page.banner_exchange.url }}" alt="Карта" loading="lazy">
+    <a class="btn map-section__btn" href="{{ branch.map_url }}" target="_blank" rel="noopener noreferrer">Відкрити в Google Maps</a>
     {% else %}
-    <img src="{% static 'images/bg-currency.jpg' %}" alt="" loading="lazy">
+    <a class="btn map-section__btn" href="https://maps.google.com/?q={{ active_city.name|default:'Київ' }}" target="_blank" rel="noopener noreferrer">Відкрити в Google Maps</a>
     {% endif %}
   </div>
-  {% if branch %}
-  <p class="section__lead" style="margin-top:16px">{{ branch.address }}{% if branch.hours %} · {{ branch.hours }}{% endif %}</p>
-  {% endif %}
+  <div class="map-section__frame">
+    {% if branch.map_url %}
+    <iframe src="{{ branch.map_url }}" title="Карта відділення" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    {% else %}
+    <iframe src="https://maps.google.com/maps?q={{ active_city.name|default:'Kyiv' }}&z=12&output=embed" title="Карта" loading="lazy"></iframe>
+    {% endif %}
+  </div>
   {% endwith %}
 </section>
 
-<section class="section" id="advantages" data-qa="section-stats">
-  <div class="section__center">
-    <div class="badge-row"><span class="pill">Цифри</span></div>
-    <h2 class="section__title">Чому нас <span class="u-accent">обирають</span></h2>
-  </div>
-  <div class="stats-grid" style="margin-top:32px">
-    <div class="stats-grid__item">
-      <div class="stats-grid__value" data-count="21">21</div>
-      <div class="stats-grid__label">рік на ринку</div>
+<section class="stats-section" id="advantages" data-qa="section-stats">
+  <span class="pill">Переваги</span>
+  <h2 class="stats-section__title">Чому нас <span class="u-accent">обирають</span></h2>
+  <div class="stats-section__grid">
+    <div class="stats-section__item">
+      <div class="stats-section__num">7K</div>
+      <p><b>Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для <b>швидкого та зручного обміну валют</b> і криптоактивів</p>
     </div>
-    <div class="stats-grid__item">
-      <div class="stats-grid__value" data-count="50">50+</div>
-      <div class="stats-grid__label">відділень</div>
+    <div class="stats-section__item">
+      <div class="stats-section__num">20+</div>
+      <p><b>Відділень в Україні</b> — обмінюйте валюту <b>у зручному для вас відділенні</b> та отримуйте якісний сервіс</p>
     </div>
-    <div class="stats-grid__item">
-      <div class="stats-grid__value" data-count="100">100+</div>
-      <div class="stats-grid__label">валютних пар</div>
+    <div class="stats-section__item">
+      <div class="stats-section__num">100%</div>
+      <p><b>Прозорість обміну</b> — жодних прихованих платежів: ви заздалегідь бачите <b>актуальний курс та умови операції</b></p>
     </div>
-    <div class="stats-grid__item">
-      <div class="stats-grid__value">24/7</div>
-      <div class="stats-grid__label">підтримка</div>
+    <div class="stats-section__item">
+      <div class="stats-section__num">10+</div>
+      <p><b>Років досвіду</b> — понад 10 років ми працюємо у сфері обміну, забезпечуючи <b>стабільність, професійність та прозорі умови</b></p>
     </div>
   </div>
 </section>
 
-<section class="section" id="services" data-qa="section-services">
-  <div class="section__head">
-    <h2 class="section__title">Наші <span class="u-accent">послуги</span></h2>
-    <a class="link-accent" href="{% url 'content:services' %}">Усі послуги
-      <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
-    </a>
+<section class="services-section" id="services" data-qa="section-services">
+  <div class="services-section__head">
+    <span class="pill">Послуги</span>
+    <h2 class="services-section__title">Наші <span class="u-accent">послуги</span></h2>
+    <p class="services-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
   </div>
-  <div class="home-services">
+  <div class="services-section__grid">
     {% for svc in services %}
-    <article class="home-service">
-      {% if forloop.counter == 1 %}<img src="{% static 'images/service-1.png' %}" alt="" width="96" height="96" loading="lazy">
-      {% elif forloop.counter == 2 %}<img src="{% static 'images/service-2.png' %}" alt="" width="96" height="96" loading="lazy">
-      {% elif forloop.counter == 3 %}<img src="{% static 'images/service-3.png' %}" alt="" width="96" height="96" loading="lazy">
-      {% elif forloop.counter == 4 %}<img src="{% static 'images/service-4.png' %}" alt="" width="96" height="96" loading="lazy">
-      {% elif forloop.counter == 5 %}<img src="{% static 'images/service-5.png' %}" alt="" width="96" height="96" loading="lazy">
-      {% else %}<img src="{% static 'images/service-6.png' %}" alt="" width="96" height="96" loading="lazy">{% endif %}
-      <h3 class="home-service__title">{{ svc.title }}</h3>
-      <p class="card__text">{{ svc.short_desc|brand_mark }}</p>
+    <article class="svc-card">
+      <div class="svc-card__media">
+        {% if forloop.counter == 1 %}<img src="{% static 'images/service-1.png' %}" alt="" loading="lazy">
+        {% elif forloop.counter == 2 %}<img src="{% static 'images/service-2.png' %}" alt="" loading="lazy">
+        {% elif forloop.counter == 3 %}<img src="{% static 'images/service-3.png' %}" alt="" loading="lazy">
+        {% elif forloop.counter == 4 %}<img src="{% static 'images/service-4.png' %}" alt="" loading="lazy">
+        {% elif forloop.counter == 5 %}<img src="{% static 'images/service-5.png' %}" alt="" loading="lazy">
+        {% else %}<img src="{% static 'images/service-6.png' %}" alt="" loading="lazy">{% endif %}
+      </div>
+      <h3 class="svc-card__title">{{ svc.title }}</h3>
+      <p class="svc-card__text">{{ svc.short_desc|brand_mark }}</p>
       <a class="link-accent" href="{% url 'content:services' %}#svc-{{ svc.slug }}">Детальніше
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
       </a>
     </article>
-    {% empty %}
-    <article class="home-service"><p class="card__text u-muted">Послуги зʼявляться незабаром</p></article>
     {% endfor %}
   </div>
 </section>
 
-<section class="section" id="faq" data-qa="section-faq">
-  <div class="section__head">
-    <h2 class="section__title">Відповіді на поширені <span class="u-accent">запитання</span></h2>
-    <a class="link-accent" href="{% url 'content:faq' %}">Усі питання
-      <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
-    </a>
+<section class="faq-section" id="faq" data-qa="section-faq">
+  <div class="faq-section__head">
+    <span class="pill">Відповіді</span>
+    <h2 class="faq-section__title">
+      <span class="calc-head__coin faq-section__coin" aria-hidden="true">
+        <span class="coin-spin">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+        </span>
+      </span>
+      Відповіді на <span class="u-accent">поширені запитання</span>
+    </h2>
   </div>
-  <div class="faq-list faq-list--2" data-faq>
+  <div class="faq-section__grid" data-faq>
     {% for item in faq_items %}
-    <div class="faq-item{% if forloop.first %} is-open{% endif %}">
-      <button type="button" class="faq-item__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+    <div class="faq-card{% if forloop.first %} is-open{% endif %}">
+      <button type="button" class="faq-card__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
         <span>{{ item.question }}</span>
-        <span class="faq-item__icon" aria-hidden="true">+</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
       </button>
-      <div class="faq-item__a">{{ item.answer|linebreaksbr }}</div>
+      <div class="faq-card__a">{{ item.answer|linebreaksbr }}</div>
     </div>
     {% empty %}
     <p class="u-muted">Питання зʼявляться незабаром</p>
@@ -212,46 +222,60 @@
   </div>
 </section>
 
-<section class="section" id="reviews" data-qa="section-reviews">
-  <div class="section__head">
-    <h2 class="section__title">Відгуки <span class="u-accent">клієнтів</span></h2>
-    <button type="button" class="btn btn--accent" data-open-modal="{% url 'reviews:review_submit' %}">Залишити відгук</button>
+<section class="reviews-section" id="reviews" data-qa="section-reviews">
+  <div class="slider-head">
+    <div>
+      <span class="pill">Статті</span>
+      <h2 class="slider-head__title">Відгуки</h2>
+    </div>
+    <div class="slider-nav" data-slider-nav="reviews">
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
+      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+    </div>
   </div>
-  <div class="card-grid card-grid--3">
+  <div class="reviews-track" data-slider="reviews">
     {% for rev in home_reviews %}
-    <article class="card">
-      <div class="review-card__head">
-        <span class="review-card__avatar">{{ rev.initial }}</span>
-        <div>
-          <div class="card__heading">{{ rev.name }}</div>
-          <div class="card__meta">{% if rev.city_name %}{{ rev.city_name }} · {% endif %}{{ rev.published_at|date:"d.m.Y" }}</div>
+    <article class="review-slide">
+      <div>
+        <div class="review-slide__name">{{ rev.name }}{% if rev.city_name %}, {{ rev.city_name }}{% endif %}</div>
+        <div class="review-slide__stars" aria-hidden="true">
+          {% for i in "12345" %}<svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="#052145" stroke="#052145" stroke-width="1.6" stroke-linejoin="round"></path></svg>{% endfor %}
         </div>
       </div>
-      <p class="card__text">{{ rev.text }}</p>
+      <p class="review-slide__text">{{ rev.text }}</p>
     </article>
     {% empty %}
-    <article class="card"><p class="card__text u-muted">Відгуки зʼявляться незабаром</p></article>
+    <article class="review-slide"><p class="review-slide__text">Відгуки зʼявляться незабаром</p></article>
     {% endfor %}
   </div>
+  <button type="button" class="btn btn--accent reviews-section__cta" data-open-modal="{% url 'reviews:review_submit' %}">Залишити відгук</button>
 </section>
 
-<section class="section" id="news" data-qa="section-news">
-  <div class="section__head">
-    <h2 class="section__title">Корисні <span class="u-accent">статті</span></h2>
-    <a class="link-accent" href="{% url 'blog:post_list' %}">Усі статті
-      <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
-    </a>
+<section class="articles-section" id="news" data-qa="section-news">
+  <div class="slider-head">
+    <div>
+      <span class="pill">Статті</span>
+      <h2 class="slider-head__title">Корисні <span class="u-accent">статті</span></h2>
+      <p class="articles-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
+    </div>
+    <div class="slider-nav" data-slider-nav="articles">
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
+      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+    </div>
   </div>
-  <div class="blog-grid">
+  <div class="articles-track" data-slider="articles">
     {% for post in news_posts %}
-    <article class="blog-card">
-      <a class="blog-card__media" href="{% url 'blog:post_detail' post.slug %}">
-        <img src="{% static 'images/blog-finance.jpg' %}" alt="" loading="lazy" width="640" height="400">
+    <article class="article-slide">
+      <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
+        {% if post.cover %}
+        <img src="{{ post.cover.url }}" alt="" loading="lazy">
+        {% else %}
+        <img src="{% static 'images/service-1.png' %}" alt="" loading="lazy">
+        {% endif %}
       </a>
-      <div class="card__meta" style="margin-top:12px">{{ post.published_at|date:"d.m.Y" }}</div>
-      <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
-      {% if post.excerpt %}<p class="blog-card__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
-      <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}" style="margin-top:12px">Читати повністю
+      <a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
+      {% if post.excerpt %}<p class="article-slide__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
+      <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати повністю
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
       </a>
     </article>

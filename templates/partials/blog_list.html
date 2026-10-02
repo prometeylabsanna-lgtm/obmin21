@@ -8,7 +8,9 @@
       {% if feature.cover %}
       <img src="{{ feature.cover.url }}" alt="" loading="lazy">
       {% else %}
-      <img src="{% static 'images/blog-finance.jpg' %}" alt="" loading="lazy">
+      <span class="blog-card__placeholder" aria-hidden="true">
+        <img src="{% static 'images/coins-d.png' %}" alt="" loading="lazy">
+      </span>
       {% endif %}
     </a>
     <div>
@@ -32,8 +34,9 @@
         {% if post.cover %}
         <img src="{{ post.cover.url }}" alt="" loading="lazy">
         {% else %}
-        {% cycle 'images/blog-laptop.jpg' 'images/blog-charts.jpg' 'images/blog-trading.jpg' as blog_img silent %}
-        <img src="{% static blog_img %}" alt="" loading="lazy">
+        <span class="blog-card__placeholder" aria-hidden="true">
+          <img src="{% static 'images/coins-d.png' %}" alt="" loading="lazy">
+        </span>
         {% endif %}
       </a>
       <div class="card__meta" style="margin-top:12px">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
