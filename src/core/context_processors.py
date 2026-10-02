@@ -1,3 +1,4 @@
+from src.content.models import Service
 from src.core.breadcrumbs import breadcrumbs_for_request
 from src.core.models import SiteSettings
 
@@ -18,4 +19,5 @@ def site_chrome(request):
         'cities': getattr(request, 'cities', []),
         'city_branches': getattr(request, 'city_branches', []),
         'breadcrumb_items': breadcrumbs_for_request(request),
+        'footer_services': Service.objects.filter(is_active=True)[:6],
     }

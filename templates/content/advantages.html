@@ -3,46 +3,104 @@
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="section" data-qa="advantages-page">
-  <h1 class="section__title">{{ page.title }}</h1>
-  {% if page.intro %}<p class="u-muted u-mb-5">{{ page.intro|brand_mark }}</p>{% endif %}
+<section class="page-hero">
+  <div class="badge-row" style="justify-content:flex-start"><span class="pill">Переваги</span></div>
+  <h1 class="page-hero__title">Чому обирають <span class="u-accent">Обмін21</span></h1>
+  {% if page.intro %}<p class="page-hero__lead">{{ page.intro|brand_mark }}</p>{% endif %}
+</section>
 
-  <div class="adv-board" data-adv-tabs>
-    <div class="adv-board__aside">
-      <div class="adv-board__tabs" role="tablist" aria-label="Аудиторія переваг">
-        {% for value, label in audiences %}
-        <button
-          type="button"
-          class="adv-board__tab{% if forloop.first %} is-active{% endif %}"
-          data-adv-tab="{{ value }}"
-          role="tab"
-          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
-        >{{ label }}</button>
-        {% endfor %}
-      </div>
-      <button type="button" class="btn btn--accent adv-board__cta" data-open-modal="{% url 'leads:request_modal' %}">Залишити заявку</button>
-    </div>
+<section class="section section--tight">
+  <div class="section__center">
+    <div class="badge-row"><span class="pill">Цифри</span></div>
+    <h2 class="section__title">Обмін21 у <span class="u-accent">цифрах</span></h2>
+  </div>
+  <div class="stats-grid" style="margin-top:32px">
+    <div class="stats-grid__item"><div class="stats-grid__value">21</div><div class="stats-grid__label">рік на ринку</div></div>
+    <div class="stats-grid__item"><div class="stats-grid__value">50+</div><div class="stats-grid__label">відділень</div></div>
+    <div class="stats-grid__item"><div class="stats-grid__value">100+</div><div class="stats-grid__label">валютних пар</div></div>
+    <div class="stats-grid__item"><div class="stats-grid__value">24/7</div><div class="stats-grid__label">підтримка</div></div>
+  </div>
+</section>
 
-    <div class="adv-board__panels">
-      {% regroup items by audience as audience_list %}
-      {% for group in audience_list %}
-      <div class="adv-list" data-adv-panel="{{ group.grouper }}" {% if not forloop.first %}hidden{% endif %}>
-        {% for item in group.list %}
-        <div class="adv-list__item">
-          <span class="adv-list__n">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
-          <div class="adv-list__body">
-            <span class="adv-list__text">{{ item.text|brand_mark }}</span>
-            {% if item.description %}<p class="adv-list__desc">{{ item.description|brand_mark }}</p>{% endif %}
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      {% endfor %}
-    </div>
+<section class="section" id="adv">
+  <div class="section__head">
+    <h2 class="section__title">Чому люди обирають <span class="u-accent">нас</span></h2>
+  </div>
+  <div class="chips" style="margin:0 0 24px" data-adv-tabs role="tablist">
+    {% for value, label in audiences %}
+    <button type="button" class="btn btn--ghost{% if forloop.first %} is-active{% endif %}"
+            style="border-radius:20px;min-height:38px;padding:0 14px"
+            data-adv-tab="{{ value }}" role="tab"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ label }}</button>
+    {% endfor %}
+  </div>
+  {% regroup items by audience as audience_list %}
+  {% for group in audience_list %}
+  <div class="card-grid card-grid--3" data-adv-panel="{{ group.grouper }}" {% if not forloop.first %}hidden{% endif %}>
+    {% for item in group.list %}
+    <article class="card">
+      <div class="card__meta">0{{ forloop.counter }}</div>
+      <h3 class="card__title">{{ item.text|brand_mark }}</h3>
+      {% if item.description %}<p class="card__text">{{ item.description|brand_mark }}</p>{% endif %}
+    </article>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  <div style="margin-top:32px;text-align:center" aria-hidden="true">
+    <img src="{% static 'images/coins.png' %}" alt="" width="420" height="280" loading="lazy" style="max-width:min(420px,100%);height:auto">
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__center">
+    <h2 class="section__title">Обмін21 чи звичайний <span class="u-accent">обмінник</span></h2>
+  </div>
+  <div class="card" style="margin-top:24px;overflow-x:auto">
+    <table class="compare-table">
+      <thead>
+        <tr><th></th><th>Обмін21</th><th>Звичайний обмінник</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Фіксація курсу онлайн</td><td>Так, 30 хв</td><td>Ні</td></tr>
+        <tr><td>Прозорі курси</td><td>Онлайн і в відділенні</td><td>Часто «на місці»</td></tr>
+        <tr><td>Мережа відділень</td><td>По всій Україні</td><td>Обмежено</td></tr>
+        <tr><td>Підтримка</td><td>Швидка відповідь</td><td>Нерівномірно</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__center">
+    <div class="badge-row"><span class="pill">Як це працює</span></div>
+    <h2 class="section__title">Три кроки до <span class="u-accent">обміну</span></h2>
+  </div>
+  <div class="steps" style="margin-top:28px">
+    <div class="steps__item"><div class="steps__n">01</div><div><strong>Оберіть валюту</strong><p class="card__text">Подивіться курс онлайн</p></div></div>
+    <div class="steps__item"><div class="steps__n">02</div><div><strong>Зафіксуйте курс</strong><p class="card__text">Залиште заявку за 1 хвилину</p></div></div>
+    <div class="steps__item"><div class="steps__n">03</div><div><strong>Обміняйте</strong><p class="card__text">У зручному відділенні</p></div></div>
   </div>
 </section>
 {% endblock %}
 
 {% block page_js %}
-<script src="{% static 'js/pages/home.js' %}?v=2" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var root = document.querySelector('[data-adv-tabs]');
+  if (!root) return;
+  var tabs = root.querySelectorAll('[data-adv-tab]');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var key = tab.getAttribute('data-adv-tab');
+      tabs.forEach(function (t) {
+        t.classList.toggle('is-active', t === tab);
+        t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      });
+      document.querySelectorAll('[data-adv-panel]').forEach(function (panel) {
+        panel.hidden = panel.getAttribute('data-adv-panel') !== key;
+      });
+    });
+  });
+});
+</script>
 {% endblock %}

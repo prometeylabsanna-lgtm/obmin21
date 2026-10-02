@@ -1,51 +1,67 @@
+{% load static %}
 <footer class="site-footer" data-qa="footer">
-  <div class="site-footer__main">
-    <div class="site-footer__logo">
-      <span class="brand-mark">{{ site_settings.logo_text }}<span class="u-accent">{{ site_settings.logo_accent }}</span></span>
-    </div>
-    <nav class="site-footer__nav" aria-label="Підвал">
-      <a href="{% url 'content:contacts' %}">Контакти</a>
-      <a href="{% url 'content:services' %}">Послуги</a>
-      <a href="{% url 'content:advantages' %}">Переваги</a>
-      <a href="{% url 'blog:post_list' %}">Блог</a>
-      <a href="{% url 'content:faq' %}">FAQ</a>
-      <a href="{% url 'content:privacy' %}">Політика конфіденційності</a>
-    </nav>
-    <div class="site-footer__social">
-      {% if site_settings.telegram_url %}
-      <a class="site-footer__social-link" href="{{ site_settings.telegram_url }}" target="_blank" rel="noopener noreferrer" title="Telegram" aria-label="Telegram">
-        <span class="site-footer__social-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 3.5 2.8 10.8c-.7.3-.7 1.3.1 1.5l4.7 1.5 1.8 5.5c.2.7 1.1.9 1.6.3l2.6-2.8 4.9 3.6c.6.4 1.5.1 1.7-.6L22.7 4.4c.2-.8-.6-1.4-1.2-.9Z"/><path d="m9.7 13.8 8.6-7.2"/></svg>
-        </span>
+  <div class="site-footer__inner">
+    <div class="site-footer__top">
+      <a href="{% url 'core:home' %}" class="site-footer__logo">
+        <img src="{% static 'images/logo-footer.png' %}" alt="{{ site_settings.site_name }}" width="140" height="40">
       </a>
-      {% endif %}
-      {% if site_settings.instagram_url %}
-      <a class="site-footer__social-link" href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram">
-        <span class="site-footer__social-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none"/></svg>
-        </span>
-      </a>
-      {% endif %}
-      {% if site_settings.facebook_url %}
-      <a class="site-footer__social-link" href="{{ site_settings.facebook_url }}" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook">
-        <span class="site-footer__social-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8h2V5h-2c-2.2 0-4 1.8-4 4v2H8v3h2v6h3v-6h2.2l.8-3H13V9c0-.6.4-1 1-1Z"/></svg>
-        </span>
-      </a>
-      {% endif %}
-      {% if site_settings.youtube_url %}
-      <a class="site-footer__social-link" href="{{ site_settings.youtube_url }}" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube">
-        <span class="site-footer__social-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="3"/><path d="m10 10 5 2-5 2v-4Z"/></svg>
-        </span>
-      </a>
-      {% endif %}
-    </div>
-  </div>
 
-  <div class="site-footer__bar">
-    <a class="site-footer__credit" href="{% url 'core:home' %}">
-      @<span class="brand-mark">{{ site_settings.logo_text|lower }}<span class="u-accent">{{ site_settings.logo_accent }}</span></span> 2026
-    </a>
+      <div class="site-footer__grid">
+        <div class="site-footer__col">
+          <div class="site-footer__heading">Послуги</div>
+          <div class="site-footer__links">
+            {% for svc in footer_services %}
+            <a href="{% url 'content:services' %}#svc-{{ svc.slug }}">{{ svc.title|upper }}</a>
+            {% empty %}
+            <a href="{% url 'content:services' %}">УСІ ПОСЛУГИ</a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="site-footer__col">
+          <div class="site-footer__heading">Компанія</div>
+          <div class="site-footer__links">
+            <a href="{% url 'content:services' %}">ПОСЛУГИ</a>
+            <a href="{% url 'content:advantages' %}">ПЕРЕВАГИ</a>
+            <a href="{% url 'content:faq' %}">FAQ</a>
+            <a href="{% url 'reviews:review_list' %}">ВІДГУКИ</a>
+            <a href="{% url 'blog:post_list' %}">БЛОГ</a>
+            <a href="{% url 'content:contacts' %}">КОНТАКТИ</a>
+          </div>
+        </div>
+
+        <div class="site-footer__col">
+          <div class="site-footer__heading">Документи</div>
+          <div class="site-footer__links site-footer__links--docs">
+            <a href="{% url 'content:privacy' %}">ПОЛІТИКА КОНФІДЕНЦІЙНОСТІ</a>
+          </div>
+        </div>
+
+        <div class="site-footer__col site-footer__col--contact">
+          {% if active_phone %}
+          <div class="site-footer__phone">
+            <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
+            {{ active_phone }}
+          </div>
+          {% endif %}
+          <div class="site-footer__social">
+            {% if active_phone %}
+            <a href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}" aria-label="Зателефонувати" class="site-footer__social-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#CA8D42" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg>
+            </a>
+            {% endif %}
+            {% if site_settings.telegram_url %}
+            <a href="{{ site_settings.telegram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram" class="site-footer__social-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#CA8D42" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L2.5 10.2l6.8 2.4M21 3l-3.2 17.5-8.5-7.9M21 3L9.3 12.6v5.9l3.1-3.3"></path></svg>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-footer__bar">
+      © 2026.{{ site_settings.site_name }}. Усі права захищені
+    </div>
   </div>
 </footer>

@@ -89,7 +89,7 @@
       return;
     }
     var el = getRoot();
-    if (el && !el.hidden && e.target === el) {
+    if (el && !el.hidden && (e.target === el || e.target.classList.contains('modal-backdrop'))) {
       closeModal();
     }
   });

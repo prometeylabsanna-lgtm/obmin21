@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff;font-family:'Roboto',sans-serif;color:#052145;-webkit-font-smoothing:antialiased}
+a{color:#052145;text-decoration:none}
+a:hover{color:#CA8D42}
+input{font-family:inherit}
+a[data-arw]{transition:color .25s}
+a[data-arw] svg{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+a[data-arw]:hover svg{transform:translateX(8px) scale(1.15)}
+a[data-arw]:hover{color:#B87B2C!important}
+a[data-mi]:hover img{filter:none!important;opacity:1!important}
+body{min-height:100vh;display:flex;flex-direction:column}
+x-dc{display:flex;flex-direction:column;flex:1 0 auto;width:100%}
+footer{margin-top:auto!important}
+@keyframes obFwSweep{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@keyframes obBkIn{0%{opacity:0;transform:translate3d(0,20px,0) scale(.97)}100%{opacity:1;transform:none}}
+@keyframes obFwIn{0%{opacity:0;transform:translate3d(0,24px,0) scale(.97)}100%{opacity:1;transform:none}}
+@keyframes obCoinRoll{0%,62%{transform:rotateY(0deg) rotateX(0deg) rotateZ(0deg) translateX(0)}71%{transform:rotateY(-38deg) rotateX(10deg) rotateZ(-6deg) translateX(-2px)}80%{transform:rotateY(26deg) rotateX(-6deg) rotateZ(4deg) translateX(2px)}89%{transform:rotateY(-7deg) rotateX(2deg) rotateZ(-1deg) translateX(0)}100%{transform:rotateY(0deg) rotateX(0deg) rotateZ(0deg) translateX(0)}}
+@keyframes obInA{0%{opacity:0;transform:translate3d(-60px,90px,0) rotate(-18deg) scale(.55)}100%{opacity:1;transform:none}}
+@keyframes obInB{0%{opacity:0;transform:translate3d(90px,120px,0) rotate(24deg) scale(.5)}100%{opacity:1;transform:none}}
+@keyframes obInC{0%{opacity:0;transform:translate3d(110px,-90px,0) rotate(-26deg) scale(.5)}100%{opacity:1;transform:none}}
+@keyframes obInD{0%{opacity:0;transform:translate3d(-40px,-110px,0) rotate(30deg) scale(.45)}100%{opacity:1;transform:none}}
+@keyframes obFlA{0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg) rotate(0deg)}50%{transform:translate3d(-6px,-14px,0) rotateX(6deg) rotateY(-8deg) rotate(-2deg)}}
+@keyframes obFlB{0%,100%{transform:translate3d(0,0,0) rotateY(0deg) rotate(0deg)}50%{transform:translate3d(8px,-18px,0) rotateY(14deg) rotate(4deg)}}
+@keyframes obFlC{0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotate(0deg)}50%{transform:translate3d(10px,12px,0) rotateX(-10deg) rotate(-4deg)}}
+@keyframes obFlD{0%,100%{transform:translate3d(0,0,0) rotateY(0deg) rotate(0deg)}50%{transform:translate3d(-8px,-16px,0) rotateY(-18deg) rotate(6deg)}}
+@keyframes obFloat{0%,100%{transform:translate3d(0,0,0) rotate(0deg)}33%{transform:translate3d(-6px,-12px,0) rotate(-1.2deg)}66%{transform:translate3d(5px,-5px,0) rotate(0.8deg)}}
+@media (prefers-reduced-motion:reduce){[data-anim]{animation:none!important}}
+</style>
+</helmet>
+<div style="flex: 1 0 auto; width: 100%; max-width: 1440px; margin: 0 auto; padding: {{ m.wrap }}; transition: opacity .35s ease; opacity: {{ pageOpacity }}; background-color: #FFFFFF">
+
+<header style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;padding:18px 0">
+  <a href="Obmin21.dc.html" style="display:flex;align-items:center">
+    <img src="assets/logo.png" alt="Obmin21" style="height:{{ m.logoH }};width:auto;display:block">
+  </a>
+  <nav style="display:{{ m.dFlex }};gap:32px;font-size:14px;font-weight:600;letter-spacing:0.3px">
+    <a href="Services.dc.html">ПОСЛУГИ</a><a href="Advantages.dc.html">ПЕРЕВАГИ</a><a href="FAQ.dc.html">FAQ</a><a href="Blog.dc.html">БЛОГ</a><a href="Contacts.dc.html">КОНТАКТИ</a>
+  </nav>
+  <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+    <div style="position:relative">
+      <button onClick="{{ toggleCity }}" style="display:flex;align-items:center;gap:6px;border:0;background:transparent;padding:6px 0;cursor:pointer;font-family:inherit;font-size:17px;font-weight:600;color:#052145">
+        <svg width="12" height="14" viewBox="0 0 12 14"><path d="M6 0a5 5 0 0 0-5 5c0 3.6 5 9 5 9s5-5.4 5-9a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="#CA8D42"></path></svg>
+        {{ city }}
+        <svg width="10" height="6" viewBox="0 0 10 6" style="margin-left:2px;transition:transform .25s;transform:{{ cityChevron }}"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
+      </button>
+      <sc-if value="{{ cityOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:calc(100% + 12px);right:{{ m.cityDdRight }};z-index:50;width:190px;background:#fff;border-radius:8px;box-shadow:0 12px 36px rgba(5,33,69,0.14);padding:10px 18px 12px">
+          <sc-for list="{{ cityList }}" as="c" hint-placeholder-count="10">
+            <button onClick="{{ c.pick }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:7px 0;border:0;border-bottom:1px solid #EEF0F3;background:transparent;cursor:pointer;font-family:inherit;font-size:14px;color:#052145;text-align:left" style-hover="color:#CA8D42">
+              {{ c.name }}
+              <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.4"></path></svg>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <div style="display:{{ m.dFlex }};align-items:center;gap:8px;font-size:14px;color:#B3B4B6">
+      <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
+      +38(044)444 44 44
+    </div>
+    <a href="#" style="display:{{ m.dBlock }};background:#CA8D42;color:#fff;font-weight:600;font-size:16px;padding:16px 29px;border-radius:6px" style-hover="background:#B87B2C;color:#fff">Забронювати заявку</a>
+    <sc-if value="{{ isM }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMenu }}" aria-label="Меню" style="width:50px;height:50px;border:0;border-radius:8px;background:#CA8D42;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:{{ burgerGap }};cursor:pointer">
+        <span style="width:22px;height:2px;background:#fff;border-radius:1px;transition:transform .25s;transform:{{ burgerTop }}"></span>
+        <span style="width:22px;height:2px;background:#fff;border-radius:1px;transition:transform .25s;transform:{{ burgerBot }}"></span>
+      </button>
+    </sc-if>
+  </div>
+</header>
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:900;background:#fff;display:flex;flex-direction:column;padding:18px 16px 16px;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <a href="Obmin21.dc.html" style="display:flex;align-items:center"><img src="assets/logo.png" alt="Obmin21" style="height:40px;width:auto;display:block"></a>
+      <button onClick="{{ toggleMenu }}" aria-label="Закрити меню" style="width:54px;height:54px;border:0;border-radius:8px;background:#CA8D42;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M2 2l18 18M20 2L2 20" stroke="#fff" stroke-width="2"></path></svg></button>
+    </div>
+    <nav style="margin-top:44px;display:flex;flex-direction:column">
+      <a data-mi="1" href="Services.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">Послуги<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
+      <a data-mi="1" href="Advantages.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">Переваги<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
+      <a data-mi="1" href="FAQ.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">FAQ<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
+      <a data-mi="1" href="Blog.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">Блог<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
+      <a data-mi="1" href="Contacts.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">Контакти<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
+    </nav>
+    <div style="margin-top:auto;padding-top:40px;display:flex;flex-direction:column;gap:16px">
+      <a href="tel:+380444444444" style="display:flex;align-items:center;gap:8px;font-size:15px;color:#052145">
+        <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
+        +38(044)444 44 44
+      </a>
+      <a href="#" style="background:#CA8D42;color:#fff;font-weight:600;font-size:16px;padding:17px 0;text-align:center;border-radius:8px" style-hover="background:#B87B2C;color:#fff">Забронювати заявку</a>
+    </div>
+  </div>
+</sc-if>
+
+<section ref="{{ bannerRef }}" style="padding:{{ m.curTopPad }}">
+  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#B3B4B6"><a href="Obmin21.dc.html" style="color:#B3B4B6">Головна</a><svg width="5" height="8" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#B3B4B6" fill="none" stroke-width="1.5"></path></svg><span style="color:#052145">Блог</span></div>
+  <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+    <div>
+      <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Блог</div>
+      <h1 style="margin:10px 0 0;font-size:clamp(34px,5vw,68px);font-weight:700;line-height:1.05;letter-spacing:-0.5px">Корисні <span style="color:#CA8D42">статті</span></h1>
+      <p style="margin:14px 0 0;color:#B3B4B6;font-size:16px;line-height:1.4;max-width:520px">Пояснюємо, як працює курс валют, як зберегти заощадження та безпечно обміняти гроші.</p>
+    </div>
+  </div>
+  <div style="margin-top:32px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">
+    <sc-for list="{{ blogCats }}" as="c" hint-placeholder-count="6">
+      <button onClick="{{ c.pick }}" style="flex:none;height:38px;padding:0 18px;border-radius:19px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-family:inherit;font-size:13px;cursor:pointer;transition:background .2s,color .2s">{{ c.name }}</button>
+    </sc-for>
+  </div>
+</section>
+
+<sc-if value="{{ hasFeatured }}" hint-placeholder-val="{{ true }}">
+<section style="margin-top:{{ m.blogMt }}">
+  <a href="{{ featured.href }}" style="display:grid;grid-template-columns:{{ m.featCols }};gap:{{ m.featGap }};align-items:center;color:#052145" style-hover="color:#052145">
+    <div style="height:{{ m.featImgH }};border-radius:10px;overflow:hidden;background:#EEF0F3">
+      <img src="{{ featured.img }}" alt="{{ featured.title }}" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#B3B4B6;flex-wrap:wrap"><span style="border:1px solid #052145;color:#052145;border-radius:20px;padding:4px 10px;font-size:12px">{{ featured.cat }}</span>{{ featured.date }}<span style="width:4px;height:4px;border-radius:50%;background:#CA8D42"></span>{{ featured.read }}</div>
+      <div style="margin-top:18px;font-size:{{ m.featT }};font-weight:700;line-height:1.12;letter-spacing:-0.3px">{{ featured.title }}</div>
+      <div style="margin-top:14px;color:#B3B4B6;font-size:16px;line-height:1.45;max-width:520px">{{ featured.text }}</div>
+      <div style="margin-top:24px;color:#CA8D42;font-weight:500;font-size:15px;display:inline-flex;align-items:center;gap:10px">Читати повністю <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg></div>
+    </div>
+  </a>
+</section>
+</sc-if>
+
+<section style="margin-top:{{ m.blogMt }}">
+  <div data-stagger="1" style="display:grid;grid-template-columns:{{ m.blogCols }};gap:{{ m.blogGap }}">
+    <sc-for list="{{ blogList }}" as="a" hint-placeholder-count="6">
+      <a href="{{ a.href }}" style="display:flex;flex-direction:column;color:#052145" style-hover="color:#052145">
+        <div style="height:{{ m.blogImgH }};border-radius:6px;overflow:hidden;background:#EEF0F3">
+          <img src="{{ a.img }}" alt="{{ a.title }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+        </div>
+        <div style="margin-top:18px;display:flex;align-items:center;gap:10px;font-size:13px;color:#B3B4B6;flex-wrap:wrap"><span style="color:#CA8D42;font-weight:500">{{ a.cat }}</span><span style="width:4px;height:4px;border-radius:50%;background:#D5D9DF"></span>{{ a.date }}</div>
+        <div style="margin-top:10px;font-size:{{ m.artT }};font-weight:600;line-height:1.2">{{ a.title }}</div>
+        <div style="margin-top:10px;color:#B3B4B6;font-size:15px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ a.text }}</div>
+      </a>
+    </sc-for>
+  </div>
+  <sc-if value="{{ blogEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px 0;text-align:center;color:#B3B4B6;font-size:15px">Нічого не знайдено</div></sc-if>
+  <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:56px;display:flex;justify-content:center">
+      <button onClick="{{ showMore }}" style="height:52px;width:{{ m.btnW292 }};padding:0 40px;border:1px solid #052145;border-radius:6px;background:transparent;color:#052145;font-family:inherit;font-weight:600;font-size:15px;cursor:pointer" style-hover="background:#052145;color:#fff">Показати ще</button>
+    </div>
+  </sc-if>
+</section>
+
+</div>
+
+<footer style="background:#052145;color:#fff;margin-top:60px">
+  <div style="max-width:1440px;margin:0 auto;padding:{{ m.footPad }}">
+    <div style="display:flex;justify-content:space-between;gap:48px;flex-wrap:wrap">
+      <a href="#" style="display:flex;align-self:flex-start">
+        <img src="assets/logo-footer.png" alt="Obmin21" style="height:{{ m.footLogo }};width:auto;display:block">
+      </a>
+      <div data-stagger="1" style="display:grid;grid-template-columns:{{ m.footCols }};gap:{{ m.footGap }}">
+        <div>
+          <div style="color:#B3B4B6;font-size:17px;margin-bottom:{{ m.footHMb }}">Послуги</div>
+          <div style="display:flex;flex-direction:column;gap:14px;font-size:13px;font-weight:600">
+            <a href="Services.dc.html#svc-1" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ОБМІН ВАЛЮТ</a><a href="Services.dc.html#svc-2" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ГРОШОВІ ПЕРЕКАЗИ</a><a href="Services.dc.html#svc-3" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">КРИПТОВАЛЮТА</a><a href="Services.dc.html#svc-4" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ІНВЕСТИЦІЙНЕ ЗОЛОТО</a><a href="Services.dc.html#svc-5" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ОПТОВИЙ ОБМІН</a><a href="Services.dc.html#svc-6" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ЗАМІНА ЗНОШЕНИХ КУПЮР</a>
+          </div>
+        </div>
+        <div>
+          <div style="color:#B3B4B6;font-size:17px;margin-bottom:{{ m.footHMb }}">Компанія</div>
+          <div style="display:flex;flex-direction:column;gap:14px;font-size:13px;font-weight:600">
+            <a href="#" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ПОСЛУГИ</a><a href="Advantages.dc.html" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ПЕРЕВАГИ</a><a href="FAQ.dc.html" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">FAQ</a><a href="#" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ВІДГУКИ</a><a href="Blog.dc.html" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">БЛОГ</a><a href="Contacts.dc.html" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">КОНТАКТИ</a>
+          </div>
+        </div>
+        <div>
+          <div style="color:#B3B4B6;font-size:17px;margin-bottom:{{ m.footHMb }}">Документи</div>
+          <div style="display:flex;flex-direction:column;gap:14px;font-size:13px;font-weight:600;max-width:220px">
+            <a href="#" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ПОЛІТИКА КОНФІДЕНЦІЙНОСТІ</a><a href="#" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ПУБЛІЧНА ОФЕРТА</a><a href="#" style="color:#fff;transition:color .2s" style-hover="color:#CA8D42">ПОЛІТИКА ВИКОРИСТАННЯ ФАЙЛІВ COOKIE</a>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px">
+            <svg width="12" height="12" viewBox="0 0 24 24"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
+            +38(044)444 44 44
+          </div>
+          <div style="display:flex;gap:12px;margin-top:20px">
+            <a href="tel:+380444444444" aria-label="Зателефонувати" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(202,141,66,0.6);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s" style-hover="background:rgba(202,141,66,0.14);border-color:#CA8D42"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#CA8D42" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg></a>
+            <a href="#" aria-label="Telegram" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(202,141,66,0.6);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s" style-hover="background:rgba(202,141,66,0.14);border-color:#CA8D42"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#CA8D42" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L2.5 10.2l6.8 2.4M21 3l-3.2 17.5-8.5-7.9M21 3L9.3 12.6v5.9l3.1-3.3"></path></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:60px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.35);font-size:13px;color:#B3B4B6">© 2026.Obmin21. Усі права захищені</div>
+  </div>
+</footer>
+<sc-if value="{{ revOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeReviewBg }}" style="position:fixed;inset:0;z-index:1000;background:rgba(5,33,69,0.55);display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto">
+    <div style="width:100%;max-width:512px;background:#fff;border-radius:12px;padding:{{ m.revModalPad }};box-shadow:0 24px 60px rgba(5,33,69,0.25);position:relative">
+      <button onClick="{{ closeReview }}" aria-label="Закрити" style="position:absolute;top:18px;right:18px;width:36px;height:36px;border:0;border-radius:50%;background:#F4F5F7;color:#052145;font-size:18px;cursor:pointer">×</button>
+      <sc-if value="{{ revForm }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Відгук</div>
+          <h2 style="margin:12px 0 0;font-size:{{ m.revModalH }};font-weight:700;line-height:1.1">Поділіться <span style="color:#CA8D42">враженнями</span></h2>
+          <p style="margin:10px 0 0;color:#B3B4B6;font-size:15px;line-height:1.35">Ваш відгук допомагає нам ставати кращими</p>
+          <div style="margin-top:24px;font-size:14px">Ваша оцінка</div>
+          <div style="margin-top:8px;display:flex;gap:6px">
+            <sc-for list="{{ revStars }}" as="s" hint-placeholder-count="5">
+              <button onClick="{{ s.pick }}" aria-label="Оцінка" style="border:0;background:transparent;padding:0;line-height:0;cursor:pointer"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="{{ s.color }}" stroke="{{ s.color }}" stroke-width="1.6" stroke-linejoin="round"></path></svg></button>
+            </sc-for>
+          </div>
+          <div style="margin-top:20px;display:grid;grid-template-columns:{{ m.revModalCols }};gap:12px">
+            <input placeholder="Ваше ім’я" style="height:50px;border:1px solid #EEF0F3;border-radius:6px;padding:0 16px;font-size:15px;color:#052145;outline:none">
+            <select style="height:50px;border:1px solid #EEF0F3;border-radius:6px;padding:0 12px;font-size:15px;color:#052145;background:#fff;outline:none">
+              <option value="">Місто</option>
+              <sc-for list="{{ cityNames }}" as="c" hint-placeholder-count="11"><option>{{ c }}</option></sc-for>
+            </select>
+          </div>
+          <textarea value="{{ revText }}" onChange="{{ onRevText }}" maxLength="300" placeholder="Розкажіть, як пройшов обмін" style="margin-top:12px;width:100%;height:120px;border:1px solid #EEF0F3;border-radius:6px;padding:14px 16px;font-size:15px;color:#052145;resize:none;outline:none"></textarea>
+          <div style="margin-top:6px;text-align:right;font-size:12px;color:#B3B4B6">{{ revCount }} / 300</div>
+          <button onClick="{{ sendReview }}" style="margin-top:14px;width:100%;height:52px;border:0;border-radius:6px;background:#CA8D42;color:#fff;font-weight:600;font-size:16px;cursor:pointer" style-hover="background:#B87B2C">Надіслати відгук</button>
+          <div style="margin-top:12px;text-align:center;font-size:12px;color:#B3B4B6">Відгук з’явиться на сайті після перевірки модератором</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ revDone }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:24px 0 4px">
+          <div style="width:76px;height:76px;margin:0 auto;border-radius:50%;background:#052145;display:flex;align-items:center;justify-content:center"><svg width="32" height="24" viewBox="0 0 36 28"><path d="M3 14l10 10L33 3" stroke="#fff" fill="none" stroke-width="4"></path></svg></div>
+          <h2 style="margin:22px 0 0;font-size:28px;font-weight:700;color:#052145">Дякуємо!</h2>
+          <p style="margin:10px auto 0;max-width:320px;color:#B3B4B6;font-size:15px;line-height:1.4">Ваш відгук надіслано. Він з’явиться на сайті після перевірки.</p>
+          <button onClick="{{ closeReview }}" style="margin-top:24px;width:100%;height:52px;border:0;border-radius:6px;background:#052145;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Закрити</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{ bk1 }}" hint-placeholder-val="{{ false }}">
+  <div data-bk="1" onClick="{{ bOverlay }}" style="position:fixed;inset:0;z-index:950;background:rgba(5,33,69,0.55);display:flex;padding:16px;overflow-y:auto">
+    <div role="dialog" aria-modal="true" aria-label="Зафіксувати курс" style="margin:auto;width:100%;max-width:440px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(5,33,69,0.3);padding:36px clamp(20px,5vw,32px) 28px;position:relative;color:#052145;animation:obBkIn .45s cubic-bezier(.16,1,.3,1) both">
+      <button onClick="{{ bClose }}" aria-label="Закрити" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border:0;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="#8A909C" stroke-width="1.4"></path></svg></button>
+      <div style="font-size:13px;color:#8A909C">Крок 1 з 2</div>
+      <div style="margin-top:8px;font-size:28px;font-weight:700;line-height:1.15;letter-spacing:-0.3px">Зафіксувати <span style="color:#CA8D42">курс</span></div>
+      <div style="margin-top:12px;font-size:15px;line-height:1.5;color:#8A909C">Оберіть валюти та суму. Після фіксації курс діятиме 30 хвилин.</div>
+      <div style="margin-top:24px;display:flex;flex-direction:column;gap:8px">
+        <div>
+          <div style="font-size:13px;color:#8A909C;margin-bottom:8px">Віддаю</div>
+          <div style="position:relative;display:flex;height:54px;border:1px solid #EEF0F3;border-radius:8px">
+            <input value="{{ bAmt }}" onChange="{{ onBAmt }}" inputmode="decimal" aria-label="Сума" style="flex:1;min-width:0;border:0;outline:none;padding:0 16px;font-size:20px;font-weight:600;color:#052145;background:transparent;font-variant-numeric:tabular-nums">
+            <button onClick="{{ bFromToggle }}" style="display:flex;align-items:center;gap:10px;height:100%;padding:0 16px;border:0;border-left:1px solid #EEF0F3;background:transparent;font-family:inherit;font-size:16px;font-weight:600;color:#052145;cursor:pointer"><span style="width:28px;height:20px;border-radius:3px;background:{{ bFromFlag }};box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06)"></span>{{ bFromCode }}<svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg></button>
+            <sc-if value="{{ bFromOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;top:calc(100% + 6px);right:0;z-index:5;width:220px;max-height:260px;overflow-y:auto;background:#fff;border-radius:8px;box-shadow:0 12px 36px rgba(5,33,69,0.16);padding:6px">
+                    <sc-for list="{{ bFromList }}" as="c" hint-placeholder-count="6">
+                      <button onClick="{{ c.pick }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 12px;border:0;border-radius:6px;background:{{ c.bg }};font-family:inherit;font-size:15px;color:#052145;text-align:left;cursor:pointer" style-hover="background:#F4F5F7"><span style="flex:none;width:28px;height:20px;border-radius:3px;background:{{ c.flag }};box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06)"></span><span style="font-weight:600">{{ c.code }}</span><span style="color:#8A909C;font-size:13px">{{ c.name }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+          </div>
+        </div>
+        <button onClick="{{ bSwap }}" aria-label="Поміняти валюти" style="align-self:center;margin:-4px 0 -18px;position:relative;z-index:1;width:36px;height:36px;border:1px solid #EEF0F3;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .3s" style-hover="transform:rotate(180deg)"><svg width="14" height="14" viewBox="0 0 20 18" style="transform:rotate(90deg)"><path d="M2 6h15l-4-4M18 12H3l4 4" stroke="#CA8D42" fill="none" stroke-width="1.6"></path></svg></button>
+        <div>
+          <div style="font-size:13px;color:#8A909C;margin-bottom:8px">Отримую</div>
+          <div style="position:relative;display:flex;height:54px;border:1px solid #EEF0F3;border-radius:8px;background:#F9FAFB">
+            <div style="flex:1;min-width:0;display:flex;align-items:center;padding:0 16px;font-size:20px;font-weight:700;overflow:hidden;white-space:nowrap;font-variant-numeric:tabular-nums">{{ bResult }}</div>
+            <button onClick="{{ bToToggle }}" style="display:flex;align-items:center;gap:10px;height:100%;padding:0 16px;border:0;border-left:1px solid #EEF0F3;background:transparent;font-family:inherit;font-size:16px;font-weight:600;color:#052145;cursor:pointer"><span style="width:28px;height:20px;border-radius:3px;background:{{ bToFlag }};box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06)"></span>{{ bToCode }}<svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg></button>
+            <sc-if value="{{ bToOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;top:calc(100% + 6px);right:0;z-index:5;width:220px;max-height:260px;overflow-y:auto;background:#fff;border-radius:8px;box-shadow:0 12px 36px rgba(5,33,69,0.16);padding:6px">
+                    <sc-for list="{{ bToList }}" as="c" hint-placeholder-count="6">
+                      <button onClick="{{ c.pick }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 12px;border:0;border-radius:6px;background:{{ c.bg }};font-family:inherit;font-size:15px;color:#052145;text-align:left;cursor:pointer" style-hover="background:#F4F5F7"><span style="flex:none;width:28px;height:20px;border-radius:3px;background:{{ c.flag }};box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06)"></span><span style="font-weight:600">{{ c.code }}</span><span style="color:#8A909C;font-size:13px">{{ c.name }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+          </div>
+        </div>
+        <div style="margin-top:4px;font-size:13px;color:#8A909C;font-variant-numeric:tabular-nums">Курс: 1 {{ bFromCode }} = {{ bRate }} {{ bToCode }} · без комісій</div>
+      </div>
+      <div style="margin-top:16px;display:flex;align-items:center;gap:10px;font-size:14px"><svg width="14" height="16" viewBox="0 0 12 14" style="flex:none"><path d="M6 0a5 5 0 0 0-5 5c0 3.6 5 9 5 9s5-5.4 5-9a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="#CA8D42"></path></svg>{{ bAddr }}</div>
+      <button onClick="{{ bFix }}" style="margin-top:24px;width:100%;height:54px;border:0;border-radius:8px;background:{{ bFixBg }};color:#fff;font-family:inherit;font-weight:600;font-size:17px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:background .2s" style-hover="background:#B87B2C"><svg width="13" height="14" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#fff" fill="none" stroke-width="1.3"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#fff" fill="none" stroke-width="1.3"></path></svg>Зафіксувати на 30 хв</button>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{ bk2 }}" hint-placeholder-val="{{ false }}">
+  <div data-bk="1" onClick="{{ bOverlay }}" style="position:fixed;inset:0;z-index:950;background:rgba(5,33,69,0.55);display:flex;padding:16px;overflow-y:auto">
+    <div role="dialog" aria-modal="true" aria-label="Зв’язатися" style="margin:auto;width:100%;max-width:440px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(5,33,69,0.3);padding:36px clamp(20px,5vw,32px) 28px;position:relative;color:#052145;animation:obBkIn .45s cubic-bezier(.16,1,.3,1) both">
+      <button onClick="{{ bClose }}" aria-label="Закрити" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border:0;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="#8A909C" stroke-width="1.4"></path></svg></button>
+      <div style="font-size:13px;color:#8A909C">Крок 2 з 2</div>
+      <div style="margin-top:8px;font-size:28px;font-weight:700;line-height:1.15;letter-spacing:-0.3px">Забронювати <span style="color:#CA8D42">заявку</span></div>
+      <div style="margin-top:12px;font-size:15px;line-height:1.5;color:#8A909C">Оберіть зручний спосіб зв’язку. Консультант підтвердить заявку і підготує суму.</div>
+      <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-radius:8px;background:#F4F5F7">
+        <span style="min-width:0"><span style="display:flex;align-items:center;gap:8px;font-size:13px;color:#8A909C"><svg width="12" height="13" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#CA8D42" fill="none" stroke-width="1.2"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#CA8D42" fill="none" stroke-width="1.2"></path></svg>Курс зафіксовано</span><span style="display:block;margin-top:4px;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums">{{ bFixText }}</span></span>
+        <span style="flex:none;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">{{ fwLeft }}</span>
+      </div>
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px">
+        <a href="tel:+380444444444" style="display:flex;align-items:center;gap:16px;padding:16px 18px;border:1px solid #EEF0F3;border-radius:8px;color:#052145;transition:border-color .2s" style-hover="border-color:#CA8D42;color:#052145">
+          <span style="flex:none;width:44px;height:44px;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg></span>
+          <span style="flex:1;min-width:0"><span style="display:block;font-size:17px;font-weight:600">Зателефонувати</span><span style="display:block;margin-top:2px;font-size:14px;color:#8A909C">+38 (044) 444 44 44</span></span>
+          <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+        </a>
+        <a href="https://t.me/obmin21" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;padding:16px 18px;border:1px solid #EEF0F3;border-radius:8px;color:#052145;transition:border-color .2s" style-hover="border-color:#CA8D42;color:#052145">
+          <span style="flex:none;width:44px;height:44px;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M21.5 4.3L2.9 11.5c-1.1.4-1.1 1.1-.2 1.4l4.7 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.8-.4l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.700-.8l3.1-14.8c.3-1.3-.5-1.9-1.3-1.5zM8.7 14l9.7-6.1c.5-.3.9-.1.5.2l-8 7.3-.3 3.4z" fill="#CA8D42"></path></svg></span>
+          <span style="flex:1;min-width:0"><span style="display:block;font-size:17px;font-weight:600">Написати в Telegram</span><span style="display:block;margin-top:2px;font-size:14px;color:#8A909C">@obmin21</span></span>
+          <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+        </a>
+      </div>
+      <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:#8A909C"><button onClick="{{ bBack }}" style="border:0;background:transparent;padding:0;font-family:inherit;font-size:13px;color:#CA8D42;cursor:pointer">← Змінити суму</button><span>Щодня з 8:00 до 21:00</span></div>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{ fw }}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position:fixed;right:16px;bottom:16px;z-index:800;width:min(340px, calc(100vw - 32px));background:#fff;border-radius:12px;box-shadow:0 18px 50px rgba(5,33,69,0.22);padding:18px 20px 16px;color:#052145;animation:obFwIn .6s cubic-bezier(.16,1,.3,1) both">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <span style="display:flex;align-items:center;gap:8px;font-size:14px;color:#8A909C"><svg width="13" height="14" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#CA8D42" fill="none" stroke-width="1.2"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#CA8D42" fill="none" stroke-width="1.2"></path></svg>Курс зафіксовано</span>
+      <span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{ fwLeft }}</span><button onClick="{{ closeFix }}" aria-label="Скасувати фіксацію" style="width:28px;height:28px;border:0;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="#8A909C" stroke-width="1.4"></path></svg></button></span>
+    </div>
+    <div style="margin-top:12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:32px;font-weight:700;letter-spacing:-0.5px;font-variant-numeric:tabular-nums">{{ fwResult }}</span><span style="font-size:14px;color:#8A909C">{{ fwFor }}</span></div>
+    <div style="margin-top:12px;height:4px;border-radius:2px;background:#F2F3F5;overflow:hidden"><div data-anim="1" style="position:relative;height:100%;border-radius:2px;width:{{ fwPct }};transition:width 1s linear;background:linear-gradient(90deg,#CA8D42 0%,#CA8D42 35%,#F0C58A 50%,#CA8D42 65%,#CA8D42 100%);background-size:200% 100%;animation:obFwSweep 1.8s linear infinite"></div></div>
+    <div style="margin-top:12px;font-size:13px;line-height:1.4;color:#8A909C">Очікуємо на вас за адресою: {{ fwAddr }}</div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tab: 'cash', amount: '1000', atStart: true, atEnd: false, rStart: true, rEnd: false, isM: typeof window !== 'undefined' && window.innerWidth < 768, menuOpen: false, cityOpen: false, fading: false, city: (() => { try { return localStorage.getItem('obmin21-city') || 'Київ'; } catch (e) { return 'Київ'; } })() };
+  cities = [
+    ['Київ', 'у Київі', 'вул. Хрещатик, 1, Київ', 'Kyiv', null],
+    ['Харків', 'у Харкові', 'вул. Сумська, 10, Харків', 'Kharkiv', 'photo-1553768869-9d6d200a0797'],
+    ['Дніпро', 'у Дніпрі', 'пр. Яворницького, 50, Дніпро', 'Dnipro', 'photo-1731596089181-469300182915'],
+    ['Одеса', 'в Одесі', 'вул. Дерибасівська, 5, Одеса', 'Odesa', 'https://unsplash.com/photos/u4tq81zACvE/download?w=2400'],
+    ['Львів', 'у Львові', 'пл. Ринок, 12, Львів', 'Lviv', 'photo-1533485496759-b919144fb6d6'],
+    ['Запоріжжя', 'у Запоріжжі', 'пр. Соборний, 100, Запоріжжя', 'Zaporizhzhia', null],
+    ['Вінниця', 'у Вінниці', 'вул. Соборна, 30, Вінниця', 'Vinnytsia', 'photo-1655105089392-5ec3ea3c96b2'],
+    ['Миколаїв', 'у Миколаєві', 'вул. Соборна, 8, Миколаїв', 'Mykolaiv', null],
+    ['Хмельницький', 'у Хмельницькому', 'вул. Проскурівська, 20, Хмельницький', 'Khmelnytskyi', null],
+    ['Рівне', 'у Рівному', 'вул. Соборна, 15, Рівне', 'Rivne', null],
+    ['Черкаси', 'у Черкасах', 'бул. Шевченка, 200, Черкаси', 'Cherkasy', null]
+  ];
+  pickCity(name) {
+    this.setState({ cityOpen: false, fading: true });
+    setTimeout(() => {
+      try { localStorage.setItem('obmin21-city', name); } catch (e) {}
+      this.setState({ city: name, menuOpen: false });
+      window.scrollTo({ top: 0 });
+      setTimeout(() => this.setState({ fading: false }), 60);
+    }, 380);
+  }
+  onDocClick = e => { if (this.state.cityOpen && !e.target.closest('button')) this.setState({ cityOpen: false }); };
+  onResize = () => { const isM = window.innerWidth < 768; if (isM !== this.state.isM) this.setState({ isM, menuOpen: false }); };
+  mStyles(M) {
+    const v = (mob, desk) => M ? mob : desk;
+    return {
+      wrap: v('0 16px 60px', '0 30px 80px'), logoH: v('40px', '52px'),
+      dFlex: v('none', 'flex'), dBlock: v('none', 'block'), dInline: v('none', 'inline-block'),
+      heroH: v('680px', '736px'), heroPad: v('24px 16px 16px', '32px 30px 30px'),
+      heroGrad: v('linear-gradient(180deg,rgba(8,20,45,0.55),rgba(8,20,45,0) 45%)', 'linear-gradient(90deg,rgba(8,20,45,0.45),rgba(8,20,45,0) 55%)'),
+      heroBtnAlign: v('stretch', 'flex-start'), heroBtnMt: v('auto', '40px'),
+      cardPos: v('relative', 'absolute'), curTopPad: v('8px 0 0', '24px 0 0'), svcHeroPad: v('20px 16px', '32px'), svcHeroGap: v('16px', '20px'), svcHeroOv: v('hidden', 'visible'), svcTextMax: v('none', '500px'), svcCoinPos: v('relative', 'absolute'), svcCoinOrder: v('2', '0'), svcChipOrder: v('3', '0'), svcCoinM: v('-20px 0 -20px -30%', '0'), svcHeroH: v('auto', '400px'), svcCoinR: v('auto', '-4%'), svcCoinT: v('auto', '-24px'), svcCoinW: v('160%', 'min(58%, max(280px, calc(100% - 520px)))'), svcListMt: v('72px', '120px'), blogSearchW: v('100%', '300px'), blogMt: v('40px', '64px'), featCols: v('1fr', 'minmax(0,1.25fr) minmax(0,1fr)'), featGap: v('20px', '56px'), featImgH: v('220px', '440px'), featT: v('26px', '40px'), blogCols: v('1fr', 'repeat(auto-fill, minmax(min(320px,100%), 1fr))'), blogGap: v('36px', '56px 24px'), blogImgH: v('200px', '240px'), artHeroH: v('440px', '560px'), artHeroPad: v('24px 16px', '48px'), artBodyMt: v('48px', '88px'), artH2: v('24px', '32px'), artH2Mt: v('40px', '56px'), artLead: v('17px', '20px'), artP: v('16px', '17px'), figMt: v('32px', '48px'), figH: v('220px', '440px'), svcRowGap: v('64px', '110px'), svcInnerGap: v('24px', '70px'), svcBigImgH: v('240px', '420px'), svcBigT: v('28px', '44px'), svcBtnFlex: v('1 1 100%', '0 0 auto'), stepCols: v('1fr', 'repeat(3, minmax(0,1fr))'), revModalPad: v('28px 20px 22px', '32px 32px 28px'), revModalH: v('26px', '30px'), revModalCols: v('1fr', '1fr 1fr'), cityDdRight: v('-60px', '-20px'), cardOff: v('auto', '25px'), cardMt: v('16px', '0'), cardW: v('100%', 'min(652px, calc(100% - 50px))'),
+      cardPad: v('16px 16px 14px', '20px 20px 18px'), cardShadow: v('0 4px 24px rgba(11,27,63,0.08)', '0 12px 40px rgba(8,20,45,0.18)'),
+      tabW: v('calc(50% - 10px)', '190px'), rateCols: v('1.7fr 1fr 1fr 44px', '1.6fr 1fr 1fr 1.2fr'),
+      flagW: v('36px', '52px'), flagH: v('26px', '36px'), pairFs: v('13px', '17px'), pairFw: v('600', '500'),
+      rowH: v('56px', '56px'), rowFs: v('15px', '17px'), updFs: v('11px', '13px'),
+      calcHeadPad: v('80px 0 32px', '120px 0 56px'), coinS: v('40px', '58px'), coinMr: v('10px', '18px'),
+      calcPad: v('20px 16px', '30px 30px 26px'), calcBtnPt: v('8px', '34px'), curPad: v('0 14px 0 12px', '0 24px 0 18px'),
+      cFlagW: v('34px', '46px'), cFlagH: v('24px', '32px'), inPad: v('0 16px', '0 20px'),
+      banH: v('600px', '390px'), banPad: v('20px 16px', '30px'),
+      coinTop: v('95px', '-110px'), coinLeft: v('-62%', 'auto'), coinRight: v('auto', '-40px'), coinBottom: v('auto', '-80px'), coinW: v('205%', '72%'), banOverflow: v('hidden', 'visible'),
+      banTextMax: v('none', '520px'), banBtnMt: v('auto', '40px'), btnW: v('100%', '292px'),
+      mapBtnMt: v('32px', '52px'), btnW302: v('100%', '302px'), mapH: v('320px', '490px'),
+      svcCols: v('repeat(2, minmax(0,1fr))', 'repeat(auto-fill,minmax(min(300px,100%),1fr))'), svcGap: v('20px 10px', '32px 20px'),
+      svcImgH: v('110px', '214px'), svcTMt: v('10px', '20px'), svcT: v('14px', '20px'), svcTxMt: v('6px', '12px'), svcTx: v('12px', '16px'), linkFs: v('12px', '15px'),
+      faqPad: v('16px', '20px'), faqFs: v('15px', '18px'), faqAPad: v('0 16px 16px', '0 20px 20px'), faqAFs: v('13px', '15px'),
+      revAlign: v('center', 'left'), revHeadFlex: v('1 1 100%', '0 1 auto'), revCard: v('0 0 72%', '0 0 calc((100% - 60px) / 4)'), cardMin: v('0', '260px'),
+      revBtnMt: v('4px', '22px'), revBtnFlex: v('1 1 auto', '0 0 auto'), btnW292: v('auto', '292px'),
+      artMt: v('32px', '50px'), artGap: v('12px', '20px'), artCard: v('0 0 calc(50% - 6px)', '0 0 calc((100% - 60px) / 4)'),
+      artImgH: v('110px', '194px'), artTMt: v('12px', '22px'), artT: v('14px', '20px'), artTxMt: v('8px', '14px'), artTx: v('12px', '16px'),
+      statsPad: v('0', '0 10px'), statsMt: v('28px', '48px'),
+      statsCols: v('1fr', 'repeat(2, minmax(0,1fr))'), statsGap: v('20px', '64px 80px'), statsFs: v('14px', '17px'),
+      statNum: v('56px', 'clamp(72px,7.5vw,108px)'), statNumMb: v('12px', '22px'),
+      statBorder: v('1px solid #EEF0F3', '0'), statPt: v('20px', '0'),
+      footPad: v('40px 16px 30px', '60px 30px 40px'), footLogo: v('56px', '72px'),
+      footCols: v('1fr 1fr', 'repeat(4, auto)'), footGap: v('32px 20px', '0 70px'), footHMb: v('16px', '32px')
+    };
+  }
+  fixKey = 'obmin21-fix';
+  loadFix() { try { const f = JSON.parse(localStorage.getItem(this.fixKey) || 'null'); return f && f.expiresAt > Date.now() ? f : null; } catch (e) { return null; } }
+  // Single entry point for a rate fixation. Later: POST `fix` to the booking endpoint (e.g. hx-post /api/booking) and store the returned id/status.
+  saveFix(fix) { try { localStorage.setItem(this.fixKey, JSON.stringify(fix)); } catch (e) {} this.setState({ fix }); }
+  clearFix() { try { localStorage.removeItem(this.fixKey); } catch (e) {} this.setState({ fix: null }); }
+  fwVals() {
+    const f = this.state.fix; if (!f) return { fw: false, closeFix: () => this.clearFix() };
+    const left = Math.max(0, Math.round((f.expiresAt - Date.now()) / 1000));
+    return { fw: true, fwLeft: String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0'), fwPct: (left / 1800 * 100).toFixed(2) + '%', fwResult: f.resultText, fwFor: f.forText, fwAddr: f.addr, closeFix: () => this.clearFix() };
+  }
+  bkCur = {
+    UAH: ['Гривня', 1, 1, 'linear-gradient(#0057B7 50%,#FFD700 50%)'],
+    USD: ['Долар США', 41.20, 41.65, 'linear-gradient(#3C3B6E,#3C3B6E) 0 0/45% 54% no-repeat,repeating-linear-gradient(#B22234 0 7.69%,#fff 7.69% 15.38%)'],
+    EUR: ['Євро', 44.93, 45.30, 'radial-gradient(circle,#003399 38%,#FFCC00 40% 46%,#003399 48%)'],
+    PLN: ['Злотий', 10.25, 10.62, 'linear-gradient(#fff 50%,#DC143C 50%)'],
+    GBP: ['Фунт', 52.10, 52.90, 'linear-gradient(90deg,transparent 42%,#C8102E 42% 58%,transparent 58%),linear-gradient(transparent 38%,#C8102E 38% 62%,transparent 62%),#012169'],
+    CHF: ['Франк', 46.80, 47.60, 'linear-gradient(90deg,transparent 43%,#fff 43% 57%,transparent 57%) center/56% 56% no-repeat,linear-gradient(transparent 43%,#fff 43% 57%,transparent 57%) center/56% 56% no-repeat,#DA291C'],
+    USDT: ['Tether', 41.10, 41.55, '#26A17B'],
+    BTC: ['Bitcoin', 2606151, 2658369, '#F7931A'],
+    ETH: ['Ethereum', 107477, 110024, '#627EEA']
+  };
+  openBk(p) { const s = this.state; this.setState({ bk: 1, bkOpen: null, menuOpen: false, bFrom: (p && p.from) || s.bFrom || 'USD', bTo: (p && p.to) || s.bTo || 'UAH', bAmt: p && p.amount != null ? String(p.amount) : (s.bAmt ?? '1000') }); }
+  bkVals() {
+    const C = this.bkCur, st = this.state, close = () => this.setState({ bk: 0, bkOpen: null });
+    if (!st.bk) return { bk1: false, bk2: false, bClose: close };
+    const from = C[st.bFrom] ? st.bFrom : 'USD', to = C[st.bTo] ? st.bTo : 'UAH', rate = C[from][1] / C[to][2];
+    const n = parseFloat(String(st.bAmt ?? '1000').replace(/\s/g, '').replace(',', '.')) || 0;
+    const fmt = (x, d) => x.toLocaleString('uk-UA', { maximumFractionDigits: d });
+    const dTo = C[to][2] > 1000 ? 6 : 2;
+    const sym = { UAH: '₴', USD: '$', EUR: '€', PLN: 'zł', GBP: '£', CHF: 'CHF', USDT: 'USDT', BTC: 'BTC', ETH: 'ETH' };
+    const cs = this.cities || [], ci = cs.find(c => c[0] === st.city) || cs[0] || ['Київ', '', ''];
+    const addr = ci[2] || ci[0];
+    const pick = (side, code) => { const upd = side === 'from' ? { bFrom: code } : { bTo: code }; if (code === (side === 'from' ? to : from)) Object.assign(upd, side === 'from' ? { bTo: from } : { bFrom: to }); this.setState({ ...upd, bkOpen: null }); };
+    const list = side => Object.keys(C).map(code => ({ code, name: C[code][0], flag: C[code][3], bg: code === (side === 'from' ? from : to) ? '#F4F5F7' : 'transparent', pick: () => pick(side, code) }));
+    const f = st.fix;
+    return {
+      bk1: st.bk === 1, bk2: st.bk === 2, bClose: close,
+      bOverlay: e => { if (e.target === e.currentTarget) close(); },
+      bAmt: st.bAmt ?? '1000', onBAmt: e => this.setState({ bAmt: e.target.value.replace(/[^\d.,\s]/g, '') }),
+      bFromCode: from, bToCode: to, bFromFlag: C[from][3], bToFlag: C[to][3],
+      bFromOpen: st.bkOpen === 'from', bToOpen: st.bkOpen === 'to',
+      bFromToggle: () => this.setState(s => ({ bkOpen: s.bkOpen === 'from' ? null : 'from' })),
+      bToToggle: () => this.setState(s => ({ bkOpen: s.bkOpen === 'to' ? null : 'to' })),
+      bFromList: list('from'), bToList: list('to'),
+      bSwap: () => this.setState({ bFrom: to, bTo: from, bkOpen: null }),
+      bResult: fmt(n * rate, dTo), bRate: fmt(rate, rate < 1 ? 6 : 2), bAddr: addr, bFixBg: n ? '#CA8D42' : '#D5D9DF',
+      bFix: () => { if (!n) return;
+        this.saveFix({ id: 'local-' + Date.now(), status: 'local', from, to, amount: n, rate, result: n * rate, resultText: fmt(n * rate, dTo) + ' ' + sym[to], forText: 'за ' + fmt(n, 6) + ' ' + sym[from], city: ci[0], addr, createdAt: Date.now(), expiresAt: Date.now() + 30 * 60 * 1000 });
+        this.setState({ bk: 2, bkOpen: null }); },
+      bFixText: f ? f.resultText + ' ' + f.forText : '',
+      bBack: () => this.setState({ bk: 1 })
+    };
+  }
+  bannerRef = React.createRef();
+  coinsRef = React.createRef();
+  trackRef = React.createRef();
+  revRef = React.createRef();
+  statsRef = React.createRef();
+  setupReveal() {
+    const b = this.bannerRef.current; if (!b || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let wrap = b; while (wrap.parentElement && !wrap.parentElement.querySelector(':scope > header')) wrap = wrap.parentElement;
+    wrap = wrap.parentElement || b.parentElement;
+    const header = wrap.querySelector(':scope > header'), footer = wrap.nextElementSibling;
+    const blocks = [...wrap.querySelectorAll(':scope > section')]; if (footer && footer.tagName === 'FOOTER') blocks.push(footer);
+    const ease = 'cubic-bezier(.16,1,.3,1)';
+    const collect = (el, out) => { [...el.children].forEach(c => { if (c.nodeType !== 1 || c.tagName === 'SC-IF') return; if (c.matches('[data-stagger]') || c.querySelector('[data-stagger]')) { if (c.matches('[data-stagger]')) [...c.children].forEach(k => k.nodeType === 1 && out.push(k)); else collect(c, out); } else out.push(c); }); return out; };
+    const saved = new WeakMap();
+    const hide = (el, y) => { saved.set(el, [el.style.opacity, el.style.transform, el.style.filter, el.style.transition]); el.style.transition = 'none'; el.style.opacity = '0'; el.style.transform = `translate3d(0,${y}px,0) scale(.985)`; el.style.filter = 'blur(8px)'; };
+    const show = (el, delay, dur) => {
+      el.style.transition = `opacity ${dur}ms ${ease} ${delay}ms, transform ${dur}ms ${ease} ${delay}ms, filter ${dur}ms ${ease} ${delay}ms`;
+      requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translate3d(0,0,0)'; el.style.filter = 'blur(0)'; });
+      setTimeout(() => { const s = saved.get(el) || ['', '', '', '']; el.style.opacity = s[0]; el.style.transform = s[1]; el.style.filter = s[2]; el.style.transition = s[3]; }, delay + dur + 80);
+    };
+    if (header) { hide(header, -18); setTimeout(() => show(header, 0, 900), 30); }
+    const items = []; blocks.forEach(sec => collect(sec, items));
+    items.forEach(el => hide(el, 44));
+    let batchT = 0;
+    this.revealIO = new IntersectionObserver(entries => {
+      const now = performance.now(); if (now - batchT > 400) this.revealIdx = 0; batchT = now;
+      entries.filter(en => en.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left).forEach(en => {
+        this.revealIO.unobserve(en.target);
+        show(en.target, Math.min(this.revealIdx++, 7) * 90, 1000);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+    this.revealIdx = 0;
+    items.forEach(el => this.revealIO.observe(el));
+  }
+  slide(dir, ref = this.trackRef) {
+    const t = ref.current; if (!t) return;
+    const card = t.firstElementChild, gap = parseFloat(getComputedStyle(t).columnGap) || 20, step = card ? card.getBoundingClientRect().width + gap : t.clientWidth;
+    t.scrollBy({ left: dir * step, behavior: 'smooth' });
+  }
+  syncTrack(ref = this.trackRef, s = 'atStart', e = 'atEnd') {
+    const t = ref.current; if (!t) return;
+    const a = t.scrollLeft < 4, b = t.scrollLeft + t.clientWidth >= t.scrollWidth - 4;
+    if (a !== !!this.state[s] || b !== !!this.state[e]) this.setState({ [s]: a, [e]: b });
+  }
+  componentDidMount() {
+    this.onBkClick = e => { const b = e.target.closest && e.target.closest('a,button'); if (!b || b.closest('[data-bk]')) return; const tx = b.textContent.replace(/\s+/g, ' ').trim(); if (tx === 'Забронювати заявку' || tx === 'Зафіксувати курс') { e.preventDefault(); this.openBk(); } };
+    this.onBkKey = e => { if (e.key === 'Escape' && this.state.bk) this.setState({ bk: 0, bkOpen: null }); };
+    document.addEventListener('click', this.onBkClick); document.addEventListener('keydown', this.onBkKey);
+    this.setState({ fix: this.loadFix() });
+    this.fwTimer = setInterval(() => { const f = this.state.fix; if (!f) return; if (f.expiresAt <= Date.now()) this.clearFix(); else this.forceUpdate(); }, 1000);
+    this.onFixStorage = e => { if (e.key === this.fixKey) this.setState({ fix: this.loadFix() }); };
+    window.addEventListener('storage', this.onFixStorage);
+    this.onHeroMove = e => {
+      const b = this.bannerRef.current; if (!b || this.state.isM) return;
+      const r = b.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width - 0.5, ny = (e.clientY - r.top) / r.height - 0.5;
+      b.querySelectorAll('[data-depth]').forEach(el => { const d = +el.dataset.depth; el.style.transform = `translate3d(${nx * d}px, ${ny * d}px, 0)`; });
+    };
+    this.onHeroLeave = () => { const b = this.bannerRef.current; if (b) b.querySelectorAll('[data-depth]').forEach(el => { el.style.transform = ''; }); };
+    if (this.bannerRef.current && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { this.bannerRef.current.addEventListener('mousemove', this.onHeroMove); this.bannerRef.current.addEventListener('mouseleave', this.onHeroLeave); }
+    this.onScroll = () => {
+      const b = this.bannerRef.current, c = this.coinsRef.current;
+      if (!b || !c) return;
+      const r = b.getBoundingClientRect(), vh = window.innerHeight;
+      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+      const k = p - 0.5;
+      c.style.transform = `translate3d(${k * -40}px, ${k * -120}px, 0) rotate(${k * 10}deg) scale(${0.92 + Math.sin(p * Math.PI) * 0.1})`;
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true, capture: true });
+    window.addEventListener('resize', this.onScroll);
+    window.addEventListener('resize', this.onResize);
+    document.addEventListener('click', this.onDocClick);
+    this.onResize();
+    setTimeout(() => this.setupReveal(), 0);
+    const el = this.statsRef.current;
+    if (el && 'IntersectionObserver' in window) {
+      this.statsIO = new IntersectionObserver(([en]) => {
+        if (!en.isIntersecting || this.statsRun) return;
+        this.statsRun = true; this.statsIO.disconnect();
+        const t0 = performance.now(), D = 1800;
+        const tick = now => { const p = Math.min(1, (now - t0) / D); this.setState({ statP: p }); if (p < 1) this.statsRaf = requestAnimationFrame(tick); };
+        this.statsRaf = requestAnimationFrame(tick);
+      }, { threshold: 0, rootMargin: '0px 0px -15% 0px' });
+      this.statsIO.observe(el);
+    } else this.setState({ statP: 1 });
+    this.onScroll();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.onScroll, { capture: true });
+    window.removeEventListener('resize', this.onScroll);
+  }
+  renderVals() {
+    const cash = this.state.tab === 'cash';
+    const on = ['1px solid #CA8D42', '#fff', '#CA8D42'], off = ['1px solid #F2F3F5', '#F2F3F5', '#052145'];
+    const [cb, cbg, cc] = cash ? on : off, [kb, kbg, kc] = cash ? off : on;
+    const us = 'linear-gradient(#3C3B6E,#3C3B6E) 0 0/45% 54% no-repeat,repeating-linear-gradient(#B22234 0 7.69%,#fff 7.69% 15.38%)';
+    const CITIES = this.cities, ci = Math.max(0, CITIES.findIndex(c => c[0] === this.state.city)), cur = CITIES[ci];
+    const d = [0, 0.06, -0.04, 0.09, -0.07, 0.03, -0.02, 0.05, -0.05, 0.08, -0.03][ci] || 0;
+    const f = x => x.toFixed(2).replace('.', ',');
+    const rates = cash ? [
+      { pair: 'USD/UAH', buy: f(41.20 + d), sell: f(41.65 + d), flag: us, mark: '' },
+      { pair: 'EUR/UAH', buy: f(44.93 + d * 1.1), sell: f(45.30 + d * 1.1), flag: 'radial-gradient(circle,#003399 38%,#FFCC00 40% 46%,#003399 48%)', mark: '' },
+      { pair: 'USD/EUR', buy: f(10.25 + d / 4), sell: f(10.62 + d / 4), flag: 'linear-gradient(#fff 50%,#DC143C 50%)', mark: '' }
+    ] : [
+      { pair: 'BTC/USDT', buy: '63 410', sell: '63 980', flag: '#F7931A', mark: '₿' },
+      { pair: 'ETH/USDT', buy: '2 615', sell: '2 648', flag: '#627EEA', mark: 'Ξ' },
+      { pair: 'USDT/UAH', buy: '41,10', sell: '41,55', flag: '#26A17B', mark: '₮' }
+    ];
+    const n = parseFloat(String(this.state.amount).replace(/\s/g, '').replace(',', '.')) || 0;
+    const open = this.state.faqOpen ?? 0;
+    const faqs = [
+      ['Які документи потрібні?', 'Для обміну в межах лімітів достатньо паспорта або ID-картки. Для великих сум можуть знадобитися додаткові підтвердження згідно з вимогами фінмоніторингу'],
+      ['Чи приймаєте ви зношені або пошкоджені купюри?', 'Так. Надірвані, потерті чи купюри старого зразка перевіряємо на місці. Вартість обміну залежить від стану банкноти, консультант назве її до операції.'],
+      ['Як обміняти криптовалюту на готівку?', 'Оберіть монету у вкладці «Крипто», зафіксуйте курс і приходьте у відділення. Переказ USDT, BTC чи ETH підтверджується за кілька хвилин, після чого ви отримуєте готівку.'],
+      ['Як зафіксувати курс онлайн?', 'Вкажіть суму в калькуляторі та натисніть «Забронювати заявку». Залиште ім’я і телефон — менеджер підтвердить заявку, а курс закріпиться за вами.'],
+      ['Чи є комісія за обмін?', 'Ні, додаткових комісій немає. Ви отримуєте рівно ту суму, яку бачите в калькуляторі за вказаним курсом.'],
+      ['Скільки діє заброньований курс?', 'Заброньований курс діє 30 хвилин з моменту підтвердження. Якщо не встигаєте, зателефонуйте — ми продовжимо бронь або оновимо курс.']
+    ].map(([q, a], i) => ({ q, a, open: open === i && !!a, rot: open === i && a ? 'rotate(180deg)' : 'none',
+      toggle: () => this.setState({ faqOpen: open === i ? -1 : i }) }));
+    const review = { name: 'Дарія, Київ', text: 'Швидко обміняли велику суму, усе прозоро й без зайвих питань' };
+    const art = [
+      ['Що буде з курсом долара у 2027 році?', 'Курс долара залишається одним із головних питань для тих, хто планує заощадження, великі покупки або подорожі. Розбираємо, від чого він залежить.', 'BRl69uNXr7g', 'Giorgio Trovato', 'giorgiotrovato'],
+      ['Долар чи євро: у чому зберігати заощадження', 'Порівнюємо стабільність, ліквідність і зручність обміну двох найпопулярніших валют, щоб ви обрали оптимальний варіант.', 'bnW9O5ZOys4', 'Ibrahim Boran', 'ibrahimboran'],
+      ['Як відрізнити справжню купюру від підробки', 'Водяні знаки, захисна стрічка, мікродрук і фарба, що змінює колір: прості перевірки, які займають менше хвилини.', 'wTO6MWpMrJk', 'Adam Nir', 'adamnir'],
+      ['Інвестиційне золото: з чого почати', 'Які злитки обрати, як їх зберігати та коли продавати. Пояснюємо, чим золото відрізняється від валютних заощаджень.', 'EKPiXskP1yg', 'rc.xyz NFT gallery', 'moneyphotos'],
+      ['Криптовалюта для початківців: BTC і USDT', 'Що таке стейблкоїн, чим він відрізняється від біткоїна і як безпечно обміняти криптовалюту на готівку.', 'aChQ2cYg1ys', 'Arturo Añez', 'americanaez225'],
+      ['Як безпечно обміняти велику суму', 'Бронювання курсу, документи та перевірка банкнот на місці: що варто підготувати перед візитом до відділення.', '-8a5eJ1-mmQ', 'Alexander Grey', 'sharonmccutcheon'],
+      ['Міжнародні перекази: як обрати спосіб', 'Порівнюємо швидкість, комісії та ліміти різних сервісів, щоб гроші дійшли вчасно і без зайвих витрат.', '6lvK6gHkhAA', 'SumUp', 'sumup'],
+      ['Які зношені купюри можна обміняти', 'Надірвані, потерті чи старого зразка банкноти: розповідаємо, які з них приймають і як проходить діагностика.', 'NM4HbWgZ0DU', 'Dan Dennis', 'cameramandan83'],
+      ['Курс купівлі та продажу: у чому різниця', 'Чому в обмінниках два курси, звідки береться спред і як розрахувати реальну вигоду від операції.', 'ms6N-gBtbCQ', 'Markus Spiske', 'markusspiske'],
+      ['Як фіксація курсу онлайн захищає від коливань', 'Бронюйте вигідний курс на 30 хвилин і приходьте у відділення без ризику, що він зміниться дорогою.', '9rz5x8LGBb8', 'Arturo Añez', 'americanaez225']
+    ];
+    const cats = ['Курс валют', 'Заощадження', 'Поради', 'Золото', 'Криптовалюта', 'Поради', 'Перекази', 'Поради', 'Курс валют', 'Курс валют'];
+    const dates = ['30 вересня 2026', '26 вересня 2026', '22 вересня 2026', '18 вересня 2026', '12 вересня 2026', '8 вересня 2026', '2 вересня 2026', '28 серпня 2026', '21 серпня 2026', '14 серпня 2026'];
+    const blogAll = art.map(([title, text, pid], i) => ({ title, text, href: 'Article.dc.html?a=' + ['kurs-dolara-2027','dolar-chy-yevro','spravzhnya-kupyura','investytsiyne-zoloto','kryptovalyuta-btc-usdt','bezpechno-velyka-suma','mizhnarodni-perekazy','znosheni-kupyury','kurs-kupivli-prodazhu','fiksatsiya-kursu-onlain'][i], cat: cats[i], date: dates[i], read: (4 + (i % 4)) + ' хв читання', img: `https://unsplash.com/photos/${pid}/download?w=1200` }));
+    const bc = this.state.blogCat || 'Усі', bq = (this.state.blogQ || '').trim().toLowerCase();
+    const blogF = blogAll.filter(a => (bc === 'Усі' || a.cat === bc) && (!bq || (a.title + ' ' + a.text).toLowerCase().includes(bq)));
+    const blogLim = this.state.blogLimit || 6, blogRest = blogF.slice(1);
+    const order = [0, 3, 2, 6, 1, 4, 5, 8, 7, 9];
+    const artSorted = order.map(i => art[i]);
+    const { atStart = true, atEnd = false } = this.state;
+    return {
+      ...this.fwVals(),
+      ...this.bkVals(),
+      city: cur[0], cityIn: cur[1], cityAddr: cur[2], citySlug: cur[3].toLowerCase(),
+      isKyiv: ci === 0, hasCityImg: !!cur[4], needCitySlot: ci !== 0 && !cur[4],
+      cityImg: !cur[4] ? '' : /^(https?:|assets\/)/.test(cur[4]) ? cur[4] : `https://images.unsplash.com/${cur[4]}?fm=jpg&q=80&w=2400&auto=format&fit=crop`,
+      mapEmbed: `https://maps.google.com/maps?q=${encodeURIComponent(cur[3] + ', Ukraine')}&z=11&output=embed`,
+      mapLink: `https://maps.google.com/?q=${encodeURIComponent(cur[2])}`,
+      cityOpen: this.state.cityOpen, cityChevron: this.state.cityOpen ? 'rotate(180deg)' : 'none',
+      toggleCity: () => this.setState(s => ({ cityOpen: !s.cityOpen })),
+      cityList: CITIES.filter((c, i) => i !== ci).map(c => ({ name: c[0], pick: () => this.pickCity(c[0]) })),
+      pageOpacity: this.state.fading ? 0 : 1,
+      revOpen: !!this.state.revOpen, revForm: !this.state.revDone, revDone: !!this.state.revDone,
+      openReview: e => { e.preventDefault(); this.setState({ revOpen: true, revDone: false, revRate: 5, revText: '' }); },
+      closeReview: () => this.setState({ revOpen: false }),
+      closeReviewBg: e => { if (e.target === e.currentTarget) this.setState({ revOpen: false }); },
+      revStars: [1, 2, 3, 4, 5].map(i => ({ pick: () => this.setState({ revRate: i }), color: i <= (this.state.revRate ?? 5) ? '#052145' : '#C3CAD2' })),
+      cityNames: CITIES.map(c => c[0]),
+      revText: this.state.revText || '', revCount: (this.state.revText || '').length,
+      onRevText: e => this.setState({ revText: e.target.value.slice(0, 300) }),
+      sendReview: () => this.setState({ revDone: true }),
+      svcFull: [
+        ['Обмін валют', 'Купуйте та продавайте понад 15 валют за актуальним курсом. Перевіряємо банкноти на місці та видаємо лише справні купюри.', ['USD, EUR, PLN, GBP та інші валюти', 'Фіксація курсу онлайн на 30 хвилин', 'Без прихованих комісій'], 'Зафіксувати курс'],
+        ['Грошові перекази', 'Надсилайте гроші по Україні та за кордон готівкою або на картку. Консультант допоможе обрати найшвидший спосіб.', ['Перекази по Україні за кілька хвилин', 'Міжнародні перекази у 100+ країн', 'Прозорі тарифи до відправлення'], 'Надіслати переказ'],
+        ['Криптовалюта', 'Обмінюйте USDT, BTC, ETH та інші монети на готівку і навпаки. Підтвердження транзакції займає кілька хвилин.', ['Вигідний курс USDT/UAH', 'Готівка у відділенні одразу після підтвердження', 'Допомога з гаманцем для новачків'], 'Обміняти крипту'],
+        ['Інвестиційне золото', 'Злитки різної ваги з сертифікатами для збереження капіталу. Розповімо про зберігання та зворотний викуп.', ['Злитки від 1 до 100 г', 'Сертифікат на кожен злиток', 'Зворотний викуп за ринковою ціною'], 'Обрати злиток'],
+        ['Оптовий обмін', 'Індивідуальний курс для великих сум і бізнесу. Підготуємо потрібну суму заздалегідь і проведемо операцію в окремій зоні.', ['Індивідуальний курс від 5000 USD', 'Резервування суми заздалегідь', 'Конфіденційне обслуговування'], 'Отримати курс'],
+        ['Заміна зношених купюр', 'Приймаємо надірвані, потерті та старі банкноти. Проводимо діагностику і пропонуємо обмін на місці.', ['Діагностика за кілька хвилин', 'Долари та євро старого зразка', 'Вартість відома до операції'], 'Перевірити купюру']
+      ].map(([title, text, points, cta], i) => ({ img: 'https://unsplash.com/photos/' + ['4xXfkHOoIhg', '4h3iqztvO9k', 'RYx-dIMb7Lk', 'tgB2UnM2dmI', 'WyxqQpyFNk8', 'pXxdGA-WHwU'][i] + '/download?w=1600', id: i + 1, num: String(i + 1).padStart(2, '0'), title, text, points, cta, dir: this.state.isM ? 'column' : (i % 2 ? 'row-reverse' : 'row') })),
+      blogQ: this.state.blogQ || '', onBlogQ: e => this.setState({ blogQ: e.target.value, blogLimit: 6 }),
+      blogCats: ['Усі', 'Курс валют', 'Заощадження', 'Криптовалюта', 'Золото', 'Перекази', 'Поради'].map(name => ({ name, pick: () => this.setState({ blogCat: name, blogLimit: 6 }), bg: name === bc ? '#052145' : 'transparent', fg: name === bc ? '#fff' : '#052145', bd: name === bc ? '#052145' : '#D5D9DF' })),
+      hasFeatured: blogF.length > 0, featured: blogF[0] || {}, blogList: blogRest.slice(0, blogLim), blogEmpty: blogF.length === 0,
+      hasMore: blogRest.length > blogLim, showMore: () => this.setState(s => ({ blogLimit: (s.blogLimit || 6) + 6 })),
+      steps: [
+        { n: '01', t: 'Оберіть послугу', d: 'Розрахуйте суму в калькуляторі або зателефонуйте консультанту.' },
+        { n: '02', t: 'Зафіксуйте курс', d: 'Забронюйте заявку онлайн — курс діє 30 хвилин.' },
+        { n: '03', t: 'Прийдіть у відділення', d: 'Отримайте гроші у зручному відділенні з паспортом або ID-карткою.' }
+      ],
+      m: this.mStyles(this.state.isM), isM: this.state.isM, isD: !this.state.isM, menuOpen: this.state.menuOpen,
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      burgerGap: this.state.menuOpen ? '0px' : '8px',
+      burgerTop: this.state.menuOpen ? 'translateY(1px) rotate(45deg)' : 'none',
+      burgerBot: this.state.menuOpen ? 'translateY(-1px) rotate(-45deg)' : 'none',
+      statsRef: this.statsRef,
+      ...(() => { const p = this.state.statP ?? 0, e = 1 - Math.pow(1 - p, 3), r = t => Math.round(t * e);
+        return { stat1: r(7) + 'K', stat2: r(20) + '+', stat3: r(100) + '%', stat4: r(10) + '+' }; })(),
+      bannerRef: this.bannerRef, coinsRef: this.coinsRef,
+      faqCols: [faqs.slice(0, 3), faqs.slice(3)],
+      services: [
+        { id: 1, title: 'Обмін валют', text: 'Вигідні курси та надійне обслуговування', ph: 'Фото: пачки доларів' },
+        { id: 2, title: 'Грошові перекази', text: 'По Україні та по всьому світу', ph: 'Фото: глобус' },
+        { id: 3, title: 'Криптовалюта', text: 'Купівля та продаж BTC, USDT, ETH та інших', ph: 'Фото: біткоїн' },
+        { id: 4, title: 'Інвестиційне золото', text: 'Надійний актив для вашого майбутнього', ph: 'Фото: золоті злитки' },
+        { id: 5, title: 'Оптовий обмін', text: 'Вигідні умови для бізнесу і організацій', ph: 'Фото: валіза з грошима' },
+        { id: 6, title: 'Заміна зношених купюр', text: 'Діагностика та обмін пошкоджених банкнот', ph: 'Фото: гривні' }
+      ],
+      reviews: [
+        ['Дарія, Київ', 'Швидко обміняли велику суму, усе прозоро й без зайвих питань'],
+        ['Андрій, Львів', 'Зафіксував курс онлайн зранку, а ввечері отримав саме ту суму, що й розраховував. Дуже зручно.'],
+        ['Олена, Одеса', 'Переказала гроші доньці за кордон за кілька хвилин. Консультант усе пояснив і допоміг заповнити дані.'],
+        ['Максим, Харків', 'Обміняв USDT на готівку без черг і прихованих комісій. Курс кращий, ніж у банку поруч.'],
+        ['Ірина, Дніпро', 'Прийняли стару потерту купюру, яку ніде не хотіли брати. Перевірили на місці й одразу обміняли.'],
+        ['Сергій, Запоріжжя', 'Купував інвестиційне золото вперше. Показали сертифікати, розповіли про зберігання — жодних сумнівів.'],
+        ['Наталія, Вінниця', 'Приємний персонал і чистий затишний офіс. Обмін євро зайняв буквально п’ять хвилин.'],
+        ['Тарас, Івано-Франківськ', 'Для бізнесу потрібен був оптовий обмін — запропонували індивідуальний курс і підготували суму заздалегідь.']
+      ].map(([name, text], i) => ({ name, text, lastStar: [5, 4, 5, 5, 4, 5, 4, 5][i] === 5 ? '#052145' : '#C3CAD2' })),
+      revRef: this.revRef,
+      onRevScroll: () => this.syncTrack(this.revRef, 'rStart', 'rEnd'),
+      revPrev: () => this.slide(-1, this.revRef), revNext: () => this.slide(1, this.revRef),
+      revPrevBg: this.state.rStart ?? true ? '#C3CAD2' : '#052145', revNextBg: this.state.rEnd ? '#C3CAD2' : '#052145',
+      articles: artSorted.map(([title, text, pid, name, user], i) => ({ id: i + 1, title, text, href: 'Article.dc.html?a=' + ['kurs-dolara-2027','dolar-chy-yevro','spravzhnya-kupyura','investytsiyne-zoloto','kryptovalyuta-btc-usdt','bezpechno-velyka-suma','mizhnarodni-perekazy','znosheni-kupyury','kurs-kupivli-prodazhu','fiksatsiya-kursu-onlain'][order[i]],
+        img: `https://unsplash.com/photos/${pid}/download?w=900`,
+        credit: `Photo by ${name} on Unsplash` })),
+      trackRef: this.trackRef,
+      onTrackScroll: () => this.syncTrack(),
+      artPrev: () => this.slide(-1), artNext: () => this.slide(1),
+      prevBg: atStart ? '#C3CAD2' : '#052145', nextBg: atEnd ? '#C3CAD2' : '#052145',
+      rates, amount: this.state.amount,
+      result: (n * 42.2).toLocaleString('uk-UA', { maximumFractionDigits: 2 }),
+      onAmount: e => this.setState({ amount: e.target.value.replace(/[^\d.,]/g, '') }),
+      setCash: () => this.setState({ tab: 'cash' }), setCrypto: () => this.setState({ tab: 'crypto' }),
+      cashBorder: cb, cashBg: cbg, cashColor: cc, cryptoBorder: kb, cryptoBg: kbg, cryptoColor: kc
+    };
+  }
+}
+</script>
+</body>
+</html>

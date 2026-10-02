@@ -1,5 +1,6 @@
+{% load static %}
 <div
-  class="site-header__drawer"
+  class="mobile-menu"
   id="mobile-nav"
   data-menu-drawer
   hidden
@@ -8,25 +9,32 @@
   aria-modal="true"
   aria-label="Меню сайту"
 >
-  <button
-    type="button"
-    class="site-header__drawer-close"
-    data-menu-close
-    aria-label="Закрити меню"
-    data-qa="menu-close"
-  >✕</button>
+  <div class="mobile-menu__top">
+    <a href="{% url 'core:home' %}" class="mobile-menu__logo">
+      <img src="{% static 'images/logo.png' %}" alt="{{ site_settings.site_name }}" width="140" height="40">
+    </a>
+    <button type="button" class="mobile-menu__close" data-menu-close aria-label="Закрити меню" data-qa="menu-close">
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M2 2l18 18M20 2L2 20" stroke="#fff" stroke-width="2"></path></svg>
+    </button>
+  </div>
 
-  <nav class="site-header__drawer-nav" aria-label="Мобільне меню">
-    <a href="{% url 'core:home' %}">Головна</a>
-    <a href="{% url 'rates:rates_page' %}">Курси</a>
-    <a href="{% url 'network:city_list' %}">Міста</a>
-    <a href="{% url 'content:contacts' %}">Контакти</a>
-    <a href="{% url 'content:services' %}">Послуги</a>
-    <a href="{% url 'content:advantages' %}">Переваги</a>
-    <a href="{% url 'blog:post_list' %}">Блог</a>
-    <a href="{% url 'reviews:review_list' %}">Відгуки</a>
-    <a href="{% url 'content:faq' %}">FAQ</a>
-    <a href="{% url 'content:privacy' %}">Політика</a>
-    <a href="{% url 'core:home' %}#seo-block">Інфо</a>
+  <nav class="mobile-menu__nav" aria-label="Мобільне меню">
+    <a data-mi href="{% url 'content:services' %}">Послуги<img src="{% static 'images/bitcoin.png' %}" alt="" width="40" height="40"></a>
+    <a data-mi href="{% url 'content:advantages' %}">Переваги<img src="{% static 'images/bitcoin.png' %}" alt="" width="40" height="40"></a>
+    <a data-mi href="{% url 'content:faq' %}">FAQ<img src="{% static 'images/bitcoin.png' %}" alt="" width="40" height="40"></a>
+    <a data-mi href="{% url 'blog:post_list' %}">Блог<img src="{% static 'images/bitcoin.png' %}" alt="" width="40" height="40"></a>
+    <a data-mi href="{% url 'content:contacts' %}">Контакти<img src="{% static 'images/bitcoin.png' %}" alt="" width="40" height="40"></a>
   </nav>
+
+  <div class="mobile-menu__bottom">
+    {% if active_phone %}
+    <a class="mobile-menu__phone" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">
+      <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
+      {{ active_phone }}
+    </a>
+    {% endif %}
+    <button type="button" class="btn btn--accent btn--block" data-open-modal="{% url 'leads:request_modal' %}" data-menu-close>
+      Забронювати заявку
+    </button>
+  </div>
 </div>

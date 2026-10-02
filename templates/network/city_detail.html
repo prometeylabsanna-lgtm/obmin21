@@ -1,12 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="section">
-  <h1 class="section__title">{{ city.name }}</h1>
-  {% include 'partials/contacts_panel.html' with city_branches=branches %}
-  <div class="u-mt-5">
+<section class="page-hero">
+  <h1 class="page-hero__title">{{ city.name }}</h1>
+</section>
+<section>
+  <div class="card-grid card-grid--2">
+    {% for b in branches %}
+    <article class="card">
+      <h2 class="card__title">{{ b.address }}</h2>
+      {% if b.hours %}<p class="card__text">{{ b.hours }}</p>{% endif %}
+      {% if b.phone %}<p class="card__text">{{ b.phone }}</p>{% endif %}
+    </article>
+    {% empty %}
+    <p class="u-muted">Відділення зʼявляться незабаром</p>
+    {% endfor %}
+  </div>
+  <div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:12px">
     <a class="btn btn--accent" href="{% url 'network:select_city' city.slug %}">Обрати це місто</a>
-    <button type="button" class="btn btn--ghost" data-open-modal="{% url 'leads:request_modal' %}">Заявка</button>
+    <button type="button" class="btn btn--ghost" data-open-modal="{% url 'leads:request_modal' %}">Забронювати заявку</button>
   </div>
 </section>
 {% endblock %}

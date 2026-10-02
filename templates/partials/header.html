@@ -1,55 +1,16 @@
-<header class="site-header" data-qa="header" id="city-chrome-phone">
-  <a href="{% url 'core:home' %}" class="site-header__logo" data-qa="logo"><span class="brand-mark">{{ site_settings.logo_text }}<span class="u-accent">{{ site_settings.logo_accent }}</span></span></a>
+{% load static %}
+<header class="site-header" data-qa="header">
+  <a href="{% url 'core:home' %}" class="site-header__logo" data-qa="logo">
+    <img src="{% static 'images/logo.png' %}" alt="{{ site_settings.site_name }}" width="160" height="40">
+  </a>
 
   <nav class="site-header__nav" aria-label="Основне меню">
-    <a href="{% url 'core:home' %}" data-qa="nav-home">Головна</a>
-    <a href="{% url 'content:contacts' %}" data-qa="nav-contacts">Контакти</a>
-    <a href="{% url 'content:services' %}" data-qa="nav-services">Послуги</a>
-    <a href="{% url 'content:advantages' %}" data-qa="nav-advantages">Переваги</a>
-    <a href="{% url 'blog:post_list' %}" data-qa="nav-blog">Блог</a>
+    <a href="{% url 'content:services' %}" data-qa="nav-services">ПОСЛУГИ</a>
+    <a href="{% url 'content:advantages' %}" data-qa="nav-advantages">ПЕРЕВАГИ</a>
     <a href="{% url 'content:faq' %}" data-qa="nav-faq">FAQ</a>
+    <a href="{% url 'blog:post_list' %}" data-qa="nav-blog">БЛОГ</a>
+    <a href="{% url 'content:contacts' %}" data-qa="nav-contacts">КОНТАКТИ</a>
   </nav>
 
-  <div class="site-header__actions" id="city-chrome">
-    <div class="city-select" data-city-select>
-      <button type="button" class="city-select__btn" data-city-toggle data-qa="city-toggle" aria-expanded="false" aria-haspopup="listbox">
-        <span data-city-label>{{ active_city.name|default:"Місто" }}</span>
-        <span class="city-select__icon" aria-hidden="true">
-          <svg class="city-select__chevron" viewBox="0 0 16 16" width="12" height="12" fill="none" focusable="false">
-            <path d="M3.5 5.75 8 10.25l4.5-4.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-      </button>
-      <div class="city-select__menu" data-city-menu hidden role="listbox">
-        {% for c in cities %}
-        <form method="post" action="{% url 'network:set_city' %}"
-              hx-post="{% url 'network:set_city' %}"
-              hx-target="#city-chrome"
-              hx-swap="outerHTML">
-          {% csrf_token %}
-          <input type="hidden" name="city" value="{{ c.slug }}">
-          <button type="submit" class="city-select__option{% if active_city.slug == c.slug %} is-active{% endif %}" data-qa="city-option">{{ c.name }}</button>
-        </form>
-        {% endfor %}
-      </div>
-    </div>
-
-    {% if active_phone %}
-    <a class="site-header__phone" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}" data-qa="phone" id="header-phone">{{ active_phone }}</a>
-    {% endif %}
-
-    <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}" data-qa="cta-request">
-      Заявка
-    </button>
-
-    <button
-      type="button"
-      class="site-header__menu-toggle"
-      data-menu-toggle
-      aria-label="Меню"
-      aria-expanded="false"
-      aria-controls="mobile-nav"
-      data-qa="menu-toggle"
-    >☰</button>
-  </div>
+  {% include 'partials/city_chrome.html' %}
 </header>

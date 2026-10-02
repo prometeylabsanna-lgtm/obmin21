@@ -14,15 +14,20 @@ def review_list(request):
     })
 
 
-@require_http_methods(['POST'])
+@require_http_methods(['GET', 'POST'])
 def review_submit(request):
+    if request.method == 'GET':
+        return render(request, 'partials/modal_review.html', {
+            'form': ReviewForm(),
+        })
+
     form = ReviewForm(request.POST)
     if form.is_valid():
         review = form.save(commit=False)
         review.is_published = False
         review.save()
-        return render(request, 'partials/form_success_inline.html', {
-            'title': 'Дякуємо за відгук',
-            'message': 'Після модерації він зʼявиться на сайті.',
+        return render(request, 'partials/form_success.html', {
+            'title': 'Дякуємо!',
+            'message': 'Ваш відгук надіслано. Він зʼявиться на сайті після перевірки.',
         })
-    return render(request, 'partials/review_form.html', {'form': form}, status=422)
+    return render(request, 'partials/modal_review.html', {'form': form}, status=422)

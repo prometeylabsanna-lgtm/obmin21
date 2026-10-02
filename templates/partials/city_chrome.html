@@ -1,12 +1,9 @@
 <div class="site-header__actions" id="city-chrome">
   <div class="city-select" data-city-select>
     <button type="button" class="city-select__btn" data-city-toggle data-qa="city-toggle" aria-expanded="false" aria-haspopup="listbox">
+      <svg class="city-select__pin" width="12" height="14" viewBox="0 0 12 14" aria-hidden="true"><path d="M6 0a5 5 0 0 0-5 5c0 3.6 5 9 5 9s5-5.4 5-9a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="#CA8D42"></path></svg>
       <span data-city-label>{{ active_city.name|default:"Місто" }}</span>
-      <span class="city-select__icon" aria-hidden="true">
-        <svg class="city-select__chevron" viewBox="0 0 16 16" width="12" height="12" fill="none" focusable="false">
-          <path d="M3.5 5.75 8 10.25l4.5-4.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
+      <svg class="city-select__chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
     </button>
     <div class="city-select__menu" data-city-menu hidden role="listbox">
       {% for c in cities %}
@@ -16,18 +13,24 @@
             hx-swap="outerHTML">
         {% csrf_token %}
         <input type="hidden" name="city" value="{{ c.slug }}">
-        <button type="submit" class="city-select__option{% if active_city.slug == c.slug %} is-active{% endif %}" data-qa="city-option">{{ c.name }}</button>
+        <button type="submit" class="city-select__option{% if active_city.slug == c.slug %} is-active{% endif %}" data-qa="city-option">
+          <span>{{ c.name }}</span>
+          <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.4"></path></svg>
+        </button>
       </form>
       {% endfor %}
     </div>
   </div>
 
   {% if active_phone %}
-  <a class="site-header__phone" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}" data-qa="phone" id="header-phone">{{ active_phone }}</a>
+  <a class="site-header__phone" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}" data-qa="phone" id="header-phone">
+    <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
+    {{ active_phone }}
+  </a>
   {% endif %}
 
-  <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}" data-qa="cta-request">
-    Заявка
+  <button type="button" class="btn btn--accent site-header__cta" data-open-modal="{% url 'leads:request_modal' %}" data-qa="cta-request">
+    Забронювати заявку
   </button>
 
   <button
@@ -38,5 +41,8 @@
     aria-expanded="false"
     aria-controls="mobile-nav"
     data-qa="menu-toggle"
-  >☰</button>
+  >
+    <span></span>
+    <span></span>
+  </button>
 </div>

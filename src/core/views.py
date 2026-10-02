@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 
 from src.blog.selectors import get_published_posts
-from src.content.models import AdvantageItem, HomePage, Service
+from src.content.models import AdvantageItem, FaqItem, HomePage, Service
 from src.rates.models import RateBoard
 from src.rates.selectors import get_quotes_for_city
 from src.reviews.selectors import get_published_reviews
@@ -24,9 +24,11 @@ class HomeView(TemplateView):
             'rate_updated_at': updated_at,
             'active_board': board,
             'boards': RateBoard.choices,
-            'services': Service.objects.filter(is_active=True)[:3],
+            'home_rates_compact': True,
+            'services': Service.objects.filter(is_active=True)[:6],
             'advantage_items': AdvantageItem.objects.filter(is_active=True),
             'advantage_audiences': AdvantageItem.Audience.choices,
+            'faq_items': FaqItem.objects.filter(is_active=True)[:6],
             'news_posts': list(get_published_posts()[:3]),
             'home_reviews': list(get_published_reviews()[:3]),
         })
@@ -44,6 +46,7 @@ def rates_partial(request):
         'active_board': board,
         'boards': RateBoard.choices,
         'hide_full_table_link': request.GET.get('hide_full') == '1',
+        'home_rates_compact': request.GET.get('home') == '1',
     })
 
 

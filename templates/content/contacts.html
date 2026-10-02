@@ -3,14 +3,60 @@
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="section">
-  <h1 class="section__title">{{ page.title }}{% if active_city %} · {{ active_city.name }}{% endif %}</h1>
-  {% if page.intro %}<p class="u-muted u-mb-5">{{ page.intro|brand_mark }}</p>{% endif %}
-  <div class="contacts-panel-wrap u-mb-6">
-    {% include 'partials/contacts_panel.html' with city_branches=branches %}
+<section class="page-hero">
+  <h1 class="page-hero__title">Звʼяжіться з <span class="u-accent">нами</span></h1>
+  {% if page.intro %}<p class="page-hero__lead">{{ page.intro|brand_mark }}</p>{% endif %}
+</section>
+
+<section class="contact-cards">
+  {% if active_phone %}
+  <a class="contact-card" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">
+    <div class="contact-card__label">Телефон</div>
+    <div class="contact-card__value">{{ active_phone }}</div>
+  </a>
+  {% endif %}
+  {% if site_settings.telegram_url %}
+  <a class="contact-card" href="{{ site_settings.telegram_url }}" target="_blank" rel="noopener">
+    <div class="contact-card__label">Telegram</div>
+    <div class="contact-card__value">Написати</div>
+  </a>
+  {% endif %}
+  <div class="contact-card">
+    <div class="contact-card__label">Email</div>
+    <div class="contact-card__value">info@obmin21.com</div>
   </div>
-  <h2 class="section__title">Написати нам</h2>
-  <div class="contacts-form-wrap">
+  <div class="contact-card">
+    <div class="contact-card__label">Графік</div>
+    <div class="contact-card__value">{% if branches.0.hours %}{{ branches.0.hours }}{% else %}Пн–Нд 09:00–21:00{% endif %}</div>
+  </div>
+</section>
+
+<section class="section" id="branches">
+  <h2 class="section__title">Відділення по <span class="u-accent">Україні</span></h2>
+  <div class="branches-layout">
+    <div>
+      {% for b in branches %}
+      <div class="branch-item">
+        <div class="branch-item__name">{{ b.address }}</div>
+        <div class="branch-item__addr">{% if b.hours %}{{ b.hours }}{% endif %}{% if b.phone %} · {{ b.phone }}{% endif %}</div>
+      </div>
+      {% empty %}
+      <p class="u-muted">Відділення для цього міста зʼявляться незабаром</p>
+      {% endfor %}
+    </div>
+    <div class="map-block__frame">
+      {% if branches.0.map_url %}
+      <iframe src="{{ branches.0.map_url }}" title="Карта" loading="lazy"></iframe>
+      {% elif page.map_image %}
+      <img src="{{ page.map_image.url }}" alt="Карта" loading="lazy">
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section__title">Написати <span class="u-accent">нам</span></h2>
+  <div class="card" style="max-width:640px;margin-top:20px">
     {% include 'partials/contact_form.html' %}
   </div>
 </section>

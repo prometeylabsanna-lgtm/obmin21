@@ -8,9 +8,21 @@ class ReviewForm(forms.ModelForm):
         model = Review
         fields = ['name', 'text', 'city_name', 'consent']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form__input', 'autocomplete': 'name'}),
-            'text': forms.Textarea(attrs={'class': 'form__input form__textarea', 'rows': 4}),
-            'city_name': forms.TextInput(attrs={'class': 'form__input'}),
+            'name': forms.TextInput(attrs={
+                'class': 'form__input',
+                'autocomplete': 'name',
+                'placeholder': "Ваше ім'я",
+            }),
+            'text': forms.Textarea(attrs={
+                'class': 'form__input form__textarea',
+                'rows': 4,
+                'placeholder': 'Розкажіть, як пройшов обмін',
+                'maxlength': '300',
+            }),
+            'city_name': forms.TextInput(attrs={
+                'class': 'form__input',
+                'placeholder': 'Місто',
+            }),
             'consent': forms.CheckboxInput(attrs={'class': 'form__checkbox'}),
         }
 

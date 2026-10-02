@@ -3,40 +3,33 @@
 
 {% block title %}{{ pair.seo_title|default:pair.code }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<article class="detail-page" data-qa="pair-detail">
-  <header class="detail-page__header">
-    <h1 class="detail-page__title">{{ pair.code }}/UAH</h1>
-    <p class="detail-page__lead">
-      {{ pair.name }}{% if active_city %} · {{ active_city.name }}{% endif %}
-    </p>
-  </header>
+<article class="simple-page" data-qa="pair-detail">
+  <h1 class="simple-page__title">{{ pair.code }}/UAH</h1>
+  <p class="page-hero__lead">{{ pair.name }}{% if active_city %} · {{ active_city.name }}{% endif %}</p>
 
   {% if quote %}
-  <div class="detail-page__rates">
-    <div class="detail-page__rate">
-      <div class="detail-page__rate-label">Купівля</div>
-      <div class="detail-page__rate-value">{{ quote.buy|format_rate:"auto" }}</div>
+  <div class="card-grid card-grid--2" style="margin:28px 0;max-width:480px">
+    <div class="card">
+      <div class="card__meta">Купівля</div>
+      <div class="stats-grid__value" style="font-size:36px;margin-top:8px">{{ quote.buy|format_rate:"auto" }}</div>
     </div>
-    <div class="detail-page__rate">
-      <div class="detail-page__rate-label">Продаж</div>
-      <div class="detail-page__rate-value">{{ quote.sell|format_rate:"auto" }}</div>
+    <div class="card">
+      <div class="card__meta">Продаж</div>
+      <div class="stats-grid__value" style="font-size:36px;margin-top:8px">{{ quote.sell|format_rate:"auto" }}</div>
     </div>
   </div>
-  <div class="detail-page__actions detail-page__actions--tight-top">
-    <button type="button"
-            class="btn btn--accent"
+  <div style="display:flex;flex-wrap:wrap;gap:12px">
+    <button type="button" class="btn btn--accent"
             data-open-modal="{% url 'leads:request_modal' %}?pair={{ pair.pk }}&rate_fixed={{ quote.buy }}&direction=sell">
       Створити заявку
     </button>
-    <a class="btn btn--ghost" href="{% url 'core:home' %}#exchange">Уся таблиця</a>
+    <a class="btn btn--ghost" href="{% url 'rates:rates_page' %}">Уся таблиця</a>
   </div>
   {% endif %}
 
   {% if pair.intro %}
-  <div class="detail-page__panel">
-    <div class="detail-page__body">
-      {{ pair.intro|format_body }}
-    </div>
+  <div class="simple-page__body" style="margin-top:32px">
+    {{ pair.intro|format_body }}
   </div>
   {% endif %}
 </article>

@@ -1,14 +1,78 @@
 {% extends 'base.html' %}
-{% load content_format %}
+{% load static content_format %}
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="section">
-  <h1 class="section__title">{{ page.title }}{% if active_city %} · <span data-live-city-name>{{ active_city.name }}</span>{% endif %}</h1>
-  {% if page.intro %}<p class="u-muted u-mb-5">{{ page.intro|brand_mark }}</p>{% endif %}
+<section class="page-hero">
+  <div class="badge-row" style="justify-content:flex-start"><span class="pill">Курси</span></div>
+  <h1 class="page-hero__title">Всі валюти{% if active_city %} <span class="u-accent" data-live-city-name>{{ active_city.name }}</span>{% endif %}</h1>
+  {% if page.intro %}<p class="page-hero__lead">{{ page.intro|brand_mark }}</p>{% endif %}
+</section>
+
+<section class="rates-page-card">
   {% include 'partials/rates_table.html' with hide_full_table_link=True %}
-  <div class="u-mt-5">
-    <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:calc_modal' %}">Калькулятор</button>
+</section>
+
+<section class="calc-head" id="calculator">
+  <div class="badge-row"><span class="pill">Калькулятор</span></div>
+  <h2 class="calc-head__title">
+    <span class="calc-head__coin" aria-hidden="true">
+      <span class="coin-spin">
+        <img src="{% static 'images/bitcoin.png' %}" alt="">
+        <img src="{% static 'images/bitcoin.png' %}" alt="">
+        <img src="{% static 'images/bitcoin.png' %}" alt="">
+      </span>
+    </span>
+    <span>Розрахуйте <span class="u-accent">обмін</span></span>
+  </h2>
+</section>
+
+<section class="calc-box" data-calc data-qa="rates-calc">
+  <div class="calc-box__col">
+    <div class="calc-box__label">Віддаю</div>
+    <div class="field-row">
+      <input type="text" inputmode="decimal" value="1000" data-calc-amount aria-label="Сума">
+      <div class="calc-codes" hidden>
+        {% for row in rate_rows %}
+        <button type="button" class="calc-codes__btn{% if forloop.first %} is-active{% endif %}"
+                data-calc-code="{{ row.pair.code }}" data-pair-id="{{ row.pair.pk }}"
+                data-buy="{{ row.quote.buy }}" data-sell="{{ row.quote.sell }}">{{ row.pair.code }}</button>
+        {% endfor %}
+      </div>
+      <button type="button" class="field-currency" data-calc-from-toggle>
+        <span class="flag" data-calc-from-flag>{{ rate_rows.0.pair.code|default:"USD"|slice:":3" }}</span>
+        <span data-calc-from-code>{{ rate_rows.0.pair.code|default:"USD" }}</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
+      </button>
+      <div class="currency-menu" data-calc-from-menu hidden>
+        {% for row in rate_rows %}
+        <button type="button" class="{% if forloop.first %}is-active{% endif %}" data-calc-pick
+                data-pair-id="{{ row.pair.pk }}" data-code="{{ row.pair.code }}" data-name="{{ row.pair.name }}"
+                data-buy="{{ row.quote.buy }}" data-sell="{{ row.quote.sell }}">
+          <span class="flag">{{ row.pair.code|slice:":3" }}</span>
+          <span class="code">{{ row.pair.code }}</span>
+          <span class="name">{{ row.pair.name }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="calc-box__rate" data-calc-rate-label>За поточним курсом</div>
+  </div>
+  <div class="calc-box__swap">
+    <button type="button" class="calc-box__swap-btn" data-calc-swap aria-label="Поміняти валюти">
+      <svg width="20" height="18" viewBox="0 0 20 18"><path d="M2 6h15l-4-4M18 12H3l4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+    </button>
+  </div>
+  <div class="calc-box__col">
+    <div class="calc-box__label">Отримую</div>
+    <div class="field-row">
+      <div class="field-value" data-calc-result>0</div>
+      <button type="button" class="field-currency" disabled><span class="flag">UAH</span><span>UAH</span></button>
+    </div>
+  </div>
+  <div class="calc-box__action">
+    <button type="button" class="btn btn--block" data-calc-continue>Забронювати заявку</button>
+    <div class="calc-box__lock">Курс діє 30 хв</div>
   </div>
 </section>
 {% endblock %}

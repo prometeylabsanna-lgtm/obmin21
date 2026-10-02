@@ -4,122 +4,218 @@
 {% block title %}{{ page.seo_title|default:site_settings.site_name }}{% endblock %}
 {% block content %}
 
-<section class="section section--tight" id="exchange" data-qa="section-exchange">
-  <div class="section__head">
-    <h1 class="section__title">Курси{% if active_city %} · <span data-live-city-name>{{ active_city.name }}</span>{% endif %}</h1>
+<section class="hero" id="exchange" data-qa="section-exchange">
+  <div class="hero__banner">
+    <div class="hero__bg" aria-hidden="true">
+      <img src="{% static 'images/bg-currency.jpg' %}" alt="" width="1600" height="900" decoding="async">
+    </div>
+    <div class="hero__overlay" aria-hidden="true"></div>
+    <div class="hero__content">
+      <h1 class="hero__title">Обмін валют<br>{% if active_city %}в {{ active_city.name }} {% endif %}за вигідним курсом</h1>
+      <p class="hero__lead">Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>
+      <div class="hero__cta">
+        <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Зафіксувати курс</button>
+      </div>
+    </div>
   </div>
-  {% include 'partials/rates_table.html' %}
+  <div class="hero__rates">
+    {% include 'partials/rates_table.html' with home_rates_compact=1 %}
+  </div>
 </section>
 
-{% include 'partials/ticker.html' %}
+<section class="calc-head" id="calculator">
+  <div class="badge-row"><span class="pill">Калькулятор</span></div>
+  <h2 class="calc-head__title">
+    <span class="calc-head__coin" aria-hidden="true">
+      <span class="coin-spin">
+        <img src="{% static 'images/bitcoin.png' %}" alt="">
+        <img src="{% static 'images/bitcoin.png' %}" alt="">
+        <img src="{% static 'images/bitcoin.png' %}" alt="">
+      </span>
+    </span>
+    <span>Розрахуйте <span class="u-accent">обмін</span></span>
+  </h2>
+  <p class="section__lead" style="margin-left:auto;margin-right:auto;text-align:center">Дізнайтесь, скільки ви отримаєте та зафіксуйте курс онлайн</p>
+</section>
 
-<section class="section" id="contacts" data-qa="section-contacts">
-  <div class="section__head">
-    <h2 class="section__title">Контакти{% if active_city %} в <span data-live-city-name>{{ active_city.name }}</span>{% endif %}</h2>
-    <a class="link-accent" href="{% url 'content:contacts' %}">Дізнатись більше →</a>
+<section class="calc-box" data-calc data-qa="home-calc">
+  <div class="calc-box__col">
+    <div class="calc-box__label">Віддаю</div>
+    <div class="field-row">
+      <input type="text" inputmode="decimal" value="1000" data-calc-amount aria-label="Сума">
+      <div class="calc-codes" hidden>
+        {% for row in rate_rows %}
+        <button type="button"
+                class="calc-codes__btn{% if forloop.first %} is-active{% endif %}"
+                data-calc-code="{{ row.pair.code }}"
+                data-pair-id="{{ row.pair.pk }}"
+                data-buy="{{ row.quote.buy }}"
+                data-sell="{{ row.quote.sell }}">{{ row.pair.code }}</button>
+        {% endfor %}
+      </div>
+      <button type="button" class="field-currency" data-calc-from-toggle aria-haspopup="listbox">
+        <span class="flag" data-calc-from-flag>{{ rate_rows.0.pair.code|default:"USD"|slice:":3" }}</span>
+        <span data-calc-from-code>{{ rate_rows.0.pair.code|default:"USD" }}</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
+      </button>
+      <div class="currency-menu" data-calc-from-menu hidden>
+        {% for row in rate_rows %}
+        <button type="button" class="{% if forloop.first %}is-active{% endif %}"
+                data-calc-pick
+                data-pair-id="{{ row.pair.pk }}"
+                data-code="{{ row.pair.code }}"
+                data-name="{{ row.pair.name }}"
+                data-buy="{{ row.quote.buy }}"
+                data-sell="{{ row.quote.sell }}">
+          <span class="flag">{{ row.pair.code|slice:":3" }}</span>
+          <span class="code">{{ row.pair.code }}</span>
+          <span class="name">{{ row.pair.name }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="calc-box__rate" data-calc-rate-label>За поточним курсом</div>
   </div>
-  {% include 'partials/contacts_panel.html' %}
+
+  <div class="calc-box__swap">
+    <button type="button" class="calc-box__swap-btn" data-calc-swap aria-label="Поміняти валюти">
+      <svg width="20" height="18" viewBox="0 0 20 18" aria-hidden="true"><path d="M2 6h15l-4-4M18 12H3l4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+    </button>
+  </div>
+
+  <div class="calc-box__col">
+    <div class="calc-box__label">Отримую</div>
+    <div class="field-row">
+      <div class="field-value" data-calc-result>0</div>
+      <button type="button" class="field-currency" disabled>
+        <span class="flag">UAH</span>
+        <span>UAH</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="calc-box__action">
+    <button type="button" class="btn btn--block" data-calc-continue>Забронювати заявку</button>
+    <div class="calc-box__lock">
+      <svg width="12" height="13" viewBox="0 0 12 14" aria-hidden="true"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#CA8D42" fill="none" stroke-width="1.2"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#CA8D42" fill="none" stroke-width="1.2"></path></svg>
+      Курс діє 30 хв
+    </div>
+  </div>
+</section>
+
+<section class="promo-banner" data-qa="promo-banner">
+  <div class="promo-banner__coins" aria-hidden="true">
+    <img src="{% static 'images/coins.png' %}" alt="" width="640" height="480" loading="lazy">
+  </div>
+  <div class="promo-banner__content">
+    <h2 class="promo-banner__title">Вигідний курс на USD та EUR</h2>
+    <p class="promo-banner__text">Зафіксуйте курс онлайн — він діятиме 30 хвилин у відділенні</p>
+    <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{% url 'leads:request_modal' %}">Зафіксувати курс</button>
+  </div>
+</section>
+
+<section class="map-block section" id="contacts" data-qa="section-map">
+  <div class="section__head">
+    <h2 class="section__title">Знайдіть нас на <span class="u-accent">карті</span></h2>
+    <a class="link-accent" href="{% url 'content:contacts' %}">Усі відділення
+      <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+    </a>
+  </div>
+  {% with branch=city_branches.0 %}
+  <div class="map-block__frame">
+    {% if branch.map_url %}
+    <iframe src="{{ branch.map_url }}" title="Карта відділення" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    {% elif page.banner_exchange %}
+    <img src="{{ page.banner_exchange.url }}" alt="Карта" loading="lazy">
+    {% else %}
+    <img src="{% static 'images/bg-currency.jpg' %}" alt="" loading="lazy">
+    {% endif %}
+  </div>
+  {% if branch %}
+  <p class="section__lead" style="margin-top:16px">{{ branch.address }}{% if branch.hours %} · {{ branch.hours }}{% endif %}</p>
+  {% endif %}
+  {% endwith %}
+</section>
+
+<section class="section" id="advantages" data-qa="section-stats">
+  <div class="section__center">
+    <div class="badge-row"><span class="pill">Цифри</span></div>
+    <h2 class="section__title">Чому нас <span class="u-accent">обирають</span></h2>
+  </div>
+  <div class="stats-grid" style="margin-top:32px">
+    <div class="stats-grid__item">
+      <div class="stats-grid__value" data-count="21">21</div>
+      <div class="stats-grid__label">рік на ринку</div>
+    </div>
+    <div class="stats-grid__item">
+      <div class="stats-grid__value" data-count="50">50+</div>
+      <div class="stats-grid__label">відділень</div>
+    </div>
+    <div class="stats-grid__item">
+      <div class="stats-grid__value" data-count="100">100+</div>
+      <div class="stats-grid__label">валютних пар</div>
+    </div>
+    <div class="stats-grid__item">
+      <div class="stats-grid__value">24/7</div>
+      <div class="stats-grid__label">підтримка</div>
+    </div>
+  </div>
 </section>
 
 <section class="section" id="services" data-qa="section-services">
   <div class="section__head">
-    <h2 class="section__title">Послуги</h2>
-    <a class="link-accent" href="{% url 'content:services' %}">Дізнатись більше →</a>
+    <h2 class="section__title">Наші <span class="u-accent">послуги</span></h2>
+    <a class="link-accent" href="{% url 'content:services' %}">Усі послуги
+      <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+    </a>
   </div>
-  <div class="card-grid card-grid--3">
+  <div class="home-services">
     {% for svc in services %}
-    <article class="card">
-      <h3 class="card__title">{{ svc.title }}</h3>
+    <article class="home-service">
+      {% if forloop.counter == 1 %}<img src="{% static 'images/service-1.png' %}" alt="" width="96" height="96" loading="lazy">
+      {% elif forloop.counter == 2 %}<img src="{% static 'images/service-2.png' %}" alt="" width="96" height="96" loading="lazy">
+      {% elif forloop.counter == 3 %}<img src="{% static 'images/service-3.png' %}" alt="" width="96" height="96" loading="lazy">
+      {% elif forloop.counter == 4 %}<img src="{% static 'images/service-4.png' %}" alt="" width="96" height="96" loading="lazy">
+      {% elif forloop.counter == 5 %}<img src="{% static 'images/service-5.png' %}" alt="" width="96" height="96" loading="lazy">
+      {% else %}<img src="{% static 'images/service-6.png' %}" alt="" width="96" height="96" loading="lazy">{% endif %}
+      <h3 class="home-service__title">{{ svc.title }}</h3>
       <p class="card__text">{{ svc.short_desc|brand_mark }}</p>
+      <a class="link-accent" href="{% url 'content:services' %}#svc-{{ svc.slug }}">Детальніше
+        <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+      </a>
     </article>
+    {% empty %}
+    <article class="home-service"><p class="card__text u-muted">Послуги зʼявляться незабаром</p></article>
     {% endfor %}
   </div>
 </section>
 
-{% if page.banner_service %}
-<div class="banner-slot">
-  <img src="{{ page.banner_service.url }}" alt="" loading="lazy">
-</div>
-{% endif %}
-
-<section class="section" id="advantages" data-qa="section-advantages">
+<section class="section" id="faq" data-qa="section-faq">
   <div class="section__head">
-    <h2 class="section__title">Переваги</h2>
-    <a class="link-accent" href="{% url 'content:advantages' %}">Дізнатись більше →</a>
+    <h2 class="section__title">Відповіді на поширені <span class="u-accent">запитання</span></h2>
+    <a class="link-accent" href="{% url 'content:faq' %}">Усі питання
+      <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+    </a>
   </div>
-  <div class="adv-tabs" role="tablist" data-adv-tabs>
-    {% for value, label in advantage_audiences %}
-    <button type="button" class="adv-tabs__btn{% if forloop.first %} is-active{% endif %}" data-adv-tab="{{ value }}"
-      role="tab">{{ label }}</button>
-    {% endfor %}
-  </div>
-  {% regroup advantage_items by audience as audience_list %}
-  {% for group in audience_list %}
-  <div class="adv-list" data-adv-panel="{{ group.grouper }}" {% if not forloop.first %}hidden{% endif %}>
-    {% for item in group.list %}
-    <div class="adv-list__item">
-      <span class="adv-list__n">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
-      <div class="adv-list__body">
-        <span class="adv-list__text">{{ item.text|brand_mark }}</span>
-        {% if item.description %}<p class="adv-list__desc">{{ item.description|brand_mark }}</p>{% endif %}
-      </div>
+  <div class="faq-list faq-list--2" data-faq>
+    {% for item in faq_items %}
+    <div class="faq-item{% if forloop.first %} is-open{% endif %}">
+      <button type="button" class="faq-item__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+        <span>{{ item.question }}</span>
+        <span class="faq-item__icon" aria-hidden="true">+</span>
+      </button>
+      <div class="faq-item__a">{{ item.answer|linebreaksbr }}</div>
     </div>
+    {% empty %}
+    <p class="u-muted">Питання зʼявляться незабаром</p>
     {% endfor %}
-  </div>
-  {% endfor %}
-</section>
-
-<section class="section" id="news" data-qa="section-news">
-  <div class="section__head">
-    <h2 class="section__title">Новини</h2>
-    <a class="link-accent" href="{% url 'blog:post_list' %}">Всі статті →</a>
-  </div>
-  <div class="news-grid">
-    {% if news_posts %}
-    {% with feature=news_posts.0 %}
-    <article class="card news-grid__feature">
-      <div class="news-grid__feature-body">
-        <div class="card__meta">{{ feature.published_at|date:"d.m.Y" }}</div>
-        <a class="card__heading news-grid__feature-title" href="{% url 'blog:post_detail' feature.slug %}">{{ feature.title|brand_mark }}</a>
-        {% if feature.excerpt %}
-        <p class="card__text">{{ feature.excerpt|brand_mark }}</p>
-        {% endif %}
-        <a class="link-accent" href="{% url 'blog:post_detail' feature.slug %}">Читати →</a>
-      </div>
-      <div class="news-grid__feature-media">
-        <img
-          src="{% static 'images/news-feature.jpg' %}"
-          alt=""
-          width="1400"
-          height="997"
-          loading="lazy"
-          decoding="async"
-        >
-      </div>
-    </article>
-    {% endwith %}
-    {% for post in news_posts|slice:"1:3" %}
-    <article class="card">
-      <div class="card__meta">{{ post.published_at|date:"d.m.Y" }}</div>
-      <a class="card__heading" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
-      {% if post.excerpt %}
-      <p class="card__text">{{ post.excerpt|brand_mark }}</p>
-      {% endif %}
-      <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати →</a>
-    </article>
-    {% endfor %}
-    {% else %}
-    <article class="card">
-      <p class="card__text u-muted">Новини зʼявляться незабаром</p>
-    </article>
-    {% endif %}
   </div>
 </section>
 
 <section class="section" id="reviews" data-qa="section-reviews">
   <div class="section__head">
-    <h2 class="section__title">Відгуки</h2>
-    <a class="link-accent" href="{% url 'reviews:review_list' %}">Усі відгуки →</a>
+    <h2 class="section__title">Відгуки <span class="u-accent">клієнтів</span></h2>
+    <button type="button" class="btn btn--accent" data-open-modal="{% url 'reviews:review_submit' %}">Залишити відгук</button>
   </div>
   <div class="card-grid card-grid--3">
     {% for rev in home_reviews %}
@@ -128,35 +224,41 @@
         <span class="review-card__avatar">{{ rev.initial }}</span>
         <div>
           <div class="card__heading">{{ rev.name }}</div>
-          <div class="card__meta">{{ rev.published_at|date:"d.m.Y" }}</div>
+          <div class="card__meta">{% if rev.city_name %}{{ rev.city_name }} · {% endif %}{{ rev.published_at|date:"d.m.Y" }}</div>
         </div>
       </div>
       <p class="card__text">{{ rev.text }}</p>
     </article>
     {% empty %}
-    <article class="card">
-      <p class="card__text u-muted">Відгуки зʼявляться незабаром</p>
-    </article>
+    <article class="card"><p class="card__text u-muted">Відгуки зʼявляться незабаром</p></article>
     {% endfor %}
   </div>
 </section>
 
-<section class="cta-block" data-qa="section-cta">
-  <div class="cta-block__inner">
-    <h2 class="cta-block__title">{{ page.cta_title }}</h2>
-    <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Залишити
-      заявку</button>
+<section class="section" id="news" data-qa="section-news">
+  <div class="section__head">
+    <h2 class="section__title">Корисні <span class="u-accent">статті</span></h2>
+    <a class="link-accent" href="{% url 'blog:post_list' %}">Усі статті
+      <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+    </a>
+  </div>
+  <div class="blog-grid">
+    {% for post in news_posts %}
+    <article class="blog-card">
+      <a class="blog-card__media" href="{% url 'blog:post_detail' post.slug %}">
+        <img src="{% static 'images/blog-finance.jpg' %}" alt="" loading="lazy" width="640" height="400">
+      </a>
+      <div class="card__meta" style="margin-top:12px">{{ post.published_at|date:"d.m.Y" }}</div>
+      <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
+      {% if post.excerpt %}<p class="blog-card__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
+      <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}" style="margin-top:12px">Читати повністю
+        <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+      </a>
+    </article>
+    {% empty %}
+    <p class="u-muted">Статті зʼявляться незабаром</p>
+    {% endfor %}
   </div>
 </section>
 
-<section class="section" id="seo-block" data-qa="section-seo">
-  <h2 class="section__title">{{ page.seo_block_title }}</h2>
-  <div class="seo-block">
-    {{ page.seo_block_body|format_body }}
-  </div>
-</section>
-{% endblock %}
-
-{% block page_js %}
-<script src="{% static 'js/pages/home.js' %}" defer></script>
 {% endblock %}

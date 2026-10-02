@@ -2,9 +2,9 @@
 
 {% block title %}Сторінку не знайдено · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="section">
-  <h1 class="section__title">404</h1>
-  <p class="u-muted u-mb-5">Сторінку не знайдено</p>
-  <a class="btn btn--accent" href="{% url 'core:home' %}">На головну</a>
+<section class="page-hero" style="text-align:center;padding:80px 0">
+  <h1 class="page-hero__title">404</h1>
+  <p class="page-hero__lead" style="margin-left:auto;margin-right:auto">Сторінку не знайдено</p>
+  <a class="btn btn--accent" style="margin-top:28px" href="{% url 'core:home' %}">На головну</a>
 </section>
 {% endblock %}

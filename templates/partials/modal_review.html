@@ -1,0 +1,85 @@
+<div class="modal-backdrop" data-close-modal>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="review-title" data-qa="modal-review" onclick="event.stopPropagation()">
+    <button type="button" class="modal__close" data-close-modal aria-label="Закрити">×</button>
+
+    <div class="modal__pill">Відгук</div>
+    <h2 class="modal__title" id="review-title">Поділіться <span class="accent">враженнями</span></h2>
+    <p class="modal__lead">Ваш відгук допомагає нам ставати кращими</p>
+
+    <form class="form modal__body"
+          method="post"
+          action="{% url 'reviews:review_submit' %}"
+          hx-post="{% url 'reviews:review_submit' %}"
+          hx-target="#modal-root"
+          hx-swap="innerHTML"
+          data-qa="review-form">
+      {% csrf_token %}
+      <div style="font-size:14px">Ваша оцінка</div>
+      <div class="stars" data-stars>
+        {% for i in "12345" %}
+        <button type="button" class="is-on" data-star="{{ forloop.counter }}" aria-label="Оцінка {{ forloop.counter }}">
+          <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+        </button>
+        {% endfor %}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px">
+        <label class="form__label">
+          {{ form.name }}
+          {% if form.name.errors %}<span class="form__error">{{ form.name.errors.0 }}</span>{% endif %}
+        </label>
+        <label class="form__label">
+          {{ form.city_name }}
+          {% if form.city_name.errors %}<span class="form__error">{{ form.city_name.errors.0 }}</span>{% endif %}
+        </label>
+      </div>
+      <label class="form__label">
+        {{ form.text }}
+        {% if form.text.errors %}<span class="form__error">{{ form.text.errors.0 }}</span>{% endif %}
+      </label>
+      <div class="modal__hint" style="text-align:right;margin-top:0" data-rev-count>0 / 300</div>
+
+      <label class="form__check">
+        {{ form.consent }}
+        <span>Згоден з <a class="link-accent" href="{% url 'content:privacy' %}">політикою конфіденційності</a></span>
+      </label>
+      {% if form.consent.errors %}<span class="form__error">{{ form.consent.errors.0 }}</span>{% endif %}
+      {% if form.errors %}<div class="form__error">Перевірте поля форми</div>{% endif %}
+
+      <button type="submit" class="btn btn--accent btn--block">Надіслати відгук</button>
+      <div class="modal__hint">Відгук зʼявиться на сайті після перевірки модератором</div>
+    </form>
+  </div>
+</div>
+<script>
+(function () {
+  var root = document.getElementById('modal-root');
+  if (!root) return;
+  var stars = root.querySelectorAll('[data-star]');
+  var rating = 5;
+  function paint(n) {
+    rating = n;
+    stars.forEach(function (btn) {
+      btn.classList.toggle('is-on', parseInt(btn.getAttribute('data-star'), 10) <= n);
+    });
+  }
+  stars.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      paint(parseInt(btn.getAttribute('data-star'), 10));
+    });
+  });
+  var ta = root.querySelector('textarea');
+  var counter = root.querySelector('[data-rev-count]');
+  if (ta) {
+    ta.setAttribute('maxlength', '300');
+    ta.setAttribute('placeholder', 'Розкажіть, як пройшов обмін');
+    ta.addEventListener('input', function () {
+      if (counter) counter.textContent = ta.value.length + ' / 300';
+    });
+  }
+  var name = root.querySelector('input[name="name"]');
+  var city = root.querySelector('input[name="city_name"]');
+  if (name) name.setAttribute('placeholder', 'Ваше ім’я');
+  if (city) city.setAttribute('placeholder', 'Місто');
+})();
+</script>

@@ -1,45 +1,62 @@
 {% load static content_format %}
 <div id="blog-list" data-qa="blog-list">
-  <div class="blog-feed">
+  {% if posts %}
+  {% with feature=posts.0 %}
+  {% if not page_obj or page_obj.number == 1 %}
+  <article class="blog-feature">
+    <a class="blog-feature__media" href="{% url 'blog:post_detail' feature.slug %}">
+      {% if feature.cover %}
+      <img src="{{ feature.cover.url }}" alt="" loading="lazy">
+      {% else %}
+      <img src="{% static 'images/blog-finance.jpg' %}" alt="" loading="lazy">
+      {% endif %}
+    </a>
+    <div>
+      <div class="card__meta">{{ feature.published_at|date:"d.m.Y" }} · {{ feature.category.name }}</div>
+      <a class="blog-card__title" href="{% url 'blog:post_detail' feature.slug %}" style="font-size:clamp(26px,4vw,36px)">{{ feature.title|brand_mark }}</a>
+      {% if feature.excerpt %}<p class="blog-card__text">{{ feature.excerpt|brand_mark }}</p>{% endif %}
+      <a class="link-accent" href="{% url 'blog:post_detail' feature.slug %}" style="margin-top:14px">Читати повністю
+        <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+      </a>
+    </div>
+  </article>
+  {% endif %}
+  {% endwith %}
+  {% endif %}
+
+  <div class="blog-grid">
     {% for post in posts %}
+    {% if page_obj and page_obj.number > 1 or not forloop.first %}
     <article class="blog-card">
-      <div class="blog-card__body">
-        <div class="card__meta">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
-        <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
-        {% if post.excerpt %}
-        <p class="card__text">{{ post.excerpt|brand_mark }}</p>
-        {% endif %}
-        <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати →</a>
-      </div>
-      <div class="blog-card__media">
+      <a class="blog-card__media" href="{% url 'blog:post_detail' post.slug %}">
         {% if post.cover %}
-        <img src="{{ post.cover.url }}" alt="" width="900" height="560" loading="lazy" decoding="async">
+        <img src="{{ post.cover.url }}" alt="" loading="lazy">
         {% else %}
         {% cycle 'images/blog-laptop.jpg' 'images/blog-charts.jpg' 'images/blog-trading.jpg' as blog_img silent %}
-        <img src="{% static blog_img %}" alt="" width="900" height="560" loading="lazy" decoding="async">
+        <img src="{% static blog_img %}" alt="" loading="lazy">
         {% endif %}
-      </div>
+      </a>
+      <div class="card__meta" style="margin-top:12px">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
+      <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
+      {% if post.excerpt %}<p class="blog-card__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
+      <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}" style="margin-top:12px">Читати повністю
+        <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+      </a>
     </article>
+    {% endif %}
     {% empty %}
     <div class="card u-muted">Статей поки немає</div>
     {% endfor %}
   </div>
+
   {% if page_obj.has_other_pages %}
-  <nav class="pagination" aria-label="Пагінація">
+  <nav class="pagination" aria-label="Пагінація" style="display:flex;gap:12px;align-items:center;justify-content:center;margin-top:32px">
     {% if page_obj.has_previous %}
-    <a class="btn btn--ghost"
-       hx-get="?page={{ page_obj.previous_page_number }}"
-       hx-target="#blog-list"
-       hx-swap="outerHTML"
-       href="?page={{ page_obj.previous_page_number }}">Назад</a>
+    <a class="btn btn--ghost" hx-get="?page={{ page_obj.previous_page_number }}" hx-target="#blog-list" hx-swap="outerHTML" href="?page={{ page_obj.previous_page_number }}">Назад</a>
     {% endif %}
     <span class="u-muted">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
     {% if page_obj.has_next %}
-    <a class="btn btn--ghost"
-       hx-get="?page={{ page_obj.next_page_number }}"
-       hx-target="#blog-list"
-       hx-swap="outerHTML"
-       href="?page={{ page_obj.next_page_number }}">Далі</a>
+    <a class="btn btn--ghost" hx-get="?page={{ page_obj.next_page_number }}" hx-target="#blog-list" hx-swap="outerHTML" href="?page={{ page_obj.next_page_number }}">Далі</a>
     {% endif %}
   </nav>
   {% endif %}

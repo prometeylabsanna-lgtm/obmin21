@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#EEF0F3;font-family:'Roboto',sans-serif;color:#052145;-webkit-font-smoothing:antialiased}
+a{color:#052145;text-decoration:none}
+a:hover{color:#CA8D42}
+input,textarea,select,button{font-family:inherit}
+</style>
+</helmet>
+<section style="padding:48px;display:flex;flex-direction:column;gap:28px">
+  <div>
+    <div style="font-size:13px;color:#B3B4B6;letter-spacing:.5px">ОБМІН21 · ВІКНО «ЗАЛИШИТИ ВІДГУК»</div>
+    <h1 style="margin:6px 0 0;font-size:36px;font-weight:700">5 варіантів вікна відгуку</h1>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+
+    <div id="1a" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="background:#052145;color:#fff;font-weight:700;font-size:13px;padding:4px 9px;border-radius:4px">1a</span><span style="font-size:15px;font-weight:600">Класичне модальне вікно</span></div>
+      <div style="width:560px;height:720px;border-radius:12px;background:rgba(5,33,69,0.55);display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="width:100%;background:#fff;border-radius:12px;padding:32px 32px 28px;box-shadow:0 24px 60px rgba(5,33,69,0.25);position:relative">
+          <button style="position:absolute;top:18px;right:18px;width:36px;height:36px;border:0;border-radius:50%;background:#F4F5F7;color:#052145;font-size:18px;cursor:pointer">×</button>
+          <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Відгук</div>
+          <h2 style="margin:12px 0 0;font-size:30px;font-weight:700;line-height:1.1">Поділіться <span style="color:#CA8D42">враженнями</span></h2>
+          <p style="margin:10px 0 0;color:#B3B4B6;font-size:15px;line-height:1.35">Ваш відгук допомагає нам ставати кращими</p>
+          <div style="margin-top:24px;font-size:14px">Ваша оцінка</div>
+          <div style="margin-top:8px;display:flex;gap:6px">
+            <sc-for list="{{ starsA }}" as="s" hint-placeholder-count="5">
+              <button onClick="{{ s.pick }}" style="border:0;background:transparent;padding:0;font-size:32px;line-height:1;cursor:pointer;color:{{ s.color }};transition:color .15s">★</button>
+            </sc-for>
+          </div>
+          <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <input placeholder="Ваше ім’я" style="height:50px;border:1px solid #EEF0F3;border-radius:6px;padding:0 16px;font-size:15px;color:#052145;outline:none">
+            <div style="height:50px;border:1px solid #EEF0F3;border-radius:6px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;font-size:15px;color:#B3B4B6">Місто<svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg></div>
+          </div>
+          <textarea placeholder="Розкажіть, як пройшов обмін" style="margin-top:12px;width:100%;height:120px;border:1px solid #EEF0F3;border-radius:6px;padding:14px 16px;font-size:15px;color:#052145;resize:none;outline:none"></textarea>
+          <div style="margin-top:6px;text-align:right;font-size:12px;color:#B3B4B6">0 / 300</div>
+          <button style="margin-top:14px;width:100%;height:52px;border:0;border-radius:6px;background:#CA8D42;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Надіслати відгук</button>
+          <div style="margin-top:12px;text-align:center;font-size:12px;color:#B3B4B6">Відгук з’явиться на сайті після перевірки модератором</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="background:#052145;color:#fff;font-weight:700;font-size:13px;padding:4px 9px;border-radius:4px">1b</span><span style="font-size:15px;font-weight:600">Розділене вікно з брендовою панеллю</span></div>
+      <div style="width:860px;height:720px;border-radius:12px;background:rgba(5,33,69,0.55);display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="width:100%;display:grid;grid-template-columns:320px 1fr;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 24px 60px rgba(5,33,69,0.25)">
+          <div style="background:#052145;color:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:space-between;gap:32px;position:relative;overflow:hidden">
+            <img src="assets/coins.png" alt="" style="position:absolute;right:-120px;bottom:-40px;width:420px;opacity:.9;pointer-events:none">
+            <div style="position:relative">
+              <img src="assets/logo-footer.png" alt="Obmin21" style="height:48px;display:block">
+              <div style="margin-top:36px;font-size:64px;font-weight:600;line-height:1">4,9</div>
+              <div style="margin-top:8px;font-size:18px;letter-spacing:2px;color:#CA8D42">★★★★★</div>
+              <div style="margin-top:10px;font-size:14px;color:#C3CAD2;line-height:1.35">Середня оцінка клієнтів у 20+ відділеннях</div>
+            </div>
+            <div style="position:relative;background:rgba(255,255,255,0.08);border-radius:8px;padding:16px;font-size:14px;line-height:1.4;max-width:230px">«Швидко обміняли велику суму, усе прозоро й без зайвих питань»<div style="margin-top:8px;color:#CA8D42;font-weight:600">Дарія, Київ</div></div>
+          </div>
+          <div style="padding:32px;position:relative">
+            <button style="position:absolute;top:18px;right:18px;width:36px;height:36px;border:0;border-radius:50%;background:#F4F5F7;color:#052145;font-size:18px;cursor:pointer">×</button>
+            <h2 style="margin:0;font-size:28px;font-weight:700">Залишити відгук</h2>
+            <p style="margin:8px 0 0;color:#B3B4B6;font-size:15px">Займе менше хвилини</p>
+            <div style="margin-top:22px;display:flex;align-items:center;gap:14px">
+              <div style="display:flex;gap:4px">
+                <sc-for list="{{ starsB }}" as="s" hint-placeholder-count="5">
+                  <button onClick="{{ s.pick }}" style="border:0;background:transparent;padding:0;font-size:30px;line-height:1;cursor:pointer;color:{{ s.color }}">★</button>
+                </sc-for>
+              </div>
+              <div style="font-size:14px;font-weight:600;color:#CA8D42">{{ labelB }}</div>
+            </div>
+            <div style="margin-top:20px;font-size:14px">Яку послугу ви використовували?</div>
+            <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ chipsB }}" as="c" hint-placeholder-count="5">
+                <button onClick="{{ c.pick }}" style="height:36px;padding:0 14px;border-radius:18px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;cursor:pointer;transition:all .15s">{{ c.name }}</button>
+              </sc-for>
+            </div>
+            <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <input placeholder="Ім’я" style="height:48px;border:1px solid #EEF0F3;border-radius:6px;padding:0 14px;font-size:15px;outline:none">
+              <input placeholder="Місто" style="height:48px;border:1px solid #EEF0F3;border-radius:6px;padding:0 14px;font-size:15px;outline:none">
+            </div>
+            <textarea placeholder="Ваш відгук" style="margin-top:12px;width:100%;height:110px;border:1px solid #EEF0F3;border-radius:6px;padding:12px 14px;font-size:15px;resize:none;outline:none"></textarea>
+            <label style="margin-top:12px;display:flex;align-items:center;gap:10px;font-size:13px;color:#B3B4B6"><span style="width:18px;height:18px;border-radius:4px;background:#CA8D42;display:flex;align-items:center;justify-content:center"><svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" fill="none" stroke-width="1.6"></path></svg></span>Погоджуюсь на публікацію відгуку</label>
+            <button style="margin-top:18px;width:100%;height:52px;border:0;border-radius:6px;background:#052145;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Надіслати</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1c" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="background:#052145;color:#fff;font-weight:700;font-size:13px;padding:4px 9px;border-radius:4px">1c</span><span style="font-size:15px;font-weight:600">Покроковий майстер (натисніть «Далі»)</span></div>
+      <div style="width:520px;height:720px;border-radius:12px;background:rgba(5,33,69,0.55);display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="width:100%;background:#fff;border-radius:12px;padding:28px 32px 30px;box-shadow:0 24px 60px rgba(5,33,69,0.25)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:13px;color:#B3B4B6">Крок {{ stepC }} з 3</div>
+            <button style="width:32px;height:32px;border:0;border-radius:50%;background:#F4F5F7;color:#052145;font-size:16px;cursor:pointer">×</button>
+          </div>
+          <div style="margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+            <sc-for list="{{ barsC }}" as="b" hint-placeholder-count="3"><div style="height:4px;border-radius:2px;background:{{ b.bg }};transition:background .3s"></div></sc-for>
+          </div>
+          <sc-if value="{{ c1 }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:36px 0 8px;text-align:center">
+              <h2 style="margin:0;font-size:28px;font-weight:700;line-height:1.15">Як вам обмін<br>у <span style="color:#CA8D42">Обмін21</span>?</h2>
+              <div style="margin-top:28px;display:flex;justify-content:center;gap:10px">
+                <sc-for list="{{ starsC }}" as="s" hint-placeholder-count="5">
+                  <button onClick="{{ s.pick }}" style="width:62px;height:62px;border-radius:12px;border:1px solid {{ s.border }};background:{{ s.bg }};font-size:30px;color:{{ s.color }};cursor:pointer;transition:all .15s">★</button>
+                </sc-for>
+              </div>
+              <div style="margin-top:16px;font-size:16px;font-weight:600;color:#CA8D42;min-height:20px">{{ labelC }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ c2 }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:28px 0 8px">
+              <h2 style="margin:0;font-size:26px;font-weight:700">Що сподобалось найбільше?</h2>
+              <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <sc-for list="{{ tagsC }}" as="t" hint-placeholder-count="6">
+                  <button onClick="{{ t.pick }}" style="height:52px;border-radius:8px;border:1px solid {{ t.border }};background:{{ t.bg }};color:#052145;font-size:14px;font-weight:500;cursor:pointer;text-align:left;padding:0 14px">{{ t.name }}</button>
+                </sc-for>
+              </div>
+              <textarea placeholder="Додайте кілька слів (необов’язково)" style="margin-top:14px;width:100%;height:90px;border:1px solid #EEF0F3;border-radius:6px;padding:12px 14px;font-size:14px;resize:none;outline:none"></textarea>
+            </div>
+          </sc-if>
+          <sc-if value="{{ c3 }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:28px 0 8px">
+              <h2 style="margin:0;font-size:26px;font-weight:700">Як вас підписати?</h2>
+              <input placeholder="Ім’я" style="margin-top:20px;width:100%;height:50px;border:1px solid #EEF0F3;border-radius:6px;padding:0 16px;font-size:15px;outline:none">
+              <input placeholder="Місто" style="margin-top:12px;width:100%;height:50px;border:1px solid #EEF0F3;border-radius:6px;padding:0 16px;font-size:15px;outline:none">
+              <input placeholder="Телефон (не публікується)" style="margin-top:12px;width:100%;height:50px;border:1px solid #EEF0F3;border-radius:6px;padding:0 16px;font-size:15px;outline:none">
+            </div>
+          </sc-if>
+          <div style="margin-top:22px;display:flex;gap:10px">
+            <button onClick="{{ backC }}" style="width:52px;height:52px;border:0;border-radius:6px;background:#C3CAD2;color:#fff;font-size:20px;cursor:pointer">‹</button>
+            <button onClick="{{ nextC }}" style="flex:1;height:52px;border:0;border-radius:6px;background:#CA8D42;color:#fff;font-weight:600;font-size:16px;cursor:pointer">{{ nextLabelC }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1d" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="background:#052145;color:#fff;font-weight:700;font-size:13px;padding:4px 9px;border-radius:4px">1d</span><span style="font-size:15px;font-weight:600">Бічна панель справа</span></div>
+      <div style="width:760px;height:720px;border-radius:12px;background:rgba(5,33,69,0.55);display:flex;justify-content:flex-end;overflow:hidden">
+        <div style="width:440px;height:100%;background:#fff;padding:32px 32px 28px;display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(5,33,69,0.25)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Відгуки</div>
+              <h2 style="margin:12px 0 0;font-size:30px;font-weight:700;line-height:1.1">Ваша думка<br><span style="color:#CA8D42">важлива</span></h2>
+            </div>
+            <button style="width:40px;height:40px;border:0;border-radius:6px;background:#052145;color:#fff;font-size:18px;cursor:pointer">×</button>
+          </div>
+          <div style="margin-top:28px;padding:18px;border-radius:8px;background:#F7F8FA">
+            <div style="font-size:13px;color:#B3B4B6">Загальна оцінка</div>
+            <div style="margin-top:8px;display:flex;gap:6px">
+              <sc-for list="{{ starsD }}" as="s" hint-placeholder-count="5">
+                <button onClick="{{ s.pick }}" style="border:0;background:transparent;padding:0;font-size:28px;line-height:1;cursor:pointer;color:{{ s.color }}">★</button>
+              </sc-for>
+            </div>
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ critD }}" as="k" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:14px">
+                  {{ k.name }}
+                  <div style="display:flex;gap:4px"><sc-for list="{{ k.dots }}" as="d" hint-placeholder-count="5"><button onClick="{{ d.pick }}" style="width:22px;height:6px;border:0;border-radius:3px;background:{{ d.bg }};cursor:pointer;padding:0"></button></sc-for></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <input placeholder="Ім’я" style="height:48px;border:1px solid #EEF0F3;border-radius:6px;padding:0 14px;font-size:15px;outline:none">
+            <input placeholder="Місто" style="height:48px;border:1px solid #EEF0F3;border-radius:6px;padding:0 14px;font-size:15px;outline:none">
+          </div>
+          <textarea placeholder="Опишіть ваш досвід" style="margin-top:10px;width:100%;flex:1;min-height:100px;border:1px solid #EEF0F3;border-radius:6px;padding:12px 14px;font-size:15px;resize:none;outline:none"></textarea>
+          <button style="margin-top:16px;width:100%;height:52px;border:0;border-radius:6px;background:#CA8D42;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Опублікувати відгук</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="1e" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="background:#052145;color:#fff;font-weight:700;font-size:13px;padding:4px 9px;border-radius:4px">1e</span><span style="font-size:15px;font-weight:600">Темне преміальне вікно + екран «Дякуємо»</span></div>
+      <div style="width:560px;height:720px;border-radius:12px;background:rgba(5,33,69,0.55);display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="width:100%;background:#052145;border-radius:14px;padding:32px;color:#fff;box-shadow:0 24px 60px rgba(0,0,0,0.35);position:relative;overflow:hidden">
+          <img src="assets/bitcoin.png" alt="" style="position:absolute;top:-30px;right:-30px;width:140px;opacity:.35;pointer-events:none">
+          <sc-if value="{{ formE }}" hint-placeholder-val="{{ true }}">
+            <div style="position:relative">
+              <div style="display:inline-block;border:1px solid #fff;border-radius:20px;padding:5px 11px;font-size:12px">Відгук</div>
+              <h2 style="margin:14px 0 0;font-size:30px;font-weight:700;line-height:1.1">Оцініть наш<br><span style="color:#CA8D42">сервіс</span></h2>
+              <div style="margin-top:24px;display:flex;gap:8px">
+                <sc-for list="{{ starsE }}" as="s" hint-placeholder-count="5">
+                  <button onClick="{{ s.pick }}" style="border:0;background:transparent;padding:0;font-size:36px;line-height:1;cursor:pointer;color:{{ s.color }};transition:color .15s">★</button>
+                </sc-for>
+              </div>
+              <input placeholder="Ім’я та місто" style="margin-top:22px;width:100%;height:50px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);border-radius:6px;padding:0 16px;font-size:15px;color:#fff;outline:none">
+              <textarea placeholder="Ваш відгук" style="margin-top:12px;width:100%;height:140px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);border-radius:6px;padding:14px 16px;font-size:15px;color:#fff;resize:none;outline:none"></textarea>
+              <button onClick="{{ sendE }}" style="margin-top:18px;width:100%;height:52px;border:0;border-radius:6px;background:#CA8D42;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Надіслати відгук</button>
+              <div style="margin-top:12px;text-align:center;font-size:12px;color:#C3CAD2">Натисніть, щоб побачити екран подяки</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ doneE }}" hint-placeholder-val="{{ false }}">
+            <div style="position:relative;text-align:center;padding:40px 0 16px">
+              <div style="width:84px;height:84px;margin:0 auto;border-radius:50%;background:#CA8D42;display:flex;align-items:center;justify-content:center"><svg width="36" height="28" viewBox="0 0 36 28"><path d="M3 14l10 10L33 3" stroke="#fff" fill="none" stroke-width="4"></path></svg></div>
+              <h2 style="margin:26px 0 0;font-size:30px;font-weight:700">Дякуємо!</h2>
+              <p style="margin:12px auto 0;max-width:320px;color:#C3CAD2;font-size:15px;line-height:1.4">Ваш відгук надіслано. Він з’явиться на сайті після перевірки.</p>
+              <button onClick="{{ resetE }}" style="margin-top:28px;width:100%;height:52px;border:1px solid #fff;border-radius:6px;background:transparent;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Закрити</button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { a: 5, b: 4, c: 0, d: 5, e: 5, step: 1, chip: 'Обмін валют', tags: ['Вигідний курс'], crit: [5, 4, 5], done: false };
+  stars(v, key, extra) {
+    return [1, 2, 3, 4, 5].map(i => ({ pick: () => this.setState({ [key]: i }), color: i <= v ? '#CA8D42' : '#C3CAD2', ...(extra ? extra(i <= v) : {}) }));
+  }
+  renderVals() {
+    const s = this.state, labels = ['', 'Погано', 'Так собі', 'Нормально', 'Добре', 'Чудово!'];
+    const chips = ['Обмін валют', 'Криптовалюта', 'Перекази', 'Золото', 'Оптовий обмін'];
+    const tags = ['Вигідний курс', 'Швидко', 'Ввічливий персонал', 'Без комісій', 'Зручне розташування', 'Онлайн-бронювання'];
+    return {
+      starsA: this.stars(s.a, 'a').map(x => ({ ...x, color: x.color === '#CA8D42' ? '#052145' : '#C3CAD2' })),
+      starsB: this.stars(s.b, 'b'), labelB: labels[s.b],
+      chipsB: chips.map(n => { const on = s.chip === n; return { name: n, pick: () => this.setState({ chip: n }), border: on ? '#052145' : '#EEF0F3', bg: on ? '#052145' : '#fff', color: on ? '#fff' : '#052145' }; }),
+      starsC: this.stars(s.c, 'c', on => ({ border: on ? '#CA8D42' : '#EEF0F3', bg: on ? '#FBF4EB' : '#fff' })),
+      labelC: labels[s.c] || 'Оберіть оцінку', stepC: s.step,
+      c1: s.step === 1, c2: s.step === 2, c3: s.step === 3,
+      barsC: [1, 2, 3].map(i => ({ bg: i <= s.step ? '#CA8D42' : '#EEF0F3' })),
+      tagsC: tags.map(n => { const on = s.tags.includes(n); return { name: n, pick: () => this.setState({ tags: on ? s.tags.filter(x => x !== n) : [...s.tags, n] }), border: on ? '#CA8D42' : '#EEF0F3', bg: on ? '#FBF4EB' : '#fff' }; }),
+      nextC: () => this.setState({ step: s.step === 3 ? 1 : s.step + 1 }),
+      backC: () => this.setState({ step: Math.max(1, s.step - 1) }),
+      nextLabelC: s.step === 3 ? 'Надіслати відгук' : 'Далі',
+      starsD: this.stars(s.d, 'd'),
+      critD: ['Курс', 'Швидкість', 'Обслуговування'].map((name, ci) => ({ name, dots: [1, 2, 3, 4, 5].map(i => ({ bg: i <= s.crit[ci] ? '#052145' : '#E3E7EC', pick: () => this.setState({ crit: s.crit.map((v, j) => j === ci ? i : v) }) })) })),
+      starsE: this.stars(s.e, 'e').map(x => ({ ...x, color: x.color === '#C3CAD2' ? 'rgba(255,255,255,0.22)' : '#CA8D42' })),
+      formE: !s.done, doneE: s.done,
+      sendE: () => this.setState({ done: true }), resetE: () => this.setState({ done: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

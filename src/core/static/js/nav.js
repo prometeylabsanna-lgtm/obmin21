@@ -111,7 +111,8 @@
   document.body.addEventListener('cityChanged', function () {
     var panel = document.getElementById('rates-panel');
     if (panel && window.htmx) {
-      window.htmx.ajax('GET', '/partials/rates/', { target: '#rates-panel', swap: 'outerHTML' });
+      var qs = panel.closest('.hero__rates') ? '?home=1' : '';
+      window.htmx.ajax('GET', '/partials/rates/' + qs, { target: '#rates-panel', swap: 'outerHTML' });
     }
     var label = document.querySelector('[data-city-label]');
     var cityName = label ? label.textContent.trim() : '';
