@@ -1,5 +1,7 @@
 asgiref==3.12.1
 Django==5.2.17
+django-unfold==0.104.0
+django-tinymce==4.1.0
 gunicorn==26.2.0
 pillow==12.3.0
 psycopg==3.3.6

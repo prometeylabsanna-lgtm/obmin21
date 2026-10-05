@@ -55,7 +55,7 @@
           <span class="contacts-map__item-name">{{ b.city.name }}</span>
           <span class="contacts-map__item-addr">{{ b.address }}</span>
         </span>
-        <svg width="7" height="12" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+        <svg width="7" height="12" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </button>
       {% endfor %}
     </div>
@@ -65,7 +65,7 @@
         <div class="contacts-map__card-name" data-branches-name>Обмін21 · {{ active_branch.city.name }}</div>
         <div class="contacts-map__card-addr" data-branches-addr>{{ active_branch.address }}</div>
         <a class="contacts-map__card-link" data-branches-link href="{{ active_branch.map_route_url }}" target="_blank" rel="noopener">Прокласти маршрут
-          <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+          <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
         </a>
       </div>
     </div>

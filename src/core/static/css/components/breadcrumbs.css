@@ -36,7 +36,7 @@
 }
 
 .breadcrumbs a:hover {
-  color: #ca8d42;
+  color: var(--color-accent);
 }
 
 .breadcrumbs__current {

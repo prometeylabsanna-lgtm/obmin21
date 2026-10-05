@@ -10,9 +10,12 @@ from src.core.breadcrumbs import safe_reverse, trail
 
 
 def city_list(request):
+    page = CitiesPage.load()
     return render(request, 'network/city_list.html', {
-        'page': CitiesPage.load(),
+        'page': page,
         'cities_list': request.cities,
+        'page_title': page.seo_title or page.title,
+        'page_description': page.seo_description or page.intro[:160],
     })
 
 

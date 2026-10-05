@@ -201,13 +201,13 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #ca8d42;
+  color: var(--color-accent);
   font-weight: 500;
   font-size: 15px;
 }
 
 .contacts-map__card-link:hover {
-  color: #b87b2c;
+  color: var(--color-accent-hover);
 }
 
 @media (min-width: 768px) {

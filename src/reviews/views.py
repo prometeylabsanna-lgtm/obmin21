@@ -1,16 +1,20 @@
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
+from src.content.models import ReviewsPage
 from src.reviews.forms import ReviewForm
 from src.reviews.selectors import get_published_reviews
 
 
 def review_list(request):
     form = ReviewForm()
+    page = ReviewsPage.load()
     return render(request, 'reviews/review_list.html', {
         'reviews': get_published_reviews(),
         'form': form,
-        'page_title': 'Відгуки',
+        'page': page,
+        'page_title': page.seo_title or page.title,
+        'page_description': page.seo_description or page.intro[:160],
     })
 
 

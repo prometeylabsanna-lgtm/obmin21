@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render
 
 from src.blog.models import Category, Post
 from src.blog.selectors import get_published_posts
+from src.content.models import BlogPage
 from src.core.breadcrumbs import safe_reverse, trail
 
 
@@ -24,7 +25,9 @@ def post_list(request, category_slug=None):
         if category
         else safe_reverse('blog:post_list')
     )
+    page = BlogPage.load()
     context = {
+        'page': page,
         'featured': featured,
         'posts': rest[:limit],
         'has_more': len(rest) > limit,
@@ -32,7 +35,8 @@ def post_list(request, category_slug=None):
         'list_url': list_url,
         'categories': Category.objects.all(),
         'active_category': category,
-        'page_title': category.name if category else 'Блог',
+        'page_title': category.name if category else (page.seo_title or page.title),
+        'page_description': page.seo_description or page.intro[:160],
     }
     if category:
         context['breadcrumb_items'] = trail(

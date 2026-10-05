@@ -1,15 +1,17 @@
 from django.contrib import admin
+from unfold.admin import TabularInline
 
+from src.core.admin_mixins import ListUnfoldAdmin
 from src.network.models import Branch, City
 
 
-class BranchInline(admin.TabularInline):
+class BranchInline(TabularInline):
     model = Branch
     extra = 0
 
 
 @admin.register(City)
-class CityAdmin(admin.ModelAdmin):
+class CityAdmin(ListUnfoldAdmin):
     list_display = ('name', 'slug', 'phone', 'is_active', 'sort_order')
     list_editable = ('is_active', 'sort_order')
     prepopulated_fields = {'slug': ('name',)}
@@ -18,7 +20,7 @@ class CityAdmin(admin.ModelAdmin):
 
 
 @admin.register(Branch)
-class BranchAdmin(admin.ModelAdmin):
+class BranchAdmin(ListUnfoldAdmin):
     list_display = ('address', 'city', 'phone', 'is_active', 'sort_order')
     list_filter = ('city', 'is_active')
     search_fields = ('address', 'phone')

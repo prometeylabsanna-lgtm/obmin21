@@ -110,7 +110,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #ca8d42;
+  background: var(--color-accent);
 }
 
 .blog-feature__title {
@@ -131,7 +131,7 @@
 
 .blog-feature__more {
   margin-top: 24px;
-  color: #ca8d42;
+  color: var(--color-accent);
   font-weight: 500;
   font-size: 15px;
   display: inline-flex;
@@ -182,7 +182,7 @@
 }
 
 .blog-card__cat {
-  color: #ca8d42;
+  color: var(--color-accent);
   font-weight: 500;
 }
 

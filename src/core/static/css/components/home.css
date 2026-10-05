@@ -71,7 +71,7 @@
 
 .hero__fix-btn {
   width: 100%;
-  background: #ca8d42;
+  background: var(--color-accent);
   color: #fff;
   font-weight: 600;
   font-size: 16px;
@@ -82,7 +82,7 @@
 }
 
 .hero__fix-btn:hover {
-  background: #b87b2c;
+  background: var(--color-accent-hover);
   color: #fff;
 }
 
@@ -121,9 +121,9 @@
 
 .hero__rates .rates-tabs__btn.is-active,
 .hero__rates .rates-tabs__btn[aria-selected="true"] {
-  border: 1px solid #ca8d42;
+  border: 1px solid var(--color-accent);
   background: #fff;
-  color: #ca8d42;
+  color: var(--color-accent);
   font-weight: 400;
 }
 
@@ -216,7 +216,7 @@
 }
 
 .hero__rates .link-accent {
-  color: #ca8d42;
+  color: var(--color-accent);
   font-weight: 600;
   font-size: 15px;
 }

@@ -8,6 +8,7 @@ from src.core.sitemaps import sitemaps
 from src.core.views import page_not_found
 
 urlpatterns = [
+    path('tinymce/', include('tinymce.urls')),
     path('admin/', admin.site.urls),
     path('', include('src.core.urls')),
     path('', include('src.network.urls')),

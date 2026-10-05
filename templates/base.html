@@ -23,29 +23,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="{% static 'css/variables.css' %}?v=11">
+  <link rel="stylesheet" href="{% static 'css/variables.css' %}?v=13">
+  <link rel="stylesheet" href="{% url 'core:theme_css' %}?v={{ theme_version }}">
   <link rel="stylesheet" href="{% static 'css/reset.css' %}">
   <link rel="stylesheet" href="{% static 'css/base.css' %}?v=11">
   <link rel="stylesheet" href="{% static 'css/layout.css' %}?v=11">
   <link rel="stylesheet" href="{% static 'css/animations.css' %}?v=13">
   <link rel="stylesheet" href="{% static 'css/components/buttons.css' %}?v=11">
   <link rel="stylesheet" href="{% static 'css/components/forms.css' %}?v=16">
-  <link rel="stylesheet" href="{% static 'css/components/header.css' %}?v=13">
-  <link rel="stylesheet" href="{% static 'css/components/breadcrumbs.css' %}?v=13">
-  <link rel="stylesheet" href="{% static 'css/components/footer.css' %}?v=14">
+  <link rel="stylesheet" href="{% static 'css/components/header.css' %}?v=14">
+  <link rel="stylesheet" href="{% static 'css/components/breadcrumbs.css' %}?v=14">
+  <link rel="stylesheet" href="{% static 'css/components/footer.css' %}?v=15">
   <link rel="stylesheet" href="{% static 'css/components/rates.css' %}?v=14">
   <link rel="stylesheet" href="{% static 'css/components/cards.css' %}?v=11">
-  <link rel="stylesheet" href="{% static 'css/components/blog.css' %}?v=12">
-  <link rel="stylesheet" href="{% static 'css/components/article.css' %}?v=2">
+  <link rel="stylesheet" href="{% static 'css/components/blog.css' %}?v=13">
+  <link rel="stylesheet" href="{% static 'css/components/article.css' %}?v=3">
   <link rel="stylesheet" href="{% static 'css/components/modal.css' %}?v=13">
   <link rel="stylesheet" href="{% static 'css/components/faq.css' %}?v=15">
-  <link rel="stylesheet" href="{% static 'css/components/home.css' %}?v=22">
+  <link rel="stylesheet" href="{% static 'css/components/home.css' %}?v=23">
   <link rel="stylesheet" href="{% static 'css/components/pages.css' %}?v=18">
   <link rel="stylesheet" href="{% static 'css/components/legal.css' %}?v=1">
-  <link rel="stylesheet" href="{% static 'css/components/contacts.css' %}?v=2">
-  <link rel="stylesheet" href="{% static 'css/components/advantages.css' %}?v=3">
+  <link rel="stylesheet" href="{% static 'css/components/contacts.css' %}?v=3">
+  <link rel="stylesheet" href="{% static 'css/components/advantages.css' %}?v=4">
   <link rel="stylesheet" href="{% static 'css/components/advantages-why.css' %}?v=3">
-  <link rel="stylesheet" href="{% static 'css/components/advantages-cmp.css' %}?v=2">
+  <link rel="stylesheet" href="{% static 'css/components/advantages-cmp.css' %}?v=3">
   <link rel="stylesheet" href="{% static 'css/detail-page.css' %}?v=11">
   <link rel="stylesheet" href="{% static 'css/components/chat.css' %}?v=1">
   {% block page_css %}{% endblock %}
@@ -64,7 +65,7 @@
   {% block page_js %}{% endblock %}
 </head>
 
-<body class="page" data-qa="page">
+<body class="page" data-qa="page" data-theme="{{ page_theme|default:'home' }}">
   <div class="page__shell">
     {% include 'partials/header.html' %}
     {% if breadcrumb_items %}

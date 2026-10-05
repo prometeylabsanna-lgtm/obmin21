@@ -1,7 +1,11 @@
 {% load static %}
-<header class="site-header" data-qa="header">
+<header class="site-header" data-qa="header" data-theme="header">
   <a href="{% url 'core:home' %}" class="site-header__logo" data-qa="logo">
+    {% if site_settings.header_logo %}
+    <img src="{{ site_settings.header_logo.url }}" alt="{{ site_settings.site_name }}" width="160" height="40">
+    {% else %}
     <img src="{% static 'images/logo.png' %}" alt="{{ site_settings.site_name }}" width="160" height="40">
+    {% endif %}
   </a>
 
   <nav class="site-header__nav" aria-label="Основне меню">

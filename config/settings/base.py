@@ -1,6 +1,8 @@
 from pathlib import Path
 
 from decouple import Csv, config
+from django.templatetags.static import static
+from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -11,6 +13,9 @@ DEBUG = False
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
 INSTALLED_APPS = [
+    'unfold',
+    'unfold.contrib.filters',
+    'unfold.contrib.forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -18,7 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
-    'src.core',
+    'tinymce',
+    'src.core.apps.CoreConfig',
     'src.network',
     'src.rates',
     'src.leads',
@@ -57,6 +63,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'src.core.context_processors.site_chrome',
+                'src.core.context_processors.page_theme',
             ],
         },
     },
@@ -103,6 +110,41 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+UNFOLD = {
+    'SITE_TITLE': 'Панель Обмін21',
+    'SITE_HEADER': 'Обмін21 — панель редагування',
+    'SITE_SYMBOL': 'currency_exchange',
+    'SHOW_HISTORY': True,
+    'STYLES': [
+        lambda request: static('css/admin/site_content.css'),
+    ],
+    'SCRIPTS': [
+        lambda request: static('js/admin/cms_image_preview.js'),
+    ],
+    'SIDEBAR': {
+        'show_search': True,
+        'command_search': True,
+        'show_all_applications': False,
+        'navigation': [],
+    },
+    'LOGIN': {
+        'redirect_after': reverse_lazy('admin:index'),
+    },
+}
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'menubar': False,
+    'plugins': 'link lists',
+    'toolbar': 'undo redo | bold italic underline | bullist numlist | link',
+    'content_css': False,
+    'skin': 'oxide',
+    'promotion': False,
+    'branding': False,
+    'forced_root_block': 'p',
+    'newline_behavior': 'block',
+}
 
 CITY_COOKIE_NAME = 'obmin21_city'
 CITY_COOKIE_MAX_AGE = 60 * 60 * 24 * 365

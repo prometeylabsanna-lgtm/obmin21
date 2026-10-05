@@ -38,11 +38,14 @@ def services_list(request):
 
 
 def advantages_page(request):
+    page = AdvantagesPage.load()
     return render(request, 'content/advantages.html', {
-        'page': AdvantagesPage.load(),
+        'page': page,
         'items': AdvantageItem.objects.filter(is_active=True),
         'audiences': AdvantageItem.Audience.choices,
         'home_reviews': list(get_published_reviews()[:8]),
+        'page_title': page.seo_title or page.title,
+        'page_description': page.seo_description or page.intro[:160],
     })
 
 
@@ -58,11 +61,14 @@ def contacts_page(request):
             if item.city_id == request.city.id:
                 active = item
                 break
+    page = ContactsPage.load()
     return render(request, 'content/contacts.html', {
-        'page': ContactsPage.load(),
+        'page': page,
         'map_branches': map_branches,
         'active_branch': active,
         'branches': request.city_branches,
+        'page_title': page.seo_title or page.title,
+        'page_description': page.seo_description or page.intro[:160],
     })
 
 

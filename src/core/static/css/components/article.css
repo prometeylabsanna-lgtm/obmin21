@@ -72,7 +72,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #ca8d42;
+  background: var(--color-accent);
 }
 
 .article-body {
@@ -129,7 +129,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ca8d42;
+  background: var(--color-accent);
 }
 
 .article-fig {
@@ -167,20 +167,20 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #ca8d42;
+  color: var(--color-accent);
   font-weight: 500;
   font-size: 15px;
 }
 
 .article-body__back:hover {
-  color: #b87b2c;
+  color: var(--color-accent-hover);
 }
 
 .article-body__rates {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #ca8d42;
+  background: var(--color-accent);
   color: #fff;
   font-weight: 600;
   font-size: 15px;
@@ -192,7 +192,7 @@
 }
 
 .article-body__rates:hover {
-  background: #b87b2c;
+  background: var(--color-accent-hover);
   color: #fff;
 }
 
@@ -243,7 +243,7 @@
 .article-related__cat {
   margin-top: 16px;
   font-size: 13px;
-  color: #ca8d42;
+  color: var(--color-accent);
   font-weight: 500;
 }
 

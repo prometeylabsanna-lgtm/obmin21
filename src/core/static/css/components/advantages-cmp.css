@@ -47,8 +47,8 @@
 }
 
 .cmp-adv__badge {
-  border: 1px solid #ca8d42;
-  color: #ca8d42;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
   border-radius: 20px;
   padding: 5px 12px;
   font-size: 12px;
@@ -109,7 +109,7 @@
 }
 
 .cmp-adv__ok {
-  background: #ca8d42;
+  background: var(--color-accent);
 }
 
 .cmp-adv__no {

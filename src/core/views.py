@@ -1,6 +1,9 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView
+
+from src.core.theme import theme_css_cached
 
 from src.blog.selectors import get_published_posts
 from src.content.models import AdvantageItem, FaqItem, HomePage, Service
@@ -94,6 +97,13 @@ def quotes_json(request):
 
 def robots_txt(request):
     return render(request, 'core/robots.txt', content_type='text/plain')
+
+
+@require_GET
+def theme_css(request):
+    response = HttpResponse(theme_css_cached(), content_type='text/css')
+    response['Cache-Control'] = 'public, max-age=300'
+    return response
 
 
 def page_not_found(request, exception):

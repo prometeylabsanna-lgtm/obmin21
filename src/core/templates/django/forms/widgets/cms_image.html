@@ -1,0 +1,22 @@
+<div class="cms-image" data-cms-image>
+  <div class="cms-image__frame{% if not widget.preview_url %} is-empty{% endif %}">
+    <img class="cms-image__preview{% if not widget.preview_url %} is-empty{% endif %}"
+         {% if widget.preview_url %}src="{{ widget.preview_url }}"{% endif %}
+         alt=""
+         width="240"
+         height="160"
+         data-cms-image-preview
+         {% if not widget.preview_url %}hidden{% endif %}>
+    {% if not widget.preview_url %}
+      <span class="cms-image__placeholder" data-cms-image-placeholder>Немає зображення</span>
+    {% endif %}
+  </div>
+  {% if widget.is_initial and not widget.required %}
+    <label class="cms-image__clear">
+      <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"{% if widget.attrs.disabled %} disabled{% endif %} data-cms-image-clear>
+      Прибрати зображення
+    </label>
+  {% endif %}
+  <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} data-cms-image-input>
+  <p class="cms-image__hint">Оберіть файл, щоб замінити картинку. Поточне фото видно вище.</p>
+</div>
