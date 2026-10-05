@@ -76,7 +76,9 @@
   .coin-spin,
   .modal-enter,
   .adv-hero__float,
-  [data-anim] {
+  [data-anim],
+  .svc-hero__coins img,
+  .why-adv__coins {
     animation: none;
   }
 }

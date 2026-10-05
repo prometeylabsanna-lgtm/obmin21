@@ -54,6 +54,12 @@
   display: block;
   width: 100%;
   height: auto;
+  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.4));
+  animation: obFlA 11s ease-in-out infinite;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .svc-hero__copy {
@@ -402,6 +408,8 @@
     top: -102px;
     width: min(66%, max(340px, calc(100% - 460px)));
     margin: 0;
+    perspective: 900px;
+    -webkit-perspective: 900px;
   }
 
   .svc-hero__copy {
@@ -453,5 +461,20 @@
   .branches-layout {
     grid-template-columns: 0.9fr 1.1fr;
     gap: 32px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .svc-hero__coins {
+    right: -6%;
+    top: -72px;
+    width: min(70%, max(300px, calc(100% - 400px)));
+  }
+}
+
+@media (max-width: 767px) {
+  .svc-hero__coins {
+    width: 170%;
+    margin: -12px 0 -24px -36%;
   }
 }
