@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 
@@ -6,6 +7,11 @@ class Review(models.Model):
     name = models.CharField("Ім'я", max_length=120)
     text = models.TextField('Текст')
     city_name = models.CharField('Місто (текст)', max_length=80, blank=True)
+    rating = models.PositiveSmallIntegerField(
+        'Оцінка',
+        default=5,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+    )
     is_published = models.BooleanField('Опубліковано', default=False)
     consent = models.BooleanField('Згода', default=False)
     created_at = models.DateTimeField('Створено', default=timezone.now)

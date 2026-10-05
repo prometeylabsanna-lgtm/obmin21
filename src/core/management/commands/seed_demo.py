@@ -542,36 +542,36 @@ class Command(BaseCommand):
             },
         )
 
-        Review.objects.update_or_create(
-            name='Олена',
-            text='Зручно зафіксувати курс онлайн і приїхати без черги.',
-            defaults={
-                'city_name': 'Харків',
-                'is_published': True,
-                'consent': True,
-                'published_at': timezone.now() - timedelta(days=2),
-            },
-        )
-        Review.objects.update_or_create(
-            name='Андрій',
-            text='Нормальний курс і ввічливі касири.',
-            defaults={
-                'city_name': 'Київ',
-                'is_published': True,
-                'consent': True,
-                'published_at': timezone.now() - timedelta(days=1),
-            },
-        )
-        Review.objects.update_or_create(
-            name='Марина',
-            text='Швидко обміняли велику суму, усе прозоро й без зайвих питань.',
-            defaults={
-                'city_name': 'Львів',
-                'is_published': True,
-                'consent': True,
-                'published_at': timezone.now(),
-            },
-        )
+        home_reviews = [
+            ('Дарія', 'Київ', 'Швидко обміняли велику суму, усе прозоро й без зайвих питань', 5),
+            ('Андрій', 'Львів', 'Зафіксував курс онлайн зранку, а ввечері отримав саме ту суму, що й розраховував. Дуже зручно.', 4),
+            ('Олена', 'Одеса', 'Переказала гроші доньці за кордон за кілька хвилин. Консультант усе пояснив і допоміг заповнити дані.', 5),
+            ('Максим', 'Харків', 'Обміняв USDT на готівку без черг і прихованих комісій. Курс кращий, ніж у банку поруч.', 5),
+            ('Ірина', 'Дніпро', 'Прийняли стару потерту купюру, яку ніде не хотіли брати. Перевірили на місці й одразу обміняли.', 4),
+            ('Сергій', 'Запоріжжя', 'Купував інвестиційне золото вперше. Показали сертифікати, розповіли про зберігання — жодних сумнівів.', 5),
+            ('Наталія', 'Вінниця', 'Приємний персонал і чистий затишний офіс. Обмін євро зайняв буквально п’ять хвилин.', 4),
+            ('Тарас', 'Івано-Франківськ', 'Для бізнесу потрібен був оптовий обмін — запропонували індивідуальний курс і підготували суму заздалегідь.', 5),
+        ]
+        Review.objects.filter(
+            text__in=[
+                'Зручно зафіксувати курс онлайн і приїхати без черги.',
+                'Нормальний курс і ввічливі касири.',
+                'Швидко обміняли велику суму, усе прозоро й без зайвих питань.',
+            ]
+        ).update(is_published=False)
+        now = timezone.now()
+        for index, (name, city, text, rating) in enumerate(home_reviews):
+            Review.objects.update_or_create(
+                name=name,
+                city_name=city,
+                defaults={
+                    'text': text,
+                    'rating': rating,
+                    'is_published': True,
+                    'consent': True,
+                    'published_at': now - timedelta(hours=index),
+                },
+            )
 
         faq_page = FaqPage.load()
         faq_page.title = 'FAQ'

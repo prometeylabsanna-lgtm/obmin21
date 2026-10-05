@@ -137,16 +137,13 @@
 .flag[data-code="USD"],
 .flag--usd {
   background:
-    linear-gradient(180deg, #b22234 7.69%, #fff 7.69% 15.38%, #b22234 15.38% 23.07%, #fff 23.07% 30.76%, #b22234 30.76% 38.45%, #fff 38.45% 46.14%, #b22234 46.14% 53.83%, #fff 53.83% 61.52%, #b22234 61.52% 69.21%, #fff 69.21% 76.9%, #b22234 76.9% 84.59%, #fff 84.59% 92.28%, #b22234 92.28%),
-    #3c3b6e;
-  background-size: 100% 100%, 40% 54%;
-  background-repeat: no-repeat, no-repeat;
-  background-position: 0 0, 0 0;
+    linear-gradient(#3c3b6e, #3c3b6e) 0 0 / 45% 54% no-repeat,
+    repeating-linear-gradient(#b22234 0 7.69%, #fff 7.69% 15.38%);
 }
 
 .flag[data-code="EUR"],
 .flag--eur {
-  background: #003399;
+  background: radial-gradient(circle, #003399 38%, #ffcc00 40% 46%, #003399 48%);
 }
 
 .flag[data-code="PLN"],

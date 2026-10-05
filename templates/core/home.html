@@ -51,7 +51,7 @@
         {% endfor %}
       </div>
       <button type="button" class="field-currency" data-calc-from-toggle aria-haspopup="listbox">
-        <span class="flag flag--usd" data-calc-from-flag aria-hidden="true"></span>
+        <span class="flag flag--usd" data-calc-from-flag data-code="USD" aria-hidden="true"></span>
         <span data-calc-from-code>{{ rate_rows.0.pair.code|default:"USD" }}</span>
         <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
       </button>
@@ -60,7 +60,7 @@
         <button type="button" class="{% if forloop.first %}is-active{% endif %}" data-calc-pick
                 data-pair-id="{{ row.pair.pk }}" data-code="{{ row.pair.code }}" data-name="{{ row.pair.name }}"
                 data-buy="{{ row.quote.buy }}" data-sell="{{ row.quote.sell }}">
-          <span class="flag"></span>
+          <span class="flag" data-code="{{ row.pair.code }}"></span>
           <span class="code">{{ row.pair.code }}</span>
           <span class="name">{{ row.pair.name }}</span>
         </button>
@@ -81,8 +81,9 @@
     <div class="field-row">
       <div class="field-value" data-calc-result>0</div>
       <button type="button" class="field-currency" disabled>
-        <span class="flag flag--uah" aria-hidden="true"></span>
+        <span class="flag flag--uah" data-code="UAH" aria-hidden="true"></span>
         <span>UAH</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
       </button>
     </div>
   </div>
@@ -222,11 +223,11 @@
 
 <section class="reviews-section" id="reviews" data-qa="section-reviews">
   <div class="slider-head">
-    <div>
+    <div class="slider-head__copy">
       <span class="pill">Статті</span>
       <h2 class="slider-head__title">Відгуки</h2>
     </div>
-    <div class="slider-nav" data-slider-nav="reviews">
+    <div class="slider-nav slider-nav--desk" data-slider-nav="reviews">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
       <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
     </div>
@@ -237,7 +238,9 @@
       <div>
         <div class="review-slide__name">{{ rev.name }}{% if rev.city_name %}, {{ rev.city_name }}{% endif %}</div>
         <div class="review-slide__stars" aria-hidden="true">
-          {% for i in "12345" %}<svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="#052145" stroke="#052145" stroke-width="1.6" stroke-linejoin="round"></path></svg>{% endfor %}
+          {% for i in "12345" %}
+          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="{% if forloop.counter <= rev.rating %}#052145{% else %}#C3CAD2{% endif %}" stroke="{% if forloop.counter <= rev.rating %}#052145{% else %}#C3CAD2{% endif %}" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+          {% endfor %}
         </div>
       </div>
       <p class="review-slide__text">{{ rev.text }}</p>
@@ -246,7 +249,13 @@
     <article class="review-slide"><p class="review-slide__text">Відгуки зʼявляться незабаром</p></article>
     {% endfor %}
   </div>
-  <button type="button" class="btn btn--accent reviews-section__cta" data-open-modal="{% url 'reviews:review_submit' %}">Залишити відгук</button>
+  <div class="reviews-section__cta-row">
+    <button type="button" class="btn btn--accent reviews-section__cta" data-open-modal="{% url 'reviews:review_submit' %}">Залишити відгук</button>
+    <div class="slider-nav slider-nav--mob" data-slider-nav="reviews">
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
+      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+    </div>
+  </div>
 </section>
 
 <section class="articles-section" id="news" data-qa="section-news">

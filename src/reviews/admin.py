@@ -6,8 +6,8 @@ from src.reviews.models import Review
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city_name', 'is_published', 'created_at', 'published_at')
-    list_filter = ('is_published',)
+    list_display = ('name', 'city_name', 'rating', 'is_published', 'created_at', 'published_at')
+    list_filter = ('is_published', 'rating')
     search_fields = ('name', 'text')
     actions = ['publish_reviews']
 

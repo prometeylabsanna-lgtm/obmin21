@@ -7,14 +7,17 @@
     return isNaN(num) ? 0 : num;
   }
 
+  function formatUa(value, maxDecimals) {
+    var n = Number(value);
+    if (!isFinite(n)) return '0';
+    return n.toLocaleString('uk-UA', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: maxDecimals
+    });
+  }
+
   function formatNum(value, maxDecimals) {
-    var decimals = typeof maxDecimals === 'number' ? maxDecimals : 2;
-    if (!isFinite(value)) return '0';
-    var text = Number(value).toFixed(decimals);
-    if (text.indexOf('.') !== -1) {
-      text = text.replace(/0+$/, '').replace(/\.$/, '');
-    }
-    return text;
+    return formatUa(value, typeof maxDecimals === 'number' ? maxDecimals : 2);
   }
 
   function activeBtn(scope) {
@@ -32,7 +35,11 @@
     var codeEl = scope.querySelector('[data-calc-from-code]');
     var flagEl = scope.querySelector('[data-calc-from-flag]');
     if (codeEl) codeEl.textContent = code;
-    if (flagEl) flagEl.textContent = code.slice(0, 3);
+    if (flagEl) {
+      flagEl.className = 'flag flag--' + code.toLowerCase();
+      flagEl.setAttribute('data-code', code);
+      flagEl.textContent = '';
+    }
   }
 
   function recalc(scope) {
@@ -45,9 +52,10 @@
     var buyRaw = btn.getAttribute('data-buy') || '0';
     var buy = parseNum(buyRaw);
     var code = btn.getAttribute('data-code') || btn.getAttribute('data-calc-code') || '';
-    resultEl.textContent = formatNum(amount * buy, 2);
+    resultEl.textContent = formatUa(amount * buy, 2);
     if (labelEl) {
-      labelEl.textContent = 'За поточним курсом 1 ' + code + ' = ' + (buyRaw || formatNum(buy, 4)) + ' UAH';
+      var rateDecimals = buy < 1 ? 4 : 2;
+      labelEl.textContent = 'За поточним курсом 1 ' + code + ' = ' + formatUa(buy, rateDecimals) + ' UAH';
     }
   }
 
@@ -90,7 +98,7 @@
         var amount = amountInput ? amountInput.value : '100';
         var buy = btn.getAttribute('data-buy');
         var pairId = btn.getAttribute('data-pair-id');
-        var receive = formatNum(parseNum(amount) * parseNum(buy), 2);
+        var receive = formatUa(parseNum(amount) * parseNum(buy), 2);
         var url =
           '/htmx/zayavka/?pair=' +
           encodeURIComponent(pairId) +

@@ -15,6 +15,7 @@
           data-qa="review-form">
       {% csrf_token %}
       <div style="font-size:14px">Ваша оцінка</div>
+      {{ form.rating }}
       <div class="stars" data-stars>
         {% for i in "12345" %}
         <button type="button" class="is-on" data-star="{{ forloop.counter }}" aria-label="Оцінка {{ forloop.counter }}">
@@ -56,13 +57,16 @@
   var root = document.getElementById('modal-root');
   if (!root) return;
   var stars = root.querySelectorAll('[data-star]');
-  var rating = 5;
+  var ratingInput = root.querySelector('input[name="rating"]');
+  var rating = ratingInput && ratingInput.value ? parseInt(ratingInput.value, 10) : 5;
   function paint(n) {
     rating = n;
+    if (ratingInput) ratingInput.value = String(n);
     stars.forEach(function (btn) {
       btn.classList.toggle('is-on', parseInt(btn.getAttribute('data-star'), 10) <= n);
     });
   }
+  paint(rating);
   stars.forEach(function (btn) {
     btn.addEventListener('click', function () {
       paint(parseInt(btn.getAttribute('data-star'), 10));

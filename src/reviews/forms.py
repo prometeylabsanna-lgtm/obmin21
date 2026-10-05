@@ -4,9 +4,14 @@ from src.reviews.models import Review
 
 
 class ReviewForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['rating'].initial = 5
+        self.fields['rating'].required = False
+
     class Meta:
         model = Review
-        fields = ['name', 'text', 'city_name', 'consent']
+        fields = ['name', 'text', 'city_name', 'consent', 'rating']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form__input',
@@ -24,7 +29,16 @@ class ReviewForm(forms.ModelForm):
                 'placeholder': 'Місто',
             }),
             'consent': forms.CheckboxInput(attrs={'class': 'form__checkbox'}),
+            'rating': forms.HiddenInput(),
         }
+
+    def clean_rating(self):
+        rating = self.cleaned_data.get('rating') or 5
+        try:
+            rating = int(rating)
+        except (TypeError, ValueError):
+            rating = 5
+        return max(1, min(5, rating))
 
     def clean_consent(self):
         consent = self.cleaned_data.get('consent')
