@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'src.content',
     'src.blog',
     'src.reviews',
+    'src.bot',
 ]
 
 MIDDLEWARE = [
@@ -115,6 +116,9 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@obmin21.local
 
 TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN', default='')
 TELEGRAM_CHAT_ID = config('TELEGRAM_CHAT_ID', default='')
+TELEGRAM_WEBHOOK_SECRET = config('TELEGRAM_WEBHOOK_SECRET', default='')
+PUBLIC_BASE_URL = config('PUBLIC_BASE_URL', default='')
+TELEGRAM_WEBHOOK_URL = config('TELEGRAM_WEBHOOK_URL', default='')
 
 LOGGING = {
     'version': 1,
@@ -142,6 +146,11 @@ LOGGING = {
             'propagate': False,
         },
         'src': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'src.bot': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,

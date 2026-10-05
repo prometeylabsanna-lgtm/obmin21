@@ -35,7 +35,7 @@ STATIC_TRAILS = {
     'content:faq': lambda: trail(('FAQ', None)),
     'blog:post_list': lambda: trail(('Блог', None)),
     'reviews:review_list': lambda: trail(('Відгуки', None)),
-    'rates:rates_page': lambda: trail(('Курси', None)),
+    'rates:rates_page': lambda: trail(('Всі валюти', None)),
     'network:city_list': lambda: trail(('Міста', None)),
 }
 

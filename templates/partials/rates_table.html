@@ -1,18 +1,23 @@
 {% load content_format %}
 <div id="rates-panel" class="rates-card" data-qa="rates-panel">
-  <div class="rates-tabs" role="tablist">
-    {% for value, label in boards %}
-    {% if value == 'retail' or value == 'crypto' or not home_rates_compact %}
-    <button type="button"
-            class="rates-tabs__btn{% if active_board == value %} is-active{% endif %}"
-            role="tab"
-            aria-selected="{% if active_board == value %}true{% else %}false{% endif %}"
-            hx-get="{% url 'core:rates_partial' %}?board={{ value }}{% if home_rates_compact %}&home=1{% endif %}{% if hide_full_table_link %}&hide_full=1{% endif %}"
-            hx-target="#rates-panel"
-            hx-swap="outerHTML"
-            data-qa="rates-tab-{{ value }}">{% if value == 'retail' %}Готівка{% elif value == 'crypto' %}Крипто{% else %}{{ label }}{% endif %}</button>
+  <div class="rates-toolbar">
+    <div class="rates-tabs" role="tablist">
+      {% for value, label in boards %}
+      {% if value == 'retail' or value == 'crypto' or not home_rates_compact and not hide_full_table_link %}
+      <button type="button"
+              class="rates-tabs__btn{% if active_board == value %} is-active{% endif %}"
+              role="tab"
+              aria-selected="{% if active_board == value %}true{% else %}false{% endif %}"
+              hx-get="{% url 'core:rates_partial' %}?board={{ value }}{% if home_rates_compact %}&home=1{% endif %}{% if hide_full_table_link %}&hide_full=1{% endif %}"
+              hx-target="#rates-panel"
+              hx-swap="outerHTML"
+              data-qa="rates-tab-{{ value }}">{% if value == 'retail' %}Готівка{% elif value == 'crypto' %}Крипто{% else %}{{ label }}{% endif %}</button>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% if hide_full_table_link %}
+    <input class="rates-search" type="search" data-rates-search placeholder="Пошук валюти" autocomplete="off" enterkeyhint="search">
     {% endif %}
-    {% endfor %}
   </div>
 
   <div class="rates-table">
@@ -49,7 +54,7 @@
       {% endwith %}
     {% else %}
       {% for row in rate_rows %}
-      <div class="rates-table__row" data-qa="rate-row">
+      <div class="rates-table__row" data-qa="rate-row" data-search="{{ row.pair.code }} {{ row.pair.name }} {{ row.pair.flag_code }}">
         <div class="rates-table__pair">
           <span class="flag" data-code="{{ row.pair.flag_code }}">{% if row.pair.flag_mark %}{{ row.pair.flag_mark }}{% endif %}</span>
           <div>
@@ -57,8 +62,8 @@
             <span class="rates-table__name">{{ row.pair.name }}</span>
           </div>
         </div>
-        <div class="rates-table__value" data-rate-animate>{% if active_board == 'crypto' %}{{ row.quote.buy|format_rate:"compact" }}{% else %}{{ row.quote.buy|format_rate }}{% endif %}</div>
-        <div class="rates-table__value" data-rate-animate>{% if active_board == 'crypto' %}{{ row.quote.sell|format_rate:"compact" }}{% else %}{{ row.quote.sell|format_rate }}{% endif %}</div>
+        <div class="rates-table__value" data-rate-animate>{% if hide_full_table_link or active_board == 'crypto' %}{{ row.quote.buy|format_rate:"compact" }}{% else %}{{ row.quote.buy|format_rate }}{% endif %}</div>
+        <div class="rates-table__value" data-rate-animate>{% if hide_full_table_link or active_board == 'crypto' %}{{ row.quote.sell|format_rate:"compact" }}{% else %}{{ row.quote.sell|format_rate }}{% endif %}</div>
         <div class="rates-table__action">
           <button type="button" class="btn btn--sm"
                   data-open-modal="{% url 'leads:request_modal' %}?pair={{ row.pair.pk }}&board={{ active_board }}&direction=sell&rate_fixed={{ row.quote.buy }}"
@@ -73,19 +78,18 @@
       {% empty %}
       <div class="rates-table__row u-muted">Немає курсів для цієї вкладки</div>
       {% endfor %}
+      <div class="rates-table__empty" data-rates-empty hidden>Нічого не знайдено</div>
     {% endif %}
+    {% if not hide_full_table_link %}
     <div class="rates-table__foot">
-      {% if not hide_full_table_link %}
       <a class="link-accent" href="{% url 'rates:rates_page' %}">Всі валюти
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
       </a>
-      {% else %}
-      <span></span>
-      {% endif %}
       <div class="rates-updated">
         <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" stroke="#B3B4B6" fill="none" stroke-width="1.2"></circle><path d="M7 3.5V7l2.3 1.4" stroke="#B3B4B6" fill="none" stroke-width="1.2"></path></svg>
         {% if rate_updated_at %}Оновлено сьогодні о {{ rate_updated_at|date:"H:i" }}{% else %}Курси зʼявляться незабаром{% endif %}
       </div>
     </div>
+    {% endif %}
   </div>
 </div>

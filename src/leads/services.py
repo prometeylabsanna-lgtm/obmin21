@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
 
+from src.bot.client import send_telegram_message
 from src.core.models import SiteSettings
 from src.leads.models import ContactMessage, ExchangeRequest
 
@@ -21,7 +22,7 @@ def validate_phone(phone):
     return bool(PHONE_RE.match(phone or ''))
 
 
-def create_exchange_request(*, cleaned, city, hold_minutes=None):
+def create_exchange_request(*, cleaned, city, hold_minutes=None, source='web', telegram_chat_id=''):
     settings_obj = SiteSettings.load()
     minutes = hold_minutes or settings_obj.rate_hold_minutes or settings.RATE_HOLD_MINUTES
     expires_at = timezone.now() + timezone.timedelta(minutes=minutes)
@@ -40,18 +41,22 @@ def create_exchange_request(*, cleaned, city, hold_minutes=None):
         branch=cleaned['branch'],
         consent=True,
         expires_at=expires_at,
+        source=source,
+        telegram_chat_id=telegram_chat_id or '',
     )
     notify_new_lead(obj)
     return obj
 
 
-def create_contact_message(*, cleaned, city=None):
+def create_contact_message(*, cleaned, city=None, source='web', telegram_chat_id=''):
     obj = ContactMessage.objects.create(
         name=cleaned['name'].strip(),
         phone=normalize_phone(cleaned['phone']),
         message=cleaned['message'].strip(),
         city=city,
         consent=True,
+        source=source,
+        telegram_chat_id=telegram_chat_id or '',
     )
     notify_contact(obj)
     return obj
@@ -95,26 +100,5 @@ def _send_email(site, subject, body):
 
 
 def _send_telegram(site, body):
-    token = settings.TELEGRAM_BOT_TOKEN
     chat_id = site.notify_telegram_chat_id or settings.TELEGRAM_CHAT_ID
-    if not token or not chat_id:
-        logger.info('Telegram notify skipped (missing token/chat)')
-        return
-    try:
-        import json
-        import urllib.request
-
-        payload = json.dumps(
-            {'chat_id': chat_id, 'text': body},
-            ensure_ascii=False,
-        ).encode('utf-8')
-        req = urllib.request.Request(
-            f'https://api.telegram.org/bot{token}/sendMessage',
-            data=payload,
-            headers={'Content-Type': 'application/json'},
-            method='POST',
-        )
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            resp.read()
-    except Exception:
-        logger.exception('Telegram notify failed')
+    send_telegram_message(chat_id, body)

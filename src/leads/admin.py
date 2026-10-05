@@ -13,16 +13,17 @@ class ExchangeRequestAdmin(admin.ModelAdmin):
         'direction',
         'city',
         'status',
+        'source',
         'expires_at',
         'created_at',
     )
-    list_filter = ('status', 'city', 'direction')
+    list_filter = ('status', 'city', 'direction', 'source')
     search_fields = ('name', 'phone')
     readonly_fields = ('created_at', 'expires_at', 'rate_fixed')
 
 
 @admin.register(ContactMessage)
 class ContactMessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'phone', 'city', 'is_processed', 'created_at')
-    list_filter = ('is_processed', 'city')
+    list_display = ('id', 'name', 'phone', 'city', 'source', 'is_processed', 'created_at')
+    list_filter = ('is_processed', 'city', 'source')
     search_fields = ('name', 'phone', 'message')

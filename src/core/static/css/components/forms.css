@@ -166,8 +166,49 @@
   background: #ff0000;
 }
 
-.flag[data-code="CNY"] {
-  background: #de2910;
+.flag:not(:empty) {
+  font-size: 9px;
+  letter-spacing: -0.2px;
+}
+
+.flag[data-code="CZK"] {
+  background: linear-gradient(#fff 50%, #d7141a 50%);
+}
+
+.flag[data-code="CAD"] {
+  background: linear-gradient(90deg, #d52b1e 25%, #fff 25% 75%, #d52b1e 75%);
+}
+
+.flag[data-code="JPY"] {
+  background: radial-gradient(circle, #bc002d 30%, #fff 32%);
+}
+
+.flag[data-code="TRY"] {
+  background: #e30a17;
+}
+
+.flag[data-code="HUF"] {
+  background: linear-gradient(#cd2a3e 33%, #fff 33% 66%, #436f4d 66%);
+}
+
+.flag[data-code="SEK"] {
+  background: #006aa7;
+}
+
+.flag[data-code="NOK"] {
+  background: #ba0c2f;
+}
+
+.flag[data-code="DKK"] {
+  background: #c8102e;
+}
+
+.flag[data-code="AED"] {
+  background: linear-gradient(90deg, #ff0000 25%, #00732f 25%);
+}
+
+.flag[data-code="MDL"] {
+  background: linear-gradient(90deg, #0046ae 33%, #ffd200 33% 66%, #cc092f 66%);
 }
 
 .flag[data-code="USDT"] {

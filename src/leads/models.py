@@ -17,6 +17,10 @@ class ExchangeRequest(models.Model):
         EXPIRED = 'expired', 'Прострочена'
         CANCELLED = 'cancelled', 'Скасована'
 
+    class Source(models.TextChoices):
+        WEB = 'web', 'Сайт'
+        TELEGRAM = 'telegram', 'Telegram'
+
     name = models.CharField("Ім'я", max_length=120)
     phone = models.CharField('Телефон', max_length=32)
     messenger = models.CharField('Месенджер', max_length=80, blank=True)
@@ -62,6 +66,13 @@ class ExchangeRequest(models.Model):
     expires_at = models.DateTimeField('Дійсна до')
     created_at = models.DateTimeField('Створено', default=timezone.now)
     notes = models.TextField('Нотатки', blank=True)
+    source = models.CharField(
+        'Джерело',
+        max_length=16,
+        choices=Source.choices,
+        default=Source.WEB,
+    )
+    telegram_chat_id = models.CharField('Telegram chat id', max_length=32, blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -73,6 +84,10 @@ class ExchangeRequest(models.Model):
 
 
 class ContactMessage(models.Model):
+    class Source(models.TextChoices):
+        WEB = 'web', 'Сайт'
+        TELEGRAM = 'telegram', 'Telegram'
+
     name = models.CharField("Ім'я", max_length=120)
     phone = models.CharField('Телефон', max_length=32)
     message = models.TextField('Повідомлення')
@@ -87,6 +102,13 @@ class ContactMessage(models.Model):
     consent = models.BooleanField('Згода на обробку даних', default=False)
     is_processed = models.BooleanField('Опрацьовано', default=False)
     created_at = models.DateTimeField('Створено', default=timezone.now)
+    source = models.CharField(
+        'Джерело',
+        max_length=16,
+        choices=Source.choices,
+        default=Source.WEB,
+    )
+    telegram_chat_id = models.CharField('Telegram chat id', max_length=32, blank=True)
 
     class Meta:
         ordering = ['-created_at']

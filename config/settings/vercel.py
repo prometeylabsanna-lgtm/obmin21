@@ -14,6 +14,9 @@ _TEST_ENV = {
     'DEFAULT_FROM_EMAIL': 'noreply@obmin21.vercel.app',
     'TELEGRAM_BOT_TOKEN': '',
     'TELEGRAM_CHAT_ID': '',
+    'TELEGRAM_WEBHOOK_SECRET': '',
+    'PUBLIC_BASE_URL': '',
+    'TELEGRAM_WEBHOOK_URL': '',
     'SECURE_SSL_REDIRECT': 'True',
     'DJANGO_LOG_LEVEL': 'INFO',
 }

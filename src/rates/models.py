@@ -31,6 +31,12 @@ class CurrencyPair(models.Model):
         'BTC': '₿',
         'ETH': 'Ξ',
         'USDT': '₮',
+        'GBP': 'GBP',
+        'CHF': 'CHF',
+        'TRY': 'TRY',
+        'SEK': 'SEK',
+        'NOK': 'NOK',
+        'DKK': 'DKK',
     }
 
     def __str__(self):

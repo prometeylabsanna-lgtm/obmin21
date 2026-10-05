@@ -1,22 +1,31 @@
 from django.shortcuts import get_object_or_404, render
 
+from src.blog.selectors import get_published_posts
 from src.content.models import RatesPage
 from src.core.breadcrumbs import safe_reverse, trail
 from src.rates.models import CurrencyPair, RateBoard
 from src.rates.selectors import get_quote, get_quotes_for_city
+from src.reviews.selectors import get_published_reviews
 
 
 def rates_page(request):
     board = request.GET.get('board', RateBoard.RETAIL)
     if board not in RateBoard.values:
         board = RateBoard.RETAIL
+    if board not in (RateBoard.RETAIL, RateBoard.CRYPTO):
+        board = RateBoard.RETAIL
     rows, updated_at = get_quotes_for_city(request.city, board)
+    page = RatesPage.load()
     return render(request, 'rates/rates_page.html', {
-        'page': RatesPage.load(),
+        'page': page,
         'rate_rows': rows,
         'rate_updated_at': updated_at,
         'active_board': board,
         'boards': RateBoard.choices,
+        'home_reviews': list(get_published_reviews()[:8]),
+        'news_posts': list(get_published_posts()[:10]),
+        'page_title': page.seo_title or page.title,
+        'page_description': page.seo_description or (page.intro[:160] if page.intro else ''),
     })
 
 

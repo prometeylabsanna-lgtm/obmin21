@@ -133,8 +133,43 @@
     return null;
   }
 
+  var savedRatesQuery = '';
+
+  function bindRatesSearch(panel) {
+    if (!panel) return;
+    var input = panel.querySelector('[data-rates-search]');
+    if (!input) return;
+    if (savedRatesQuery) {
+      input.value = savedRatesQuery;
+    }
+
+    function apply() {
+      savedRatesQuery = input.value || '';
+      var q = savedRatesQuery.trim().toLowerCase();
+      var rows = panel.querySelectorAll('.rates-table__row[data-qa="rate-row"]');
+      var visible = 0;
+      rows.forEach(function (row) {
+        var hay = (row.getAttribute('data-search') || row.textContent || '').toLowerCase();
+        var show = !q || hay.indexOf(q) !== -1;
+        row.hidden = !show;
+        if (show) visible += 1;
+      });
+      var empty = panel.querySelector('[data-rates-empty]');
+      if (empty) empty.hidden = visible > 0;
+    }
+
+    if (input.dataset.bound === '1') {
+      apply();
+      return;
+    }
+    input.dataset.bound = '1';
+    input.addEventListener('input', apply);
+    apply();
+  }
+
   function boot() {
     animateRates(document);
+    bindRatesSearch(document.getElementById('rates-panel'));
   }
 
   if (document.readyState === 'loading') {
@@ -147,6 +182,7 @@
     var panel = resolveRatesRoot(evt.target);
     if (panel) {
       animateRates(panel);
+      bindRatesSearch(panel);
     }
   });
 
