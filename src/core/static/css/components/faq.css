@@ -144,9 +144,20 @@
   }
 }
 
-.faq-section--page {
+.faq-section.faq-section--page {
   margin-top: 0;
   padding-top: 32px;
+}
+
+.faq-section--page .faq-section__title {
+  margin: 10px auto 0;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.6vw, 66px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+  max-width: 860px;
+  color: #052145;
 }
 
 .faq-section--page .faq-section__coin {
@@ -232,7 +243,7 @@
 }
 
 @media (min-width: 768px) {
-  .faq-section--page {
+  .faq-section.faq-section--page {
     padding-top: 56px;
   }
 
