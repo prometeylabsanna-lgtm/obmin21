@@ -27,8 +27,22 @@ class CurrencyPair(models.Model):
         verbose_name = 'Валютна пара'
         verbose_name_plural = 'Валютні пари'
 
+    FLAG_MARKS = {
+        'BTC': '₿',
+        'ETH': 'Ξ',
+        'USDT': '₮',
+    }
+
     def __str__(self):
         return self.code
+
+    @property
+    def flag_code(self):
+        return (self.code or '').upper().split('/')[0]
+
+    @property
+    def flag_mark(self):
+        return self.FLAG_MARKS.get(self.flag_code, '')
 
 
 class Quote(models.Model):

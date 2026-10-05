@@ -295,6 +295,36 @@
   }
 
   .article-related__grid {
-    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 24px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .article-related__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 36px 20px;
+  }
+
+  .article-related__name {
+    font-size: 18px;
+  }
+
+  .article-related__media {
+    height: 180px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .article-related__grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .article-related__name {
+    font-size: 16px;
+  }
+
+  .article-related__media {
+    height: 160px;
   }
 }

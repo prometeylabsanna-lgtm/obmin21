@@ -52,6 +52,16 @@ def brand_mark(value):
     return mark_safe('<br>'.join(mark_brand(line) for line in lines))
 
 
+def _ua_grouped(n):
+    sign = '-' if n < 0 else ''
+    digits = str(abs(n))
+    parts = []
+    while digits:
+        parts.append(digits[-3:])
+        digits = digits[:-3]
+    return sign + ' '.join(reversed(parts))
+
+
 @register.filter(name='format_rate')
 def format_rate(value, style='fixed4'):
     """
@@ -72,10 +82,11 @@ def format_rate(value, style='fixed4'):
         mode = 'compact' if abs(amount) >= Decimal('1000') else 'fixed4'
 
     if mode == 'compact':
-        text = format(amount.normalize(), 'f')
-        if '.' in text:
-            text = text.rstrip('0').rstrip('.')
-        return text
+        if amount == amount.to_integral_value():
+            return _ua_grouped(int(amount))
+        quantized = amount.quantize(Decimal('0.01'))
+        whole, frac = format(quantized, 'f').split('.')
+        return f'{_ua_grouped(int(whole))},{frac}'
 
     quantized = amount.quantize(Decimal('0.0001'))
     return format(quantized, 'f')

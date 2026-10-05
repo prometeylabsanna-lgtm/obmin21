@@ -54,7 +54,7 @@ def post_detail(request, slug):
     idx = next((i for i, item in enumerate(posts) if item.pk == post.pk), 0)
     related = []
     step = 1
-    while len(related) < 3 and step < max(len(posts), 1):
+    while len(related) < 6 and step < max(len(posts), 1):
         cand = posts[(idx + step) % len(posts)]
         if cand.pk != post.pk:
             related.append(cand)

@@ -423,25 +423,44 @@ class Command(BaseCommand):
             defaults={'buy': Decimal('1.1600'), 'sell': Decimal('1.1640'), 'is_active': True},
         )
 
-        btc, _ = CurrencyPair.objects.update_or_create(
-            slug='btc-uah',
-            defaults={
-                'code': 'BTC',
-                'name': 'Bitcoin',
-                'is_active': True,
-                'sort_order': 200,
-            },
-        )
-        Quote.objects.update_or_create(
-            pair=btc,
-            board=RateBoard.CRYPTO,
-            city=None,
-            defaults={
-                'buy': Decimal('2410000'),
-                'sell': Decimal('2450000'),
-                'is_active': True,
-            },
-        )
+        btc_uah = CurrencyPair.objects.filter(slug='btc-uah').first()
+        if btc_uah:
+            btc_uah.is_active = False
+            btc_uah.save(update_fields=['is_active'])
+
+        crypto_pairs = [
+            ('BTC/USDT', 'Bitcoin', 'btc-usdt', '63410', '63980', 'USDT', 200),
+            ('ETH/USDT', 'Ethereum', 'eth-usdt', '2615', '2648', 'USDT', 201),
+            ('USDT/UAH', 'Tether', 'usdt-uah', '41.10', '41.55', 'UAH', 202),
+        ]
+        for code, name, slug, buy, sell, base, order in crypto_pairs:
+            pair, _ = CurrencyPair.objects.update_or_create(
+                slug=slug,
+                defaults={
+                    'code': code,
+                    'name': name,
+                    'base_code': base,
+                    'is_active': True,
+                    'sort_order': order,
+                    'intro': (
+                        f'Актуальний курс {code} у мережі Обмін21. '
+                        f'Зафіксуйте курс онлайн і завершіть обмін у відділенні.'
+                    ),
+                    'seo_title': f'{code} — курс обміну',
+                    'seo_description': f'Курс {code}: купівля та продаж у Обмін21',
+                },
+            )
+            Quote.objects.update_or_create(
+                pair=pair,
+                board=RateBoard.CRYPTO,
+                city=None,
+                defaults={
+                    'buy': Decimal(buy),
+                    'sell': Decimal(sell),
+                    'is_active': True,
+                    'updated_at': timezone.now(),
+                },
+            )
 
         keep_slugs = []
         for i, (title, slug, short, body) in enumerate(SERVICES):

@@ -166,6 +166,25 @@
   background: #ff0000;
 }
 
+.flag[data-code="CNY"] {
+  background: #de2910;
+}
+
+.flag[data-code="USDT"] {
+  background: #26a17b;
+  font-size: 12px;
+}
+
+.flag[data-code="BTC"] {
+  background: #f7931a;
+  font-size: 12px;
+}
+
+.flag[data-code="ETH"] {
+  background: #627eea;
+  font-size: 12px;
+}
+
 .currency-menu {
   position: absolute;
   top: calc(100% + 8px);

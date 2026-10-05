@@ -22,7 +22,13 @@ class HomeView(TemplateView):
             preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
             rows = sorted(
                 rows,
-                key=lambda r: preferred.get(r['pair'].code.split('/')[0], 90),
+                key=lambda r: preferred.get(r['pair'].flag_code, 90),
+            )
+        elif board == RateBoard.CRYPTO:
+            preferred = {'BTC': 0, 'ETH': 1, 'USDT': 2}
+            rows = sorted(
+                rows,
+                key=lambda r: preferred.get(r['pair'].flag_code, 90),
             )
         ctx.update({
             'page': HomePage.load(),
@@ -51,7 +57,13 @@ def rates_partial(request):
         preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
         rows = sorted(
             rows,
-            key=lambda r: preferred.get(r['pair'].code.split('/')[0], 90),
+            key=lambda r: preferred.get(r['pair'].flag_code, 90),
+        )
+    elif board == RateBoard.CRYPTO:
+        preferred = {'BTC': 0, 'ETH': 1, 'USDT': 2}
+        rows = sorted(
+            rows,
+            key=lambda r: preferred.get(r['pair'].flag_code, 90),
         )
     return render(request, 'partials/rates_table.html', {
         'rate_rows': rows,
