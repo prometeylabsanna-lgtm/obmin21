@@ -158,17 +158,23 @@
 
 .flag[data-code="GBP"],
 .flag--gbp {
-  background: #012169;
+  background:
+    linear-gradient(90deg, transparent 42%, #c8102e 42% 58%, transparent 58%),
+    linear-gradient(#012169 38%, #c8102e 38% 62%, #012169 62%);
 }
 
 .flag[data-code="CHF"],
 .flag--chf {
-  background: #ff0000;
+  background:
+    linear-gradient(#fff, #fff) 50% 50% / 18% 56% no-repeat,
+    linear-gradient(#fff, #fff) 50% 50% / 56% 18% no-repeat,
+    #da291c;
 }
 
-.flag:not(:empty) {
-  font-size: 9px;
-  letter-spacing: -0.2px;
+.flag[data-code="CNY"] {
+  background:
+    radial-gradient(circle at 22% 32%, #ffde00 0 7%, transparent 8%),
+    #de2910;
 }
 
 .flag[data-code="CZK"] {
@@ -176,39 +182,83 @@
 }
 
 .flag[data-code="CAD"] {
-  background: linear-gradient(90deg, #d52b1e 25%, #fff 25% 75%, #d52b1e 75%);
+  background: linear-gradient(90deg, #d52b1e 24%, #fff 24% 76%, #d52b1e 76%);
 }
 
 .flag[data-code="JPY"] {
-  background: radial-gradient(circle, #bc002d 30%, #fff 32%);
+  background: radial-gradient(circle at 50% 50%, #bc002d 0 28%, #fff 30%);
 }
 
 .flag[data-code="TRY"] {
-  background: #e30a17;
+  background:
+    radial-gradient(circle at 48% 50%, #e30a17 0 11%, transparent 12%),
+    radial-gradient(circle at 42% 50%, #fff 0 18%, transparent 19%),
+    #e30a17;
 }
 
 .flag[data-code="HUF"] {
-  background: linear-gradient(#cd2a3e 33%, #fff 33% 66%, #436f4d 66%);
+  background: linear-gradient(#cd2a3e 33.33%, #fff 33.33% 66.66%, #436f4d 66.66%);
 }
 
 .flag[data-code="SEK"] {
-  background: #006aa7;
+  background:
+    linear-gradient(#fecc00, #fecc00) 32% 0 / 14% 100% no-repeat,
+    linear-gradient(#fecc00, #fecc00) 0 50% / 100% 22% no-repeat,
+    #006aa7;
 }
 
 .flag[data-code="NOK"] {
-  background: #ba0c2f;
+  background:
+    linear-gradient(#00205b, #00205b) 32% 0 / 10% 100% no-repeat,
+    linear-gradient(#00205b, #00205b) 0 50% / 100% 16% no-repeat,
+    linear-gradient(#fff, #fff) 32% 0 / 18% 100% no-repeat,
+    linear-gradient(#fff, #fff) 0 50% / 100% 28% no-repeat,
+    #ba0c2f;
+}
+
+.flag:not(:empty) {
+  font-size: 9px;
+  letter-spacing: -0.2px;
 }
 
 .flag[data-code="DKK"] {
-  background: #c8102e;
+  background:
+    linear-gradient(#fff, #fff) 32% 0 / 14% 100% no-repeat,
+    linear-gradient(#fff, #fff) 0 50% / 100% 22% no-repeat,
+    #c8102e;
 }
 
 .flag[data-code="AED"] {
-  background: linear-gradient(90deg, #ff0000 25%, #00732f 25%);
+  background: linear-gradient(90deg, #ce1126 28%, #00732f 28% 64%, #fff 64%);
 }
 
 .flag[data-code="MDL"] {
-  background: linear-gradient(90deg, #0046ae 33%, #ffd200 33% 66%, #cc092f 66%);
+  background: linear-gradient(90deg, #0046ae 33.33%, #ffd200 33.33% 66.66%, #cc092f 66.66%);
+}
+
+.flag[data-code="USDC"] {
+  background: #2775ca;
+  font-size: 12px;
+}
+
+.flag[data-code="BNB"] {
+  background: #f3ba2f;
+  font-size: 12px;
+}
+
+.flag[data-code="SOL"] {
+  background: #9945ff;
+  font-size: 12px;
+}
+
+.flag[data-code="TRX"] {
+  background: #ef0027;
+  font-size: 12px;
+}
+
+.flag[data-code="TON"] {
+  background: #0098ea;
+  font-size: 12px;
 }
 
 .flag[data-code="USDT"] {
