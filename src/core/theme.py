@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from django.core.cache import cache
 
+from src.core.colors import ACCENT_HOVER_DEFAULT, ACCENT_RGB_DEFAULT
+
 THEME_CSS_CACHE_KEY = 'theme_css_v1'
 THEME_VERSION_KEY = 'theme_css_version'
 
@@ -39,7 +41,7 @@ def theme_version() -> int:
 def _hover_from_accent(accent: str) -> tuple[str, str]:
     raw = (accent or '').strip()
     if len(raw) != 7 or not raw.startswith('#'):
-        return '#3e5d78', '78, 115, 148'
+        return ACCENT_HOVER_DEFAULT, ACCENT_RGB_DEFAULT
     r = int(raw[1:3], 16)
     g = int(raw[3:5], 16)
     b = int(raw[5:7], 16)

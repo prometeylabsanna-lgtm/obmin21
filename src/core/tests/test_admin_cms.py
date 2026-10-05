@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from src.content.models import HomePage
 from src.core.models import SiteSettings
+from src.core.vercel_admin import ensure_vercel_admin
 
 
 class AdminPanelTests(TestCase):
@@ -41,7 +42,7 @@ class AdminPanelTests(TestCase):
             'seo_block_body': '<p>Текст</p>',
             'color_bg': '#f3f6fb',
             'color_text': '#052145',
-            'color_accent': '#4e7394',
+            'color_accent': '#253855',
         }, follow=True)
         self.assertEqual(post.status_code, 200)
         self.assertContains(post, 'Зміни успішно збережено!')
@@ -63,3 +64,31 @@ class AdminPanelTests(TestCase):
         self.assertContains(resp, 'data-theme="header"')
         self.assertContains(resp, 'data-theme="footer"')
         self.assertContains(resp, reverse('core:theme_css'))
+
+    def test_admin_login_uses_brand_colors_and_logo(self):
+        self.client.logout()
+        resp = self.client.get(reverse('admin:login'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'rgb(202, 141, 66)')
+        self.assertContains(resp, 'rgb(5, 33, 69)')
+        self.assertContains(resp, 'images/logo.png')
+        self.assertContains(resp, 'images/favicon-32x32.png')
+        self.assertNotContains(resp, 'Панель Обмін21')
+
+    def test_admin_sidebar_uses_site_logo(self):
+        resp = self.client.get(reverse('admin:index'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'images/logo.png')
+        self.assertContains(resp, 'images/favicon.ico')
+        self.assertNotContains(resp, 'Обмін21 — панель редагування')
+
+    def test_ensure_vercel_admin_keeps_session(self):
+        ensure_vercel_admin()
+        hash_before = User.objects.get(username='admin').password
+        self.client.logout()
+        self.assertTrue(self.client.login(username='admin', password='admin'))
+        ensure_vercel_admin()
+        self.assertEqual(User.objects.get(username='admin').password, hash_before)
+        resp = self.client.get(reverse('admin:index'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Адміністрування')

@@ -8,11 +8,11 @@
   --color-surface: #f4f5f7;
   --color-surface-alt: #f9fafb;
 
-  --color-accent: #4e7394;
-  --color-accent-rgb: 78, 115, 148;
+  --color-accent: #253855;
+  --color-accent-rgb: 37, 56, 85;
   --color-accent-ink: #ffffff;
-  --color-accent-hover: #3e5d78;
-  --color-accent-soft: rgba(78, 115, 148, 0.14);
+  --color-accent-hover: #1e2d45;
+  --color-accent-soft: rgba(37, 56, 85, 0.14);
 
   --color-heading: #052145;
   --color-navy: #052145;

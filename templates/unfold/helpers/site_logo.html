@@ -1,0 +1,10 @@
+{% load i18n %}
+
+<a href="{% url 'admin:index' %}" class="cms-admin-logo">
+    {% if site_logo.light and site_logo.dark %}
+        <img src="{{ site_logo.dark }}" alt="Обмін21" class="cms-admin-logo__img cms-admin-logo__img--dark" width="160" height="40">
+        <img src="{{ site_logo.light }}" alt="Обмін21" class="cms-admin-logo__img cms-admin-logo__img--light" width="160" height="40">
+    {% else %}
+        <img src="{{ site_logo }}" class="cms-admin-logo__img" alt="Обмін21" width="160" height="40">
+    {% endif %}
+</a>

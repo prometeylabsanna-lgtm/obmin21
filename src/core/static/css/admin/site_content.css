@@ -52,10 +52,70 @@
   max-width: 100%;
 }
 
+.cms-admin-logo {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.cms-admin-logo__img {
+  display: block;
+  height: 40px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+}
+
+.cms-admin-logo__img--dark {
+  display: none;
+}
+
+.cms-admin-logo__img--light {
+  display: block;
+}
+
+.dark .cms-admin-logo__img--dark {
+  display: block;
+}
+
+.dark .cms-admin-logo__img--light {
+  display: none;
+}
+
+.cms-admin-login-logo {
+  display: flex;
+  align-items: center;
+}
+
+.cms-admin-login-logo__img {
+  display: block;
+  height: 52px;
+  width: auto;
+  max-width: 240px;
+  object-fit: contain;
+}
+
 @media (max-width: 767px) {
   .cms-image,
   .cms-image__frame {
     width: 100%;
     max-width: 100%;
+  }
+
+  .cms-admin-logo__img {
+    height: 32px;
+    max-width: 148px;
+  }
+
+  .cms-admin-login-logo__img {
+    height: 44px;
+    max-width: 200px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .cms-admin-logo__img {
+    height: 36px;
+    max-width: 164px;
   }
 }

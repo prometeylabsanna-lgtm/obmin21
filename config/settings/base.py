@@ -3,6 +3,8 @@ from pathlib import Path
 from decouple import Csv, config
 from django.templatetags.static import static
 
+from src.core.colors import UNFOLD_BASE, UNFOLD_PRIMARY
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
@@ -111,9 +113,37 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 UNFOLD = {
-    'SITE_TITLE': 'Панель Обмін21',
-    'SITE_HEADER': 'Обмін21 — панель редагування',
-    'SITE_SYMBOL': 'currency_exchange',
+    'SITE_TITLE': 'Обмін21',
+    'SITE_HEADER': 'Обмін21',
+    'SITE_URL': '/',
+    'SITE_LOGO': {
+        'light': lambda request: static('images/logo.png'),
+        'dark': lambda request: static('images/logo-footer.png'),
+    },
+    'SITE_FAVICONS': [
+        {
+            'rel': 'icon',
+            'href': lambda request: static('images/favicon.ico'),
+            'sizes': 'any',
+        },
+        {
+            'rel': 'icon',
+            'type': 'image/png',
+            'sizes': '32x32',
+            'href': lambda request: static('images/favicon-32x32.png'),
+        },
+        {
+            'rel': 'icon',
+            'type': 'image/png',
+            'sizes': '48x48',
+            'href': lambda request: static('images/favicon-48x48.png'),
+        },
+        {
+            'rel': 'apple-touch-icon',
+            'sizes': '180x180',
+            'href': lambda request: static('images/apple-touch-icon.png'),
+        },
+    ],
     'SHOW_HISTORY': True,
     'STYLES': [
         lambda request: static('css/admin/site_content.css'),
@@ -129,6 +159,18 @@ UNFOLD = {
     },
     'LOGIN': {
         'redirect_after': '/admin/',
+    },
+    'COLORS': {
+        'primary': UNFOLD_PRIMARY,
+        'base': UNFOLD_BASE,
+        'font': {
+            'subtle-light': 'var(--color-base-500)',
+            'subtle-dark': 'var(--color-base-400)',
+            'default-light': 'var(--color-base-800)',
+            'default-dark': 'var(--color-base-50)',
+            'important-light': 'var(--color-base-900)',
+            'important-dark': '#ffffff',
+        },
     },
 }
 
