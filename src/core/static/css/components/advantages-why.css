@@ -49,11 +49,71 @@
   position: absolute;
   left: -12.5%;
   top: 0;
-  max-width: none;
   width: 125%;
+  aspect-ratio: 1642 / 823;
   pointer-events: none;
-  filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.4));
-  animation: obFlA 11s ease-in-out infinite;
+  perspective: 900px;
+  -webkit-perspective: 900px;
+}
+
+.why-adv__coin-layer {
+  position: absolute;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.why-adv__coin-layer--b {
+  left: 0;
+  top: 34.51%;
+  width: 31.12%;
+}
+
+.why-adv__coin-layer--d {
+  left: 53.87%;
+  top: 0;
+  width: 16.26%;
+}
+
+.why-adv__coin-layer--c {
+  left: 69.12%;
+  top: 4.74%;
+  width: 30.88%;
+}
+
+.why-adv__coin-layer--a {
+  left: 17.84%;
+  top: 14.09%;
+  width: 48.17%;
+}
+
+.why-adv__coin-move img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.4));
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.why-adv__coin-move--b {
+  animation: obFlB 8s ease-in-out 1.95s infinite;
+}
+
+.why-adv__coin-move--d {
+  animation: obFlD 7s ease-in-out 2.05s infinite;
+}
+
+.why-adv__coin-move--c {
+  animation: obFlC 9s ease-in-out 1.85s infinite;
+}
+
+.why-adv__coin-move--a {
+  animation: obFlA 11s ease-in-out 1.65s infinite;
+}
+
+.why-adv__coin-move {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .why-adv__hero-copy {
@@ -115,8 +175,24 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .why-adv__coins {
+  .why-adv__coin-move--a,
+  .why-adv__coin-move--b,
+  .why-adv__coin-move--c,
+  .why-adv__coin-move--d {
     animation: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .why-adv__hero {
+    min-height: 420px;
+    padding: 20px 16px 24px;
+  }
+
+  .why-adv__coins {
+    left: -18%;
+    top: 6px;
+    width: 136%;
   }
 }
 
@@ -160,5 +236,18 @@
 
   .why-adv__name {
     font-size: 22px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .why-adv__coins {
+    left: 4%;
+    top: -28px;
+    width: 92%;
+  }
+
+  .why-adv__hero {
+    min-height: 480px;
+    padding: 28px 24px;
   }
 }

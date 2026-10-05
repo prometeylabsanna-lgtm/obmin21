@@ -11,8 +11,15 @@
   }
 
   function trapFocus(container) {
+    var preferred = container.querySelector(
+      'input:not([disabled]), textarea:not([disabled]), select:not([disabled])'
+    );
+    if (preferred) {
+      preferred.focus();
+      return;
+    }
     var focusable = container.querySelectorAll(
-      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+      'a[href], button:not([disabled]):not(.modal__close), textarea, input, select, [tabindex]:not([tabindex="-1"])'
     );
     if (!focusable.length) return;
     focusable[0].focus();
@@ -88,11 +95,10 @@
       closeModal();
       return;
     }
-    var el = getRoot();
-    if (el && !el.hidden && (e.target === el || e.target.classList.contains('modal-backdrop'))) {
+    if (e.target.classList.contains('modal-backdrop')) {
       closeModal();
     }
-  });
+  }, true);
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeModal();

@@ -4,7 +4,7 @@
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
 <section class="adv-hero">
-  <div class="adv-hero__banner">
+  <div class="adv-hero__banner" data-coin-host>
     <div class="adv-hero__copy">
       <span class="pill pill--light">Переваги</span>
       <h1 class="adv-hero__title">Чому обирають<br><span class="u-accent">Обмін21</span></h1>
@@ -14,15 +14,15 @@
         <a class="btn adv-hero__ghost" href="#adv">Усі переваги</a>
       </div>
     </div>
-    <div class="adv-hero__stack" aria-hidden="true">
-      <div class="adv-hero__layer adv-hero__k1">
+    <div class="adv-hero__stack" aria-hidden="true" data-coin-scene>
+      <div class="adv-hero__layer adv-hero__k1" data-depth="-10">
         <div class="adv-hero__k1-rot">
           <div class="adv-hero__float">
             <img class="adv-hero__coin" src="{% static 'images/coins-d.png' %}" alt="">
           </div>
         </div>
       </div>
-      <div class="adv-hero__layer adv-hero__c1">
+      <div class="adv-hero__layer adv-hero__c1" data-depth="-6">
         <div class="adv-hero__c1-rot">
           <div class="adv-hero__float">
             <div class="adv-card adv-card--eur">
@@ -37,7 +37,7 @@
           </div>
         </div>
       </div>
-      <div class="adv-hero__layer adv-hero__c2">
+      <div class="adv-hero__layer adv-hero__c2" data-depth="8">
         <div class="adv-hero__c2-rot">
           <div class="adv-hero__float">
             <div class="adv-card adv-card--usd">
@@ -53,7 +53,7 @@
           </div>
         </div>
       </div>
-      <div class="adv-hero__layer adv-hero__c3">
+      <div class="adv-hero__layer adv-hero__c3" data-depth="16">
         <div class="adv-hero__c3-rot">
           <div class="adv-hero__float">
             <div class="adv-fix">
@@ -70,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div class="adv-hero__layer adv-hero__k2">
+      <div class="adv-hero__layer adv-hero__k2" data-depth="24">
         <div class="adv-hero__k2-rot">
           <div class="adv-hero__float">
             <img class="adv-hero__coin adv-hero__coin--flip" src="{% static 'images/coins-d.png' %}" alt="">
@@ -111,8 +111,29 @@
     <p class="why-adv__lead">Шість причин, через які клієнти повертаються до нас знову і радять друзям</p>
   </div>
   <div class="why-adv__grid">
-    <article class="why-adv__hero">
-      <img class="why-adv__coins" src="{% static 'images/coins.png' %}" alt="" decoding="async">
+    <article class="why-adv__hero" data-coin-host>
+      <div class="why-adv__coins" aria-hidden="true" data-coin-scene>
+        <div class="why-adv__coin-layer why-adv__coin-layer--b" data-depth="-16">
+          <div class="why-adv__coin-move why-adv__coin-move--b">
+            <img src="{% static 'images/coins-b.png' %}" alt="" decoding="async">
+          </div>
+        </div>
+        <div class="why-adv__coin-layer why-adv__coin-layer--d" data-depth="-24">
+          <div class="why-adv__coin-move why-adv__coin-move--d">
+            <img src="{% static 'images/coins-d.png' %}" alt="" decoding="async">
+          </div>
+        </div>
+        <div class="why-adv__coin-layer why-adv__coin-layer--c" data-depth="-12">
+          <div class="why-adv__coin-move why-adv__coin-move--c">
+            <img src="{% static 'images/coins-c.png' %}" alt="" decoding="async">
+          </div>
+        </div>
+        <div class="why-adv__coin-layer why-adv__coin-layer--a" data-depth="12">
+          <div class="why-adv__coin-move why-adv__coin-move--a">
+            <img src="{% static 'images/coins-a.png' %}" alt="" decoding="async">
+          </div>
+        </div>
+      </div>
       <div class="why-adv__hero-copy">
         <h3 class="why-adv__hero-title">Курс кращий, <span class="u-accent">ніж у банку</span></h3>
         <p class="why-adv__hero-text">Щодня порівнюємо курси з ринком і тримаємо різницю між купівлею та продажем мінімальною.</p>
