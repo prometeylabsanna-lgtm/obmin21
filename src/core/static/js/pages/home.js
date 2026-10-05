@@ -31,8 +31,10 @@
       var next = nav.querySelector('[data-slider-next]');
 
       function step() {
-        var card = track.querySelector('.review-slide, .article-slide');
-        return card ? card.getBoundingClientRect().width + 20 : 300;
+        var card = track.querySelector('.review-slide, .article-slide, .svc-card');
+        if (!card) return 300;
+        var gap = parseFloat(window.getComputedStyle(track).columnGap) || 20;
+        return card.getBoundingClientRect().width + gap;
       }
 
       function sync() {

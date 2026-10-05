@@ -756,8 +756,7 @@
   display: none;
 }
 
-.reviews-track,
-.articles-track {
+.reviews-track {
   margin: 24px -16px 0;
   padding: 20px 16px;
   display: flex;
@@ -766,6 +765,21 @@
   scroll-snap-type: x mandatory;
   scroll-padding: 0 16px;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  scrollbar-width: none;
+}
+
+.articles-track {
+  margin-top: 32px;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: 4px;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
   touch-action: pan-x;
@@ -849,14 +863,14 @@
 }
 
 .article-slide {
-  flex: 0 0 min(280px, 78vw);
-  min-width: min(280px, 78vw);
+  flex: 0 0 calc(50% - 6px);
+  min-width: 0;
   scroll-snap-align: start;
 }
 
 .article-slide__media {
   display: block;
-  height: 180px;
+  height: 110px;
   overflow: hidden;
   border-radius: 4px;
   background: var(--color-surface);
@@ -871,17 +885,17 @@
 
 .article-slide__title {
   display: block;
-  margin-top: 16px;
-  font-size: 20px;
+  margin-top: 12px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
   color: var(--color-navy);
 }
 
 .article-slide__text {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -891,6 +905,16 @@
 
 .article-slide .link-accent {
   margin-top: 12px;
+}
+
+.articles-section .slider-nav--desk {
+  display: none;
+}
+
+.articles-section .slider-nav--mob {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0 0;
 }
 
 @media (min-width: 768px) {
@@ -1106,7 +1130,8 @@
     align-items: start;
   }
 
-  .reviews-section {
+  .reviews-section,
+  .articles-section {
     margin-top: 130px;
   }
 
@@ -1147,9 +1172,36 @@
     width: 292px;
   }
 
+  .articles-track {
+    margin-top: 50px;
+    gap: 20px;
+  }
+
   .article-slide {
-    flex-basis: 280px;
-    min-width: 280px;
+    flex: 0 0 calc((100% - 60px) / 4);
+    min-width: 260px;
+  }
+
+  .article-slide__media {
+    height: 194px;
+  }
+
+  .article-slide__title {
+    margin-top: 22px;
+    font-size: 20px;
+  }
+
+  .article-slide__text {
+    margin-top: 14px;
+    font-size: 16px;
+  }
+
+  .articles-section .slider-nav--desk {
+    display: flex;
+  }
+
+  .articles-section .slider-nav--mob {
+    display: none;
   }
 }
 
@@ -1169,8 +1221,4 @@
     flex-wrap: nowrap;
   }
 
-  .article-slide {
-    flex-basis: 300px;
-    min-width: 300px;
-  }
 }

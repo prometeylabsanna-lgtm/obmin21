@@ -265,7 +265,7 @@
       <h2 class="slider-head__title">Корисні <span class="u-accent">статті</span></h2>
       <p class="articles-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
     </div>
-    <div class="slider-nav" data-slider-nav="articles">
+    <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
       <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
     </div>
@@ -275,9 +275,9 @@
     <article class="article-slide">
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
         {% if post.cover %}
-        <img src="{{ post.cover.url }}" alt="" loading="lazy">
+        <img src="{{ post.cover.url }}" alt="{{ post.title }}" loading="lazy">
         {% else %}
-        <img src="{% static 'images/service-1.png' %}" alt="" loading="lazy">
+        <img src="{% static 'images/articles/' %}{{ post.slug }}.jpg" alt="{{ post.title }}" loading="lazy">
         {% endif %}
       </a>
       <a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
@@ -289,6 +289,10 @@
     {% empty %}
     <p class="u-muted">Статті зʼявляться незабаром</p>
     {% endfor %}
+  </div>
+  <div class="slider-nav slider-nav--mob" data-slider-nav="articles">
+    <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
+    <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
   </div>
 </section>
 

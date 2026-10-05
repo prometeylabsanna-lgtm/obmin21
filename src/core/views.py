@@ -35,7 +35,7 @@ class HomeView(TemplateView):
             'advantage_items': AdvantageItem.objects.filter(is_active=True),
             'advantage_audiences': AdvantageItem.Audience.choices,
             'faq_items': FaqItem.objects.filter(is_active=True)[:8],
-            'news_posts': list(get_published_posts()[:8]),
+            'news_posts': list(get_published_posts()[:10]),
             'home_reviews': list(get_published_reviews()[:8]),
         })
         return ctx
