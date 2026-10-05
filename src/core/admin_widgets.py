@@ -38,20 +38,36 @@ class CmsAdminTextareaWidget(AdminTextareaWidget):
 
 
 class CmsAdminColorWidget(TextInput):
+    template_name = 'django/forms/widgets/cms_color.html'
+    input_type = 'color'
+
     def __init__(self, attrs: Optional[dict[str, Any]] = None) -> None:
         merged = dict(attrs or {})
         extra = merged.pop('class', '')
         merged['type'] = 'color'
         super().__init__(attrs={
             **merged,
-            'class': _classes(INPUT_CLASSES, extra),
+            'class': _classes(['cms-color__swatch'], extra),
         })
+
+    def format_value(self, value):
+        raw = super().format_value(value) or ''
+        if isinstance(raw, str) and len(raw) == 7 and raw.startswith('#'):
+            return raw
+        return '#ffffff'
 
 
 class CmsAdminImageWidget(ClearableFileInput):
     template_name = 'django/forms/widgets/cms_image.html'
 
-    def __init__(self, attrs: Optional[dict[str, Any]] = None) -> None:
+    def __init__(
+        self,
+        attrs: Optional[dict[str, Any]] = None,
+        fallback_url: str = '',
+        fit: str = 'cover',
+    ) -> None:
+        self.fallback_url = fallback_url
+        self.fit = fit
         merged = dict(attrs or {})
         extra = merged.pop('class', '')
         merged.setdefault('accept', 'image/*')
@@ -65,13 +81,17 @@ class CmsAdminImageWidget(ClearableFileInput):
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
-        preview_url = ''
+        uploaded = ''
         if value:
             try:
-                preview_url = getattr(value, 'url', '') or ''
+                uploaded = getattr(value, 'url', '') or ''
             except ValueError:
-                preview_url = ''
-        context['widget']['preview_url'] = preview_url
+                uploaded = ''
+        preview_url = uploaded or self.fallback_url
+        widget = context['widget']
+        widget['preview_url'] = preview_url
+        widget['is_fallback'] = bool(preview_url and not uploaded)
+        widget['fit'] = self.fit
         return context
 
 

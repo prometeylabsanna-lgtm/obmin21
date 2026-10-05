@@ -25,6 +25,9 @@ class AdminPanelTests(TestCase):
         self.assertContains(resp, 'Контент')
         self.assertContains(resp, 'Оформлення')
         self.assertContains(resp, 'Логотип у шапці')
+        self.assertContains(resp, 'images/logo.png')
+        self.assertContains(resp, 'cms-color__swatch')
+        self.assertContains(resp, 'type="color"')
 
     def test_home_change_and_theme_css(self):
         HomePage.load()
@@ -33,6 +36,8 @@ class AdminPanelTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'Банер після блоків курсів')
         self.assertContains(resp, 'Колір фону')
+        self.assertContains(resp, 'images/coins.png')
+        self.assertContains(resp, 'cms-color__swatch')
 
         post = self.client.post(change_url, {
             'seo_title': 'Головна',
@@ -42,7 +47,7 @@ class AdminPanelTests(TestCase):
             'seo_block_body': '<p>Текст</p>',
             'color_bg': '#f3f6fb',
             'color_text': '#052145',
-            'color_accent': '#253855',
+            'color_accent': '#ca8d42',
         }, follow=True)
         self.assertEqual(post.status_code, 200)
         self.assertContains(post, 'Зміни успішно збережено!')

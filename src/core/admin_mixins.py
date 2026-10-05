@@ -11,6 +11,7 @@ from src.core.admin_widgets import (
     CmsAdminTextareaWidget,
     CmsTinyMCE,
 )
+from src.core.image_fallbacks import image_fallback_url, image_preview_fit
 
 RICH_FIELD_NAMES = frozenset({
     'intro',
@@ -20,6 +21,22 @@ RICH_FIELD_NAMES = frozenset({
     'faq',
 })
 COLOR_PREFIXES = ('color_', 'header_color_', 'footer_color_')
+
+
+def _instance_from_request(admin, request):
+    match = getattr(request, 'resolver_match', None)
+    object_id = match.kwargs.get('object_id') if match else None
+    if not object_id:
+        return None
+    return admin.model.objects.filter(pk=object_id).first()
+
+
+def _image_widget(admin, db_field, request):
+    instance = _instance_from_request(admin, request)
+    return CmsAdminImageWidget(
+        fallback_url=image_fallback_url(db_field.name, instance),
+        fit=image_preview_fit(db_field.name),
+    )
 
 
 class SingletonUnfoldAdmin(ModelAdmin):
@@ -61,7 +78,7 @@ class SingletonUnfoldAdmin(ModelAdmin):
             kwargs['widget'] = CmsAdminColorWidget()
             return db_field.formfield(**kwargs)
         if isinstance(db_field, ImageField):
-            kwargs['widget'] = CmsAdminImageWidget()
+            kwargs['widget'] = _image_widget(self, db_field, request)
             return db_field.formfield(**kwargs)
         if db_field.get_internal_type() in ('CharField', 'URLField', 'EmailField'):
             kwargs.setdefault('widget', CmsAdminTextInputWidget())
@@ -83,7 +100,7 @@ class ListUnfoldAdmin(ModelAdmin):
             kwargs['widget'] = CmsTinyMCE()
             return db_field.formfield(**kwargs)
         if isinstance(db_field, ImageField):
-            kwargs['widget'] = CmsAdminImageWidget()
+            kwargs['widget'] = _image_widget(self, db_field, request)
             return db_field.formfield(**kwargs)
         if db_field.get_internal_type() in ('CharField', 'URLField', 'EmailField', 'SlugField'):
             kwargs.setdefault('widget', CmsAdminTextInputWidget())

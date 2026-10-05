@@ -6,10 +6,10 @@ hex_color_validator = RegexValidator(
 )
 
 COLOR_HELP = 'Натисніть квадратик, щоб обрати колір. Зміна з’явиться на сайті після збереження.'
-ACCENT_DEFAULT = '#253855'
-ACCENT_HOVER_DEFAULT = '#1e2d45'
-ACCENT_RGB_DEFAULT = '37, 56, 85'
-LEGACY_ACCENTS = frozenset({'#ca8d42', '#4e7394'})
+ACCENT_DEFAULT = '#ca8d42'
+ACCENT_HOVER_DEFAULT = '#b87b2c'
+ACCENT_RGB_DEFAULT = '202, 141, 66'
+LEGACY_ACCENTS = frozenset({'#253855', '#4e7394'})
 
 UNFOLD_PRIMARY = {
     '50': '#fbf6ee',

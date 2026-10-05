@@ -1,0 +1,4 @@
+<div class="cms-color">
+  <input type="{{ widget.type }}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value }}"{% endif %}{% include "django/forms/widgets/attrs.html" %} data-cms-color>
+  <span class="cms-color__hex" data-cms-color-hex>{{ widget.value }}</span>
+</div>

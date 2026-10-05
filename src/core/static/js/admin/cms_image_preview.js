@@ -22,14 +22,27 @@
     });
   }
 
+  function bindColor(input) {
+    if (input.dataset.cmsColorBound) return;
+    input.dataset.cmsColorBound = '1';
+    var hex = input.parentElement && input.parentElement.querySelector('[data-cms-color-hex]');
+    input.addEventListener('input', function () {
+      if (hex) hex.textContent = input.value;
+    });
+  }
+
   function bindAll(root) {
-    (root || document).querySelectorAll('[data-cms-image-input]').forEach(bindInput);
+    var scope = root || document;
+    scope.querySelectorAll('[data-cms-image-input]').forEach(bindInput);
+    scope.querySelectorAll('[data-cms-color]').forEach(bindColor);
   }
 
   document.addEventListener('DOMContentLoaded', function () {
     bindAll(document);
   });
-  document.body.addEventListener('htmx:afterSwap', function (event) {
-    bindAll(event.target);
-  });
+  if (document.body) {
+    document.body.addEventListener('htmx:afterSwap', function (event) {
+      bindAll(event.target);
+    });
+  }
 })();
