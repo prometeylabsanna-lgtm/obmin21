@@ -1,17 +1,28 @@
 .breadcrumbs {
   padding: 8px 0 0;
   font-size: 13px;
+  line-height: 1;
   color: #b3b4b6;
 }
 
 .breadcrumbs__list {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.breadcrumbs__item {
+  display: flex;
+  flex-direction: row;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
 }
 
 .breadcrumbs__sep {
@@ -21,14 +32,14 @@
 }
 
 .breadcrumbs a {
-  color: var(--color-text-muted);
+  color: #b3b4b6;
 }
 
 .breadcrumbs a:hover {
-  color: var(--color-accent);
+  color: #ca8d42;
 }
 
 .breadcrumbs__current {
-  color: var(--color-navy);
-  font-weight: 500;
+  color: #052145;
+  font-weight: 400;
 }
