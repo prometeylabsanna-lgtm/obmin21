@@ -131,4 +131,75 @@
     </div>
   </div>
 </section>
+
+<section class="reviews-section" id="reviews" data-qa="section-reviews">
+  <div class="slider-head">
+    <div class="slider-head__copy">
+      <span class="pill">Статті</span>
+      <h2 class="slider-head__title">Відгуки</h2>
+    </div>
+    <div class="slider-nav slider-nav--desk" data-slider-nav="reviews">
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
+      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+    </div>
+  </div>
+  <div class="reviews-track" data-slider="reviews">
+    {% for rev in home_reviews %}
+    <article class="review-slide">
+      <div>
+        <div class="review-slide__name">{{ rev.name }}{% if rev.city_name %}, {{ rev.city_name }}{% endif %}</div>
+        <div class="review-slide__stars" aria-hidden="true">
+          {% for i in "12345" %}
+          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="{% if forloop.counter <= rev.rating %}#052145{% else %}#C3CAD2{% endif %}" stroke="{% if forloop.counter <= rev.rating %}#052145{% else %}#C3CAD2{% endif %}" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+          {% endfor %}
+        </div>
+      </div>
+      <p class="review-slide__text">{{ rev.text }}</p>
+    </article>
+    {% empty %}
+    <article class="review-slide"><p class="review-slide__text">Відгуки зʼявляться незабаром</p></article>
+    {% endfor %}
+  </div>
+  <div class="reviews-section__cta-row">
+    <button type="button" class="btn btn--accent reviews-section__cta" data-open-modal="{% url 'reviews:review_submit' %}">Залишити відгук</button>
+    <div class="slider-nav slider-nav--mob" data-slider-nav="reviews">
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
+      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+    </div>
+  </div>
+</section>
+
+<section class="articles-section" id="news" data-qa="section-news">
+  <div class="slider-head">
+    <div>
+      <span class="pill">Статті</span>
+      <h2 class="slider-head__title">Корисні <span class="u-accent">статті</span></h2>
+      <p class="articles-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
+    </div>
+    <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
+      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+    </div>
+  </div>
+  <div class="articles-track" data-slider="articles">
+    {% for post in news_posts %}
+    <article class="article-slide">
+      <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
+        <img src="{{ post.image_url }}" alt="{{ post.title }}" width="330" height="194" decoding="async">
+      </a>
+      <a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
+      {% if post.excerpt %}<p class="article-slide__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
+      <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати повністю
+        <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+      </a>
+    </article>
+    {% empty %}
+    <p class="u-muted">Статті зʼявляться незабаром</p>
+    {% endfor %}
+  </div>
+  <div class="slider-nav slider-nav--mob" data-slider-nav="articles">
+    <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
+    <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+  </div>
+</section>
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+from src.blog.selectors import get_published_posts
 from src.content.models import (
     AdvantageItem,
     AdvantagesPage,
@@ -12,6 +13,7 @@ from src.content.models import (
 )
 from src.content.service_blocks import SERVICE_BLOCKS
 from src.leads.forms import ContactMessageForm
+from src.reviews.selectors import get_published_reviews
 
 
 def services_list(request):
@@ -26,6 +28,8 @@ def services_list(request):
     return render(request, 'content/services_list.html', {
         'page': page,
         'services': services,
+        'home_reviews': list(get_published_reviews()[:8]),
+        'news_posts': list(get_published_posts()[:10]),
         'page_title': page.seo_title or page.title,
         'page_description': page.seo_description or page.intro[:160],
     })
