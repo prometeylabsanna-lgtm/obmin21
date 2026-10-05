@@ -3,17 +3,40 @@
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="page-hero page-hero--services">
-  <div class="page-hero__coins" aria-hidden="true">
-    <img src="{% static 'images/coins-a.png' %}" alt="" loading="lazy">
-  </div>
-  <span class="pill">Послуги</span>
-  <h1 class="page-hero__title">Усі фінансові послуги в одному місці</h1>
-  {% if page.intro %}<p class="page-hero__lead">{{ page.intro|brand_mark }}</p>{% endif %}
-  <div class="chips">
-    {% for svc in services %}
-    <a href="#svc-{{ svc.slug }}">{{ svc.title }}</a>
-    {% endfor %}
+<section class="svc-hero">
+  <div class="svc-hero__banner">
+    <div class="svc-hero__coins" aria-hidden="true">
+      <div class="svc-hero__coin svc-hero__coin--b">
+        <div class="svc-hero__coin-in svc-hero__coin-in--b">
+          <img src="{% static 'images/coins-b.png' %}" alt="" decoding="async">
+        </div>
+      </div>
+      <div class="svc-hero__coin svc-hero__coin--d">
+        <div class="svc-hero__coin-in svc-hero__coin-in--d">
+          <img src="{% static 'images/coins-d.png' %}" alt="" decoding="async">
+        </div>
+      </div>
+      <div class="svc-hero__coin svc-hero__coin--c">
+        <div class="svc-hero__coin-in svc-hero__coin-in--c">
+          <img src="{% static 'images/coins-c.png' %}" alt="" decoding="async">
+        </div>
+      </div>
+      <div class="svc-hero__coin svc-hero__coin--a">
+        <div class="svc-hero__coin-in svc-hero__coin-in--a">
+          <img src="{% static 'images/coins-a.png' %}" alt="" decoding="async">
+        </div>
+      </div>
+    </div>
+    <div class="svc-hero__copy">
+      <span class="pill pill--light">Послуги</span>
+      <h1 class="svc-hero__title">Усі фінансові послуги<br><span class="u-accent">в одному місці</span></h1>
+      <p class="svc-hero__lead">Обмін валют, криптовалюти, перекази та інвестиційне золото {% if active_city %}{% if active_city.slug == 'kyiv' or active_city.name == 'Київ' %}у Києві{% else %}у {{ active_city.name }}{% endif %}{% endif %} — з фіксацією курсу онлайн.</p>
+    </div>
+    <div class="svc-hero__chips">
+      {% for svc in services %}
+      <a href="#svc-{{ svc.slug }}">{{ svc.title }}</a>
+      {% endfor %}
+    </div>
   </div>
 </section>
 

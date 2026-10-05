@@ -3,7 +3,9 @@
     {% for item in breadcrumb_items %}
     <li class="breadcrumbs__item">
       {% if not forloop.first %}
-      <span class="breadcrumbs__sep" aria-hidden="true">/</span>
+      <span class="breadcrumbs__sep" aria-hidden="true">
+        <svg width="5" height="8" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#B3B4B6" fill="none" stroke-width="1.5"></path></svg>
+      </span>
       {% endif %}
       {% if item.url and not forloop.last %}
       <a href="{{ item.url }}">{{ item.title }}</a>

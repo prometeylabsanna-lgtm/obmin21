@@ -1,22 +1,23 @@
 .breadcrumbs {
-  padding: 8px 0 4px;
+  padding: 8px 0 0;
   font-size: 13px;
-  color: var(--color-text-muted);
+  color: #b3b4b6;
 }
 
 .breadcrumbs__list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .breadcrumbs__sep {
-  color: var(--color-text-muted);
-  margin-right: 2px;
+  display: flex;
+  align-items: center;
+  line-height: 0;
 }
 
 .breadcrumbs a {
