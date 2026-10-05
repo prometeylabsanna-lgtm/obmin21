@@ -45,44 +45,14 @@
   top: auto;
   width: 160%;
   margin: -20px 0 -20px -30%;
-  aspect-ratio: 1642 / 823;
   z-index: 1;
   pointer-events: none;
-}
-
-.svc-hero__coin {
-  position: absolute;
-}
-
-.svc-hero__coin--b {
-  left: 0%;
-  top: 34.51%;
-  width: 31.12%;
-}
-
-.svc-hero__coin--d {
-  left: 53.87%;
-  top: 0%;
-  width: 16.26%;
-}
-
-.svc-hero__coin--c {
-  left: 69.12%;
-  top: 4.74%;
-  width: 30.88%;
-}
-
-.svc-hero__coin--a {
-  left: 17.84%;
-  top: 14.09%;
-  width: 48.17%;
 }
 
 .svc-hero__coins img {
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.4));
 }
 
 .svc-hero__copy {
@@ -152,6 +122,123 @@
   color: #fff;
   font-size: 13px;
   font-weight: 500;
+}
+
+.svc-row {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  scroll-margin-top: 24px;
+}
+
+.svc-row + .svc-row {
+  margin-top: 64px;
+}
+
+.svc-row__media {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  height: 240px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #eef0f3;
+}
+
+.svc-row__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.svc-row__copy {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+}
+
+.svc-row__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.3px;
+  color: #052145;
+}
+
+.svc-row__text {
+  margin: 14px 0 0;
+  color: #b3b4b6;
+  font-size: 16px;
+  line-height: 1.4;
+  max-width: 520px;
+}
+
+.svc-row__points {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.svc-row__point {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.35;
+  color: #052145;
+}
+
+.svc-row__check {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #052145;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -1px;
+}
+
+.svc-row__btns {
+  margin-top: 28px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.svc-row__cta,
+.svc-row__consult {
+  flex: 1 1 100%;
+  min-height: 0;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.svc-row__cta {
+  padding: 15px 32px;
+}
+
+.svc-row__consult {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border: 1px solid #052145;
+  color: #052145;
+  background: transparent;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.svc-row__consult:hover {
+  background: #052145;
+  color: #fff;
 }
 
 .contact-cards {
@@ -257,9 +344,9 @@
   .svc-hero__coins {
     position: absolute;
     order: 0;
-    right: -4%;
-    top: -24px;
-    width: min(58%, max(280px, calc(100% - 520px)));
+    right: -2%;
+    top: -52px;
+    width: min(64%, max(320px, calc(100% - 480px)));
     margin: 0;
   }
 
@@ -269,6 +356,32 @@
 
   .svc-hero__chips {
     order: 0;
+  }
+
+  .svc-row {
+    flex-direction: row;
+    gap: 70px;
+  }
+
+  .svc-row--rev {
+    flex-direction: row-reverse;
+  }
+
+  .svc-row + .svc-row {
+    margin-top: 110px;
+  }
+
+  .svc-row__media {
+    height: 420px;
+  }
+
+  .svc-row__title {
+    font-size: 44px;
+  }
+
+  .svc-row__cta,
+  .svc-row__consult {
+    flex: 0 0 auto;
   }
 
   .contact-cards {

@@ -6,18 +6,7 @@
 <section class="svc-hero">
   <div class="svc-hero__banner">
     <div class="svc-hero__coins" aria-hidden="true">
-      <div class="svc-hero__coin svc-hero__coin--b">
-        <img src="{% static 'images/coins-b.png' %}" alt="" decoding="async">
-      </div>
-      <div class="svc-hero__coin svc-hero__coin--d">
-        <img src="{% static 'images/coins-d.png' %}" alt="" decoding="async">
-      </div>
-      <div class="svc-hero__coin svc-hero__coin--c">
-        <img src="{% static 'images/coins-c.png' %}" alt="" decoding="async">
-      </div>
-      <div class="svc-hero__coin svc-hero__coin--a">
-        <img src="{% static 'images/coins-a.png' %}" alt="" decoding="async">
-      </div>
+      <img src="{% static 'images/coins.png' %}" alt="" decoding="async">
     </div>
     <div class="svc-hero__copy">
       <span class="pill pill--light">Послуги</span>
@@ -33,22 +22,29 @@
 </section>
 
 {% for svc in services %}
-<article class="service-card" id="svc-{{ svc.slug }}">
-  <div class="service-card__media">
-    {% if forloop.counter == 1 %}<img src="{% static 'images/service-1.png' %}" alt="">
-    {% elif forloop.counter == 2 %}<img src="{% static 'images/service-2.png' %}" alt="">
-    {% elif forloop.counter == 3 %}<img src="{% static 'images/service-3.png' %}" alt="">
-    {% elif forloop.counter == 4 %}<img src="{% static 'images/service-4.png' %}" alt="">
-    {% elif forloop.counter == 5 %}<img src="{% static 'images/service-5.png' %}" alt="">
-    {% else %}<img src="{% static 'images/service-6.png' %}" alt="">{% endif %}
+<article class="svc-row{% if forloop.counter|divisibleby:2 %} svc-row--rev{% endif %}" id="svc-{{ svc.slug }}">
+  <div class="svc-row__media">
+    <img src="{% static 'images/services/' %}{{ svc.slug }}.jpg" alt="{{ svc.title }}" width="800" height="420" decoding="async">
   </div>
-  <div>
-    <h2 class="service-card__title">{{ svc.title }}</h2>
-    <p class="card__text">{{ svc.short_desc|brand_mark }}</p>
-    {% if svc.body %}
-    <div class="card__text" style="margin-top:16px">{{ svc.body|format_body }}</div>
+  <div class="svc-row__copy">
+    <h2 class="svc-row__title">{{ svc.title }}</h2>
+    <p class="svc-row__text">{{ svc.block_text }}</p>
+    {% if svc.block_points %}
+    <div class="svc-row__points">
+      {% for pt in svc.block_points %}
+      <div class="svc-row__point">
+        <span class="svc-row__check" aria-hidden="true">
+          <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" fill="none" stroke-width="1.6"></path></svg>
+        </span>
+        {{ pt }}
+      </div>
+      {% endfor %}
+    </div>
     {% endif %}
-    <button type="button" class="btn btn--accent" style="margin-top:20px" data-open-modal="{% url 'leads:request_modal' %}">Забронювати заявку</button>
+    <div class="svc-row__btns">
+      <button type="button" class="btn btn--accent svc-row__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ svc.block_cta }}</button>
+      <a class="svc-row__consult" href="tel:+380444444444">Консультація</a>
+    </div>
   </div>
 </article>
 {% empty %}

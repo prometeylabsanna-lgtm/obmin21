@@ -10,14 +10,22 @@ from src.content.models import (
     Service,
     ServicesPage,
 )
+from src.content.service_blocks import SERVICE_BLOCKS
 from src.leads.forms import ContactMessageForm
 
 
 def services_list(request):
     page = ServicesPage.load()
+    services = []
+    for svc in Service.objects.filter(is_active=True):
+        block = SERVICE_BLOCKS.get(svc.slug, {})
+        svc.block_text = block.get('text') or svc.short_desc
+        svc.block_points = list(block.get('points', ()))
+        svc.block_cta = block.get('cta', 'Забронювати заявку')
+        services.append(svc)
     return render(request, 'content/services_list.html', {
         'page': page,
-        'services': Service.objects.filter(is_active=True),
+        'services': services,
         'page_title': page.seo_title or page.title,
         'page_description': page.seo_description or page.intro[:160],
     })
