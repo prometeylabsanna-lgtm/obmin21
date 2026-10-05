@@ -1,4 +1,5 @@
 from django.db import models
+from urllib.parse import quote_plus
 
 
 class City(models.Model):
@@ -42,3 +43,12 @@ class Branch(models.Model):
 
     def __str__(self):
         return f'{self.city.name}: {self.address}'
+
+    def map_embed_src(self):
+        q = quote_plus(f'{self.address}, Ukraine')
+        return f'https://maps.google.com/maps?q={q}&z=15&hl=uk&output=embed'
+
+    def map_route_url(self):
+        if self.map_url:
+            return self.map_url
+        return f'https://maps.google.com/?q={quote_plus(self.address)}'

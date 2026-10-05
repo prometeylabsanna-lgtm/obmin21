@@ -12,7 +12,7 @@ from src.content.models import (
     ServicesPage,
 )
 from src.content.service_blocks import SERVICE_BLOCKS
-from src.leads.forms import ContactMessageForm
+from src.network.models import Branch
 from src.reviews.selectors import get_published_reviews
 
 
@@ -45,9 +45,21 @@ def advantages_page(request):
 
 
 def contacts_page(request):
+    map_branches = list(
+        Branch.objects.filter(is_active=True, city__is_active=True)
+        .select_related('city')
+        .order_by('city__sort_order', 'sort_order', 'id')
+    )
+    active = map_branches[0] if map_branches else None
+    if request.city:
+        for item in map_branches:
+            if item.city_id == request.city.id:
+                active = item
+                break
     return render(request, 'content/contacts.html', {
         'page': ContactsPage.load(),
-        'form': ContactMessageForm(),
+        'map_branches': map_branches,
+        'active_branch': active,
         'branches': request.city_branches,
     })
 

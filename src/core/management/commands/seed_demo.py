@@ -1,6 +1,7 @@
 from decimal import Decimal
 from datetime import datetime, timedelta
 from pathlib import Path
+from urllib.parse import quote_plus
 
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
@@ -27,16 +28,17 @@ from src.reviews.models import Review
 
 
 CITIES = [
-    ('Харків', 'kharkiv', '+38 (099) 111-11-11'),
-    ('Київ', 'kyiv', '+38 (099) 222-22-22'),
-    ('Одеса', 'odesa', '+38 (099) 333-33-33'),
-    ('Дніпро', 'dnipro', '+38 (099) 444-44-44'),
-    ('Полтава', 'poltava', '+38 (099) 555-55-55'),
-    ('Суми', 'sumy', '+38 (099) 666-66-66'),
-    ('Черкаси', 'cherkasy', '+38 (099) 777-77-77'),
-    ('Івано-Франківськ', 'ivano-frankivsk', '+38 (099) 888-88-88'),
-    ('Кривий Ріг', 'kryvyi-rih', '+38 (099) 999-99-99'),
-    ('Кропивницький', 'kropyvnytskyi', '+38 (067) 101-01-01'),
+    ('Київ', 'kyiv', '+38 (099) 222-22-22', 'вул. Хрещатик, 1, Київ'),
+    ('Харків', 'kharkiv', '+38 (099) 111-11-11', 'вул. Сумська, 10, Харків'),
+    ('Дніпро', 'dnipro', '+38 (099) 444-44-44', 'пр. Яворницького, 50, Дніпро'),
+    ('Одеса', 'odesa', '+38 (099) 333-33-33', 'вул. Дерибасівська, 5, Одеса'),
+    ('Львів', 'lviv', '+38 (099) 121-21-21', 'пл. Ринок, 12, Львів'),
+    ('Запоріжжя', 'zaporizhzhia', '+38 (099) 131-31-31', 'пр. Соборний, 100, Запоріжжя'),
+    ('Вінниця', 'vinnytsia', '+38 (099) 141-41-41', 'вул. Соборна, 30, Вінниця'),
+    ('Миколаїв', 'mykolaiv', '+38 (099) 151-51-51', 'вул. Соборна, 8, Миколаїв'),
+    ('Хмельницький', 'khmelnytskyi', '+38 (099) 161-61-61', 'вул. Проскурівська, 20, Хмельницький'),
+    ('Рівне', 'rivne', '+38 (099) 171-71-71', 'вул. Соборна, 15, Рівне'),
+    ('Черкаси', 'cherkasy', '+38 (099) 777-77-77', 'бул. Шевченка, 200, Черкаси'),
 ]
 
 PAIRS = [
@@ -287,7 +289,9 @@ class Command(BaseCommand):
         )
         privacy.save()
 
-        for i, (name, slug, phone) in enumerate(CITIES):
+        keep_city_slugs = []
+        for i, (name, slug, phone, address) in enumerate(CITIES):
+            keep_city_slugs.append(slug)
             city, _ = City.objects.update_or_create(
                 slug=slug,
                 defaults={
@@ -297,19 +301,23 @@ class Command(BaseCommand):
                     'sort_order': i,
                 },
             )
-            Branch.objects.update_or_create(
-                city=city,
-                address='вул. Хрещатик, 1, Київ',
-                defaults={
-                    'hours': 'Пн–Пт 09:00–19:00, Сб 10:00–16:00',
-                    'phone': phone,
-                    'lat': Decimal('50.447200'),
-                    'lng': Decimal('30.521500'),
-                    'map_url': 'https://www.google.com/maps/search/?api=1&query=вул.+Хрещатик,+1,+Київ',
-                    'is_active': True,
-                    'sort_order': 0,
-                },
-            )
+            branch = city.branches.order_by('sort_order', 'id').first()
+            payload = {
+                'address': address,
+                'hours': 'Пн–Нд, 8:00–21:00',
+                'phone': phone,
+                'map_url': 'https://www.google.com/maps/search/?api=1&query=' + quote_plus(address),
+                'is_active': True,
+                'sort_order': 0,
+            }
+            if branch:
+                for key, val in payload.items():
+                    setattr(branch, key, val)
+                branch.save()
+            else:
+                branch = Branch.objects.create(city=city, **payload)
+            city.branches.exclude(pk=branch.pk).update(is_active=False)
+        City.objects.exclude(slug__in=keep_city_slugs).update(is_active=False)
 
         for i, (code, name, slug, buy, sell) in enumerate(PAIRS):
             pair, _ = CurrencyPair.objects.update_or_create(

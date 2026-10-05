@@ -1,65 +1,80 @@
 {% extends 'base.html' %}
-{% load content_format %}
+{% load static content_format %}
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="page-hero">
-  <h1 class="page-hero__title">Звʼяжіться з <span class="u-accent">нами</span></h1>
-  {% if page.intro %}<p class="page-hero__lead">{{ page.intro|brand_mark }}</p>{% endif %}
-</section>
-
-<section class="contact-cards">
-  {% if active_phone %}
-  <a class="contact-card" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">
-    <div class="contact-card__label">Телефон</div>
-    <div class="contact-card__value">{{ active_phone }}</div>
-  </a>
-  {% endif %}
-  {% if site_settings.telegram_url %}
-  <a class="contact-card" href="{{ site_settings.telegram_url }}" target="_blank" rel="noopener">
-    <div class="contact-card__label">Telegram</div>
-    <div class="contact-card__value">Написати</div>
-  </a>
-  {% endif %}
-  <div class="contact-card">
-    <div class="contact-card__label">Email</div>
-    <div class="contact-card__value">info@obmin21.com</div>
-  </div>
-  <div class="contact-card">
-    <div class="contact-card__label">Графік</div>
-    <div class="contact-card__value">{% if branches.0.hours %}{{ branches.0.hours }}{% else %}Пн–Нд 09:00–21:00{% endif %}</div>
-  </div>
-</section>
-
-<section class="section" id="branches">
-  <h2 class="section__title">Відділення по <span class="u-accent">Україні</span></h2>
-  <div class="branches-layout">
-    <div>
-      {% for b in branches %}
-      <div class="branch-item">
-        <div class="branch-item__name">{{ b.address }}</div>
-        <div class="branch-item__addr">{% if b.hours %}{{ b.hours }}{% endif %}{% if b.phone %} · {{ b.phone }}{% endif %}</div>
+<section class="contacts-hero">
+  <span class="pill">Контакти</span>
+  <h1 class="contacts-hero__title">Зв’яжіться <span class="u-accent">з нами</span></h1>
+  <p class="contacts-hero__lead">Відповімо на питання, підкажемо курс і допоможемо забронювати обмін у зручному відділенні.</p>
+  <div class="contacts-cards">
+    <a class="contacts-card" href="tel:+380444444444">
+      <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg>
+      <div>
+        <div class="contacts-card__label">Телефон</div>
+        <div class="contacts-card__value">+38(044)444 44 44</div>
+        <div class="contacts-card__hint">Щодня з 8:00 до 21:00</div>
       </div>
-      {% empty %}
-      <p class="u-muted">Відділення для цього міста зʼявляться незабаром</p>
+    </a>
+    <a class="contacts-card" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">
+      <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3L2.5 10.2l6.8 2.4M21 3l-3.2 17.5-8.5-7.9M21 3L9.3 12.6v5.9l3.1-3.3"></path></svg>
+      <div>
+        <div class="contacts-card__label">Telegram</div>
+        <div class="contacts-card__value">@obmin21</div>
+        <div class="contacts-card__hint">Відповідаємо за кілька хвилин</div>
+      </div>
+    </a>
+    <a class="contacts-card" href="mailto:info@obmin21.ua">
+      <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3.5 6.5l8.5 6.5 8.5-6.5"></path></svg>
+      <div>
+        <div class="contacts-card__label">Email</div>
+        <div class="contacts-card__value">info@obmin21.ua</div>
+        <div class="contacts-card__hint">Для співпраці та бізнес-клієнтів</div>
+      </div>
+    </a>
+    <a class="contacts-card" href="#branches">
+      <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+      <div>
+        <div class="contacts-card__label">Графік роботи</div>
+        <div class="contacts-card__value">Пн–Нд, 8:00–21:00</div>
+        <div class="contacts-card__hint">Без перерв і вихідних</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="contacts-map" id="branches" data-branches>
+  <span class="pill">Відділення</span>
+  <h2 class="contacts-map__title">Відділення <span class="u-accent">по Україні</span></h2>
+  {% if map_branches %}
+  <div class="contacts-map__layout">
+    <div class="contacts-map__list" role="list">
+      {% for b in map_branches %}
+      <button type="button" class="contacts-map__item{% if active_branch.pk == b.pk %} is-active{% endif %}" data-branch data-name="{{ b.city.name }}" data-addr="{{ b.address }}" data-map="{{ b.map_embed_src }}" data-link="{{ b.map_route_url }}" aria-pressed="{% if active_branch.pk == b.pk %}true{% else %}false{% endif %}">
+        <span class="contacts-map__item-copy">
+          <span class="contacts-map__item-name">{{ b.city.name }}</span>
+          <span class="contacts-map__item-addr">{{ b.address }}</span>
+        </span>
+        <svg width="7" height="12" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+      </button>
       {% endfor %}
     </div>
-    <div class="map-block__frame">
-      <iframe
-        src="https://maps.google.com/maps?q=%D0%9A%D0%B8%D1%97%D0%B2%2C+%D0%B2%D1%83%D0%BB.+%D0%A5%D1%80%D0%B5%D1%89%D0%B0%D1%82%D0%B8%D0%BA%2C+1&hl=uk&z=16&output=embed"
-        title="Карта: Київ, вул. Хрещатик, 1"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        allowfullscreen
-      ></iframe>
+    <div class="contacts-map__frame">
+      <iframe data-branches-map src="{{ active_branch.map_embed_src }}" title="Карта: {{ active_branch.address }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <div class="contacts-map__card">
+        <div class="contacts-map__card-name" data-branches-name>Обмін21 · {{ active_branch.city.name }}</div>
+        <div class="contacts-map__card-addr" data-branches-addr>{{ active_branch.address }}</div>
+        <a class="contacts-map__card-link" data-branches-link href="{{ active_branch.map_route_url }}" target="_blank" rel="noopener">Прокласти маршрут
+          <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+        </a>
+      </div>
     </div>
   </div>
+  {% else %}
+  <p class="u-muted">Відділення з’являться незабаром</p>
+  {% endif %}
 </section>
-
-<section class="section">
-  <h2 class="section__title">Написати <span class="u-accent">нам</span></h2>
-  <div class="card" style="max-width:640px;margin-top:20px">
-    {% include 'partials/contact_form.html' %}
-  </div>
-</section>
+{% endblock %}
+{% block page_js %}
+<script src="{% static 'js/contacts.js' %}?v=1" defer></script>
 {% endblock %}
