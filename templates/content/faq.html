@@ -3,10 +3,10 @@
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="faq-section" data-qa="faq-page" style="margin-top:24px">
+<section class="faq-section faq-section--page" data-qa="faq-page">
   <div class="faq-section__head">
     <span class="pill">Відповіді</span>
-    <h2 class="faq-section__title">
+    <h1 class="faq-section__title">
       <span class="calc-head__coin faq-section__coin" aria-hidden="true">
         <span class="coin-spin">
           <img src="{% static 'images/bitcoin.png' %}" alt="">
@@ -15,37 +15,76 @@
         </span>
       </span>
       Відповіді на <span class="u-accent">поширені запитання</span>
-    </h2>
-    {% if page.intro %}<p class="services-section__lead">{{ page.intro|brand_mark }}</p>{% endif %}
+    </h1>
   </div>
-
-  {% if items %}
-  <div class="faq-section__grid" data-faq>
-    {% for item in items %}
-    <div class="faq-card{% if forloop.first %} is-open{% endif %}">
-      <button type="button" class="faq-card__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
-        <span>{{ item.question|brand_mark }}</span>
+  <div class="faq-section__grid faq-section__grid--page" data-faq>
+    <div class="faq-card is-open">
+      <button type="button" class="faq-card__q" aria-expanded="true">
+        <span>Які документи потрібні?</span>
         <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
       </button>
-      <div class="faq-card__a">{{ item.answer|format_body }}</div>
+      <div class="faq-card__a">Для обміну в межах лімітів достатньо паспорта або ID-картки. Для великих сум можуть знадобитися додаткові підтвердження згідно з вимогами фінмоніторингу</div>
     </div>
-    {% endfor %}
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Чи приймаєте ви зношені або пошкоджені купюри?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Так. Надірвані, потерті чи купюри старого зразка перевіряємо на місці. Вартість обміну залежить від стану банкноти, консультант назве її до операції.</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Як обміняти криптовалюту на готівку?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Оберіть монету у вкладці «Крипто», зафіксуйте курс і приходьте у відділення. Переказ USDT, BTC чи ETH підтверджується за кілька хвилин, після чого ви отримуєте готівку.</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Як зафіксувати курс онлайн?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Вкажіть суму в калькуляторі та натисніть «Забронювати заявку». Залиште ім’я і телефон — менеджер підтвердить заявку, а курс закріпиться за вами.</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Чи є комісія за обмін?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Ні, додаткових комісій немає. Ви отримуєте рівно ту суму, яку бачите в калькуляторі за вказаним курсом.</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Скільки діє заброньований курс?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Заброньований курс діє 30 хвилин з моменту підтвердження. Якщо не встигаєте, зателефонуйте — ми продовжимо бронь або оновимо курс.</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Які валюти можна обміняти?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Понад 15 валют: USD, EUR, PLN, GBP, CHF, CZK та інші. Актуальний список і курси дивіться на сторінці «Всі валюти».</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Куди можна надіслати переказ?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">По всій Україні та у понад 100 країн світу — готівкою або на картку отримувача.</div>
+    </div>
   </div>
-  {% else %}
-  <p class="u-muted">Питання зʼявляться незабаром.</p>
-  {% endif %}
+</section>
 
-  <div class="faq-cta">
-    <h2 class="faq-cta__title">Не знайшли відповідь?</h2>
-    <p style="margin:12px 0 0;color:rgba(255,255,255,0.72)">Напишіть або зателефонуйте — допоможемо</p>
-    <div class="faq-cta__actions">
-      {% if active_phone %}
-      <a class="btn btn--accent" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">{{ active_phone }}</a>
-      {% endif %}
-      {% if site_settings.telegram_url %}
-      <a class="btn btn--ghost" style="color:#fff;border-color:rgba(255,255,255,0.35)" href="{{ site_settings.telegram_url }}" target="_blank" rel="noopener">Telegram</a>
-      {% endif %}
-    </div>
+<section class="faq-cta faq-cta--split">
+  <div class="faq-cta__copy">
+    <h2 class="faq-cta__title">Не знайшли <span class="u-accent">відповідь?</span></h2>
+    <p class="faq-cta__text">Консультант відповість на будь-яке питання щодня з 8:00 до 21:00.</p>
+  </div>
+  <div class="faq-cta__actions">
+    <a class="btn btn--accent faq-cta__btn" href="tel:{% if active_phone %}{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}{% else %}+380444444444{% endif %}">Зателефонувати</a>
+    <a class="btn faq-cta__tg" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">Написати в Telegram</a>
   </div>
 </section>
 {% endblock %}
