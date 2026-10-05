@@ -365,34 +365,50 @@
   border-radius: 12px;
   background: #052145;
   overflow: hidden;
-  min-height: 300px;
-  padding: 36px 24px;
+  min-height: 680px;
+  padding: 20px 16px;
   display: flex;
   align-items: stretch;
   color: #fff;
+  z-index: 2;
 }
 
 .promo-banner__coins {
   position: absolute;
-  right: -20px;
-  bottom: -30px;
-  width: min(360px, 70%);
+  top: 190px;
+  left: -62%;
+  right: auto;
+  bottom: auto;
+  width: 205%;
   pointer-events: none;
-  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  opacity: 1;
 }
 
 .promo-banner__coins img {
   width: 100%;
   height: auto;
+  max-height: 100%;
   object-fit: contain;
+  display: block;
 }
 
 .promo-banner__content {
   position: relative;
   z-index: 1;
-  max-width: 460px;
+  max-width: none;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  pointer-events: none;
+}
+
+.promo-banner__content .pill {
+  align-self: flex-start;
+  width: auto;
+  flex: none;
 }
 
 .promo-banner__title {
@@ -413,9 +429,18 @@
 }
 
 .promo-banner__cta {
-  margin-top: 28px;
-  align-self: flex-start;
-  min-width: 200px;
+  pointer-events: auto;
+  display: block;
+  margin-top: auto;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+  padding: 16px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
 }
 
 .map-section {
@@ -963,17 +988,27 @@
 
   .promo-banner {
     margin-top: 120px;
-    min-height: 360px;
-    padding: 48px 56px;
+    min-height: 390px;
+    padding: 30px;
     overflow: visible;
   }
 
   .promo-banner__coins {
-    top: -40px;
-    right: -10px;
-    bottom: -40px;
-    width: 48%;
-    opacity: 1;
+    top: -110px;
+    left: auto;
+    right: -40px;
+    bottom: -80px;
+    width: 72%;
+  }
+
+  .promo-banner__content {
+    max-width: 520px;
+  }
+
+  .promo-banner__cta {
+    margin-top: 40px;
+    align-self: flex-start;
+    width: 292px;
   }
 
   .map-section {
