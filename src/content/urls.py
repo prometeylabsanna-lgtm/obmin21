@@ -14,4 +14,14 @@ urlpatterns = [
         views.privacy_page,
         name='privacy',
     ),
+    path(
+        'publichna-oferta/',
+        views.offer_page,
+        name='offer',
+    ),
+    path(
+        'polityka-cookie/',
+        views.cookies_page,
+        name='cookies',
+    ),
 ]

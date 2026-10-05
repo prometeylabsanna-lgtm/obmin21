@@ -8,6 +8,8 @@ from src.content.models import (
     FaqItem,
     FaqPage,
     HomePage,
+    CookiePage,
+    OfferPage,
     PrivacyPage,
     RatesPage,
     Service,
@@ -71,6 +73,16 @@ class ContactsPageAdmin(SingletonAdmin):
 
 @admin.register(PrivacyPage)
 class PrivacyPageAdmin(SingletonAdmin):
+    pass
+
+
+@admin.register(OfferPage)
+class OfferPageAdmin(SingletonAdmin):
+    pass
+
+
+@admin.register(CookiePage)
+class CookiePageAdmin(SingletonAdmin):
     pass
 
 

@@ -8,14 +8,17 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from src.blog.models import Category, Post
+from src.blog.article_data import BY_SLUG, body_text
 from src.content.models import (
     AdvantageItem,
     AdvantagesPage,
     CitiesPage,
     ContactsPage,
+    CookiePage,
     FaqItem,
     FaqPage,
     HomePage,
+    OfferPage,
     PrivacyPage,
     RatesPage,
     Service,
@@ -289,6 +292,49 @@ class Command(BaseCommand):
         )
         privacy.save()
 
+        offer = OfferPage.load()
+        offer.title = 'Публічна оферта'
+        offer.body = (
+            'Ця оферта визначає умови надання послуг мережі Обмін21 '
+            'через сайт, телефон і відділення.\n\n'
+            'Предмет\n\n'
+            'Ми приймаємо заявки на обмін валют, перекази, операції з криптовалютою '
+            'та супутні послуги, зазначені на сайті.\n\n'
+            'Заявка та курс\n\n'
+            'Заявка на сайті фіксує намір клієнта. Курс і сума підтверджуються менеджером '
+            'або касиром перед розрахунком.\n\n'
+            'Ідентифікація\n\n'
+            'Для операцій у межах лімітів достатньо паспорта або ID-картки. '
+            'Для більших сум можуть знадобитися додаткові документи згідно з вимогами фінмоніторингу.\n\n'
+            'Відмова від операції\n\n'
+            'Ми можемо відмовити в обслуговуванні, якщо є ознаки підробки, '
+            'порушення законодавства або неповні дані клієнта.\n\n'
+            'Відповідальність\n\n'
+            'Фінальні умови операції підтверджуються у відділенні. '
+            'Питання щодо оферти надсилайте на контактний email у налаштуваннях сайту.'
+        )
+        offer.save()
+
+        cookies = CookiePage.load()
+        cookies.title = 'Політика використання файлів Cookie'
+        cookies.body = (
+            'Ми використовуємо файли cookie, щоб сайт працював стабільно, '
+            'запам’ятовував місто та зберігав технічні налаштування сесії.\n\n'
+            'Які cookie застосовуємо\n\n'
+            'Необхідні cookie для безпеки форм і вибору міста, а також технічні журнали, '
+            'що допомагають усувати збої.\n\n'
+            'Навіщо вони потрібні\n\n'
+            'Щоб показати відділення вашого міста, захистити заявки від повторної відправки '
+            'і коректно відкривати сторінки на різних пристроях, зокрема в iOS Safari.\n\n'
+            'Термін зберігання\n\n'
+            'Сесійні cookie видаляються після закриття браузера. '
+            'Cookie міста можуть зберігатися довше, щоб не обирати локацію щоразу.\n\n'
+            'Керування\n\n'
+            'Ви можете вимкнути cookie в налаштуваннях браузера. '
+            'Частина функцій сайту тоді може працювати обмежено.'
+        )
+        cookies.save()
+
         keep_city_slugs = []
         for i, (name, slug, phone, address) in enumerate(CITIES):
             keep_city_slugs.append(slug)
@@ -445,16 +491,21 @@ class Command(BaseCommand):
         for slug, title, excerpt, cat_i, dpart in BLOG_POSTS:
             keep_post_slugs.append(slug)
             published_at = timezone.make_aware(datetime(dpart[0], dpart[1], dpart[2], 12, 0))
+            packed = BY_SLUG.get(slug)
+            body = body_text(packed) if packed else excerpt
+            seo_title = packed['seo_title'] if packed else title
+            seo_description = packed['seo_description'] if packed else excerpt
             post, _ = Post.objects.update_or_create(
                 slug=slug,
                 defaults={
                     'category': cat_objs[cat_i],
                     'title': title,
-                    'excerpt': excerpt,
-                    'body': excerpt,
+                    'excerpt': packed['lead'] if packed else excerpt,
+                    'body': body,
                     'status': Post.Status.PUBLISHED,
                     'published_at': published_at,
-                    'seo_title': title,
+                    'seo_title': seo_title,
+                    'seo_description': seo_description,
                 },
             )
             cover = art_dir / f'{slug}.jpg'

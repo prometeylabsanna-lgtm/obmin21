@@ -159,6 +159,42 @@ class PrivacyPage(SingletonModel):
         return self.title
 
 
+class OfferPage(SingletonModel):
+    title = models.CharField(
+        'Заголовок',
+        max_length=160,
+        default='Публічна оферта',
+    )
+    body = models.TextField('Текст', blank=True)
+    seo_title = models.CharField('SEO Title', max_length=160, blank=True)
+    seo_description = models.CharField('SEO Description', max_length=320, blank=True)
+
+    class Meta:
+        verbose_name = 'Публічна оферта'
+        verbose_name_plural = 'Публічна оферта'
+
+    def __str__(self):
+        return self.title
+
+
+class CookiePage(SingletonModel):
+    title = models.CharField(
+        'Заголовок',
+        max_length=160,
+        default='Політика використання файлів Cookie',
+    )
+    body = models.TextField('Текст', blank=True)
+    seo_title = models.CharField('SEO Title', max_length=160, blank=True)
+    seo_description = models.CharField('SEO Description', max_length=320, blank=True)
+
+    class Meta:
+        verbose_name = 'Політика Cookie'
+        verbose_name_plural = 'Політика Cookie'
+
+    def __str__(self):
+        return self.title
+
+
 class CitiesPage(SingletonModel):
     title = models.CharField('Заголовок', max_length=120, default='Міста мережі')
     intro = models.TextField('Вступ', blank=True)

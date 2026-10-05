@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load content_format %}
+
+{% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<article class="legal-page" data-qa="{{ legal_qa }}">
+  <header class="legal-page__head">
+    <span class="pill">Документи</span>
+    <h1 class="legal-page__title">
+      {{ title_head }}{% if title_accent %} <span class="u-accent">{{ title_accent }}</span>{% endif %}
+    </h1>
+    <nav class="legal-page__nav" aria-label="Юридичні документи">
+      <a class="legal-page__chip{% if legal_current == 'privacy' %} is-active{% endif %}" href="{% url 'content:privacy' %}">Конфіденційність</a>
+      <a class="legal-page__chip{% if legal_current == 'offer' %} is-active{% endif %}" href="{% url 'content:offer' %}">Публічна оферта</a>
+      <a class="legal-page__chip{% if legal_current == 'cookies' %} is-active{% endif %}" href="{% url 'content:cookies' %}">Cookie</a>
+    </nav>
+  </header>
+  <div class="legal-page__body">
+    {{ page.body|format_legal }}
+  </div>
+</article>
+{% endblock %}

@@ -50,19 +50,27 @@ def post_detail(request, slug):
         slug=slug,
         status=Post.Status.PUBLISHED,
     )
-    published = get_published_posts().exclude(pk=post.pk)
-    related = list(published.filter(category=post.category)[:3])
-    if len(related) < 3:
-        related_ids = {item.pk for item in related}
-        extras = published.exclude(pk__in=related_ids)[: 3 - len(related)]
-        related.extend(extras)
+    posts = list(get_published_posts())
+    idx = next((i for i, item in enumerate(posts) if item.pk == post.pk), 0)
+    related = []
+    step = 1
+    while len(related) < 3 and step < max(len(posts), 1):
+        cand = posts[(idx + step) % len(posts)]
+        if cand.pk != post.pk:
+            related.append(cand)
+        step += 1
+    crumb = post.title
+    layout = post.article_layout()
+    if layout.get('h1b'):
+        crumb = f"{layout['h1a']} {layout['h1b']}"
     return render(request, 'blog/post_detail.html', {
         'post': post,
+        'art': layout,
         'related': related,
         'page_title': post.seo_title or post.title,
         'page_description': post.seo_description or post.excerpt[:160],
         'breadcrumb_items': trail(
             ('Блог', safe_reverse('blog:post_list')),
-            (post.category.name, None),
+            (crumb, None),
         ),
     })

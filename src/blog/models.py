@@ -99,11 +99,19 @@ class Post(models.Model):
         return f'{d.day} {_UK_MONTHS[d.month]} {d.year}'
 
     def reading_label(self):
+        from src.blog.article_data import BY_SLUG
+        data = BY_SLUG.get(self.slug)
+        if data and data.get('read'):
+            return data['read']
         try:
             idx = _READ_ORDER.index(self.slug)
         except ValueError:
             idx = 0
         return f'{4 + (idx % 4)} хв читання'
+
+    def article_layout(self):
+        from src.blog.article_data import layout_for
+        return layout_for(self)
 
     def publish(self):
         self.status = self.Status.PUBLISHED

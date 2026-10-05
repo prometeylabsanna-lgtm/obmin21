@@ -3,43 +3,73 @@
 
 {% block title %}{{ post.seo_title|default:post.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<article data-qa="post-detail">
-  <div class="card__meta">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
-  <h1 class="page-hero__title" style="margin-top:12px">{{ post.title|brand_mark }}</h1>
-  {% if post.excerpt %}<p class="page-hero__lead">{{ post.excerpt|brand_mark }}</p>{% endif %}
-
-  <div class="article-hero" style="margin-top:28px">
-    <img src="{{ post.image_url }}" alt="{{ post.title }}" decoding="async">
-  </div>
+<article class="article-page" data-qa="post-detail">
+  <header class="article-banner">
+    <img class="article-banner__img" src="{{ post.image_url }}" alt="{{ post.title }}" decoding="async">
+    <div class="article-banner__shade" aria-hidden="true"></div>
+    <div class="article-banner__copy">
+      <span class="article-banner__pill">{{ post.category.name }}</span>
+      <h1 class="article-banner__title">{{ art.h1a }}{% if art.h1b %} <span class="u-accent">{{ art.h1b }}</span>{% endif %}</h1>
+      <div class="article-banner__meta">
+        <span>Обмін21</span>
+        <span class="article-banner__dot" aria-hidden="true"></span>
+        <time datetime="{{ post.published_at|date:'Y-m-d' }}">{{ post.date_uk }}</time>
+        <span class="article-banner__dot" aria-hidden="true"></span>
+        <span>{{ art.read }}</span>
+      </div>
+    </div>
+  </header>
 
   <div class="article-body">
-    {{ post.body|format_body }}
-    {% if post.faq %}
-    <h2>FAQ</h2>
-    {{ post.faq|format_body }}
-    {% endif %}
-  </div>
-
-  <div style="margin-top:32px;display:flex;flex-wrap:wrap;gap:12px">
-    <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Заявка на обмін</button>
-    <a class="btn btn--ghost" href="{% url 'blog:post_list' %}">Усі статті</a>
-  </div>
-
-  {% if related %}
-  <section class="section">
-    <h2 class="section__title">Читайте <span class="u-accent">також</span></h2>
-    <div class="blog-grid" style="margin-top:24px">
-      {% for item in related %}
-      <article class="blog-card">
-        <div class="card__meta">{{ item.published_at|date:"d.m.Y" }}</div>
-        <a class="blog-card__title" href="{% url 'blog:post_detail' item.slug %}">{{ item.title|brand_mark }}</a>
-        {% if item.excerpt %}<p class="blog-card__text">{{ item.excerpt|brand_mark }}</p>{% endif %}
-      </article>
+    {% if art.lead %}<p class="article-body__lead">{{ art.lead|brand_mark }}</p>{% endif %}
+    {% if art.plain %}
+      {{ post.body|format_body }}
+    {% else %}
+      {% for sec in art.sections %}
+      <section class="article-sec">
+        <h2 class="article-sec__title">{{ sec.h }}</h2>
+        {% for pp in sec.p %}<p class="article-sec__p">{{ pp|brand_mark }}</p>{% endfor %}
+        {% if sec.list %}
+        <ul class="article-sec__list">
+          {% for li in sec.list %}<li>{{ li|brand_mark }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% if sec.fig and art.fig_url %}
+        <figure class="article-fig">
+          <img src="{{ art.fig_url }}" alt="{{ art.fig_cap }}" loading="lazy" decoding="async">
+          {% if art.fig_cap %}<figcaption>{{ art.fig_cap }}</figcaption>{% endif %}
+        </figure>
+        {% endif %}
+      </section>
       {% endfor %}
+    {% endif %}
+    <div class="article-body__nav">
+      <a class="article-body__back" href="{% url 'blog:post_list' %}">
+        <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M5 1L1 5l4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+        Усі статті
+      </a>
+      <a class="article-body__rates" href="{% url 'rates:rates_page' %}">Переглянути курси</a>
     </div>
-  </section>
-  {% endif %}
+  </div>
 </article>
+
+{% if related %}
+<section class="article-related">
+  <h2 class="article-related__title">Читайте <span class="u-accent">також</span></h2>
+  <div class="article-related__grid">
+    {% for item in related %}
+    <a class="article-related__card" href="{% url 'blog:post_detail' item.slug %}">
+      <div class="article-related__media">
+        <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy" decoding="async">
+      </div>
+      <div class="article-related__cat">{{ item.category.name }}</div>
+      <div class="article-related__name">{{ item.title|brand_mark }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

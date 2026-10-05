@@ -5,8 +5,10 @@ from src.content.models import (
     AdvantageItem,
     AdvantagesPage,
     ContactsPage,
+    CookiePage,
     FaqItem,
     FaqPage,
+    OfferPage,
     PrivacyPage,
     Service,
     ServicesPage,
@@ -64,10 +66,39 @@ def contacts_page(request):
     })
 
 
-def privacy_page(request):
-    return render(request, 'content/privacy.html', {
-        'page': PrivacyPage.load(),
+def _split_title(title):
+    text = (title or '').strip()
+    if ' ' not in text:
+        return text, ''
+    head, accent = text.rsplit(' ', 1)
+    return head, accent
+
+
+def _legal_page(request, page, current, qa):
+    head, accent = _split_title(page.title)
+    body = page.body or ''
+    lead = body.split('\n\n', 1)[0].replace('\n', ' ').strip()
+    return render(request, 'content/legal.html', {
+        'page': page,
+        'legal_current': current,
+        'title_head': head,
+        'title_accent': accent,
+        'legal_qa': qa,
+        'page_title': page.seo_title or page.title,
+        'page_description': page.seo_description or lead[:160],
     })
+
+
+def privacy_page(request):
+    return _legal_page(request, PrivacyPage.load(), 'privacy', 'privacy-page')
+
+
+def offer_page(request):
+    return _legal_page(request, OfferPage.load(), 'offer', 'offer-page')
+
+
+def cookies_page(request):
+    return _legal_page(request, CookiePage.load(), 'cookies', 'cookies-page')
 
 
 def faq_page(request):

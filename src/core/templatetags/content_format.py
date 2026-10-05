@@ -100,3 +100,59 @@ def format_body(value):
         inner = '<br>'.join(mark_brand(ln) for ln in lines)
         parts.append(f'<p>{inner}</p>')
     return mark_safe(''.join(parts))
+
+
+def _paragraph(inner: str) -> str:
+    return f'<p>{inner}</p>'
+
+
+@register.filter(name='format_legal')
+def format_legal(value):
+    """Legal text: intro + section cards from short standalone headings."""
+    if not value:
+        return ''
+    blocks = re.split(r'\n\s*\n', str(value).strip())
+    intro = []
+    sections = []
+    current = None
+
+    def close_section():
+        nonlocal current
+        if not current:
+            return
+        paras = ''.join(_paragraph(item) for item in current['paras'])
+        sections.append(
+            '<section class="legal-block">'
+            f'<h2 class="legal-block__title">{current["title"]}</h2>'
+            f'<div class="legal-block__text">{paras}</div>'
+            '</section>'
+        )
+        current = None
+
+    for block in blocks:
+        lines = [ln.strip() for ln in block.split('\n') if ln.strip()]
+        if not lines:
+            continue
+        if len(lines) == 1 and _is_heading(lines[0]):
+            close_section()
+            current = {'title': mark_brand(lines[0]), 'paras': []}
+            continue
+        inner = '<br>'.join(mark_brand(ln) for ln in lines)
+        if current is None:
+            intro.append(inner)
+        else:
+            current['paras'].append(inner)
+    close_section()
+
+    parts = []
+    if intro:
+        parts.append(
+            '<div class="legal-page__intro">'
+            + ''.join(_paragraph(item) for item in intro)
+            + '</div>'
+        )
+    if sections:
+        parts.append(
+            '<div class="legal-stack">' + ''.join(sections) + '</div>'
+        )
+    return mark_safe(''.join(parts))

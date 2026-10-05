@@ -30,6 +30,8 @@ STATIC_TRAILS = {
     'content:services': lambda: trail(('Послуги', None)),
     'content:advantages': lambda: trail(('Переваги', None)),
     'content:privacy': lambda: trail(('Політика конфіденційності', None)),
+    'content:offer': lambda: trail(('Публічна оферта', None)),
+    'content:cookies': lambda: trail(('Політика Cookie', None)),
     'content:faq': lambda: trail(('FAQ', None)),
     'blog:post_list': lambda: trail(('Блог', None)),
     'reviews:review_list': lambda: trail(('Відгуки', None)),

@@ -21,6 +21,8 @@ class StaticSitemap(Sitemap):
             'reviews:review_list',
             'network:city_list',
             'content:privacy',
+            'content:offer',
+            'content:cookies',
             'content:faq',
         ]
 
