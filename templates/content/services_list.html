@@ -51,32 +51,83 @@
 <p class="u-muted">Послуги зʼявляться незабаром</p>
 {% endfor %}
 
-<section class="section">
-  <div class="section__center">
-    <div class="badge-row"><span class="pill">Як це працює</span></div>
-    <h2 class="section__title">Три кроки до <span class="u-accent">обміну</span></h2>
+<section class="svc-how">
+  <div class="svc-how__head">
+    <span class="pill">Як це працює</span>
+    <h2 class="svc-how__title">Три кроки до <span class="u-accent">обміну</span></h2>
   </div>
-  <div class="steps" style="margin-top:28px">
-    <div class="steps__item">
-      <div class="steps__n">01</div>
-      <div>
-        <strong>Оберіть валюту</strong>
-        <p class="card__text">Подивіться курс і суму в калькуляторі</p>
-      </div>
+  <div class="svc-how__grid">
+    <article class="svc-how__card">
+      <h3 class="svc-how__name">Оберіть послугу</h3>
+      <p class="svc-how__text">Розрахуйте суму в калькуляторі або зателефонуйте консультанту.</p>
+    </article>
+    <article class="svc-how__card">
+      <h3 class="svc-how__name">Зафіксуйте курс</h3>
+      <p class="svc-how__text">Забронюйте заявку онлайн — курс діє 30 хвилин.</p>
+    </article>
+    <article class="svc-how__card">
+      <h3 class="svc-how__name">Прийдіть у відділення</h3>
+      <p class="svc-how__text">Отримайте гроші у зручному відділенні з паспортом або ID-карткою.</p>
+    </article>
+  </div>
+</section>
+
+<section class="faq-section faq-section--svc" id="faq" data-qa="section-faq">
+  <div class="faq-section__head">
+    <span class="pill">Відповіді</span>
+    <h2 class="faq-section__title">
+      <span class="calc-head__coin faq-section__coin" aria-hidden="true">
+        <span class="coin-spin">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+        </span>
+      </span>
+      Відповіді на <span class="u-accent">поширені запитання</span>
+    </h2>
+  </div>
+  <div class="faq-section__grid faq-section__grid--svc" data-faq>
+    <div class="faq-card is-open">
+      <button type="button" class="faq-card__q" aria-expanded="true">
+        <span>Які документи потрібні?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Для обміну в межах лімітів достатньо паспорта або ID-картки. Для великих сум можуть знадобитися додаткові підтвердження згідно з вимогами фінмоніторингу</div>
     </div>
-    <div class="steps__item">
-      <div class="steps__n">02</div>
-      <div>
-        <strong>Зафіксуйте курс</strong>
-        <p class="card__text">Залиште заявку — курс діє 30 хвилин</p>
-      </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Чи приймаєте ви зношені або пошкоджені купюри?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Так. Надірвані, потерті чи купюри старого зразка перевіряємо на місці. Вартість обміну залежить від стану банкноти, консультант назве її до операції.</div>
     </div>
-    <div class="steps__item">
-      <div class="steps__n">03</div>
-      <div>
-        <strong>Приходьте у відділення</strong>
-        <p class="card__text">Обміняйте за зафіксованим курсом</p>
-      </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Як обміняти криптовалюту на готівку?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Оберіть монету у вкладці «Крипто», зафіксуйте курс і приходьте у відділення. Переказ USDT, BTC чи ETH підтверджується за кілька хвилин, після чого ви отримуєте готівку.</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Як зафіксувати курс онлайн?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Вкажіть суму в калькуляторі та натисніть «Забронювати заявку». Залиште ім’я і телефон — менеджер підтвердить заявку, а курс закріпиться за вами.</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Чи є комісія за обмін?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Ні, додаткових комісій немає. Ви отримуєте рівно ту суму, яку бачите в калькуляторі за вказаним курсом.</div>
+    </div>
+    <div class="faq-card">
+      <button type="button" class="faq-card__q" aria-expanded="false">
+        <span>Скільки діє заброньований курс?</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">Заброньований курс діє 30 хвилин з моменту підтвердження. Якщо не встигаєте, зателефонуйте — ми продовжимо бронь або оновимо курс.</div>
     </div>
   </div>
 </section>
