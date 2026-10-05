@@ -21,10 +21,24 @@
   100% { transform: rotateY(0deg) rotateX(0deg) rotateZ(0deg) translateX(0); }
 }
 
-@keyframes obFloat {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  33% { transform: translate3d(-6px, -12px, 0) rotate(-1.2deg); }
-  66% { transform: translate3d(5px, -5px, 0) rotate(0.8deg); }
+@keyframes obFlA {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotate(0deg); }
+  50% { transform: translate3d(-6px, -14px, 0) rotateX(6deg) rotateY(-8deg) rotate(-2deg); }
+}
+
+@keyframes obFlB {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateY(0deg) rotate(0deg); }
+  50% { transform: translate3d(8px, -18px, 0) rotateY(14deg) rotate(4deg); }
+}
+
+@keyframes obFlC {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(0deg) rotate(0deg); }
+  50% { transform: translate3d(10px, 12px, 0) rotateX(-10deg) rotate(-4deg); }
+}
+
+@keyframes obFlD {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateY(0deg) rotate(0deg); }
+  50% { transform: translate3d(-8px, -16px, 0) rotateY(-18deg) rotate(6deg); }
 }
 
 .coin-spin {
@@ -61,6 +75,7 @@
 @media (prefers-reduced-motion: reduce) {
   .coin-spin,
   .modal-enter,
+  .adv-hero__float,
   [data-anim] {
     animation: none;
   }

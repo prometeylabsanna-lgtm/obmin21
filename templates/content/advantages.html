@@ -3,10 +3,82 @@
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="page-hero">
-  <div class="badge-row" style="justify-content:flex-start"><span class="pill">Переваги</span></div>
-  <h1 class="page-hero__title">Чому обирають <span class="u-accent">Обмін21</span></h1>
-  {% if page.intro %}<p class="page-hero__lead">{{ page.intro|brand_mark }}</p>{% endif %}
+<section class="adv-hero">
+  <div class="adv-hero__banner">
+    <div class="adv-hero__copy">
+      <span class="pill pill--light">Переваги</span>
+      <h1 class="adv-hero__title">Чому обирають<br><span class="u-accent">Обмін21</span></h1>
+      <p class="adv-hero__lead">Вигідний курс без комісій, фіксація онлайн і перевірка кожної купюри. Ось що цінують наші клієнти {% if active_city %}{% if active_city.slug == 'kyiv' or active_city.name == 'Київ' %}у Києві{% else %}у {{ active_city.name }}{% endif %}{% endif %}.</p>
+      <div class="adv-hero__btns">
+        <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">Забронювати заявку</button>
+        <a class="btn adv-hero__ghost" href="#adv">Усі переваги</a>
+      </div>
+    </div>
+    <div class="adv-hero__stack" aria-hidden="true">
+      <div class="adv-hero__layer adv-hero__k1">
+        <div class="adv-hero__k1-rot">
+          <div class="adv-hero__float">
+            <img class="adv-hero__coin" src="{% static 'images/coins-d.png' %}" alt="">
+          </div>
+        </div>
+      </div>
+      <div class="adv-hero__layer adv-hero__c1">
+        <div class="adv-hero__c1-rot">
+          <div class="adv-hero__float">
+            <div class="adv-card adv-card--eur">
+              <div class="adv-card__shine"></div>
+              <div class="adv-card__top"><span>EUR / UAH</span><span class="adv-flag adv-flag--eu"></span></div>
+              <div class="adv-card__rate"><span class="adv-card__num">45,30</span><span class="adv-card__hint">продаж</span></div>
+              <div class="adv-card__bot">
+                <svg width="30" height="22" viewBox="0 0 30 22"><rect x=".5" y=".5" width="29" height="21" rx="4" fill="none" stroke="#CA8D42"></rect><path d="M10 .5v21M20 .5v21M.5 8h9.5M20 8h9.5M.5 14h9.5M20 14h9.5" stroke="#CA8D42" stroke-width=".8"></path></svg>
+                <span class="adv-card__mark">OBMIN21</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="adv-hero__layer adv-hero__c2">
+        <div class="adv-hero__c2-rot">
+          <div class="adv-hero__float">
+            <div class="adv-card adv-card--usd">
+              <div class="adv-card__shine"></div>
+              <div class="adv-card__dollar">$</div>
+              <div class="adv-card__top"><span>USD / UAH</span><span class="adv-flag adv-flag--us"></span></div>
+              <div class="adv-card__rate"><span class="adv-card__num">41,65</span><span class="adv-card__hint">продаж</span></div>
+              <div class="adv-card__bot">
+                <svg width="30" height="22" viewBox="0 0 30 22"><rect x=".5" y=".5" width="29" height="21" rx="4" fill="none" stroke="#052145"></rect><path d="M10 .5v21M20 .5v21M.5 8h9.5M20 8h9.5M.5 14h9.5M20 14h9.5" stroke="#052145" stroke-width=".8"></path></svg>
+                <span class="adv-card__mark">Кращий за банківський</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="adv-hero__layer adv-hero__c3">
+        <div class="adv-hero__c3-rot">
+          <div class="adv-hero__float">
+            <div class="adv-fix">
+              <div class="adv-fix__top">
+                <span class="adv-fix__label">
+                  <svg width="12" height="13" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#CA8D42" fill="none" stroke-width="1.2"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#CA8D42" fill="none" stroke-width="1.2"></path></svg>
+                  Курс зафіксовано
+                </span>
+                <span class="adv-fix__time">29:55</span>
+              </div>
+              <div class="adv-fix__sum"><span class="adv-fix__num">41 650 ₴</span><span class="adv-fix__note">за 1 000 USD</span></div>
+              <div class="adv-fix__bar"><div class="adv-fix__fill"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="adv-hero__layer adv-hero__k2">
+        <div class="adv-hero__k2-rot">
+          <div class="adv-hero__float">
+            <img class="adv-hero__coin adv-hero__coin--flip" src="{% static 'images/coins-d.png' %}" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section class="section section--tight">
