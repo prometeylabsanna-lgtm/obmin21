@@ -21,6 +21,7 @@
 .svc-hero {
   padding: 20px 0 0;
   margin-bottom: 72px;
+  overflow: visible;
 }
 
 .svc-hero__banner {
@@ -344,9 +345,9 @@
   .svc-hero__coins {
     position: absolute;
     order: 0;
-    right: -2%;
-    top: -52px;
-    width: min(64%, max(320px, calc(100% - 480px)));
+    right: -4%;
+    top: -102px;
+    width: min(66%, max(340px, calc(100% - 460px)));
     margin: 0;
   }
 
