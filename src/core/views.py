@@ -34,21 +34,30 @@ class HomeView(TemplateView):
                 rows,
                 key=lambda r: preferred.get(r['pair'].flag_code, 90),
             )
+        page = HomePage.load()
         ctx.update({
-            'page': HomePage.load(),
+            'page': page,
             'rate_rows': rows,
             'rate_updated_at': updated_at,
             'active_board': board,
             'boards': RateBoard.choices,
             'home_rates_compact': True,
-            'services': Service.objects.filter(is_active=True)[:6],
+            'services': Service.objects.filter(is_active=True, show_on_home=True)[:6],
             'advantage_items': AdvantageItem.objects.filter(is_active=True),
             'advantage_audiences': AdvantageItem.Audience.choices,
             'faq_items': FaqItem.objects.filter(is_active=True)[:8],
-            'news_posts': list(get_published_posts()[:10]),
+            'news_posts': _home_posts(page),
             'home_reviews': get_published_reviews(8),
+            'home_stats': page.stats.filter(is_active=True),
         })
         return ctx
+
+
+def _home_posts(page):
+    selected = list(page.featured_posts.filter(status='published').select_related('category'))
+    if selected:
+        return selected
+    return list(get_published_posts()[:10])
 
 
 def rates_partial(request):

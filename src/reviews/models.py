@@ -14,6 +14,14 @@ class Review(models.Model):
     )
     is_published = models.BooleanField('Опубліковано', default=False)
     consent = models.BooleanField('Згода', default=False)
+    home_page = models.ForeignKey(
+        'content.HomePage',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviews',
+        verbose_name='Головна',
+    )
     created_at = models.DateTimeField('Створено', default=timezone.now)
     published_at = models.DateTimeField('Опубліковано о', null=True, blank=True)
 

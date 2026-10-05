@@ -10,6 +10,19 @@ class CurrencyPairAdmin(ListUnfoldAdmin):
     list_editable = ('is_active', 'sort_order')
     prepopulated_fields = {'slug': ('code',)}
     search_fields = ('code', 'name')
+    fields = (
+        'code',
+        'name',
+        'slug',
+        'base_code',
+        'flag_image',
+        'is_active',
+        'sort_order',
+        'intro',
+        'seo_title',
+        'seo_description',
+    )
+    rich_fields = frozenset({'intro'})
 
 
 @admin.register(Quote)

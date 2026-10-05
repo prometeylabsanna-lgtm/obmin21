@@ -17,4 +17,24 @@ class PostAdmin(ListUnfoldAdmin):
     search_fields = ('title', 'body')
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'published_at'
+    filter_horizontal = ('related_posts',)
     rich_fields = frozenset({'body', 'excerpt', 'faq'})
+    fieldsets = (
+        ('Стаття', {
+            'fields': (
+                'title',
+                'slug',
+                'category',
+                'status',
+                'published_at',
+                'cover',
+                'excerpt',
+                'body',
+                'figure',
+                'related_posts',
+            ),
+        }),
+        ('Пошук', {
+            'fields': ('seo_title', 'seo_description', 'faq'),
+        }),
+    )

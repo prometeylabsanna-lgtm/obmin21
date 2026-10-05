@@ -340,7 +340,7 @@
           {% endfor %}
         </div>
       </div>
-      <p class="review-slide__text">{{ rev.text }}</p>
+      <p class="review-slide__text">{{ rev.text|rich_html }}</p>
     </article>
     {% empty %}
     <article class="review-slide"><p class="review-slide__text">Відгуки зʼявляться незабаром</p></article>

@@ -29,6 +29,8 @@ def review_submit(request):
     if form.is_valid():
         review = form.save(commit=False)
         review.is_published = False
+        from src.content.models import HomePage
+        review.home_page = HomePage.load()
         review.save()
         return render(request, 'partials/form_success.html', {
             'title': 'Дякуємо!',

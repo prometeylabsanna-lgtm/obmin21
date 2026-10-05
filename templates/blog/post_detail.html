@@ -21,8 +21,15 @@
   </header>
 
   <div class="article-body">
-    {% if art.lead %}<p class="article-body__lead">{{ art.lead|brand_mark }}</p>{% endif %}
-    {% if art.plain %}
+    {% if post.excerpt %}<p class="article-body__lead">{{ post.excerpt }}</p>{% elif art.lead %}<p class="article-body__lead">{{ art.lead|brand_mark }}</p>{% endif %}
+    {% if post.body %}
+      {{ post.body|rich_html }}
+      {% if post.figure %}
+      <figure class="article-fig">
+        <img src="{{ post.figure.url }}" alt="" loading="lazy" decoding="async">
+      </figure>
+      {% endif %}
+    {% elif art.plain %}
       {{ post.body|format_body }}
     {% else %}
       {% for sec in art.sections %}

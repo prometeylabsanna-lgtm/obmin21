@@ -31,30 +31,34 @@ class AdminPanelTests(TestCase):
 
     def test_home_change_and_theme_css(self):
         HomePage.load()
-        change_url = reverse('admin:content_homepage_change', args=[1])
-        resp = self.client.get(change_url)
+        promo_url = reverse('admin:content_homepromosettings_change', args=[1])
+        resp = self.client.get(promo_url)
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, 'Блок «Вигідний курс на USD та EUR»')
+        self.assertContains(resp, 'Вигідний курс')
         self.assertNotContains(resp, 'Банер після')
         self.assertContains(resp, 'images/coins.png')
-        self.assertContains(resp, 'cms-color__swatch')
 
-        post = self.client.post(change_url, {
-            'seo_title': 'Головна',
-            'seo_description': '',
+        post = self.client.post(promo_url, {
             'promo_kicker': 'USD та EUR',
             'promo_title': 'Вигідний курс',
             'promo_title_accent': 'USD та EUR',
             'promo_text': 'Обмінюйте валюту за актуальним курсом без зайвих кроків',
             'promo_button': 'Обрати валюту',
+        }, follow=True)
+        self.assertEqual(post.status_code, 200)
+        self.assertContains(post, 'Зміни успішно збережено!')
+
+        search_url = reverse('admin:content_homesearchsettings_change', args=[1])
+        theme_post = self.client.post(search_url, {
+            'seo_title': 'Головна',
+            'seo_description': '',
             'seo_block_title': 'Обмін валют',
             'seo_block_body': '<p>Текст</p>',
             'color_bg': '#f3f6fb',
             'color_text': '#052145',
             'color_accent': '#ca8d42',
         }, follow=True)
-        self.assertEqual(post.status_code, 200)
-        self.assertContains(post, 'Зміни успішно збережено!')
+        self.assertEqual(theme_post.status_code, 200)
         home = HomePage.objects.get(pk=1)
         self.assertEqual(home.color_bg, '#f3f6fb')
 
@@ -105,16 +109,16 @@ class AdminPanelTests(TestCase):
     def test_city_home_banner_fields(self):
         from src.network.models import City
         city = City.objects.create(name='Київ', slug='kyiv-cms')
-        resp = self.client.get(reverse('admin:network_city_change', args=[city.pk]))
+        resp = self.client.get(reverse('admin:network_bannercity_change', args=[city.pk]))
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, 'Банер на головній')
+        self.assertContains(resp, 'Банер')
         self.assertContains(resp, 'Підпис на банері')
-        self.assertContains(resp, 'Курси в калькуляторі')
+        self.assertContains(resp, 'Курси на банері')
 
     def test_shared_lists_in_sidebar(self):
         resp = self.client.get(reverse('admin:index'))
-        self.assertContains(resp, 'Новини')
-        self.assertContains(resp, 'FAQ')
-        self.assertContains(resp, reverse('admin:reviews_review_changelist'))
-        self.assertContains(resp, reverse('admin:content_faqitem_changelist'))
+        self.assertContains(resp, 'Банер')
+        self.assertContains(resp, 'Документи')
         self.assertContains(resp, reverse('admin:blog_post_changelist'))
+        self.assertContains(resp, reverse('admin:content_homefaqsettings_changelist'))
+        self.assertContains(resp, reverse('admin:content_homereviewssettings_changelist'))

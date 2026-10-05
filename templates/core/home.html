@@ -24,7 +24,7 @@
       <h1 class="hero__title"><span data-hero-title>{% if active_city %}{{ active_city.banner_title }}{% else %}Обмін валют{% endif %}</span><br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{{ active_city.banner_suffix }}{% else %}за вигідним курсом{% endif %}</span></h1>
       <p class="hero__lead" data-hero-lead>{% if active_city %}{{ active_city.banner_text }}{% else %}Фіксуйте курс онлайн та обмінюйте за вигідним курсом{% endif %}</p>
       <div class="hero__cta">
-        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">Зафіксувати курс</button>
+        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">{% if active_city %}{{ active_city.banner_button }}{% else %}Зафіксувати курс{% endif %}</button>
       </div>
     </div>
   </div>
@@ -34,7 +34,7 @@
 </section>
 
 <section class="calc-head" id="calculator">
-  <div class="badge-row"><span class="pill">Калькулятор</span></div>
+  <div class="badge-row"><span class="pill">{{ page.calc_kicker }}</span></div>
   <h2 class="calc-head__title">
     <span class="calc-head__coin" aria-hidden="true">
       <span class="coin-spin">
@@ -43,16 +43,16 @@
         <img src="{% static 'images/bitcoin.png' %}" alt="">
       </span>
     </span>
-    <span>Розрахуйте <span class="u-accent">обмін</span></span>
+    <span>{{ page.calc_title }} <span class="u-accent">{{ page.calc_title_accent }}</span></span>
   </h2>
-  <p class="calc-head__lead">Дізнайтесь, скільки ви отримаєте та зафіксуйте курс онлайн</p>
+  <p class="calc-head__lead">{{ page.calc_lead }}</p>
 </section>
 
 <section class="calc-box" data-calc data-qa="home-calc">
   <div class="calc-box__col">
-    <div class="calc-box__label">Віддаю</div>
+    <div class="calc-box__label">{{ page.calc_give }}</div>
     <div class="field-row">
-      <input type="text" inputmode="decimal" value="1000" data-calc-amount aria-label="Сума">
+      <input type="text" inputmode="decimal" value="{{ page.calc_amount }}" data-calc-amount aria-label="Сума">
       <div class="calc-codes" hidden>
         {% for row in rate_rows %}
         <button type="button" class="calc-codes__btn{% if forloop.first %} is-active{% endif %}"
@@ -77,7 +77,7 @@
         {% endfor %}
       </div>
     </div>
-    <div class="calc-box__rate" data-calc-rate-label>За поточним курсом</div>
+    <div class="calc-box__rate" data-calc-rate-label>{{ page.calc_rate_hint }}</div>
   </div>
 
   <div class="calc-box__swap">
@@ -87,7 +87,7 @@
   </div>
 
   <div class="calc-box__col">
-    <div class="calc-box__label">Отримую</div>
+    <div class="calc-box__label">{{ page.calc_get }}</div>
     <div class="field-row">
       <div class="field-value" data-calc-result>0</div>
       <button type="button" class="field-currency" disabled>
@@ -99,10 +99,10 @@
   </div>
 
   <div class="calc-box__action">
-    <button type="button" class="btn btn--block" data-calc-continue>Забронювати заявку</button>
+    <button type="button" class="btn btn--block" data-calc-continue>{{ page.calc_button }}</button>
     <div class="calc-box__lock">
       <svg width="12" height="13" viewBox="0 0 12 14" aria-hidden="true"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="var(--color-accent)" fill="none" stroke-width="1.2"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="var(--color-accent)" fill="none" stroke-width="1.2"></path></svg>
-      Курс діє 30 хв
+      {{ page.calc_lock }}
     </div>
   </div>
 </section>
@@ -126,23 +126,23 @@
 <section class="map-section" id="contacts" data-qa="section-map">
   {% with branch=city_branches.0 %}
   <div class="map-section__info">
-    <span class="pill">Відділення {% if active_city %}{{ active_city.name_in }}{% endif %}</span>
-    <h2 class="map-section__title">Знайдіть нас<br><span class="u-accent">на карті</span></h2>
+    <span class="pill">{{ page.map_kicker }} {% if active_city %}{{ active_city.name_in }}{% endif %}</span>
+    <h2 class="map-section__title">{{ page.map_title }}<br><span class="u-accent">{{ page.map_title_accent }}</span></h2>
     <div class="map-section__details">
       <div>
-        <div class="map-section__label">Графік:</div>
+        <div class="map-section__label">{{ page.map_hours_label }}</div>
         <div>{% if branch.hours %}{{ branch.hours }}{% else %}Пн–Пт 09:00–19:00, Сб 10:00–16:00{% endif %}</div>
       </div>
       <div>
-        <div class="map-section__label">Телефон:</div>
+        <div class="map-section__label">{{ page.map_phone_label }}</div>
         <div>{% if branch.phone %}{{ branch.phone }}{% elif active_phone %}{{ active_phone }}{% else %}+38 (099) 111-11-11{% endif %}</div>
       </div>
       <div>
-        <div class="map-section__label">Адреса:</div>
+        <div class="map-section__label">{{ page.map_address_label }}</div>
         <div>{% if branch.address %}{{ branch.address }}{% else %}вул. Хрещатик, 1, Київ{% endif %}</div>
       </div>
     </div>
-    <a class="btn map-section__btn" href="https://maps.google.com/?q={% if branch.address %}{{ branch.address|urlencode }}{% else %}Київ{% endif %}" target="_blank" rel="noopener noreferrer">Відкрити в Google Maps</a>
+    <a class="btn map-section__btn" href="https://maps.google.com/?q={% if branch.address %}{{ branch.address|urlencode }}{% else %}Київ{% endif %}" target="_blank" rel="noopener noreferrer">{{ page.map_button }}</a>
   </div>
   <div class="map-section__frame">
     <iframe
@@ -157,39 +157,36 @@
 </section>
 
 <section class="stats-section" id="advantages" data-qa="section-stats">
-  <span class="pill">Переваги</span>
-  <h2 class="stats-section__title">Чому нас <span class="u-accent">обирають</span></h2>
+  <span class="pill">{{ page.why_kicker }}</span>
+  <h2 class="stats-section__title">{{ page.why_title }} <span class="u-accent">{{ page.why_title_accent }}</span></h2>
   <div class="stats-section__grid">
+    {% for item in home_stats %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ item.number }}</div>
+      <div>{{ item.text|rich_html }}</div>
+    </div>
+    {% empty %}
     <div class="stats-section__item">
       <div class="stats-section__num">7K</div>
       <p><b>Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для <b>швидкого та зручного обміну валют</b> і криптоактивів</p>
     </div>
-    <div class="stats-section__item">
-      <div class="stats-section__num">20+</div>
-      <p><b>Відділень в Україні</b> — обмінюйте валюту <b>у зручному для вас відділенні</b> та отримуйте якісний сервіс</p>
-    </div>
-    <div class="stats-section__item">
-      <div class="stats-section__num">100%</div>
-      <p><b>Прозорість обміну</b> — жодних прихованих платежів: ви заздалегідь бачите <b>актуальний курс та умови операції</b></p>
-    </div>
-    <div class="stats-section__item">
-      <div class="stats-section__num">10+</div>
-      <p><b>Років досвіду</b> — понад 10 років ми працюємо у сфері обміну, забезпечуючи <b>стабільність, професійність та прозорі умови</b></p>
-    </div>
+    {% endfor %}
   </div>
 </section>
 
 <section class="services-section" id="services" data-qa="section-services">
   <div class="services-section__head">
-    <span class="pill">Послуги</span>
-    <h2 class="services-section__title">Наші <span class="u-accent">послуги</span></h2>
-    <p class="services-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
+    <span class="pill">{{ page.services_kicker }}</span>
+    <h2 class="services-section__title">{{ page.services_title }} <span class="u-accent">{{ page.services_title_accent }}</span></h2>
+    <p class="services-section__lead">{{ page.services_lead }}</p>
   </div>
   <div class="services-section__grid" data-slider="services">
     {% for svc in services %}
     <article class="svc-card">
       <div class="svc-card__media">
-        {% if forloop.counter == 1 %}<img src="{% static 'images/service-1.png' %}" alt="" loading="lazy">
+        {% if svc.image %}
+        <img src="{{ svc.image.url }}" alt="" loading="lazy">
+        {% elif forloop.counter == 1 %}<img src="{% static 'images/service-1.png' %}" alt="" loading="lazy">
         {% elif forloop.counter == 2 %}<img src="{% static 'images/service-2.png' %}" alt="" loading="lazy">
         {% elif forloop.counter == 3 %}<img src="{% static 'images/service-3.png' %}" alt="" loading="lazy">
         {% elif forloop.counter == 4 %}<img src="{% static 'images/service-4.png' %}" alt="" loading="lazy">
@@ -197,7 +194,7 @@
         {% else %}<img src="{% static 'images/service-6.png' %}" alt="" loading="lazy">{% endif %}
       </div>
       <h3 class="svc-card__title">{{ svc.title }}</h3>
-      <p class="svc-card__text">{{ svc.short_desc|brand_mark }}</p>
+      <div class="svc-card__text">{{ svc.short_desc|rich_html }}</div>
       <a class="link-accent" href="{% url 'content:services' %}#svc-{{ svc.slug }}">Детальніше
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </a>
@@ -208,7 +205,7 @@
 
 <section class="faq-section" id="faq" data-qa="section-faq">
   <div class="faq-section__head">
-    <span class="pill">Відповіді</span>
+    <span class="pill">{{ page.faq_kicker }}</span>
     <h2 class="faq-section__title">
       <span class="calc-head__coin faq-section__coin" aria-hidden="true">
         <span class="coin-spin">
@@ -217,7 +214,7 @@
           <img src="{% static 'images/bitcoin.png' %}" alt="">
         </span>
       </span>
-      Відповіді на <span class="u-accent">поширені запитання</span>
+      {{ page.faq_title }} <span class="u-accent">{{ page.faq_title_accent }}</span>
     </h2>
   </div>
   <div class="faq-section__grid" data-faq>
@@ -227,7 +224,7 @@
         <span>{{ item.question }}</span>
         <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="var(--color-accent)" fill="none" stroke-width="1.3"></path></svg>
       </button>
-      <div class="faq-card__a">{{ item.answer|linebreaksbr }}</div>
+      <div class="faq-card__a">{{ item.answer|rich_html }}</div>
     </div>
     {% empty %}
     <p class="u-muted">Питання зʼявляться незабаром</p>
@@ -238,8 +235,8 @@
 <section class="reviews-section" id="reviews" data-qa="section-reviews">
   <div class="slider-head">
     <div class="slider-head__copy">
-      <span class="pill">Статті</span>
-      <h2 class="slider-head__title">Відгуки</h2>
+      <span class="pill">{{ page.reviews_kicker }}</span>
+      <h2 class="slider-head__title">{{ page.reviews_title }}</h2>
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="reviews">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
@@ -257,7 +254,7 @@
           {% endfor %}
         </div>
       </div>
-      <p class="review-slide__text">{{ rev.text }}</p>
+      <p class="review-slide__text">{{ rev.text|rich_html }}</p>
     </article>
     {% empty %}
     <article class="review-slide"><p class="review-slide__text">Відгуки зʼявляться незабаром</p></article>
@@ -275,9 +272,9 @@
 <section class="articles-section" id="news" data-qa="section-news">
   <div class="slider-head">
     <div>
-      <span class="pill">Статті</span>
-      <h2 class="slider-head__title">Корисні <span class="u-accent">статті</span></h2>
-      <p class="articles-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
+      <span class="pill">{{ page.articles_kicker }}</span>
+      <h2 class="slider-head__title">{{ page.articles_title }} <span class="u-accent">{{ page.articles_title_accent }}</span></h2>
+      <p class="articles-section__lead">{{ page.articles_lead }}</p>
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>

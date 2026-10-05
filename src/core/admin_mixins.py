@@ -12,6 +12,7 @@ from src.core.admin_widgets import (
     CmsTinyMCE,
 )
 from src.core.image_fallbacks import image_fallback_url, image_preview_fit
+from src.core.plain_text import plain_text
 
 RICH_FIELD_NAMES = frozenset({
     'intro',
@@ -19,8 +20,10 @@ RICH_FIELD_NAMES = frozenset({
     'seo_block_body',
     'answer',
     'faq',
+    'short_desc',
 })
 COLOR_PREFIXES = ('color_', 'header_color_', 'footer_color_')
+PLAIN_SKIP = frozenset({'color_bg', 'color_text', 'color_accent'})
 
 
 def _instance_from_request(admin, request):
@@ -37,6 +40,16 @@ def _image_widget(admin, db_field, request):
         fallback_url=image_fallback_url(db_field.name, instance),
         fit=image_preview_fit(db_field.name),
     )
+
+
+def _strip_plain_fields(obj, rich_names):
+    for field in obj._meta.fields:
+        if field.name in rich_names or field.name in RICH_FIELD_NAMES:
+            continue
+        if field.name in PLAIN_SKIP or field.name.startswith(COLOR_PREFIXES):
+            continue
+        if field.get_internal_type() in ('CharField', 'SlugField', 'EmailField', 'URLField'):
+            setattr(obj, field.name, plain_text(getattr(obj, field.name) or ''))
 
 
 class SingletonUnfoldAdmin(ModelAdmin):
@@ -70,18 +83,21 @@ class SingletonUnfoldAdmin(ModelAdmin):
                     classes = ['tab', *classes]
                 cfg['classes'] = classes
                 tabs.append((title, cfg))
-            tabs.append(
-                ('Оформлення', {'classes': ['tab'], 'fields': self.style_fields}),
-            )
+            if self.style_fields:
+                tabs.append(
+                    ('Оформлення', {'classes': ['tab'], 'fields': self.style_fields}),
+                )
             return tuple(tabs)
         content = self.content_fields or tuple(
             f.name for f in self.model._meta.fields
             if f.name != 'id' and f.name not in self.style_fields
         )
-        return (
-            ('Контент', {'classes': ['tab'], 'fields': content}),
-            ('Оформлення', {'classes': ['tab'], 'fields': self.style_fields}),
-        )
+        blocks = [('Контент', {'classes': ['tab'], 'fields': content})]
+        if self.style_fields:
+            blocks.append(
+                ('Оформлення', {'classes': ['tab'], 'fields': self.style_fields}),
+            )
+        return tuple(blocks)
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         name = db_field.name
@@ -101,6 +117,7 @@ class SingletonUnfoldAdmin(ModelAdmin):
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):
+        _strip_plain_fields(obj, self.rich_fields)
         super().save_model(request, obj, form, change)
         messages.success(request, 'Зміни успішно збережено!')
 
@@ -121,3 +138,7 @@ class ListUnfoldAdmin(ModelAdmin):
         elif db_field.get_internal_type() == 'TextField':
             kwargs.setdefault('widget', CmsAdminTextareaWidget())
         return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        _strip_plain_fields(obj, self.rich_fields)
+        super().save_model(request, obj, form, change)

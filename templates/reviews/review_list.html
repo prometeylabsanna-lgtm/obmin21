@@ -19,7 +19,7 @@
           <div class="card__meta">{% if rev.city_name %}{{ rev.city_name }} · {% endif %}{{ rev.published_at|date:"d.m.Y" }}</div>
         </div>
       </div>
-      <p class="card__text">{{ rev.text }}</p>
+      <p class="card__text">{{ rev.text|rich_html }}</p>
     </article>
     {% empty %}
     <div class="card u-muted">Поки немає опублікованих відгуків</div>

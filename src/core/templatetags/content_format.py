@@ -92,6 +92,21 @@ def format_rate(value, style='fixed4'):
     return format(quantized, 'f')
 
 
+def looks_like_html(value: str) -> bool:
+    return bool(re.search(r'<[a-zA-Z][^>]*>', value or ''))
+
+
+@register.filter(name='rich_html')
+def rich_html(value):
+    """TinyMCE HTML as HTML; plain text as paragraphs. Never show raw tags."""
+    if not value:
+        return ''
+    text = str(value)
+    if looks_like_html(text):
+        return mark_safe(text)
+    return format_body(text)
+
+
 @register.filter(name='format_body')
 def format_body(value):
     """Split plain text into paragraphs; short standalone lines become subheads."""
@@ -119,9 +134,11 @@ def _paragraph(inner: str) -> str:
 
 @register.filter(name='format_legal')
 def format_legal(value):
-    """Legal text: intro + section cards from short standalone headings."""
+    """Legal text: TinyMCE HTML or intro + section cards from plain text."""
     if not value:
         return ''
+    if looks_like_html(str(value)):
+        return mark_safe(str(value))
     blocks = re.split(r'\n\s*\n', str(value).strip())
     intro = []
     sections = []

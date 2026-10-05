@@ -54,15 +54,17 @@ def post_detail(request, slug):
         slug=slug,
         status=Post.Status.PUBLISHED,
     )
-    posts = list(get_published_posts())
-    idx = next((i for i, item in enumerate(posts) if item.pk == post.pk), 0)
-    related = []
-    step = 1
-    while len(related) < 6 and step < max(len(posts), 1):
-        cand = posts[(idx + step) % len(posts)]
-        if cand.pk != post.pk:
-            related.append(cand)
-        step += 1
+    related = list(post.related_posts.filter(status=Post.Status.PUBLISHED)[:6])
+    if not related:
+        posts = list(get_published_posts())
+        idx = next((i for i, item in enumerate(posts) if item.pk == post.pk), 0)
+        related = []
+        step = 1
+        while len(related) < 6 and step < max(len(posts), 1):
+            cand = posts[(idx + step) % len(posts)]
+            if cand.pk != post.pk:
+                related.append(cand)
+            step += 1
     crumb = post.title
     layout = post.article_layout()
     if layout.get('h1b'):

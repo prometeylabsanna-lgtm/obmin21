@@ -4,48 +4,48 @@
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
 <section class="contacts-hero">
-  <span class="pill">Контакти</span>
-  <h1 class="contacts-hero__title">Зв’яжіться <span class="u-accent">з нами</span></h1>
-  <p class="contacts-hero__lead">Відповімо на питання, підкажемо курс і допоможемо забронювати обмін у зручному відділенні.</p>
+  <span class="pill">{{ page.title }}</span>
+  <h1 class="contacts-hero__title">Зв’яжіться <span class="u-accent">{{ page.title_accent }}</span></h1>
+  <div class="contacts-hero__lead">{{ page.intro|rich_html }}</div>
   <div class="contacts-cards">
-    <a class="contacts-card" href="tel:+380444444444">
+    <a class="contacts-card" href="tel:{{ page.phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">
       <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg>
       <div>
         <div class="contacts-card__label">Телефон</div>
-        <div class="contacts-card__value">+38(044)444 44 44</div>
-        <div class="contacts-card__hint">Щодня з 8:00 до 21:00</div>
+        <div class="contacts-card__value">{{ page.phone }}</div>
+        <div class="contacts-card__hint">{{ page.phone_hint }}</div>
       </div>
     </a>
     <a class="contacts-card" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">
       <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3L2.5 10.2l6.8 2.4M21 3l-3.2 17.5-8.5-7.9M21 3L9.3 12.6v5.9l3.1-3.3"></path></svg>
       <div>
         <div class="contacts-card__label">Telegram</div>
-        <div class="contacts-card__value">@obmin21</div>
-        <div class="contacts-card__hint">Відповідаємо за кілька хвилин</div>
+        <div class="contacts-card__value">{{ page.telegram }}</div>
+        <div class="contacts-card__hint">{{ page.telegram_hint }}</div>
       </div>
     </a>
-    <a class="contacts-card" href="mailto:info@obmin21.ua">
+    <a class="contacts-card" href="mailto:{{ page.email }}">
       <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3.5 6.5l8.5 6.5 8.5-6.5"></path></svg>
       <div>
         <div class="contacts-card__label">Email</div>
-        <div class="contacts-card__value">info@obmin21.ua</div>
-        <div class="contacts-card__hint">Для співпраці та бізнес-клієнтів</div>
+        <div class="contacts-card__value">{{ page.email }}</div>
+        <div class="contacts-card__hint">{{ page.email_hint }}</div>
       </div>
     </a>
     <a class="contacts-card" href="#branches">
       <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
       <div>
         <div class="contacts-card__label">Графік роботи</div>
-        <div class="contacts-card__value">Пн–Нд, 8:00–21:00</div>
-        <div class="contacts-card__hint">Без перерв і вихідних</div>
+        <div class="contacts-card__value">{{ page.hours }}</div>
+        <div class="contacts-card__hint">{{ page.hours_hint }}</div>
       </div>
     </a>
   </div>
 </section>
 
 <section class="contacts-map" id="branches" data-branches>
-  <span class="pill">Відділення</span>
-  <h2 class="contacts-map__title">Відділення <span class="u-accent">по Україні</span></h2>
+  <span class="pill">{{ page.branches_kicker }}</span>
+  <h2 class="contacts-map__title">{{ page.branches_title }} <span class="u-accent">{{ page.branches_title_accent }}</span></h2>
   {% if map_branches %}
   <div class="contacts-map__layout">
     <div class="contacts-map__list" role="list">

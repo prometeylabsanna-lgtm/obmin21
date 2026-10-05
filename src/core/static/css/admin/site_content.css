@@ -203,3 +203,50 @@
     line-height: 1.35;
   }
 }
+
+.cms-city-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.cms-city-switch__label {
+  font-size: 13px;
+  color: var(--color-base-400, #9aa3b2);
+}
+
+.cms-city-switch__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cms-city-switch__btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-base-700, #3a4553);
+  border-radius: 999px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cms-city-switch__btn.is-current {
+  border-color: #ca8d42;
+  color: #ca8d42;
+}
+
+.flag img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 767px) {
+  .cms-city-switch__btn {
+    min-height: 44px;
+  }
+}

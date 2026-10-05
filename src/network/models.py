@@ -31,6 +31,11 @@ class City(models.Model):
         max_length=240,
         default='Фіксуйте курс онлайн та обмінюйте за вигідним курсом',
     )
+    banner_button = models.CharField(
+        'Текст кнопки на банері',
+        max_length=80,
+        default='Зафіксувати курс',
+    )
 
     class Meta:
         ordering = ['sort_order', 'name']
@@ -109,3 +114,6 @@ class Branch(models.Model):
         if self.map_url:
             return self.map_url
         return f'https://maps.google.com/?q={quote_plus(self.address)}'
+
+
+from src.network.cms_proxies import BannerCity, ContactCity, MapCity  # noqa: E402,F401

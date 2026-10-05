@@ -21,6 +21,12 @@ class CurrencyPair(models.Model):
     intro = models.TextField('Опис для сторінки пари', blank=True)
     seo_title = models.CharField('SEO Title', max_length=160, blank=True)
     seo_description = models.CharField('SEO Description', max_length=320, blank=True)
+    flag_image = models.ImageField(
+        'Іконка прапора',
+        upload_to='flags/',
+        blank=True,
+        help_text='Якщо порожньо — стандартний прапор за кодом валюти.',
+    )
 
     class Meta:
         ordering = ['sort_order', 'code']

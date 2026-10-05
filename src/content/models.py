@@ -1,5 +1,6 @@
 from django.db import models
 
+from src.content.home_copy import HomeSectionCopy
 from src.core.colors import ACCENT_DEFAULT, COLOR_HELP, hex_color_validator
 from src.core.theme import bump_theme_cache
 
@@ -49,7 +50,7 @@ class ThemeFieldsMixin(models.Model):
         abstract = True
 
 
-class HomePage(ThemeFieldsMixin, SingletonModel):
+class HomePage(HomeSectionCopy, ThemeFieldsMixin, SingletonModel):
     theme_slug = 'home'
     seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
     seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
@@ -97,6 +98,27 @@ class HomePage(ThemeFieldsMixin, SingletonModel):
 
     def __str__(self):
         return 'Головна'
+
+
+class HomeStat(models.Model):
+    page = models.ForeignKey(
+        HomePage,
+        on_delete=models.CASCADE,
+        related_name='stats',
+        verbose_name='Головна',
+    )
+    number = models.CharField('Цифра', max_length=16)
+    text = models.TextField('Текст картки')
+    sort_order = models.PositiveIntegerField('Порядок', default=0)
+    is_active = models.BooleanField('Показувати', default=True)
+
+    class Meta:
+        ordering = ['sort_order', 'id']
+        verbose_name = 'Картка «Чому нас обирають»'
+        verbose_name_plural = 'Картки «Чому нас обирають»'
+
+    def __str__(self):
+        return self.number
 
 
 class RatesPage(ThemeFieldsMixin, SingletonModel):
@@ -153,8 +175,18 @@ class ServicesPage(ThemeFieldsMixin, SingletonModel):
 class Service(models.Model):
     title = models.CharField('Назва', max_length=120)
     slug = models.SlugField('Адреса сторінки', unique=True, max_length=80)
+    image = models.ImageField('Фото картки', upload_to='services/', blank=True)
     short_desc = models.TextField('Короткий опис')
     body = models.TextField('Повний опис', blank=True)
+    show_on_home = models.BooleanField('Показувати на головній', default=True)
+    home_page = models.ForeignKey(
+        'HomePage',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='service_cards',
+        verbose_name='Головна',
+    )
     is_active = models.BooleanField('Показувати на сайті', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
@@ -208,7 +240,62 @@ class AdvantageItem(models.Model):
 class ContactsPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'contacts'
     title = models.CharField('Заголовок', max_length=120, default='Контакти')
-    intro = models.TextField('Вступний текст', blank=True)
+    title_accent = models.CharField(
+        'Акцент у заголовку',
+        max_length=80,
+        default='з нами',
+    )
+    intro = models.TextField(
+        'Вступний текст',
+        blank=True,
+        default=(
+            'Відповімо на питання, підкажемо курс і допоможемо '
+            'забронювати обмін у зручному відділенні.'
+        ),
+    )
+    phone = models.CharField('Телефон', max_length=40, default='+38(044)444 44 44')
+    phone_hint = models.CharField(
+        'Підказка до телефону',
+        max_length=80,
+        default='Щодня з 8:00 до 21:00',
+    )
+    telegram = models.CharField('Telegram', max_length=80, default='@obmin21')
+    telegram_hint = models.CharField(
+        'Підказка до Telegram',
+        max_length=80,
+        default='Відповідаємо за кілька хвилин',
+    )
+    email = models.CharField('Email', max_length=80, default='info@obmin21.ua')
+    email_hint = models.CharField(
+        'Підказка до email',
+        max_length=80,
+        default='Для співпраці та бізнес-клієнтів',
+    )
+    hours = models.CharField(
+        'Графік роботи',
+        max_length=80,
+        default='Пн–Нд, 8:00–21:00',
+    )
+    hours_hint = models.CharField(
+        'Підказка до графіка',
+        max_length=80,
+        default='Без перерв і вихідних',
+    )
+    branches_kicker = models.CharField(
+        'Підпис блоку відділень',
+        max_length=80,
+        default='Відділення',
+    )
+    branches_title = models.CharField(
+        'Заголовок блоку відділень',
+        max_length=120,
+        default='Відділення',
+    )
+    branches_title_accent = models.CharField(
+        'Акцент блоку відділень',
+        max_length=80,
+        default='по Україні',
+    )
     map_image = models.ImageField('Зображення карти', upload_to='contacts/', blank=True)
     seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
     seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
@@ -309,6 +396,14 @@ class FaqPage(ThemeFieldsMixin, SingletonModel):
 
 
 class FaqItem(models.Model):
+    home_page = models.ForeignKey(
+        HomePage,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='faq_items',
+        verbose_name='Головна',
+    )
     question = models.CharField('Питання', max_length=255)
     answer = models.TextField('Відповідь')
     sort_order = models.PositiveIntegerField('Порядок', default=0)
@@ -351,3 +446,15 @@ class ReviewsPage(ThemeFieldsMixin, SingletonModel):
 
     def __str__(self):
         return self.title
+
+
+from src.content.cms_proxies import (  # noqa: E402,F401
+    HomeArticlesSettings,
+    HomeCalcSettings,
+    HomeFaqSettings,
+    HomePromoSettings,
+    HomeReviewsSettings,
+    HomeSearchSettings,
+    HomeServicesSettings,
+    HomeWhySettings,
+)

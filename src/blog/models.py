@@ -72,6 +72,18 @@ class Post(models.Model):
     seo_title = models.CharField('SEO Title', max_length=160, blank=True)
     seo_description = models.CharField('SEO Description', max_length=320, blank=True)
     faq = models.TextField('FAQ (опційно)', blank=True)
+    figure = models.ImageField(
+        'Картинка в статті',
+        upload_to='blog/figure/',
+        blank=True,
+    )
+    related_posts = models.ManyToManyField(
+        'self',
+        blank=True,
+        symmetrical=False,
+        related_name='related_from',
+        verbose_name='Читати також',
+    )
 
     class Meta:
         ordering = ['-published_at', '-id']
