@@ -3,71 +3,66 @@
   <div class="site-footer__inner">
     <div class="site-footer__top">
       <a href="{% url 'core:home' %}" class="site-footer__logo">
-        <img src="{% static 'images/logo-footer.png' %}?v=13" alt="{{ site_settings.site_name }}" width="160" height="56">
+        <img src="{% static 'images/logo-footer.png' %}?v=13" alt="Obmin21" width="206" height="72">
       </a>
 
-      <div class="site-footer__col">
-        <div class="site-footer__heading">Послуги</div>
-        <div class="site-footer__links">
-          {% for svc in footer_services %}
-          <a href="{% url 'content:services' %}#svc-{{ svc.slug }}">{{ svc.title|upper }}</a>
-          {% empty %}
-          <a href="{% url 'content:services' %}">ОБМІН ВАЛЮТ</a>
-          <a href="{% url 'content:services' %}">ГРОШОВІ ПЕРЕКАЗИ</a>
-          <a href="{% url 'content:services' %}">КРИПТОВАЛЮТА</a>
-          <a href="{% url 'content:services' %}">ІНВЕСТИЦІЙНЕ ЗОЛОТО</a>
-          <a href="{% url 'content:services' %}">ОПТОВИЙ ОБМІН</a>
-          <a href="{% url 'content:services' %}">ЗАМІНА ЗНОШЕНИХ КУПЮР</a>
-          {% endfor %}
+      <div class="site-footer__nav">
+        <div class="site-footer__col">
+          <div class="site-footer__heading">Послуги</div>
+          <div class="site-footer__links">
+            {% for svc in footer_services %}
+            <a href="{% url 'content:services' %}#svc-{{ svc.slug }}">{{ svc.title|upper }}</a>
+            {% empty %}
+            <a href="{% url 'content:services' %}#svc-1">ОБМІН ВАЛЮТ</a>
+            <a href="{% url 'content:services' %}#svc-2">ГРОШОВІ ПЕРЕКАЗИ</a>
+            <a href="{% url 'content:services' %}#svc-3">КРИПТОВАЛЮТА</a>
+            <a href="{% url 'content:services' %}#svc-4">ІНВЕСТИЦІЙНЕ ЗОЛОТО</a>
+            <a href="{% url 'content:services' %}#svc-5">ОПТОВИЙ ОБМІН</a>
+            <a href="{% url 'content:services' %}#svc-6">ЗАМІНА ЗНОШЕНИХ КУПЮР</a>
+            {% endfor %}
+          </div>
         </div>
-      </div>
 
-      <div class="site-footer__col">
-        <div class="site-footer__heading">Компанія</div>
-        <div class="site-footer__links">
-          <a href="{% url 'content:services' %}">ПОСЛУГИ</a>
-          <a href="{% url 'content:advantages' %}">ПЕРЕВАГИ</a>
-          <a href="{% url 'content:faq' %}">FAQ</a>
-          <a href="{% url 'reviews:review_list' %}">ВІДГУКИ</a>
-          <a href="{% url 'blog:post_list' %}">БЛОГ</a>
-          <a href="{% url 'content:contacts' %}">КОНТАКТИ</a>
+        <div class="site-footer__col">
+          <div class="site-footer__heading">Компанія</div>
+          <div class="site-footer__links">
+            <a href="{% url 'content:services' %}">ПОСЛУГИ</a>
+            <a href="{% url 'content:advantages' %}">ПЕРЕВАГИ</a>
+            <a href="{% url 'content:faq' %}">FAQ</a>
+            <a href="{% url 'reviews:review_list' %}">ВІДГУКИ</a>
+            <a href="{% url 'blog:post_list' %}">БЛОГ</a>
+            <a href="{% url 'content:contacts' %}">КОНТАКТИ</a>
+          </div>
         </div>
-      </div>
 
-      <div class="site-footer__col">
-        <div class="site-footer__heading">Документи</div>
-        <div class="site-footer__links site-footer__links--docs">
-          <a href="{% url 'content:privacy' %}">ПОЛІТИКА КОНФІДЕНЦІЙНОСТІ</a>
-          <a href="{% url 'content:privacy' %}">ПУБЛІЧНА ОФЕРТА</a>
-          <a href="{% url 'content:privacy' %}">ПОЛІТИКА ВИКОРИСТАННЯ ФАЙЛІВ COOKIE</a>
+        <div class="site-footer__col">
+          <div class="site-footer__heading">Документи</div>
+          <div class="site-footer__links site-footer__links--docs">
+            <a href="{% url 'content:privacy' %}">ПОЛІТИКА КОНФІДЕНЦІЙНОСТІ</a>
+            <a href="{% url 'content:privacy' %}">ПУБЛІЧНА ОФЕРТА</a>
+            <a href="{% url 'content:privacy' %}">ПОЛІТИКА ВИКОРИСТАННЯ ФАЙЛІВ COOKIE</a>
+          </div>
         </div>
-      </div>
 
-      <div class="site-footer__col site-footer__col--contact">
-        {% if active_phone %}
-        <a class="site-footer__phone" href="tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">
-          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
-          <span>{{ active_phone }}</span>
-        </a>
-        {% else %}
-        <div class="site-footer__phone">
-          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
-          <span>+38(044)444 44 44</span>
-        </div>
-        {% endif %}
-        <div class="site-footer__social">
-          <a href="{% if active_phone %}tel:{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}{% else %}tel:+380444444444{% endif %}" aria-label="Зателефонувати" class="site-footer__social-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#CA8D42" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg>
+        <div class="site-footer__col site-footer__col--contact">
+          <a class="site-footer__phone" href="tel:+380444444444">
+            <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
+            +38(044)444 44 44
           </a>
-          <a href="{{ site_settings.telegram_url|default:'https://t.me/' }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram" class="site-footer__social-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.5 3.2 2.8 10.5c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.7.4.9 1 .9.5 0 .7-.2 1-.6l2.7-3.6 5.1 3.8c.9.5 1.6.2 1.8-.9L22.9 4.5c.3-1.2-.4-1.7-1.4-1.3z" fill="#CA8D42"/></svg>
-          </a>
+          <div class="site-footer__social">
+            <a href="tel:+380444444444" aria-label="Зателефонувати" class="site-footer__social-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#CA8D42" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg>
+            </a>
+            <a href="{{ site_settings.telegram_url|default:'https://t.me/' }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram" class="site-footer__social-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#CA8D42" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L2.5 10.2l6.8 2.4M21 3l-3.2 17.5-8.5-7.9M21 3L9.3 12.6v5.9l3.1-3.3"></path></svg>
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="site-footer__bar">
-      © 2026 {{ site_settings.site_name }}. Усі права захищені
+      © 2026.Obmin21. Усі права захищені
     </div>
   </div>
 </footer>
