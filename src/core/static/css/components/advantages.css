@@ -350,6 +350,10 @@
   width: 99.7%;
 }
 
+.stats-section--adv {
+  margin-top: 96px;
+}
+
 @media (min-width: 768px) {
   .adv-hero {
     padding: 24px 0 0;
@@ -416,5 +420,10 @@
 
   .adv-fix__num {
     font-size: 30px;
+  }
+
+  .stats-section--adv {
+    margin-top: 160px;
+    padding: 0 10px;
   }
 }
