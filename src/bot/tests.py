@@ -99,3 +99,22 @@ class BotWebhookTests(TestCase):
         session, created = BotSession.objects.get_or_create(chat_id='5')
         self.assertTrue(created)
         self.assertEqual(session.state, BotState.IDLE)
+
+
+class WebChatTests(TestCase):
+    def test_log_starts_bot(self):
+        url = reverse('bot:chat_log')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Обмін21')
+        self.assertContains(response, 'Курси')
+
+    def test_send_and_callback(self):
+        self.client.get(reverse('bot:chat_log'))
+        send = self.client.post(reverse('bot:chat_send'), {'text': 'курси'})
+        self.assertEqual(send.status_code, 200)
+        cb = self.client.post(
+            reverse('bot:chat_callback'),
+            {'data': 'mn:ex', 'label': 'Заявка'},
+        )
+        self.assertEqual(cb.status_code, 200)

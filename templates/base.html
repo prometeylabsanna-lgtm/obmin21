@@ -39,7 +39,7 @@
   <link rel="stylesheet" href="{% static 'css/components/article.css' %}?v=2">
   <link rel="stylesheet" href="{% static 'css/components/modal.css' %}?v=13">
   <link rel="stylesheet" href="{% static 'css/components/faq.css' %}?v=15">
-  <link rel="stylesheet" href="{% static 'css/components/home.css' %}?v=20">
+  <link rel="stylesheet" href="{% static 'css/components/home.css' %}?v=22">
   <link rel="stylesheet" href="{% static 'css/components/pages.css' %}?v=18">
   <link rel="stylesheet" href="{% static 'css/components/legal.css' %}?v=1">
   <link rel="stylesheet" href="{% static 'css/components/contacts.css' %}?v=2">
@@ -47,18 +47,20 @@
   <link rel="stylesheet" href="{% static 'css/components/advantages-why.css' %}?v=3">
   <link rel="stylesheet" href="{% static 'css/components/advantages-cmp.css' %}?v=2">
   <link rel="stylesheet" href="{% static 'css/detail-page.css' %}?v=11">
+  <link rel="stylesheet" href="{% static 'css/components/chat.css' %}?v=1">
   {% block page_css %}{% endblock %}
 
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/utils.js' %}" defer></script>
-  <script src="{% static 'js/nav.js' %}?v=11" defer></script>
+  <script src="{% static 'js/nav.js' %}?v=13" defer></script>
   <script src="{% static 'js/modal.js' %}?v=12" defer></script>
-  <script src="{% static 'js/calc.js' %}?v=12" defer></script>
+  <script src="{% static 'js/calc.js' %}?v=13" defer></script>
   <script src="{% static 'js/booking-modal.js' %}?v=1" defer></script>
   <script src="{% static 'js/reveal.js' %}" defer></script>
   <script src="{% static 'js/coins-parallax.js' %}?v=1" defer></script>
   <script src="{% static 'js/rates-animate.js' %}?v=12" defer></script>
   <script src="{% static 'js/pages/home.js' %}?v=12" defer></script>
+  <script src="{% static 'js/chat.js' %}?v=2" defer></script>
   {% block page_js %}{% endblock %}
 </head>
 
@@ -75,6 +77,7 @@
   {% include 'partials/footer.html' %}
   {% include 'partials/mobile_nav.html' %}
   <div id="modal-root" class="modal-root" hidden></div>
+  {% include 'partials/chat_widget.html' %}
 </body>
 
 </html>

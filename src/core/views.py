@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
@@ -73,6 +74,22 @@ def rates_partial(request):
         'hide_full_table_link': request.GET.get('hide_full') == '1',
         'home_rates_compact': home_compact,
     })
+
+
+def quotes_json(request):
+    board = request.GET.get('board', RateBoard.RETAIL)
+    if board not in RateBoard.values:
+        board = RateBoard.RETAIL
+    rows, _updated = get_quotes_for_city(request.city, board)
+    payload = []
+    for row in rows:
+        payload.append({
+            'id': row['pair'].pk,
+            'code': row['pair'].flag_code,
+            'buy': str(row['quote'].buy),
+            'sell': str(row['quote'].sell),
+        })
+    return JsonResponse({'quotes': payload})
 
 
 def robots_txt(request):

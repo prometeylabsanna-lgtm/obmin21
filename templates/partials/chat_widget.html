@@ -1,0 +1,37 @@
+<div class="site-chat" data-chat data-qa="site-chat">
+  <button type="button" class="site-chat__fab" data-chat-toggle aria-expanded="false" aria-controls="site-chat-panel">
+    <span class="site-chat__fab-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 3L2.5 10.2l6.8 2.4M21 3l-3.2 17.5-8.5-7.9M21 3L9.3 12.6v5.9l3.1-3.3" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </span>
+    <span class="site-chat__fab-text">Чат</span>
+  </button>
+
+  <section class="site-chat__panel" id="site-chat-panel" hidden>
+    <header class="site-chat__head">
+      <div>
+        <div class="site-chat__title">Обмін21</div>
+        <div class="site-chat__status">Онлайн-бот</div>
+      </div>
+      <button type="button" class="site-chat__close" data-chat-close aria-label="Закрити чат">
+        <svg width="18" height="18" viewBox="0 0 22 22" aria-hidden="true"><path d="M2 2l18 18M20 2L2 20" stroke="currentColor" stroke-width="2"></path></svg>
+      </button>
+    </header>
+    <div
+      class="site-chat__log"
+      id="site-chat-log"
+      data-chat-log
+      hx-get="{% url 'bot:chat_log' %}"
+      hx-trigger="none"
+      hx-swap="innerHTML"
+    ></div>
+    <form class="site-chat__form" data-chat-form hx-post="{% url 'bot:chat_send' %}" hx-target="#site-chat-log" hx-swap="beforeend">
+      <label class="site-chat__sr" for="site-chat-input">Повідомлення</label>
+      <input id="site-chat-input" class="site-chat__input" name="text" type="text" maxlength="2000" autocomplete="off" enterkeyhint="send" placeholder="Напишіть повідомлення" data-chat-input>
+      <button type="submit" class="site-chat__send" aria-label="Надіслати">Надіслати</button>
+    </form>
+    <form hidden data-chat-cb-form hx-post="{% url 'bot:chat_callback' %}" hx-target="#site-chat-log" hx-swap="beforeend">
+      <input type="hidden" name="data" data-chat-cb-data>
+      <input type="hidden" name="label" data-chat-cb-label>
+    </form>
+  </section>
+</div>

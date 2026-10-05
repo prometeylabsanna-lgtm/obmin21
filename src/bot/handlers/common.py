@@ -11,8 +11,14 @@ from src.bot.keyboards import (
 from src.bot import services, texts
 
 
-def send_menu(bot, chat_id: int, text: str = texts.MENU_HINT) -> None:
+def send_menu(bot, chat_id, text: str = texts.MENU_HINT) -> None:
     bot.send_message(chat_id, text, reply_markup=main_menu())
+
+
+def start_welcome(bot, chat_id, profile) -> None:
+    services.clear_session(profile.chat_id)
+    bot.send_message(chat_id, texts.WELCOME, reply_markup=remove_reply())
+    send_menu(bot, chat_id)
 
 
 def cancel_flow(bot, chat_id: int) -> None:
@@ -25,9 +31,7 @@ def register(bot) -> None:
     @bot.message_handler(commands=['start', 'menu'])
     def cmd_start(message) -> None:
         profile = services.upsert_profile(message.from_user)
-        services.clear_session(profile.chat_id)
-        bot.send_message(message.chat.id, texts.WELCOME, reply_markup=remove_reply())
-        send_menu(bot, message.chat.id)
+        start_welcome(bot, message.chat.id, profile)
 
     @bot.message_handler(commands=['help'])
     def cmd_help(message) -> None:

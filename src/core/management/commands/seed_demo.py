@@ -424,6 +424,33 @@ class Command(BaseCommand):
                         'updated_at': timezone.now(),
                     },
                 )
+                city_bps = {
+                    'kyiv': 0,
+                    'kharkiv': 12,
+                    'dnipro': -8,
+                    'odesa': 15,
+                    'lviv': 6,
+                    'zaporizhzhia': -10,
+                    'vinnytsia': 4,
+                    'mykolaiv': -6,
+                    'khmelnytskyi': 3,
+                    'rivne': -4,
+                    'cherkasy': 5,
+                }
+                for city in City.objects.filter(is_active=True):
+                    bps = Decimal(city_bps.get(city.slug, 0))
+                    factor = Decimal('1') + (bps / Decimal('10000'))
+                    Quote.objects.update_or_create(
+                        pair=pair,
+                        board=board,
+                        city=city,
+                        defaults={
+                            'buy': (buy_v * factor).quantize(Decimal('0.01')),
+                            'sell': (sell_v * factor).quantize(Decimal('0.01')),
+                            'is_active': True,
+                            'updated_at': timezone.now(),
+                        },
+                    )
 
         CurrencyPair.objects.update_or_create(
             slug='eur-usd',

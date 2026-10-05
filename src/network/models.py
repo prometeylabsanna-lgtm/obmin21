@@ -19,6 +19,28 @@ class City(models.Model):
     def __str__(self):
         return self.name
 
+    CITY_IN = {
+        'kyiv': 'у Києві',
+        'kharkiv': 'у Харкові',
+        'dnipro': 'у Дніпрі',
+        'odesa': 'в Одесі',
+        'lviv': 'у Львові',
+        'zaporizhzhia': 'у Запоріжжі',
+        'vinnytsia': 'у Вінниці',
+        'mykolaiv': 'у Миколаєві',
+        'khmelnytskyi': 'у Хмельницькому',
+        'rivne': 'у Рівному',
+        'cherkasy': 'у Черкасах',
+    }
+
+    @property
+    def name_in(self):
+        return self.CITY_IN.get(self.slug, f'у {self.name}')
+
+    @property
+    def hero_image(self):
+        return f'images/hero-{self.slug}.jpg'
+
 
 class Branch(models.Model):
     city = models.ForeignKey(

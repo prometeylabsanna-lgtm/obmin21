@@ -30,7 +30,7 @@
 .hero__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(8, 20, 45, 0.55), rgba(8, 20, 45, 0) 45%);
+  background: linear-gradient(90deg, rgba(8, 24, 48, 0.42) 0%, rgba(8, 24, 48, 0.16) 46%, rgba(8, 24, 48, 0.08) 100%);
   pointer-events: none;
 }
 

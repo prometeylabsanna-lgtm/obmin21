@@ -1,0 +1,14 @@
+{% for msg in messages %}
+<article class="site-chat__msg site-chat__msg--{{ msg.role }}" data-chat-msg>
+  <div class="site-chat__bubble">
+    {% if msg.role == 'bot' %}{{ msg.text|safe }}{% else %}{{ msg.text }}{% endif %}
+  </div>
+  {% if msg.buttons %}
+  <div class="site-chat__actions">
+    {% for btn in msg.buttons %}
+    <button type="button" class="site-chat__chip" data-chat-cb="{{ btn.data }}" data-chat-label="{{ btn.label }}">{{ btn.label }}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+</article>
+{% endfor %}

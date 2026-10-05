@@ -6,7 +6,7 @@
 <section class="page-hero page-hero--rates">
   <div>
     <span class="pill">Курси валют</span>
-    <h1 class="page-hero__title">Всі валюти{% if active_city %} <span class="u-accent">{% if active_city.slug == 'kyiv' or active_city.name == 'Київ' %}у Києві{% else %}у {{ active_city.name }}{% endif %}</span>{% endif %}</h1>
+    <h1 class="page-hero__title">Всі валюти{% if active_city %} <span class="u-accent" data-city-in>{{ active_city.name_in }}</span>{% endif %}</h1>
     <p class="page-hero__lead">{% if page.intro %}{{ page.intro|brand_mark }}{% else %}Актуальні курси купівлі та продажу у відділеннях Обмін21. Зафіксуйте курс онлайн і приходьте без черги.{% endif %}</p>
   </div>
   <div class="page-hero__updated">

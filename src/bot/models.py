@@ -45,3 +45,23 @@ class BotSession(models.Model):
 
     def __str__(self):
         return f'{self.chat_id} · {self.state}'
+
+
+class ChatMessage(models.Model):
+    class Role(models.TextChoices):
+        USER = 'user', 'Користувач'
+        BOT = 'bot', 'Бот'
+
+    chat_id = models.CharField('Chat ID', max_length=32, db_index=True)
+    role = models.CharField('Роль', max_length=8, choices=Role.choices)
+    text = models.TextField('Текст')
+    buttons = models.JSONField('Кнопки', default=list, blank=True)
+    created_at = models.DateTimeField('Створено', default=timezone.now)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Повідомлення чату'
+        verbose_name_plural = 'Повідомлення чату'
+
+    def __str__(self):
+        return f'{self.chat_id} · {self.role}'

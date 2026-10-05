@@ -21,39 +21,12 @@ def register(bot) -> None:
     )
     def on_feedback_input(message) -> None:
         profile = services.upsert_profile(message.from_user)
-        session = services.get_session(profile.chat_id)
-        state = session.state
         chat_id = message.chat.id
-
-        if state == BotState.FB_NAME:
-            name = (message.text or '').strip()
-            if not services.is_valid_name(name):
-                bot.send_message(chat_id, texts.BAD_NAME)
-                return
-            services.remember_contacts(profile.chat_id, name=name)
-            services.patch_session(profile.chat_id, state=BotState.FB_PHONE, name=name)
-            bot.send_message(chat_id, texts.ENTER_PHONE, reply_markup=keyboards.phone_keyboard())
+        session = services.get_session(profile.chat_id)
+        if session.state == BotState.FB_PHONE:
+            apply_feedback_phone(bot, chat_id, profile, _phone_from_message(message))
             return
-
-        if state == BotState.FB_PHONE:
-            phone = _phone_from_message(message)
-            if not phone or not validate_phone(phone):
-                bot.send_message(chat_id, texts.BAD_PHONE, reply_markup=keyboards.phone_keyboard())
-                return
-            phone = normalize_phone(phone)
-            services.remember_contacts(profile.chat_id, phone=phone)
-            services.patch_session(profile.chat_id, state=BotState.FB_TEXT, phone=phone)
-            bot.send_message(chat_id, 'Дякуємо.', reply_markup=keyboards.remove_reply())
-            bot.send_message(chat_id, texts.ENTER_FEEDBACK)
-            return
-
-        if state == BotState.FB_TEXT:
-            body = (message.text or '').strip()
-            if not services.is_valid_feedback(body):
-                bot.send_message(chat_id, texts.BAD_FEEDBACK)
-                return
-            services.patch_session(profile.chat_id, state=BotState.FB_CONSENT, message=body)
-            bot.send_message(chat_id, texts.ASK_CONSENT, reply_markup=keyboards.consent_keyboard())
+        handle_feedback_text(bot, chat_id, profile, message.text or '')
 
     @bot.callback_query_handler(
         func=lambda c: c.data in {keyboards.CB_CONSENT_YES, keyboards.CB_CONSENT_NO}
@@ -62,23 +35,61 @@ def register(bot) -> None:
     def cb_feedback_consent(call) -> None:
         bot.answer_callback_query(call.id)
         profile = services.upsert_profile(call.from_user)
-        chat_id = call.message.chat.id
-        if call.data == keyboards.CB_CONSENT_NO:
-            bot.send_message(chat_id, texts.NEED_CONSENT)
-            services.clear_session(profile.chat_id)
-            send_menu(bot, chat_id)
-            return
-        session = services.get_session(profile.chat_id)
-        try:
-            services.submit_feedback(profile.chat_id, profile, session.data)
-        except ValueError:
-            bot.send_message(chat_id, texts.UNKNOWN)
-            services.clear_session(profile.chat_id)
-            send_menu(bot, chat_id)
-            return
+        apply_feedback_consent(bot, call.message.chat.id, profile, call.data)
+
+
+def apply_feedback_phone(bot, chat_id, profile, phone: str) -> None:
+    if not phone or not validate_phone(phone):
+        bot.send_message(chat_id, texts.BAD_PHONE, reply_markup=keyboards.phone_keyboard())
+        return
+    phone = normalize_phone(phone)
+    services.remember_contacts(profile.chat_id, phone=phone)
+    services.patch_session(profile.chat_id, state=BotState.FB_TEXT, phone=phone)
+    bot.send_message(chat_id, 'Дякуємо.', reply_markup=keyboards.remove_reply())
+    bot.send_message(chat_id, texts.ENTER_FEEDBACK)
+
+
+def apply_feedback_consent(bot, chat_id, profile, data: str) -> None:
+    if data == keyboards.CB_CONSENT_NO:
+        bot.send_message(chat_id, texts.NEED_CONSENT)
         services.clear_session(profile.chat_id)
-        bot.send_message(chat_id, texts.SAVED_FEEDBACK)
         send_menu(bot, chat_id)
+        return
+    session = services.get_session(profile.chat_id)
+    try:
+        services.submit_feedback(profile.chat_id, profile, session.data)
+    except ValueError:
+        bot.send_message(chat_id, texts.UNKNOWN)
+        services.clear_session(profile.chat_id)
+        send_menu(bot, chat_id)
+        return
+    services.clear_session(profile.chat_id)
+    bot.send_message(chat_id, texts.SAVED_FEEDBACK)
+    send_menu(bot, chat_id)
+
+
+def handle_feedback_text(bot, chat_id, profile, text: str) -> None:
+    session = services.get_session(profile.chat_id)
+    state = session.state
+    if state == BotState.FB_NAME:
+        name = (text or '').strip()
+        if not services.is_valid_name(name):
+            bot.send_message(chat_id, texts.BAD_NAME)
+            return
+        services.remember_contacts(profile.chat_id, name=name)
+        services.patch_session(profile.chat_id, state=BotState.FB_PHONE, name=name)
+        bot.send_message(chat_id, texts.ENTER_PHONE, reply_markup=keyboards.phone_keyboard())
+        return
+    if state == BotState.FB_PHONE:
+        apply_feedback_phone(bot, chat_id, profile, text)
+        return
+    if state == BotState.FB_TEXT:
+        body = (text or '').strip()
+        if not services.is_valid_feedback(body):
+            bot.send_message(chat_id, texts.BAD_FEEDBACK)
+            return
+        services.patch_session(profile.chat_id, state=BotState.FB_CONSENT, message=body)
+        bot.send_message(chat_id, texts.ASK_CONSENT, reply_markup=keyboards.consent_keyboard())
 
 
 def _phone_from_message(message) -> str:

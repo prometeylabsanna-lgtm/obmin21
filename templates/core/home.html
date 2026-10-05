@@ -7,11 +7,21 @@
 <section class="hero" id="exchange" data-qa="section-exchange">
   <div class="hero__banner">
     <div class="hero__bg" aria-hidden="true">
-      <img src="{% static 'images/hero-kyiv.png' %}?v=10" alt="" width="1600" height="900" decoding="async" fetchpriority="high">
+      <img
+        src="{% if active_city %}{% static active_city.hero_image %}{% else %}{% static 'images/hero-kyiv.jpg' %}{% endif %}?v=2"
+        alt=""
+        width="1600"
+        height="900"
+        decoding="async"
+        fetchpriority="high"
+        data-hero-banner
+        data-hero-fallback="{% static 'images/hero-kyiv.jpg' %}?v=2"
+        data-static-prefix="{% get_static_prefix %}"
+      >
     </div>
     <div class="hero__overlay" aria-hidden="true"></div>
     <div class="hero__content">
-      <h1 class="hero__title">Обмін валют<br>{% if active_city %}{% if active_city.slug == 'kyiv' or active_city.name == 'Київ' %}у Києві{% else %}у {{ active_city.name }}{% endif %} {% endif %}за вигідним курсом</h1>
+      <h1 class="hero__title">Обмін валют<br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> за вигідним курсом</h1>
       <p class="hero__lead">Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>
       <div class="hero__cta">
         <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">Зафіксувати курс</button>

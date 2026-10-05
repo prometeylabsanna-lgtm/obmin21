@@ -52,67 +52,19 @@ def register(bot) -> None:
     def cb_pair(call) -> None:
         bot.answer_callback_query(call.id)
         profile = services.upsert_profile(call.from_user)
-        session = services.get_session(profile.chat_id)
-        if session.state != BotState.EX_PAIR:
-            return
-        try:
-            pair_id = int(call.data.split(':', 1)[1])
-        except (ValueError, IndexError):
-            return
-        pair = services.pair_by_id(pair_id)
-        if pair is None:
-            bot.send_message(call.message.chat.id, texts.NO_PAIRS)
-            return
-        services.patch_session(
-            profile.chat_id,
-            state=BotState.EX_DIRECTION,
-            pair_id=pair.pk,
-        )
-        bot.send_message(
-            call.message.chat.id,
-            texts.CHOOSE_DIRECTION,
-            reply_markup=keyboards.direction_keyboard(),
-        )
+        handle_pair(bot, call.message.chat.id, profile, call.data or '')
 
     @bot.callback_query_handler(func=lambda c: (c.data or '').startswith('d:'))
     def cb_direction(call) -> None:
         bot.answer_callback_query(call.id)
         profile = services.upsert_profile(call.from_user)
-        session = services.get_session(profile.chat_id)
-        if session.state != BotState.EX_DIRECTION:
-            return
-        direction = call.data.split(':', 1)[1]
-        if direction not in {ExchangeRequest.Direction.BUY, ExchangeRequest.Direction.SELL}:
-            return
-        services.patch_session(
-            profile.chat_id,
-            state=BotState.EX_AMOUNT,
-            direction=direction,
-        )
-        bot.send_message(call.message.chat.id, texts.ENTER_AMOUNT)
+        handle_direction(bot, call.message.chat.id, profile, call.data or '')
 
     @bot.callback_query_handler(func=lambda c: (c.data or '').startswith('br:'))
     def cb_branch(call) -> None:
         bot.answer_callback_query(call.id)
         profile = services.upsert_profile(call.from_user)
-        session = services.get_session(profile.chat_id)
-        if session.state != BotState.EX_BRANCH:
-            return
-        city = services.resolve_city(profile, session.data)
-        try:
-            branch_id = int(call.data.split(':', 1)[1])
-        except (ValueError, IndexError):
-            return
-        branch = services.branch_by_id(branch_id, city) if city else None
-        if branch is None:
-            bot.send_message(call.message.chat.id, texts.NO_BRANCHES)
-            return
-        services.patch_session(
-            profile.chat_id,
-            state=BotState.EX_NAME,
-            branch_id=branch.pk,
-        )
-        bot.send_message(call.message.chat.id, texts.ENTER_NAME)
+        handle_branch(bot, call.message.chat.id, profile, call.data or '')
 
     @bot.callback_query_handler(
         func=lambda c: c.data in {keyboards.CB_CONSENT_YES, keyboards.CB_CONSENT_NO}
@@ -121,43 +73,13 @@ def register(bot) -> None:
     def cb_consent(call) -> None:
         bot.answer_callback_query(call.id)
         profile = services.upsert_profile(call.from_user)
-        chat_id = call.message.chat.id
-        if call.data == keyboards.CB_CONSENT_NO:
-            bot.send_message(chat_id, texts.NEED_CONSENT)
-            services.clear_session(profile.chat_id)
-            send_menu(bot, chat_id)
-            return
-        session = services.patch_session(profile.chat_id, state=BotState.EX_CONFIRM)
-        bot.send_message(
-            chat_id,
-            _confirm_text(profile, session.data),
-            reply_markup=keyboards.confirm_keyboard(),
-        )
+        handle_consent(bot, call.message.chat.id, profile, call.data)
 
     @bot.callback_query_handler(func=lambda c: c.data == keyboards.CB_CONFIRM)
     def cb_confirm(call) -> None:
         bot.answer_callback_query(call.id)
         profile = services.upsert_profile(call.from_user)
-        session = services.get_session(profile.chat_id)
-        chat_id = call.message.chat.id
-        if session.state != BotState.EX_CONFIRM:
-            return
-        try:
-            obj = services.submit_exchange(profile.chat_id, profile, session.data)
-        except ValueError:
-            bot.send_message(chat_id, texts.UNKNOWN)
-            services.clear_session(profile.chat_id)
-            send_menu(bot, chat_id)
-            return
-        services.clear_session(profile.chat_id)
-        bot.send_message(
-            chat_id,
-            texts.SAVED_REQUEST.format(
-                until=obj.expires_at.strftime('%H:%M %d.%m.%Y'),
-                address=texts.safe(obj.branch.address),
-            ),
-        )
-        send_menu(bot, chat_id)
+        handle_confirm(bot, call.message.chat.id, profile)
 
     @bot.message_handler(
         func=lambda m: services.get_session(str(m.from_user.id)).state in EXCHANGE_STATES,
@@ -167,12 +89,10 @@ def register(bot) -> None:
         profile = services.upsert_profile(message.from_user)
         session = services.get_session(profile.chat_id)
         chat_id = message.chat.id
-        if session.state == BotState.EX_AMOUNT:
-            _handle_amount(bot, chat_id, profile, session, message.text or '')
-        elif session.state == BotState.EX_NAME:
-            _handle_name(bot, chat_id, profile, message.text or '')
-        elif session.state == BotState.EX_PHONE:
-            _handle_phone(bot, chat_id, profile, message)
+        if session.state == BotState.EX_PHONE and message.contact:
+            apply_phone(bot, chat_id, profile, message.contact.phone_number or '')
+            return
+        handle_exchange_text(bot, chat_id, profile, message.text or '')
 
 
 def _handle_amount(bot, chat_id, profile, session, raw: str) -> None:
@@ -220,12 +140,7 @@ def _handle_name(bot, chat_id, profile, raw: str) -> None:
     bot.send_message(chat_id, texts.ENTER_PHONE, reply_markup=keyboards.phone_keyboard())
 
 
-def _handle_phone(bot, chat_id, profile, message) -> None:
-    phone = ''
-    if message.contact and message.contact.phone_number:
-        phone = message.contact.phone_number
-    else:
-        phone = (message.text or '').strip()
+def apply_phone(bot, chat_id, profile, phone: str) -> None:
     if not validate_phone(phone):
         bot.send_message(chat_id, texts.BAD_PHONE, reply_markup=keyboards.phone_keyboard())
         return
@@ -234,6 +149,100 @@ def _handle_phone(bot, chat_id, profile, message) -> None:
     services.patch_session(profile.chat_id, state=BotState.EX_CONSENT, phone=phone)
     bot.send_message(chat_id, 'Дякуємо.', reply_markup=keyboards.remove_reply())
     bot.send_message(chat_id, texts.ASK_CONSENT, reply_markup=keyboards.consent_keyboard())
+
+
+def handle_pair(bot, chat_id, profile, data: str) -> None:
+    session = services.get_session(profile.chat_id)
+    if session.state != BotState.EX_PAIR:
+        return
+    try:
+        pair_id = int(data.split(':', 1)[1])
+    except (ValueError, IndexError):
+        return
+    pair = services.pair_by_id(pair_id)
+    if pair is None:
+        bot.send_message(chat_id, texts.NO_PAIRS)
+        return
+    services.patch_session(
+        profile.chat_id,
+        state=BotState.EX_DIRECTION,
+        pair_id=pair.pk,
+    )
+    bot.send_message(chat_id, texts.CHOOSE_DIRECTION, reply_markup=keyboards.direction_keyboard())
+
+
+def handle_direction(bot, chat_id, profile, data: str) -> None:
+    session = services.get_session(profile.chat_id)
+    if session.state != BotState.EX_DIRECTION:
+        return
+    direction = data.split(':', 1)[1]
+    if direction not in {ExchangeRequest.Direction.BUY, ExchangeRequest.Direction.SELL}:
+        return
+    services.patch_session(profile.chat_id, state=BotState.EX_AMOUNT, direction=direction)
+    bot.send_message(chat_id, texts.ENTER_AMOUNT)
+
+
+def handle_branch(bot, chat_id, profile, data: str) -> None:
+    session = services.get_session(profile.chat_id)
+    if session.state != BotState.EX_BRANCH:
+        return
+    city = services.resolve_city(profile, session.data)
+    try:
+        branch_id = int(data.split(':', 1)[1])
+    except (ValueError, IndexError):
+        return
+    branch = services.branch_by_id(branch_id, city) if city else None
+    if branch is None:
+        bot.send_message(chat_id, texts.NO_BRANCHES)
+        return
+    services.patch_session(profile.chat_id, state=BotState.EX_NAME, branch_id=branch.pk)
+    bot.send_message(chat_id, texts.ENTER_NAME)
+
+
+def handle_consent(bot, chat_id, profile, data: str) -> None:
+    if data == keyboards.CB_CONSENT_NO:
+        bot.send_message(chat_id, texts.NEED_CONSENT)
+        services.clear_session(profile.chat_id)
+        send_menu(bot, chat_id)
+        return
+    session = services.patch_session(profile.chat_id, state=BotState.EX_CONFIRM)
+    bot.send_message(
+        chat_id,
+        _confirm_text(profile, session.data),
+        reply_markup=keyboards.confirm_keyboard(),
+    )
+
+
+def handle_confirm(bot, chat_id, profile) -> None:
+    session = services.get_session(profile.chat_id)
+    if session.state != BotState.EX_CONFIRM:
+        return
+    try:
+        obj = services.submit_exchange(profile.chat_id, profile, session.data)
+    except ValueError:
+        bot.send_message(chat_id, texts.UNKNOWN)
+        services.clear_session(profile.chat_id)
+        send_menu(bot, chat_id)
+        return
+    services.clear_session(profile.chat_id)
+    bot.send_message(
+        chat_id,
+        texts.SAVED_REQUEST.format(
+            until=obj.expires_at.strftime('%H:%M %d.%m.%Y'),
+            address=texts.safe(obj.branch.address),
+        ),
+    )
+    send_menu(bot, chat_id)
+
+
+def handle_exchange_text(bot, chat_id, profile, text: str) -> None:
+    session = services.get_session(profile.chat_id)
+    if session.state == BotState.EX_AMOUNT:
+        _handle_amount(bot, chat_id, profile, session, text or '')
+    elif session.state == BotState.EX_NAME:
+        _handle_name(bot, chat_id, profile, text or '')
+    elif session.state == BotState.EX_PHONE:
+        apply_phone(bot, chat_id, profile, (text or '').strip())
 
 
 def _confirm_text(profile, data: dict) -> str:

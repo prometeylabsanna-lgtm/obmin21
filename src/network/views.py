@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+import json
 
 from src.network.models import City
 from src.network.selectors import get_city_branches
@@ -46,7 +47,13 @@ def set_city(request):
             'city_branches': list(get_city_branches(city)),
         })
         apply_city_cookie(response, city)
-        response['HX-Trigger'] = 'cityChanged'
+        response['HX-Trigger'] = json.dumps({
+            'cityChanged': {
+                'slug': city.slug,
+                'name': city.name,
+                'nameIn': city.name_in,
+            }
+        })
         return response
 
     response = redirect(request.META.get('HTTP_REFERER', '/'))

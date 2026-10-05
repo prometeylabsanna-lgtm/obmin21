@@ -108,18 +108,40 @@
     }
   });
 
-  document.body.addEventListener('cityChanged', function () {
+  document.body.addEventListener('cityChanged', function (evt) {
+    var detail = evt.detail || {};
     var panel = document.getElementById('rates-panel');
     if (panel && window.htmx) {
-      var qs = panel.closest('.hero__rates') ? '?home=1' : '';
+      var parts = [];
+      if (panel.closest('.hero__rates')) parts.push('home=1');
+      if (panel.closest('.rates-page-card')) parts.push('hide_full=1');
+      var tab = panel.querySelector('.rates-tabs__btn.is-active');
+      if (tab) {
+        var qa = tab.getAttribute('data-qa') || '';
+        var board = qa.replace('rates-tab-', '');
+        if (board) parts.push('board=' + encodeURIComponent(board));
+      }
+      var qs = parts.length ? '?' + parts.join('&') : '';
       window.htmx.ajax('GET', '/partials/rates/' + qs, { target: '#rates-panel', swap: 'outerHTML' });
     }
-    var label = document.querySelector('[data-city-label]');
-    var cityName = label ? label.textContent.trim() : '';
-    if (cityName) {
-      document.querySelectorAll('[data-live-city-name]').forEach(function (el) {
-        el.textContent = cityName;
+    if (window.Obmin21 && typeof window.Obmin21.syncQuotes === 'function') {
+      window.Obmin21.syncQuotes();
+    }
+    var nameIn = detail.nameIn || '';
+    if (nameIn) {
+      document.querySelectorAll('[data-city-in]').forEach(function (el) {
+        el.textContent = nameIn;
       });
+    }
+    var banner = document.querySelector('[data-hero-banner]');
+    if (banner && detail.slug) {
+      var prefix = banner.getAttribute('data-static-prefix') || '/static/';
+      var next = prefix + 'images/hero-' + detail.slug + '.jpg?v=2';
+      banner.onerror = function () {
+        banner.onerror = null;
+        banner.src = banner.getAttribute('data-hero-fallback') || '/static/images/hero-kyiv.jpg?v=2';
+      };
+      banner.src = next;
     }
     var branches = document.getElementById('branch-list');
     if (branches) {

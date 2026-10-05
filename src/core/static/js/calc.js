@@ -116,6 +116,40 @@
     recalc(scope);
   }
 
+  function applyQuotes(scope, quotes) {
+    if (!scope || !quotes || !quotes.length) return;
+    quotes.forEach(function (q) {
+      var id = String(q.id);
+      scope.querySelectorAll('[data-pair-id="' + id + '"]').forEach(function (el) {
+        el.setAttribute('data-buy', q.buy);
+        el.setAttribute('data-sell', q.sell);
+        if (q.code) {
+          el.setAttribute('data-code', q.code);
+          if (el.hasAttribute('data-calc-code')) el.setAttribute('data-calc-code', q.code);
+        }
+      });
+    });
+    recalc(scope);
+  }
+
+  function syncQuotes() {
+    var board = 'retail';
+    var tab = document.querySelector('#rates-panel .rates-tabs__btn.is-active');
+    if (tab) {
+      var qa = tab.getAttribute('data-qa') || '';
+      board = qa.replace('rates-tab-', '') || 'retail';
+    }
+    fetch('/partials/quotes.json?board=' + encodeURIComponent(board), { credentials: 'same-origin' })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (data) {
+        if (!data || !data.quotes) return;
+        document.querySelectorAll('[data-calc]').forEach(function (scope) {
+          applyQuotes(scope, data.quotes);
+        });
+      })
+      .catch(function () {});
+  }
+
   function initFaq() {
     /* handled in pages/home.js */
   }
@@ -137,4 +171,7 @@
       bindCalc(calc);
     }
   });
+
+  window.Obmin21 = window.Obmin21 || {};
+  window.Obmin21.syncQuotes = syncQuotes;
 })();

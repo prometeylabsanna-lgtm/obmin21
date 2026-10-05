@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from src.bot.models import BotSession, TelegramProfile
+from src.bot.models import BotSession, ChatMessage, TelegramProfile
 
 
 @admin.register(TelegramProfile)
@@ -24,3 +24,11 @@ class BotSessionAdmin(admin.ModelAdmin):
     list_display = ('chat_id', 'state', 'updated_at')
     search_fields = ('chat_id', 'state')
     readonly_fields = ('updated_at',)
+
+
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'chat_id', 'role', 'created_at')
+    list_filter = ('role',)
+    search_fields = ('chat_id', 'text')
+    readonly_fields = ('created_at',)
