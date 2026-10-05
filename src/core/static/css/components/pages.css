@@ -48,13 +48,10 @@
   aspect-ratio: 1642 / 823;
   z-index: 1;
   pointer-events: none;
-  perspective: 900px;
 }
 
 .svc-hero__coin {
   position: absolute;
-  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-  will-change: transform;
 }
 
 .svc-hero__coin--b {
@@ -81,47 +78,11 @@
   width: 48.17%;
 }
 
-.svc-hero__coin-in {
-  animation: svcCoinIn 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.svc-hero__coin-in--a {
-  animation-delay: 0.05s;
-}
-
-.svc-hero__coin-in--b {
-  animation-delay: 0.35s;
-}
-
-.svc-hero__coin-in--c {
-  animation-delay: 0.25s;
-}
-
-.svc-hero__coin-in--d {
-  animation-delay: 0.45s;
-}
-
 .svc-hero__coins img {
   display: block;
   width: 100%;
   height: auto;
   filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.4));
-}
-
-.svc-hero__coin-in--a img {
-  animation: svcFlA 11s ease-in-out 1.65s infinite;
-}
-
-.svc-hero__coin-in--b img {
-  animation: svcFlB 8s ease-in-out 1.95s infinite;
-}
-
-.svc-hero__coin-in--c img {
-  animation: svcFlC 9s ease-in-out 1.85s infinite;
-}
-
-.svc-hero__coin-in--d img {
-  animation: svcFlD 7s ease-in-out 2.05s infinite;
 }
 
 .svc-hero__copy {
@@ -191,69 +152,6 @@
   color: #fff;
   font-size: 13px;
   font-weight: 500;
-}
-
-@keyframes svcCoinIn {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, 24px, 0) scale(0.7);
-  }
-
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes svcFlA {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotate(0deg);
-  }
-
-  50% {
-    transform: translate3d(-6px, -14px, 0) rotateX(6deg) rotateY(-8deg) rotate(-2deg);
-  }
-}
-
-@keyframes svcFlB {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotateY(0deg) rotate(0deg);
-  }
-
-  50% {
-    transform: translate3d(8px, -18px, 0) rotateY(14deg) rotate(4deg);
-  }
-}
-
-@keyframes svcFlC {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotateX(0deg) rotate(0deg);
-  }
-
-  50% {
-    transform: translate3d(10px, 12px, 0) rotateX(-10deg) rotate(-4deg);
-  }
-}
-
-@keyframes svcFlD {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotateY(0deg) rotate(0deg);
-  }
-
-  50% {
-    transform: translate3d(-8px, -16px, 0) rotateY(-18deg) rotate(6deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .svc-hero__coin-in,
-  .svc-hero__coins img {
-    animation: none;
-  }
 }
 
 .contact-cards {
