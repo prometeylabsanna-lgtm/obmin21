@@ -40,6 +40,7 @@ def advantages_page(request):
         'page': AdvantagesPage.load(),
         'items': AdvantageItem.objects.filter(is_active=True),
         'audiences': AdvantageItem.Audience.choices,
+        'home_reviews': list(get_published_reviews()[:8]),
     })
 
 
