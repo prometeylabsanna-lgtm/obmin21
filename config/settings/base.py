@@ -2,7 +2,6 @@ from pathlib import Path
 
 from decouple import Csv, config
 from django.templatetags.static import static
-from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -129,7 +128,7 @@ UNFOLD = {
         'navigation': [],
     },
     'LOGIN': {
-        'redirect_after': reverse_lazy('admin:index'),
+        'redirect_after': '/admin/',
     },
 }
 
