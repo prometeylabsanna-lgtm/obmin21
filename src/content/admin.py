@@ -20,9 +20,10 @@ from src.content.models import (
 from src.core.admin_mixins import ListUnfoldAdmin, SingletonUnfoldAdmin
 
 
-def _register_page(model, content_fields, rich_fields=()):
+def _register_page(model, content_fields, rich_fields=(), content_fieldsets=()):
     attrs = {
         'content_fields': content_fields,
+        'content_fieldsets': content_fieldsets,
         'rich_fields': frozenset(rich_fields),
     }
     admin.site.register(
@@ -33,17 +34,28 @@ def _register_page(model, content_fields, rich_fields=()):
 
 _register_page(
     HomePage,
-    (
-        'seo_title',
-        'seo_description',
-        'banner_exchange',
-        'banner_service',
-        'banner_cta',
-        'cta_title',
-        'seo_block_title',
-        'seo_block_body',
-    ),
+    (),
     ('seo_block_body',),
+    (
+        ('Пошук і текст', {
+            'fields': (
+                'seo_title',
+                'seo_description',
+                'seo_block_title',
+                'seo_block_body',
+            ),
+        }),
+        ('Блок «Вигідний курс на USD та EUR»', {
+            'fields': (
+                'promo_image',
+                'promo_kicker',
+                'promo_title',
+                'promo_title_accent',
+                'promo_text',
+                'promo_button',
+            ),
+        }),
+    ),
 )
 _register_page(
     RatesPage,
@@ -52,8 +64,21 @@ _register_page(
 )
 _register_page(
     ServicesPage,
-    ('title', 'intro', 'seo_title', 'seo_description'),
+    (),
     ('intro',),
+    (
+        ('Пошук і текст', {
+            'fields': ('title', 'intro', 'seo_title', 'seo_description'),
+        }),
+        ('Блок «Усі фінансові послуги в одному місці»', {
+            'fields': (
+                'hero_image',
+                'hero_title',
+                'hero_title_accent',
+                'hero_text',
+            ),
+        }),
+    ),
 )
 _register_page(
     AdvantagesPage,

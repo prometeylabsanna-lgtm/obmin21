@@ -267,7 +267,8 @@ class Command(BaseCommand):
             'можете порахувати суму в калькуляторі та залишити заявку з фіксацією курсу. '
             'Розрахунок відбувається у відділенні.'
         )
-        home.cta_title = 'Зафіксуй курс. Забронюй онлайн.'
+        home.promo_title = 'Вигідний курс'
+        home.promo_title_accent = 'USD та EUR'
         home.save()
 
         rates_page = RatesPage.load()

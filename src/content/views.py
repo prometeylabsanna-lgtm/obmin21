@@ -30,7 +30,7 @@ def services_list(request):
     return render(request, 'content/services_list.html', {
         'page': page,
         'services': services,
-        'home_reviews': list(get_published_reviews()[:8]),
+        'home_reviews': get_published_reviews(8),
         'news_posts': list(get_published_posts()[:10]),
         'page_title': page.seo_title or page.title,
         'page_description': page.seo_description or page.intro[:160],
@@ -43,7 +43,7 @@ def advantages_page(request):
         'page': page,
         'items': AdvantageItem.objects.filter(is_active=True),
         'audiences': AdvantageItem.Audience.choices,
-        'home_reviews': list(get_published_reviews()[:8]),
+        'home_reviews': get_published_reviews(8),
         'page_title': page.seo_title or page.title,
         'page_description': page.seo_description or page.intro[:160],
     })

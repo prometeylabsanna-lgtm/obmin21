@@ -34,15 +34,19 @@ class AdminPanelTests(TestCase):
         change_url = reverse('admin:content_homepage_change', args=[1])
         resp = self.client.get(change_url)
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, 'Банер після блоків курсів')
-        self.assertContains(resp, 'Колір фону')
+        self.assertContains(resp, 'Блок «Вигідний курс на USD та EUR»')
+        self.assertNotContains(resp, 'Банер після')
         self.assertContains(resp, 'images/coins.png')
         self.assertContains(resp, 'cms-color__swatch')
 
         post = self.client.post(change_url, {
             'seo_title': 'Головна',
             'seo_description': '',
-            'cta_title': 'Зафіксуй курс. Забронюй онлайн.',
+            'promo_kicker': 'USD та EUR',
+            'promo_title': 'Вигідний курс',
+            'promo_title_accent': 'USD та EUR',
+            'promo_text': 'Обмінюйте валюту за актуальним курсом без зайвих кроків',
+            'promo_button': 'Обрати валюту',
             'seo_block_title': 'Обмін валют',
             'seo_block_body': '<p>Текст</p>',
             'color_bg': '#f3f6fb',
@@ -97,3 +101,20 @@ class AdminPanelTests(TestCase):
         resp = self.client.get(reverse('admin:index'))
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'Адміністрування')
+
+    def test_city_home_banner_fields(self):
+        from src.network.models import City
+        city = City.objects.create(name='Київ', slug='kyiv-cms')
+        resp = self.client.get(reverse('admin:network_city_change', args=[city.pk]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Банер на головній')
+        self.assertContains(resp, 'Підпис на банері')
+        self.assertContains(resp, 'Курси в калькуляторі')
+
+    def test_shared_lists_in_sidebar(self):
+        resp = self.client.get(reverse('admin:index'))
+        self.assertContains(resp, 'Новини')
+        self.assertContains(resp, 'FAQ')
+        self.assertContains(resp, reverse('admin:reviews_review_changelist'))
+        self.assertContains(resp, reverse('admin:content_faqitem_changelist'))
+        self.assertContains(resp, reverse('admin:blog_post_changelist'))

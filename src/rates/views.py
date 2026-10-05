@@ -22,7 +22,7 @@ def rates_page(request):
         'rate_updated_at': updated_at,
         'active_board': board,
         'boards': RateBoard.choices,
-        'home_reviews': list(get_published_reviews()[:8]),
+        'home_reviews': get_published_reviews(8),
         'news_posts': list(get_published_posts()[:10]),
         'page_title': page.seo_title or page.title,
         'page_description': page.seo_description or (page.intro[:160] if page.intro else ''),

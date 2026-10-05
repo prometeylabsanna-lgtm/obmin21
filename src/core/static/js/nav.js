@@ -134,14 +134,33 @@
       });
     }
     var banner = document.querySelector('[data-hero-banner]');
-    if (banner && detail.slug) {
-      var prefix = banner.getAttribute('data-static-prefix') || '/static/';
-      var next = prefix + 'images/hero-' + detail.slug + '.jpg?v=2';
-      banner.onerror = function () {
-        banner.onerror = null;
-        banner.src = banner.getAttribute('data-hero-fallback') || '/static/images/hero-kyiv.jpg?v=2';
-      };
-      banner.src = next;
+    if (banner) {
+      if (detail.bannerUrl) {
+        banner.src = detail.bannerUrl;
+      } else if (detail.slug) {
+        var prefix = banner.getAttribute('data-static-prefix') || '/static/';
+        var next = prefix + 'images/hero-' + detail.slug + '.jpg';
+        banner.onerror = function () {
+          banner.onerror = null;
+          banner.src = banner.getAttribute('data-hero-fallback') || '/static/images/hero-kyiv.jpg';
+        };
+        banner.src = next;
+      }
+    }
+    if (detail.bannerTitle) {
+      document.querySelectorAll('[data-hero-title]').forEach(function (el) {
+        el.textContent = detail.bannerTitle;
+      });
+    }
+    if (detail.bannerSuffix) {
+      document.querySelectorAll('[data-hero-suffix]').forEach(function (el) {
+        el.textContent = detail.bannerSuffix;
+      });
+    }
+    if (detail.bannerText) {
+      document.querySelectorAll('[data-hero-lead]').forEach(function (el) {
+        el.textContent = detail.bannerText;
+      });
     }
     var branches = document.getElementById('branch-list');
     if (branches) {

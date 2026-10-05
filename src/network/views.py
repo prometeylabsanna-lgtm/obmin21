@@ -55,6 +55,10 @@ def set_city(request):
                 'slug': city.slug,
                 'name': city.name,
                 'nameIn': city.name_in,
+                'bannerUrl': city.banner_src(),
+                'bannerTitle': city.banner_title,
+                'bannerSuffix': city.banner_suffix,
+                'bannerText': city.banner_text,
             }
         })
         return response

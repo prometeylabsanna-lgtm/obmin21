@@ -30,6 +30,8 @@
   border-radius: 12px;
   background: #052145;
   overflow: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
   padding: 20px 16px;
   min-height: 0;
   display: flex;
@@ -54,7 +56,6 @@
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.4));
   animation: obFlA 11s ease-in-out infinite;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -395,7 +396,7 @@
   }
 
   .svc-hero__banner {
-    overflow: visible;
+    overflow: hidden;
     padding: 32px;
     min-height: 400px;
     gap: 20px;
@@ -405,8 +406,8 @@
     position: absolute;
     order: 0;
     right: -4%;
-    top: -102px;
-    width: min(66%, max(340px, calc(100% - 460px)));
+    top: 8px;
+    width: min(58%, max(280px, calc(100% - 520px)));
     margin: 0;
     perspective: 900px;
     -webkit-perspective: 900px;
@@ -467,7 +468,7 @@
 @media (min-width: 768px) and (max-width: 1024px) {
   .svc-hero__coins {
     right: -6%;
-    top: -72px;
+    top: 12px;
     width: min(70%, max(300px, calc(100% - 400px)));
   }
 }

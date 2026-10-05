@@ -6,12 +6,16 @@
 <section class="svc-hero">
   <div class="svc-hero__banner">
     <div class="svc-hero__coins" aria-hidden="true">
+      {% if page.hero_image %}
+      <img src="{{ page.hero_image.url }}" alt="" decoding="async">
+      {% else %}
       <img src="{% static 'images/coins.png' %}" alt="" decoding="async">
+      {% endif %}
     </div>
     <div class="svc-hero__copy">
       <span class="pill pill--light">Послуги</span>
-      <h1 class="svc-hero__title">Усі фінансові послуги<br><span class="u-accent">в одному місці</span></h1>
-      <p class="svc-hero__lead">Обмін валют, криптовалюти, перекази та інвестиційне золото {% if active_city %}{% if active_city.slug == 'kyiv' or active_city.name == 'Київ' %}у Києві{% else %}у {{ active_city.name }}{% endif %}{% endif %} — з фіксацією курсу онлайн.</p>
+      <h1 class="svc-hero__title">{{ page.hero_title }}<br><span class="u-accent">{{ page.hero_title_accent }}</span></h1>
+      <p class="svc-hero__lead">{{ page.hero_text }}</p>
     </div>
     <div class="svc-hero__chips">
       {% for svc in services %}

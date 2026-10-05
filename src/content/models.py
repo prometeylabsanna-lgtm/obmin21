@@ -53,25 +53,36 @@ class HomePage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'home'
     seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
     seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
-    banner_exchange = models.ImageField(
-        'Банер після блоків курсів',
+    promo_image = models.ImageField(
+        'Фото',
         upload_to='home/',
         blank=True,
+        help_text='Блок «Вигідний курс на USD та EUR» на головній.',
     )
-    banner_service = models.ImageField(
-        'Банер після блоку послуг',
-        upload_to='home/',
-        blank=True,
+    promo_kicker = models.CharField(
+        'Підпис над заголовком',
+        max_length=80,
+        default='USD та EUR',
     )
-    banner_cta = models.ImageField(
-        'Банер із закликом залишити заявку',
-        upload_to='home/',
-        blank=True,
+    promo_title = models.CharField(
+        'Заголовок',
+        max_length=120,
+        default='Вигідний курс',
     )
-    cta_title = models.CharField(
-        'Заголовок банера із закликом',
-        max_length=160,
-        default='Зафіксуй курс. Забронюй онлайн.',
+    promo_title_accent = models.CharField(
+        'Акцент у заголовку',
+        max_length=80,
+        default='USD та EUR',
+    )
+    promo_text = models.CharField(
+        'Текст',
+        max_length=240,
+        default='Обмінюйте валюту за актуальним курсом без зайвих кроків',
+    )
+    promo_button = models.CharField(
+        'Текст кнопки',
+        max_length=80,
+        default='Обрати валюту',
     )
     seo_block_title = models.CharField(
         'Заголовок інформаційного блоку',
@@ -105,8 +116,29 @@ class RatesPage(ThemeFieldsMixin, SingletonModel):
 
 class ServicesPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'services'
-    title = models.CharField('Заголовок', max_length=120, default='Послуги')
+    title = models.CharField('Заголовок сторінки', max_length=120, default='Послуги')
     intro = models.TextField('Вступний текст', blank=True)
+    hero_image = models.ImageField(
+        'Фото',
+        upload_to='services/',
+        blank=True,
+        help_text='Блок «Усі фінансові послуги в одному місці».',
+    )
+    hero_title = models.CharField(
+        'Заголовок банера',
+        max_length=120,
+        default='Усі фінансові послуги',
+    )
+    hero_title_accent = models.CharField(
+        'Акцент у заголовку',
+        max_length=80,
+        default='в одному місці',
+    )
+    hero_text = models.CharField(
+        'Текст банера',
+        max_length=320,
+        default='Обмін валют, криптовалюти, перекази та інвестиційне золото з фіксацією курсу онлайн.',
+    )
     seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
     seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
 

@@ -10,6 +10,27 @@ class City(models.Model):
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     seo_title = models.CharField('SEO Title', max_length=160, blank=True)
     seo_description = models.CharField('SEO Description', max_length=320, blank=True)
+    banner_image = models.ImageField(
+        'Фото банера на головній',
+        upload_to='cities/',
+        blank=True,
+        help_text='Якщо порожньо — стандартне фото міста.',
+    )
+    banner_title = models.CharField(
+        'Заголовок банера',
+        max_length=80,
+        default='Обмін валют',
+    )
+    banner_suffix = models.CharField(
+        'Текст після назви міста',
+        max_length=80,
+        default='за вигідним курсом',
+    )
+    banner_text = models.CharField(
+        'Підпис на банері',
+        max_length=240,
+        default='Фіксуйте курс онлайн та обмінюйте за вигідним курсом',
+    )
 
     class Meta:
         ordering = ['sort_order', 'name']
@@ -40,6 +61,20 @@ class City(models.Model):
     @property
     def hero_image(self):
         return f'images/hero-{self.slug}.jpg'
+
+    def banner_src(self):
+        if self.banner_image:
+            try:
+                return self.banner_image.url
+            except ValueError:
+                pass
+        from django.contrib.staticfiles import finders
+        from django.templatetags.static import static
+
+        name = f'images/hero-{self.slug}.jpg'
+        if finders.find(name):
+            return static(name)
+        return static('images/hero-kyiv.jpg')
 
 
 class Branch(models.Model):

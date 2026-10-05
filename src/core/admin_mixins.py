@@ -41,6 +41,7 @@ def _image_widget(admin, db_field, request):
 
 class SingletonUnfoldAdmin(ModelAdmin):
     content_fields: tuple[str, ...] = ()
+    content_fieldsets: tuple = ()
     style_fields: tuple[str, ...] = ('color_bg', 'color_text', 'color_accent')
     rich_fields: frozenset[str] = frozenset()
 
@@ -60,6 +61,19 @@ class SingletonUnfoldAdmin(ModelAdmin):
         )
 
     def get_fieldsets(self, request, obj=None):
+        if self.content_fieldsets:
+            tabs = []
+            for title, opts in self.content_fieldsets:
+                cfg = dict(opts)
+                classes = list(cfg.get('classes', []))
+                if 'tab' not in classes:
+                    classes = ['tab', *classes]
+                cfg['classes'] = classes
+                tabs.append((title, cfg))
+            tabs.append(
+                ('Оформлення', {'classes': ['tab'], 'fields': self.style_fields}),
+            )
+            return tuple(tabs)
         content = self.content_fields or tuple(
             f.name for f in self.model._meta.fields
             if f.name != 'id' and f.name not in self.style_fields

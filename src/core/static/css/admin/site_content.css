@@ -181,3 +181,25 @@
     max-width: 164px;
   }
 }
+
+@media (min-width: 768px) {
+  .change-form .form-field > .flex {
+    align-items: flex-start;
+  }
+
+  .change-form .form-field label {
+    line-height: 1.35;
+    max-width: 100%;
+  }
+
+  .change-form .cms-image,
+  .change-form .cms-color {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .change-form .form-field label {
+    line-height: 1.35;
+  }
+}
