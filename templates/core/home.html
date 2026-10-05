@@ -274,11 +274,7 @@
     {% for post in news_posts %}
     <article class="article-slide">
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
-        {% if post.cover %}
-        <img src="{{ post.cover.url }}" alt="{{ post.title }}" loading="lazy">
-        {% else %}
-        <img src="{% static 'images/articles/' %}{{ post.slug }}.jpg" alt="{{ post.title }}" loading="lazy">
-        {% endif %}
+        <img src="{{ post.image_url }}" alt="{{ post.title }}" width="330" height="194" decoding="async">
       </a>
       <a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
       {% if post.excerpt %}<p class="article-slide__text">{{ post.excerpt|brand_mark }}</p>{% endif %}

@@ -52,6 +52,17 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def image_url(self):
+        from django.contrib.staticfiles import finders
+        from django.templatetags.static import static
+
+        name = f'images/articles/{self.slug}.jpg'
+        if finders.find(name):
+            return static(name)
+        if self.cover:
+            return self.cover.url
+        return static('images/service-1.png')
+
     def publish(self):
         self.status = self.Status.PUBLISHED
         if not self.published_at:

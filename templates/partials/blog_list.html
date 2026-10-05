@@ -5,13 +5,7 @@
   {% if not page_obj or page_obj.number == 1 %}
   <article class="blog-feature">
     <a class="blog-feature__media" href="{% url 'blog:post_detail' feature.slug %}">
-      {% if feature.cover %}
-      <img src="{{ feature.cover.url }}" alt="" loading="lazy">
-      {% else %}
-      <span class="blog-card__placeholder" aria-hidden="true">
-        <img src="{% static 'images/coins-d.png' %}" alt="" loading="lazy">
-      </span>
-      {% endif %}
+      <img src="{{ feature.image_url }}" alt="{{ feature.title }}" decoding="async">
     </a>
     <div>
       <div class="card__meta">{{ feature.published_at|date:"d.m.Y" }} · {{ feature.category.name }}</div>
@@ -31,13 +25,7 @@
     {% if page_obj and page_obj.number > 1 or not forloop.first %}
     <article class="blog-card">
       <a class="blog-card__media" href="{% url 'blog:post_detail' post.slug %}">
-        {% if post.cover %}
-        <img src="{{ post.cover.url }}" alt="" loading="lazy">
-        {% else %}
-        <span class="blog-card__placeholder" aria-hidden="true">
-          <img src="{% static 'images/coins-d.png' %}" alt="" loading="lazy">
-        </span>
-        {% endif %}
+        <img src="{{ post.image_url }}" alt="{{ post.title }}" decoding="async">
       </a>
       <div class="card__meta" style="margin-top:12px">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
       <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>

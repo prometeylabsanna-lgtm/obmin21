@@ -9,13 +9,7 @@
   {% if post.excerpt %}<p class="page-hero__lead">{{ post.excerpt|brand_mark }}</p>{% endif %}
 
   <div class="article-hero" style="margin-top:28px">
-    {% if post.cover %}
-    <img src="{{ post.cover.url }}" alt="" loading="lazy">
-    {% else %}
-    <span class="blog-card__placeholder blog-card__placeholder--hero" aria-hidden="true">
-      <img src="{% static 'images/coins.png' %}" alt="" loading="lazy">
-    </span>
-    {% endif %}
+    <img src="{{ post.image_url }}" alt="{{ post.title }}" decoding="async">
   </div>
 
   <div class="article-body">
