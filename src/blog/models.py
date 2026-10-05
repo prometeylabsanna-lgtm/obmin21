@@ -1,6 +1,35 @@
 from django.db import models
 from django.utils import timezone
 
+_UK_MONTHS = (
+    '',
+    'січня',
+    'лютого',
+    'березня',
+    'квітня',
+    'травня',
+    'червня',
+    'липня',
+    'серпня',
+    'вересня',
+    'жовтня',
+    'листопада',
+    'грудня',
+)
+
+_READ_ORDER = (
+    'kurs-dolara-2027',
+    'dolar-chy-yevro',
+    'spravzhnya-kupyura',
+    'investytsiyne-zoloto',
+    'kryptovalyuta-btc-usdt',
+    'bezpechno-velyka-suma',
+    'mizhnarodni-perekazy',
+    'znosheni-kupyury',
+    'kurs-kupivli-prodazhu',
+    'fiksatsiya-kursu-onlain',
+)
+
 
 class Category(models.Model):
     name = models.CharField('Назва', max_length=120)
@@ -62,6 +91,19 @@ class Post(models.Model):
         if self.cover:
             return self.cover.url
         return static('images/service-1.png')
+
+    def date_uk(self):
+        if not self.published_at:
+            return ''
+        d = timezone.localtime(self.published_at)
+        return f'{d.day} {_UK_MONTHS[d.month]} {d.year}'
+
+    def reading_label(self):
+        try:
+            idx = _READ_ORDER.index(self.slug)
+        except ValueError:
+            idx = 0
+        return f'{4 + (idx % 4)} хв читання'
 
     def publish(self):
         self.status = self.Status.PUBLISHED

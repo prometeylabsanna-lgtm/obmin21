@@ -1,4 +1,3 @@
-from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 
 from src.blog.models import Category, Post
@@ -12,11 +11,25 @@ def post_list(request, category_slug=None):
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         qs = qs.filter(category=category)
-    paginator = Paginator(qs, 9)
-    page_obj = paginator.get_page(request.GET.get('page'))
+    try:
+        limit = int(request.GET.get('limit', 6))
+    except (TypeError, ValueError):
+        limit = 6
+    limit = max(6, min(limit, 60))
+    posts = list(qs)
+    featured = posts[0] if posts else None
+    rest = posts[1:] if posts else []
+    list_url = (
+        safe_reverse('blog:category', category_slug=category.slug)
+        if category
+        else safe_reverse('blog:post_list')
+    )
     context = {
-        'page_obj': page_obj,
-        'posts': page_obj.object_list,
+        'featured': featured,
+        'posts': rest[:limit],
+        'has_more': len(rest) > limit,
+        'next_limit': limit + 6,
+        'list_url': list_url,
         'categories': Category.objects.all(),
         'active_category': category,
         'page_title': category.name if category else 'Блог',

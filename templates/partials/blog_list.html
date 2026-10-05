@@ -1,54 +1,50 @@
 {% load static content_format %}
 <div id="blog-list" data-qa="blog-list">
-  {% if posts %}
-  {% with feature=posts.0 %}
-  {% if not page_obj or page_obj.number == 1 %}
-  <article class="blog-feature">
-    <a class="blog-feature__media" href="{% url 'blog:post_detail' feature.slug %}">
-      <img src="{{ feature.image_url }}" alt="{{ feature.title }}" decoding="async">
-    </a>
-    <div>
-      <div class="card__meta">{{ feature.published_at|date:"d.m.Y" }} · {{ feature.category.name }}</div>
-      <a class="blog-card__title" href="{% url 'blog:post_detail' feature.slug %}" style="font-size:clamp(26px,4vw,36px)">{{ feature.title|brand_mark }}</a>
-      {% if feature.excerpt %}<p class="blog-card__text">{{ feature.excerpt|brand_mark }}</p>{% endif %}
-      <a class="link-accent" href="{% url 'blog:post_detail' feature.slug %}" style="margin-top:14px">Читати повністю
-        <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
-      </a>
+  {% if featured %}
+  <a class="blog-feature" href="{% url 'blog:post_detail' featured.slug %}">
+    <div class="blog-feature__media">
+      <img src="{{ featured.image_url }}" alt="{{ featured.title }}" decoding="async">
     </div>
-  </article>
-  {% endif %}
-  {% endwith %}
+    <div class="blog-feature__copy">
+      <div class="blog-feature__meta">
+        <span class="blog-feature__pill">{{ featured.category.name }}</span>
+        <span>{{ featured.date_uk }}</span>
+        <span class="blog-feature__dot" aria-hidden="true"></span>
+        <span>{{ featured.reading_label }}</span>
+      </div>
+      <h2 class="blog-feature__title">{{ featured.title|brand_mark }}</h2>
+      {% if featured.excerpt %}<p class="blog-feature__text">{{ featured.excerpt|brand_mark }}</p>{% endif %}
+      <span class="blog-feature__more">Читати повністю
+        <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
+      </span>
+    </div>
+  </a>
   {% endif %}
 
+  {% if posts %}
   <div class="blog-grid">
     {% for post in posts %}
-    {% if page_obj and page_obj.number > 1 or not forloop.first %}
-    <article class="blog-card">
-      <a class="blog-card__media" href="{% url 'blog:post_detail' post.slug %}">
-        <img src="{{ post.image_url }}" alt="{{ post.title }}" decoding="async">
-      </a>
-      <div class="card__meta" style="margin-top:12px">{{ post.published_at|date:"d.m.Y" }} · {{ post.category.name }}</div>
-      <a class="blog-card__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
+    <a class="blog-card" href="{% url 'blog:post_detail' post.slug %}">
+      <div class="blog-card__media">
+        <img src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+      </div>
+      <div class="blog-card__meta">
+        <span class="blog-card__cat">{{ post.category.name }}</span>
+        <span class="blog-card__dot" aria-hidden="true"></span>
+        <span>{{ post.date_uk }}</span>
+      </div>
+      <h3 class="blog-card__title">{{ post.title|brand_mark }}</h3>
       {% if post.excerpt %}<p class="blog-card__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
-      <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}" style="margin-top:12px">Читати повністю
-        <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
-      </a>
-    </article>
-    {% endif %}
-    {% empty %}
-    <div class="card u-muted">Статей поки немає</div>
+    </a>
     {% endfor %}
   </div>
+  {% elif not featured %}
+  <p class="blog-empty">Нічого не знайдено</p>
+  {% endif %}
 
-  {% if page_obj.has_other_pages %}
-  <nav class="pagination" aria-label="Пагінація" style="display:flex;gap:12px;align-items:center;justify-content:center;margin-top:32px">
-    {% if page_obj.has_previous %}
-    <a class="btn btn--ghost" hx-get="?page={{ page_obj.previous_page_number }}" hx-target="#blog-list" hx-swap="outerHTML" href="?page={{ page_obj.previous_page_number }}">Назад</a>
-    {% endif %}
-    <span class="u-muted">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-    {% if page_obj.has_next %}
-    <a class="btn btn--ghost" hx-get="?page={{ page_obj.next_page_number }}" hx-target="#blog-list" hx-swap="outerHTML" href="?page={{ page_obj.next_page_number }}">Далі</a>
-    {% endif %}
-  </nav>
+  {% if has_more %}
+  <div class="blog-more">
+    <a class="blog-more__btn" href="{{ list_url }}?limit={{ next_limit }}" hx-get="{{ list_url }}?limit={{ next_limit }}" hx-target="#blog-list" hx-swap="outerHTML">Показати ще</a>
+  </div>
   {% endif %}
 </div>

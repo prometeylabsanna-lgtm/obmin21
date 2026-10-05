@@ -3,12 +3,16 @@
 
 {% block title %}{{ page_title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="page-hero blog-hero">
-  <h1 class="page-hero__title">Корисні <span class="u-accent">статті</span></h1>
+<section class="blog-hero">
+  <div class="blog-hero__copy">
+    <span class="pill">Блог</span>
+    <h1 class="blog-hero__title">Корисні <span class="u-accent">статті</span></h1>
+    <p class="blog-hero__lead">Пояснюємо, як працює курс валют, як зберегти заощадження та безпечно обміняти гроші.</p>
+  </div>
   <div class="blog-filters">
-    <a class="{% if not active_category %}is-active{% endif %}" href="{% url 'blog:post_list' %}">Усі</a>
+    <a class="blog-filters__chip{% if not active_category %} is-active{% endif %}" href="{% url 'blog:post_list' %}">Усі</a>
     {% for cat in categories %}
-    <a class="{% if active_category.slug == cat.slug %}is-active{% endif %}" href="{% url 'blog:category' cat.slug %}">{{ cat.name }}</a>
+    <a class="blog-filters__chip{% if active_category.slug == cat.slug %} is-active{% endif %}" href="{% url 'blog:category' cat.slug %}">{{ cat.name }}</a>
     {% endfor %}
   </div>
 </section>
