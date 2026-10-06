@@ -4,6 +4,7 @@
       hx-post="{% url 'leads:contact_submit' %}"
       hx-target="closest form"
       hx-swap="outerHTML"
+      hx-disabled-elt="find button[type=submit]"
       data-qa="contact-form"
       id="contact-form">
   {% csrf_token %}

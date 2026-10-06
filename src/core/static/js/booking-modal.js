@@ -157,6 +157,14 @@
       var resultText = fmt(n * rate, dTo) + ' ' + (SYM[toCode] || toCode);
       var forText = 'за ' + fmt(n, 6) + ' ' + (SYM[fromCode] || fromCode);
       if (fixTextEl) fixTextEl.textContent = resultText + ' ' + forText;
+      var pairCode = fromCode === 'UAH' ? toCode : fromCode;
+      var pairItem = byCode(list, pairCode);
+      var pairInput = root.querySelector('[name="pair"]');
+      var amountInput = root.querySelector('[name="amount_give"]');
+      var dirInput = root.querySelector('[name="direction"]');
+      if (pairInput && pairItem && pairItem.pair_id) pairInput.value = pairItem.pair_id;
+      if (amountInput) amountInput.value = String(n).replace(',', '.');
+      if (dirInput) dirInput.value = fromCode === 'UAH' ? 'buy' : 'sell';
       expiresAt = Date.now() + 30 * 60 * 1000;
       if (timerId) clearInterval(timerId);
       tick();

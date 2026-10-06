@@ -1,0 +1,8 @@
+<div class="modal-backdrop">
+  <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="error-title" data-qa="form-error">
+    <button type="button" class="modal__close" data-close-modal aria-label="Закрити">×</button>
+    <h2 class="modal__title" id="error-title">{{ title|default:"Перевірте дані" }}</h2>
+    <p class="modal__lead" style="margin-left:auto;margin-right:auto;max-width:320px">{{ message }}</p>
+    <button type="button" class="btn btn--block" style="margin-top:24px" data-close-modal>Закрити</button>
+  </div>
+</div>

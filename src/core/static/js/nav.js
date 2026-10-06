@@ -162,6 +162,19 @@
         el.textContent = detail.bannerText;
       });
     }
+    if (detail.slug) {
+      try {
+        var ch = new BroadcastChannel('obmin21-city');
+        ch.postMessage({ slug: detail.slug });
+        ch.close();
+      } catch (err) {}
+      try {
+        localStorage.setItem('obmin21-city-sync', JSON.stringify({
+          slug: detail.slug,
+          t: Date.now()
+        }));
+      } catch (err) {}
+    }
     var branches = document.getElementById('branch-list');
     if (branches) {
       window.location.reload();
@@ -178,5 +191,30 @@
     if (evt.target && evt.target.id === 'city-chrome') {
       initCitySelect(evt.target);
     }
+  });
+
+  function currentCitySlug() {
+    var btn = document.querySelector('[data-qa="city-toggle"]');
+    return (btn && btn.getAttribute('data-city-slug')) || '';
+  }
+
+  function reloadIfCityDiffers(slug) {
+    if (!slug || slug === currentCitySlug()) return;
+    window.location.reload();
+  }
+
+  try {
+    var cityChannel = new BroadcastChannel('obmin21-city');
+    cityChannel.onmessage = function (evt) {
+      if (evt.data && evt.data.slug) reloadIfCityDiffers(evt.data.slug);
+    };
+  } catch (err) {}
+
+  window.addEventListener('storage', function (evt) {
+    if (evt.key !== 'obmin21-city-sync' || !evt.newValue) return;
+    try {
+      var payload = JSON.parse(evt.newValue);
+      reloadIfCityDiffers(payload.slug);
+    } catch (err) {}
   });
 })();

@@ -46,7 +46,7 @@ def _store_replies(chat_id: str, replies: list[Outgoing]) -> list[ChatMessage]:
         saved.append(_store(
             chat_id,
             ChatMessage.Role.BOT,
-            item.html.replace('\n', '<br>'),
+            item.html,
             item.buttons,
         ))
     return saved

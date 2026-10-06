@@ -252,7 +252,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         settings = SiteSettings.load()
         settings.site_name = 'Обмін21'
-        settings.default_phone = '+38 (099) 123-45-67'
+        settings.default_phone = '+38 (099) 222-22-22'
         settings.telegram_url = 'https://t.me/obmin21'
         settings.instagram_url = 'https://instagram.com/'
         settings.facebook_url = 'https://facebook.com/'
@@ -308,6 +308,7 @@ class Command(BaseCommand):
         contacts_page.title = 'Контакти'
         contacts_page.heading = 'Зв’яжіться'
         contacts_page.title_accent = 'з нами'
+        contacts_page.phone = '+38 (099) 222-22-22'
         contacts_page.branches_title = 'Відділення'
         contacts_page.branches_title_accent = 'по Україні'
         contacts_page.save()
@@ -428,8 +429,8 @@ class Command(BaseCommand):
             for board, bmul, smul in (
                 (RateBoard.RETAIL, '1', '1'),
             ):
-                buy_v = (Decimal(buy) * Decimal(bmul)).quantize(Decimal('0.01'))
-                sell_v = (Decimal(sell) * Decimal(smul)).quantize(Decimal('0.01'))
+                buy_v = (Decimal(buy) * Decimal(bmul)).quantize(Decimal('0.0001'))
+                sell_v = (Decimal(sell) * Decimal(smul)).quantize(Decimal('0.0001'))
                 Quote.objects.update_or_create(
                     pair=pair,
                     board=board,
@@ -462,8 +463,8 @@ class Command(BaseCommand):
                         board=board,
                         city=city,
                         defaults={
-                            'buy': (buy_v * factor).quantize(Decimal('0.01')),
-                            'sell': (sell_v * factor).quantize(Decimal('0.01')),
+                    'buy': (buy_v * factor).quantize(Decimal('0.0001')),
+                    'sell': (sell_v * factor).quantize(Decimal('0.0001')),
                             'is_active': True,
                             'updated_at': timezone.now(),
                         },

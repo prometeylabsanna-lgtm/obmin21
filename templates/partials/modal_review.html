@@ -12,6 +12,7 @@
           hx-post="{% url 'reviews:review_submit' %}"
           hx-target="#modal-root"
           hx-swap="innerHTML"
+          hx-disabled-elt="find button[type=submit]"
           data-qa="review-form">
       {% csrf_token %}
       <div style="font-size:14px">Ваша оцінка</div>

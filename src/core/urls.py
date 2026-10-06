@@ -10,4 +10,5 @@ urlpatterns = [
     path('partials/rates/', views.rates_partial, name='rates_partial'),
     path('partials/quotes.json', views.quotes_json, name='quotes_json'),
     path('robots.txt', views.robots_txt, name='robots'),
+    path('sitemap.xml', views.safe_sitemap, name='sitemap'),
 ]

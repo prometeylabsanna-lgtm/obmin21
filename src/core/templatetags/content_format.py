@@ -5,6 +5,7 @@ from django import template
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from src.core.phones import phone_tel as to_tel
 from src.core.plain_text import html_to_plain_legal
 
 register = template.Library()
@@ -64,6 +65,11 @@ def _ua_grouped(n):
     return sign + ' '.join(reversed(parts))
 
 
+@register.filter(name='phone_tel')
+def phone_tel_filter(value):
+    return to_tel(value)
+
+
 @register.filter(name='format_rate')
 def format_rate(value, style='fixed4'):
     """
@@ -84,6 +90,9 @@ def format_rate(value, style='fixed4'):
         mode = 'compact' if abs(amount) >= Decimal('1000') else 'fixed4'
 
     if mode == 'compact':
+        if abs(amount) < 1:
+            quantized = amount.quantize(Decimal('0.0001'))
+            return format(quantized, 'f')
         if amount == amount.to_integral_value():
             return _ua_grouped(int(amount))
         quantized = amount.quantize(Decimal('0.01'))

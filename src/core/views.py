@@ -2,7 +2,10 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView
+from django.contrib.sitemaps.views import sitemap as django_sitemap
+import logging
 
+from src.core.sitemaps import sitemaps
 from src.core.theme import theme_css_cached
 
 from src.blog.selectors import get_published_posts
@@ -10,6 +13,8 @@ from src.content.models import AdvantagesPage, FaqItem, HomePage, Service
 from src.rates.models import RateBoard
 from src.rates.selectors import get_quotes_for_city
 from src.reviews.selectors import get_published_reviews
+
+logger = logging.getLogger(__name__)
 
 
 class HomeView(TemplateView):
@@ -97,6 +102,19 @@ def quotes_json(request):
 
 def robots_txt(request):
     return render(request, 'core/robots.txt', content_type='text/plain')
+
+
+@require_GET
+def safe_sitemap(request):
+    try:
+        return django_sitemap(request, sitemaps=sitemaps)
+    except Exception:
+        logger.exception('sitemap.xml failed')
+        xml = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>'
+        )
+        return HttpResponse(xml, content_type='application/xml')
 
 
 @require_GET

@@ -4,10 +4,10 @@
       <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9" stroke="#8A909C" stroke-width="1.4"></path></svg>
     </button>
 
-    <div class="bk-step" data-bk-panel="1">
+    <div class="bk-step" data-bk-panel="1"{% if form.is_bound and form.errors %} hidden{% endif %}>
       <div class="modal__step">Крок 1 з 2</div>
       <h2 class="modal__title" id="request-title">Зафіксувати <span class="accent">курс</span></h2>
-      <p class="modal__lead">Оберіть валюти та суму. Після фіксації курс діятиме 30 хвилин.</p>
+      <p class="modal__lead">Оберіть валюти та суму. Курс закріпиться після відправки заявки і діятиме 30 хвилин.</p>
 
       <div class="bk-calc">
         <div>
@@ -49,27 +49,59 @@
       </div>
 
       <button type="button" class="btn btn--accent btn--block bk-fix" data-bk-fix>
-        <svg width="13" height="14" viewBox="0 0 12 14" aria-hidden="true"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#fff" fill="none" stroke-width="1.3"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#fff" fill="none" stroke-width="1.3"></path></svg>
-        Зафіксувати на 30 хв
+        Продовжити
       </button>
     </div>
 
-    <div class="bk-step" data-bk-panel="2" hidden>
+    <div class="bk-step" data-bk-panel="2"{% if not form.is_bound or not form.errors %} hidden{% endif %}>
       <div class="modal__step">Крок 2 з 2</div>
       <h2 class="modal__title">Забронювати <span class="accent">заявку</span></h2>
-      <p class="modal__lead">Оберіть зручний спосіб зв’язку. Консультант підтвердить заявку і підготує суму.</p>
+      <p class="modal__lead">Залиште контакти. Курс закріпиться після відправки заявки.</p>
 
       <div class="bk-fixed">
         <span>
-          <span class="bk-fixed__label">
-            <svg width="12" height="13" viewBox="0 0 12 14" aria-hidden="true"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="var(--color-accent)" fill="none" stroke-width="1.2"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="var(--color-accent)" fill="none" stroke-width="1.2"></path></svg>
-            Курс зафіксовано
-          </span>
+          <span class="bk-fixed__label">Попередній розрахунок</span>
           <span class="bk-fixed__text" data-bk-fix-text></span>
         </span>
         <span class="bk-fixed__time" data-bk-timer>30:00</span>
       </div>
 
+      <form class="form"
+            method="post"
+            action="{% url 'leads:request_modal' %}"
+            hx-post="{% url 'leads:request_modal' %}"
+            hx-target="#modal-root"
+            hx-swap="innerHTML"
+            hx-disabled-elt="find button[type=submit]"
+            data-qa="booking-form">
+        {% csrf_token %}
+        {{ form.pair }}
+        {{ form.board }}
+        {{ form.direction }}
+        {{ form.amount_give }}
+        {{ form.amount_receive }}
+        {{ form.rate_fixed }}
+        {{ form.branch }}
+        {{ form.messenger }}
+        <label class="form__label">Імʼя
+          {{ form.name }}
+          {% if form.name.errors %}<span class="form__error">{{ form.name.errors.0 }}</span>{% endif %}
+        </label>
+        <label class="form__label">Телефон
+          {{ form.phone }}
+          {% if form.phone.errors %}<span class="form__error">{{ form.phone.errors.0 }}</span>{% endif %}
+        </label>
+        <label class="form__check">
+          {{ form.consent }}
+          <span>Згоден з <a class="link-accent" href="{% url 'content:privacy' %}">політикою конфіденційності</a></span>
+        </label>
+        {% if form.consent.errors %}<span class="form__error">{{ form.consent.errors.0 }}</span>{% endif %}
+        {% if form.non_field_errors %}<span class="form__error">{{ form.non_field_errors.0 }}</span>{% endif %}
+        {% if form.pair.errors %}<span class="form__error">{{ form.pair.errors.0 }}</span>{% endif %}
+        <button type="submit" class="btn btn--accent btn--block">Надіслати заявку</button>
+      </form>
+
+      {% if phone_tel %}
       <div class="bk-contacts">
         <a class="bk-contact" href="tel:{{ phone_tel }}">
           <span class="bk-contact__icon" aria-hidden="true">
@@ -79,7 +111,6 @@
             <span class="bk-contact__title">Зателефонувати</span>
             <span class="bk-contact__meta">{{ phone_display }}</span>
           </span>
-          <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
         </a>
         <a class="bk-contact" href="{{ telegram_url }}" target="_blank" rel="noopener">
           <span class="bk-contact__icon" aria-hidden="true">
@@ -89,9 +120,9 @@
             <span class="bk-contact__title">Написати в Telegram</span>
             <span class="bk-contact__meta">{{ telegram_handle }}</span>
           </span>
-          <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
         </a>
       </div>
+      {% endif %}
 
       <div class="bk-foot">
         <button type="button" class="bk-back" data-bk-back>← Змінити суму</button>

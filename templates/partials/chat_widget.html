@@ -24,7 +24,7 @@
       hx-trigger="none"
       hx-swap="innerHTML"
     ></div>
-    <form class="site-chat__form" data-chat-form hx-post="{% url 'bot:chat_send' %}" hx-target="#site-chat-log" hx-swap="beforeend">
+    <form class="site-chat__form" data-chat-form hx-post="{% url 'bot:chat_send' %}" hx-target="#site-chat-log" hx-swap="beforeend" hx-disabled-elt="find button[type=submit]">
       <label class="site-chat__sr" for="site-chat-input">Повідомлення</label>
       <input id="site-chat-input" class="site-chat__input" name="text" type="text" maxlength="2000" autocomplete="off" enterkeyhint="send" placeholder="Напишіть повідомлення" data-chat-input>
       <button type="submit" class="site-chat__send" aria-label="Надіслати">Надіслати</button>

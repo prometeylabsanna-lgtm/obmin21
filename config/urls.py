@@ -1,10 +1,8 @@
 from django.contrib import admin
-from django.contrib.sitemaps.views import sitemap
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
-from src.core.sitemaps import sitemaps
 from src.core.views import page_not_found
 
 urlpatterns = [
@@ -18,7 +16,6 @@ urlpatterns = [
     path('', include('src.reviews.urls')),
     path('', include('src.rates.urls')),
     path('', include('src.bot.urls')),
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 handler404 = page_not_found

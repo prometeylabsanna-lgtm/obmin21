@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django import forms
 
 from src.leads.models import ContactMessage, ExchangeRequest
@@ -28,6 +30,7 @@ class ExchangeRequestForm(forms.ModelForm):
             'name': forms.TextInput(attrs={
                 'class': 'form__input',
                 'autocomplete': 'name',
+                'placeholder': "Ваше ім'я",
                 'required': True,
             }),
             'phone': forms.TextInput(attrs={
@@ -35,24 +38,17 @@ class ExchangeRequestForm(forms.ModelForm):
                 'type': 'tel',
                 'autocomplete': 'tel',
                 'inputmode': 'tel',
+                'placeholder': '+380',
                 'required': True,
             }),
-            'messenger': forms.TextInput(attrs={'class': 'form__input'}),
-            'pair': forms.Select(attrs={'class': 'form__input'}),
-            'board': forms.Select(attrs={'class': 'form__input'}),
-            'direction': forms.Select(attrs={'class': 'form__input'}),
-            'amount_give': forms.NumberInput(attrs={
-                'class': 'form__input',
-                'step': '0.01',
-                'min': '0',
-            }),
-            'amount_receive': forms.NumberInput(attrs={
-                'class': 'form__input',
-                'step': '0.01',
-                'min': '0',
-            }),
+            'messenger': forms.HiddenInput(),
+            'pair': forms.HiddenInput(),
+            'board': forms.HiddenInput(),
+            'direction': forms.HiddenInput(),
+            'amount_give': forms.HiddenInput(),
+            'amount_receive': forms.HiddenInput(),
             'rate_fixed': forms.HiddenInput(),
-            'branch': forms.Select(attrs={'class': 'form__input'}),
+            'branch': forms.HiddenInput(),
             'consent': forms.CheckboxInput(attrs={'class': 'form__checkbox'}),
         }
 
@@ -62,6 +58,8 @@ class ExchangeRequestForm(forms.ModelForm):
         self.fields['pair'].queryset = CurrencyPair.objects.filter(is_active=True)
         self.fields['board'].choices = RateBoard.choices
         self.fields['rate_fixed'].required = False
+        self.fields['amount_receive'].required = False
+        self.fields['messenger'].required = False
         if city is not None:
             self.fields['branch'].queryset = get_city_branches(city)
         else:
@@ -79,18 +77,28 @@ class ExchangeRequestForm(forms.ModelForm):
             raise forms.ValidationError('Потрібна згода на обробку даних')
         return consent
 
+    def clean_amount_give(self):
+        value = self.cleaned_data.get('amount_give')
+        if value is None or value <= 0:
+            raise forms.ValidationError('Вкажіть суму')
+        return value
+
     def clean(self):
         cleaned = super().clean()
         pair = cleaned.get('pair')
         direction = cleaned.get('direction') or 'sell'
         board = cleaned.get('board') or RateBoard.RETAIL
-        rate = cleaned.get('rate_fixed')
-        if pair and rate is None:
-            quote = get_quote(pair, self.city, board)
-            if quote is None:
-                self.add_error('pair', 'Немає курсу для цієї пари')
-            else:
-                cleaned['rate_fixed'] = quote.buy if direction == 'sell' else quote.sell
+        amount_give = cleaned.get('amount_give')
+        if not pair:
+            return cleaned
+        quote = get_quote(pair, self.city, board)
+        if quote is None:
+            self.add_error('pair', 'Немає курсу для цієї пари')
+            return cleaned
+        rate = quote.buy if direction == 'sell' else quote.sell
+        cleaned['rate_fixed'] = rate
+        if amount_give is not None:
+            cleaned['amount_receive'] = (amount_give * rate).quantize(Decimal('0.01'))
         return cleaned
 
 

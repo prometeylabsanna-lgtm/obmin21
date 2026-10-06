@@ -1,6 +1,7 @@
 from src.content.models import Service
 from src.core.breadcrumbs import breadcrumbs_for_request
 from src.core.models import SiteSettings
+from src.core.phones import phone_tel
 from src.core.theme import URL_THEME_MAP, theme_version
 
 
@@ -17,6 +18,7 @@ def site_chrome(request):
         'site_settings': settings,
         'active_city': city,
         'active_phone': phone,
+        'phone_href': phone_tel(phone),
         'cities': getattr(request, 'cities', []),
         'city_branches': getattr(request, 'city_branches', []),
         'breadcrumb_items': breadcrumbs_for_request(request),

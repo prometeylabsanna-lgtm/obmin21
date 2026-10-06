@@ -88,7 +88,9 @@ class Obmin21SmokeTests(TestCase):
             'branch': self.branch_a.pk,
             'consent': True,
         })
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 422)
+        self.assertNotContains(resp, 'Заявку прийнято', status_code=422)
+        self.assertContains(resp, 'Вкажіть коректний телефон', status_code=422)
         self.assertEqual(ExchangeRequest.objects.count(), before)
 
     def test_valid_request_creates_row(self):
@@ -115,6 +117,17 @@ class Obmin21SmokeTests(TestCase):
         content = resp.content.decode()
         self.assertIn('public-post', content)
         self.assertNotIn('draft-post', content)
+
+    def test_sitemap_static_names_reverse(self):
+        from src.core.sitemaps import StaticSitemap
+        from django.urls import reverse
+        for name in StaticSitemap().items():
+            self.assertTrue(reverse(name))
+
+    def test_footer_uses_city_phone(self):
+        resp = self.client.get(reverse('core:home'))
+        self.assertContains(resp, self.city_a.phone)
+        self.assertNotContains(resp, '+38(044)444 44 44')
 
     def test_csrf_required_on_contact(self):
         c = Client(enforce_csrf_checks=True)

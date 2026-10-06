@@ -26,6 +26,8 @@ def get_quotes_for_city(city, board=RateBoard.RETAIL):
     by_pair = {}
     updated_at = None
     for quote in quotes:
+        if quote.buy <= 0 or quote.sell <= 0:
+            continue
         existing = by_pair.get(quote.pair_id)
         prefer_city = quote.city_id is not None
         if existing is None:
@@ -49,6 +51,9 @@ def get_quote(pair, city, board=RateBoard.RETAIL):
     city_id = city.id if city else None
     qs = Quote.objects.filter(pair=pair, board=board, is_active=True)
     city_quote = qs.filter(city_id=city_id).first() if city_id else None
-    if city_quote:
+    if city_quote and city_quote.buy > 0 and city_quote.sell > 0:
         return city_quote
-    return qs.filter(city__isnull=True).first()
+    global_quote = qs.filter(city__isnull=True).first()
+    if global_quote and global_quote.buy > 0 and global_quote.sell > 0:
+        return global_quote
+    return None

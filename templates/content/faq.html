@@ -11,7 +11,9 @@
     <p class="faq-cta__text">{{ page.cta_text }}</p>
   </div>
   <div class="faq-cta__actions">
-    <a class="btn btn--accent faq-cta__btn" href="tel:{% if active_phone %}{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}{% else %}+380444444444{% endif %}">{{ page.cta_phone }}</a>
+    {% if phone_href %}
+    <a class="btn btn--accent faq-cta__btn" href="tel:{{ phone_href }}">{{ page.cta_phone }}</a>
+    {% endif %}
     <a class="btn faq-cta__tg" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">{{ page.cta_telegram }}</a>
   </div>
 </section>
