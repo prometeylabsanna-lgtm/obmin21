@@ -10,12 +10,24 @@ from src.content.models import (
     FaqPage,
     OfferPage,
     PrivacyPage,
+    ReviewsPage,
     Service,
     ServicesPage,
 )
 from src.content.service_blocks import SERVICE_BLOCKS
 from src.network.models import Branch
 from src.reviews.selectors import get_published_reviews
+
+
+def _shared_blocks():
+    faq_page = FaqPage.load()
+    reviews_page = ReviewsPage.load()
+    return {
+        'faq_page': faq_page,
+        'faq_items': FaqItem.objects.filter(is_active=True)[:8],
+        'home_reviews': get_published_reviews(8),
+        'reviews_page': reviews_page,
+    }
 
 
 def services_list(request):
@@ -27,26 +39,28 @@ def services_list(request):
         svc.block_points = list(block.get('points', ()))
         svc.block_cta = block.get('cta', 'Забронювати заявку')
         services.append(svc)
-    return render(request, 'content/services_list.html', {
+    ctx = {
         'page': page,
         'services': services,
-        'home_reviews': get_published_reviews(8),
         'news_posts': list(get_published_posts()[:10]),
         'page_title': page.seo_title or page.title,
         'page_description': page.seo_description or page.hero_text[:160],
-    })
+    }
+    ctx.update(_shared_blocks())
+    return render(request, 'content/services_list.html', ctx)
 
 
 def advantages_page(request):
     page = AdvantagesPage.load()
-    return render(request, 'content/advantages.html', {
+    ctx = {
         'page': page,
         'items': AdvantageItem.objects.filter(is_active=True),
         'audiences': AdvantageItem.Audience.choices,
-        'home_reviews': get_published_reviews(8),
         'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or page.title,
-    })
+        'page_description': page.seo_description or page.hero_lead[:160],
+    }
+    ctx.update(_shared_blocks())
+    return render(request, 'content/advantages.html', ctx)
 
 
 def contacts_page(request):
@@ -109,9 +123,11 @@ def cookies_page(request):
 
 def faq_page(request):
     page = FaqPage.load()
-    return render(request, 'content/faq.html', {
+    ctx = {
         'page': page,
-        'items': FaqItem.objects.filter(is_active=True),
         'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or page.title,
-    })
+        'page_description': page.seo_description or page.lead or page.title,
+    }
+    ctx.update(_shared_blocks())
+    ctx['faq_items'] = FaqItem.objects.filter(is_active=True)
+    return render(request, 'content/faq.html', ctx)

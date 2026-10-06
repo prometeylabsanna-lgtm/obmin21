@@ -18,5 +18,5 @@ class MapCity(City):
 class ContactCity(City):
     class Meta:
         proxy = True
-        verbose_name = 'Адреси міст'
-        verbose_name_plural = 'Адреси міст'
+        verbose_name = 'Адреси відділень'
+        verbose_name_plural = 'Адреси відділень'

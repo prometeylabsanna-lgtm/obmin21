@@ -49,8 +49,10 @@ def _hover_from_accent(accent: str) -> tuple[str, str]:
     return hover, f'{r}, {g}, {b}'
 
 
-def _rule(slug: str, bg: str, text: str, accent: str) -> str:
+def _rule(slug: str, bg: str, text: str, accent: str, highlight: str = '') -> str:
     hover, rgb = _hover_from_accent(accent)
+    if highlight:
+        hover = highlight
     return (
         f'[data-theme="{slug}"] {{\n'
         f'  --color-bg: {bg};\n'
@@ -89,12 +91,14 @@ def build_theme_css() -> str:
             settings.header_color_bg,
             settings.header_color_text,
             settings.header_color_accent,
+            settings.header_color_highlight,
         ),
         _rule(
             'footer',
             settings.footer_color_bg,
             settings.footer_color_text,
             settings.footer_color_accent,
+            settings.footer_color_highlight,
         ),
     ]
     pages = (
@@ -113,7 +117,13 @@ def build_theme_css() -> str:
     )
     for model in pages:
         obj = model.load()
-        parts.append(_rule(obj.theme_slug, obj.color_bg, obj.color_text, obj.color_accent))
+        parts.append(_rule(
+            obj.theme_slug,
+            obj.color_bg,
+            obj.color_text,
+            obj.color_accent,
+            obj.color_highlight,
+        ))
     return ''.join(parts)
 
 

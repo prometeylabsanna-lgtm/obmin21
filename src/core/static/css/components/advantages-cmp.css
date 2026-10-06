@@ -140,7 +140,88 @@
   color: #6b7686;
 }
 
-.cmp-adv__cta {
+.cmp-adv__html {
+  margin: 0 0 28px;
+}
+
+.cmp-adv__html ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cmp-adv__html li {
+  padding: 18px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: start;
+  color: #fff;
+}
+
+.cmp-adv__html li::before {
+  content: '';
+  grid-row: 1 / span 8;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23fff' fill='none' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px 8px;
+}
+
+.cmp-adv__html p {
+  margin: 0;
+}
+
+.cmp-adv__html p + p,
+.cmp-adv__html ul + p,
+.cmp-adv__html p + ul {
+  margin-top: 12px;
+}
+
+.cmp-adv__html span {
+  display: block;
+  font-size: 13px;
+  color: #c3cad2;
+}
+
+.cmp-adv__html strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.35;
+}
+
+.cmp-adv__html--them {
+  margin-bottom: 0;
+}
+
+.cmp-adv__html--them li {
+  border-top-color: #eef0f3;
+}
+
+.cmp-adv__html--them li::before {
+  background-color: transparent;
+  border: 1px solid #d5d9df;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M1 1l6 6M7 1L1 7' stroke='%23B3B4B6' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-size: 8px 8px;
+}
+
+.cmp-adv__html--them span {
+  color: #8a909c;
+}
+
+.cmp-adv__html--them strong {
+  font-weight: 500;
+  color: #6b7686;
+}
   margin-top: auto;
   width: 100%;
   font-size: 15px;
@@ -168,7 +249,8 @@
     padding: 36px 40px;
   }
 
-  .cmp-adv__list strong {
+  .cmp-adv__list strong,
+  .cmp-adv__html strong {
     font-size: 18px;
   }
 

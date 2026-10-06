@@ -1,7 +1,14 @@
 from django.db import models
 
+from src.content.advantages_fields import AdvantagesSectionsMixin
+from src.content.faq_fields import FaqPageCopy
 from src.content.home_copy import HomeSectionCopy
-from src.core.colors import ACCENT_DEFAULT, COLOR_HELP, hex_color_validator
+from src.core.colors import (
+    ACCENT_DEFAULT,
+    ACCENT_HOVER_DEFAULT,
+    COLOR_HELP,
+    hex_color_validator,
+)
 from src.core.theme import bump_theme_cache
 
 
@@ -39,9 +46,16 @@ class ThemeFieldsMixin(models.Model):
         help_text=COLOR_HELP,
     )
     color_accent = models.CharField(
-        'Колір підсвітки',
+        'Колір акценту',
         max_length=7,
         default=ACCENT_DEFAULT,
+        validators=[hex_color_validator],
+        help_text=COLOR_HELP,
+    )
+    color_highlight = models.CharField(
+        'Колір підсвітки',
+        max_length=7,
+        default=ACCENT_HOVER_DEFAULT,
         validators=[hex_color_validator],
         help_text=COLOR_HELP,
     )
@@ -52,8 +66,8 @@ class ThemeFieldsMixin(models.Model):
 
 class HomePage(HomeSectionCopy, ThemeFieldsMixin, SingletonModel):
     theme_slug = 'home'
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
     promo_image = models.ImageField(
         'Фото',
         upload_to='home/',
@@ -125,8 +139,8 @@ class RatesPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'rates'
     title = models.CharField('Заголовок', max_length=120, default='Курси валют')
     intro = models.TextField('Вступний текст', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Сторінка курсів'
@@ -161,8 +175,8 @@ class ServicesPage(ThemeFieldsMixin, SingletonModel):
         max_length=320,
         default='Обмін валют, криптовалюти, перекази та інвестиційне золото з фіксацією курсу онлайн.',
     )
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Сторінка послуг'
@@ -176,7 +190,7 @@ class Service(models.Model):
     title = models.CharField('Назва', max_length=120)
     slug = models.SlugField('Адреса сторінки', unique=True, max_length=80)
     image = models.ImageField('Фото картки', upload_to='services/', blank=True)
-    short_desc = models.TextField('Короткий опис')
+    short_desc = models.CharField('Короткий опис', max_length=400)
     body = models.TextField('Повний опис', blank=True)
     show_on_home = models.BooleanField('Показувати на головній', default=True)
     home_page = models.ForeignKey(
@@ -189,8 +203,8 @@ class Service(models.Model):
     )
     is_active = models.BooleanField('Показувати на сайті', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         ordering = ['sort_order', 'id']
@@ -200,13 +214,34 @@ class Service(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        from src.core.plain_text import plain_text
 
-class AdvantagesPage(ThemeFieldsMixin, SingletonModel):
+        self.short_desc = plain_text(self.short_desc or '')[:400]
+        super().save(*args, **kwargs)
+
+    def image_src(self):
+        if self.image:
+            try:
+                return self.image.url
+            except ValueError:
+                pass
+        from django.contrib.staticfiles import finders
+        from django.templatetags.static import static
+
+        slug = self.slug or ''
+        name = f'images/services/{slug}.jpg'
+        if slug and finders.find(name):
+            return static(name)
+        return static('images/service-1.png')
+
+
+class AdvantagesPage(ThemeFieldsMixin, AdvantagesSectionsMixin, SingletonModel):
     theme_slug = 'advantages'
     title = models.CharField('Заголовок', max_length=120, default='Переваги')
     intro = models.TextField('Вступний текст', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Сторінка переваг'
@@ -291,8 +326,8 @@ class ContactsPage(ThemeFieldsMixin, SingletonModel):
         default='по Україні',
     )
     map_image = models.ImageField('Зображення карти', upload_to='contacts/', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Сторінка контактів'
@@ -310,8 +345,8 @@ class PrivacyPage(ThemeFieldsMixin, SingletonModel):
         default='Політика конфіденційності',
     )
     body = models.TextField('Текст сторінки', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Політика конфіденційності'
@@ -329,8 +364,8 @@ class OfferPage(ThemeFieldsMixin, SingletonModel):
         default='Публічна оферта',
     )
     body = models.TextField('Текст сторінки', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Публічна оферта'
@@ -348,8 +383,8 @@ class CookiePage(ThemeFieldsMixin, SingletonModel):
         default='Політика використання файлів Cookie',
     )
     body = models.TextField('Текст сторінки', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Політика файлів cookie'
@@ -363,8 +398,8 @@ class CitiesPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'cities'
     title = models.CharField('Заголовок', max_length=120, default='Міста мережі')
     intro = models.TextField('Вступний текст', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Сторінка міст'
@@ -374,16 +409,16 @@ class CitiesPage(ThemeFieldsMixin, SingletonModel):
         return self.title
 
 
-class FaqPage(ThemeFieldsMixin, SingletonModel):
+class FaqPage(FaqPageCopy, ThemeFieldsMixin, SingletonModel):
     theme_slug = 'faq'
-    title = models.CharField('Заголовок', max_length=120, default='Часті питання')
+    title = models.CharField('Заголовок', max_length=120, default='Відповіді на')
     intro = models.TextField('Вступний текст', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
-        verbose_name = 'Сторінка частих питань'
-        verbose_name_plural = 'Сторінка частих питань'
+        verbose_name = 'Сторінка питань і відповідей'
+        verbose_name_plural = 'Сторінка питань і відповідей'
 
     def __str__(self):
         return self.title
@@ -429,8 +464,8 @@ class BlogPage(ThemeFieldsMixin, SingletonModel):
             'та безпечно обміняти гроші.'
         ),
     )
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Сторінка Блог'
@@ -442,10 +477,25 @@ class BlogPage(ThemeFieldsMixin, SingletonModel):
 
 class ReviewsPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'reviews'
+    kicker = models.CharField('Підпис над заголовком', max_length=80, default='Відгуки')
     title = models.CharField('Заголовок', max_length=120, default='Відгуки')
-    intro = models.TextField('Вступний текст', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    title_accent = models.CharField(
+        'Акцент у заголовку',
+        max_length=80,
+        default='клієнтів',
+    )
+    intro = models.TextField(
+        'Підзаголовок',
+        blank=True,
+        default='Що кажуть люди, які вже обмінювали валюту в Обмін21.',
+    )
+    cta_button = models.CharField(
+        'Кнопка',
+        max_length=80,
+        default='Залишити відгук',
+    )
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
 
     class Meta:
         verbose_name = 'Сторінка відгуків'

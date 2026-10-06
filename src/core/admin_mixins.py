@@ -21,10 +21,31 @@ RICH_FIELD_NAMES = frozenset({
     'seo_block_body',
     'answer',
     'faq',
+    'cmp_us_html',
+    'cmp_them_html',
+})
+PLAIN_TEXTAREA_FIELDS = frozenset({
     'short_desc',
 })
+
+
+def _is_rich_field(name, extra=()):
+    return name in extra or name in RICH_FIELD_NAMES or name.endswith('_html')
+
+
+def _is_plain_textarea(name, extra=()):
+    if _is_rich_field(name, extra):
+        return False
+    if name in PLAIN_TEXTAREA_FIELDS:
+        return True
+    return name.endswith(('_lead', '_text'))
 COLOR_PREFIXES = ('color_', 'header_color_', 'footer_color_')
-PLAIN_SKIP = frozenset({'color_bg', 'color_text', 'color_accent'})
+PLAIN_SKIP = frozenset({
+    'color_bg',
+    'color_text',
+    'color_accent',
+    'color_highlight',
+})
 
 
 def _instance_from_request(admin, request):
@@ -37,15 +58,22 @@ def _instance_from_request(admin, request):
 
 def _image_widget(admin, db_field, request):
     instance = _instance_from_request(admin, request)
+    flag_code = ''
+    flag_mark = ''
+    if db_field.name == 'flag_image' and instance is not None:
+        flag_code = getattr(instance, 'flag_code', '') or ''
+        flag_mark = getattr(instance, 'flag_mark', '') or ''
     return CmsAdminImageWidget(
         fallback_url=image_fallback_url(db_field.name, instance),
         fit=image_preview_fit(db_field.name),
+        flag_code=flag_code,
+        flag_mark=flag_mark,
     )
 
 
 def _strip_plain_fields(obj, rich_names):
     for field in obj._meta.fields:
-        if field.name in rich_names or field.name in RICH_FIELD_NAMES:
+        if field.name in rich_names or _is_rich_field(field.name):
             continue
         if field.name in PLAIN_SKIP or field.name.startswith(COLOR_PREFIXES):
             continue
@@ -147,7 +175,12 @@ class AutoSlugAdmin:
 class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
     content_fields: tuple[str, ...] = ()
     content_fieldsets: tuple = ()
-    style_fields: tuple[str, ...] = ('color_bg', 'color_text', 'color_accent')
+    style_fields: tuple[str, ...] = (
+        'color_bg',
+        'color_text',
+        'color_accent',
+        'color_highlight',
+    )
     rich_fields: frozenset[str] = frozenset()
     plain_fields: frozenset[str] = frozenset()
 
@@ -194,6 +227,9 @@ class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         name = db_field.name
+        if _is_plain_textarea(name, self.rich_fields):
+            kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 3})
+            return db_field.formfield(**kwargs)
         if name in self.plain_fields:
             if db_field.get_internal_type() == 'TextField':
                 kwargs.setdefault(
@@ -201,7 +237,7 @@ class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
                     CmsAdminTextareaWidget(attrs={'rows': 18}),
                 )
             return db_field.formfield(**kwargs)
-        if name in self.rich_fields or name in RICH_FIELD_NAMES:
+        if _is_rich_field(name, self.rich_fields):
             kwargs['widget'] = CmsTinyMCE()
             return db_field.formfield(**kwargs)
         if name.startswith(COLOR_PREFIXES) or name in self.style_fields:
@@ -238,7 +274,10 @@ class ListUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         name = db_field.name
-        if name in self.rich_fields or name in RICH_FIELD_NAMES:
+        if _is_plain_textarea(name, self.rich_fields):
+            kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 3})
+            return db_field.formfield(**kwargs)
+        if _is_rich_field(name, self.rich_fields):
             kwargs['widget'] = CmsTinyMCE()
             return db_field.formfield(**kwargs)
         if isinstance(db_field, ImageField):

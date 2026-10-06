@@ -182,6 +182,38 @@ class HomeSectionCopy(models.Model):
         verbose_name='Статті на головній',
         help_text='Якщо порожньо — показуємо останні опубліковані.',
     )
+    show_map = models.BooleanField(
+        'Показувати блок на головній',
+        default=True,
+        help_text='Відділення беруться зі сторінки Контакти.',
+    )
+    show_why = models.BooleanField(
+        'Показувати блок на головній',
+        default=True,
+        help_text='Цифри беруться зі сторінки Переваги.',
+    )
+    show_services = models.BooleanField(
+        'Показувати блок на головній',
+        default=True,
+        help_text='Картки — зі сторінки Послуги (позначка «Показувати на головній»).',
+    )
+    show_faq = models.BooleanField(
+        'Показувати блок на головній',
+        default=True,
+        help_text='Питання беруться зі сторінки Питання і відповіді.',
+    )
+    faq_lead = models.CharField('Підзаголовок', max_length=400, blank=True)
+    show_reviews = models.BooleanField(
+        'Показувати блок на головній',
+        default=True,
+        help_text='Відгуки беруться зі сторінки Відгуки.',
+    )
+    reviews_lead = models.CharField('Підзаголовок', max_length=400, blank=True)
+    show_articles = models.BooleanField(
+        'Показувати блок на головній',
+        default=True,
+        help_text='Статті беруться з розділу Блог.',
+    )
 
     class Meta:
         abstract = True

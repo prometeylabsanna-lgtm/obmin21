@@ -1,0 +1,30 @@
+{% load static content_format %}
+<section class="faq-section {{ extra_class }}"{% if section_id %} id="{{ section_id }}"{% endif %} data-qa="{{ qa|default:'section-faq' }}">
+  <div class="faq-section__head">
+    <span class="pill">{{ faq_kicker }}</span>
+    <h2 class="faq-section__title">
+      <span class="calc-head__coin faq-section__coin" aria-hidden="true">
+        <span class="coin-spin">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+          <img src="{% static 'images/bitcoin.png' %}" alt="">
+        </span>
+      </span>
+      {{ faq_title }}{% if faq_title_accent %} <span class="u-accent">{{ faq_title_accent }}</span>{% endif %}
+    </h2>
+    {% if faq_lead %}<p class="faq-section__lead">{{ faq_lead }}</p>{% endif %}
+  </div>
+  <div class="faq-section__grid {{ grid_class }}" data-faq>
+    {% for item in faq_items %}
+    <div class="faq-card{% if forloop.first %} is-open{% endif %}">
+      <button type="button" class="faq-card__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+        <span>{{ item.question }}</span>
+        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="var(--color-accent)" fill="none" stroke-width="1.3"></path></svg>
+      </button>
+      <div class="faq-card__a">{{ item.answer|rich_html }}</div>
+    </div>
+    {% empty %}
+    <p class="u-muted">Питання зʼявляться незабаром</p>
+    {% endfor %}
+  </div>
+</section>

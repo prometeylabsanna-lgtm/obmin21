@@ -10,7 +10,15 @@ class ReviewAdmin(ListUnfoldAdmin):
     list_display = ('name', 'city_name', 'rating', 'is_published', 'created_at', 'published_at')
     list_filter = ('is_published', 'rating')
     search_fields = ('name', 'text')
-    actions = ['publish_reviews']
+    fields = (
+        'name',
+        'city_name',
+        'rating',
+        'text',
+        'is_published',
+        'published_at',
+    )
+    rich_fields = frozenset({'text'})
 
     @admin.action(description='Опублікувати на сайті')
     def publish_reviews(self, request, queryset):

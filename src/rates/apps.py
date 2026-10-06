@@ -5,4 +5,4 @@ class RatesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'src.rates'
     label = 'rates'
-    verbose_name = 'Курси'
+    verbose_name = 'Курси валют'

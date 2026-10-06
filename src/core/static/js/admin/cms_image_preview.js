@@ -19,6 +19,8 @@
       img.classList.remove('is-empty');
       if (frame) frame.classList.remove('is-empty');
       if (placeholder) placeholder.hidden = true;
+      var flag = wrap.querySelector('[data-cms-flag]');
+      if (flag) flag.hidden = true;
       var nameEl = wrap.querySelector('[data-cms-image-filename]');
       if (nameEl) nameEl.textContent = file.name;
     });

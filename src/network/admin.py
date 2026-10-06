@@ -29,7 +29,6 @@ class BannerCityAdmin(CitySectionAdmin):
 
 @admin.register(MapCity)
 class MapCityAdmin(CitySectionAdmin):
-    inlines = [BranchInline]
     fieldsets = (
         ('Обрати місто', {'fields': ('city_switch',)}),
         ('Місто', {'fields': ('name', 'phone')}),
@@ -47,14 +46,14 @@ class ContactCityAdmin(CitySectionAdmin):
 
 @admin.register(City)
 class CityAdmin(ListUnfoldAdmin):
-    list_display = ('name', 'slug', 'phone', 'is_active', 'sort_order')
+    list_display = ('name', 'phone', 'is_active', 'sort_order')
     list_editable = ('is_active', 'sort_order')
     search_fields = ('name',)
-    inlines = [BranchInline]
+    fields = ('name', 'phone', 'is_active', 'sort_order')
+    slug_source = 'name'
 
 
-@admin.register(Branch)
-class BranchAdmin(ListUnfoldAdmin):
-    list_display = ('address', 'city', 'phone', 'is_active', 'sort_order')
-    list_filter = ('city', 'is_active')
-    search_fields = ('address', 'phone')
+try:
+    admin.site.unregister(Branch)
+except admin.sites.NotRegistered:
+    pass

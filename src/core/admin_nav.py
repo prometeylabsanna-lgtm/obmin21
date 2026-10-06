@@ -59,6 +59,84 @@ def build_unfold_navigation():
                     'article',
                     'admin:content_homearticlessettings_changelist',
                 ),
+                _item(
+                    'Оформлення',
+                    'palette',
+                    'admin:content_homesearchsettings_changelist',
+                ),
+            ],
+        },
+        {
+            'title': 'Курси валют',
+            'separator': True,
+            'collapsible': True,
+            'items': [
+                _item(
+                    'Основна інформація',
+                    'title',
+                    'admin:content_ratespage_changelist',
+                ),
+                _item('Валютні пари', 'payments', 'admin:rates_currencypair_changelist'),
+                _item('Таблиця курсів', 'table_chart', 'admin:rates_quote_changelist'),
+            ],
+        },
+        {
+            'title': 'Послуги',
+            'separator': True,
+            'collapsible': True,
+            'items': [
+                _item(
+                    'Основна інформація',
+                    'title',
+                    'admin:content_servicespage_changelist',
+                ),
+                _item('Картки послуг', 'handyman', 'admin:content_service_changelist'),
+            ],
+        },
+        {
+            'title': 'Переваги',
+            'separator': True,
+            'collapsible': True,
+            'items': [
+                _item(
+                    'Сторінка переваг',
+                    'star',
+                    'admin:content_advantagespage_changelist',
+                ),
+            ],
+        },
+        {
+            'title': 'Питання і відповіді',
+            'separator': True,
+            'collapsible': True,
+            'items': [
+                _item(
+                    'Сторінка питань і відповідей',
+                    'quiz',
+                    'admin:content_faqpage_changelist',
+                ),
+                _item(
+                    'Питання',
+                    'help',
+                    'admin:content_faqitem_changelist',
+                ),
+            ],
+        },
+        {
+            'title': 'Відгуки',
+            'separator': True,
+            'collapsible': True,
+            'items': [
+                _item(
+                    'Сторінка відгуків',
+                    'reviews',
+                    'admin:content_reviewspage_changelist',
+                ),
+                _item(
+                    'Відгуки клієнтів',
+                    'rate_review',
+                    'admin:reviews_review_changelist',
+                ),
             ],
         },
         {
@@ -77,7 +155,8 @@ def build_unfold_navigation():
             'collapsible': True,
             'items': [
                 _item('Сторінка контактів', 'call', 'admin:content_contactspage_changelist'),
-                _item('Адреси по містах', 'location_city', 'admin:network_contactcity_changelist'),
+                _item('Міста', 'location_city', 'admin:network_city_changelist'),
+                _item('Адреси відділень', 'location_on', 'admin:network_contactcity_changelist'),
             ],
         },
         {
@@ -99,35 +178,12 @@ def build_unfold_navigation():
             ],
         },
         {
-            'title': 'Інші сторінки',
-            'separator': True,
-            'collapsible': True,
-            'items': [
-                _item('Курси валют', 'currency_exchange', 'admin:content_ratespage_changelist'),
-                _item('Послуги', 'handyman', 'admin:content_servicespage_changelist'),
-                _item('Переваги', 'star', 'admin:content_advantagespage_changelist'),
-                _item('Питання та відповіді', 'quiz', 'admin:content_faqpage_changelist'),
-                _item('Відгуки (сторінка)', 'reviews', 'admin:content_reviewspage_changelist'),
-                _item('Міста мережі', 'location_city', 'admin:network_city_changelist'),
-            ],
-        },
-        {
             'title': 'Заявки',
             'separator': True,
             'collapsible': True,
             'items': [
                 _item('Заявки на обмін', 'assignment', 'admin:leads_exchangerequest_changelist'),
                 _item('Повідомлення з форми', 'mail', 'admin:leads_contactmessage_changelist'),
-            ],
-        },
-        {
-            'title': 'Курси',
-            'separator': True,
-            'collapsible': True,
-            'items': [
-                _item('Валютні пари', 'payments', 'admin:rates_currencypair_changelist'),
-                _item('Таблиця курсів', 'table_chart', 'admin:rates_quote_changelist'),
-                _item('Відділення', 'store', 'admin:network_branch_changelist'),
             ],
         },
         {

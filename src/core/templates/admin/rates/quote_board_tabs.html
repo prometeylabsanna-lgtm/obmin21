@@ -1,0 +1,6 @@
+<nav class="cms-board-tabs" aria-label="Тип курсів">
+  {% for tab in rate_board_tabs %}
+  <a class="cms-board-tabs__btn{% if tab.value == rate_board %} is-active{% endif %}"
+     href="{{ tab.url }}">{{ tab.label }}</a>
+  {% endfor %}
+</nav>

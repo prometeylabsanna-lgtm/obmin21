@@ -1,5 +1,4 @@
 from django.contrib import admin
-from unfold.admin import StackedInline
 
 from src.content.cms_proxies import (
     HomeArticlesSettings,
@@ -12,36 +11,16 @@ from src.content.cms_proxies import (
     HomeWhySettings,
 )
 from src.content.models import (
-    AdvantageItem,
     AdvantagesPage,
-    BlogPage,
     CitiesPage,
     ContactsPage,
-    CookiePage,
-    FaqItem,
     FaqPage,
-    HomeStat,
-    OfferPage,
-    PrivacyPage,
     RatesPage,
     ReviewsPage,
-    Service,
     ServicesPage,
 )
-from src.core.admin_mixins import ListUnfoldAdmin, SingletonUnfoldAdmin
-from src.core.admin_widgets import CmsAdminTextareaWidget, CmsTinyMCE
-from src.core.plain_text import html_to_plain_legal
-from src.reviews.models import Review
-
-
-class TinyStackedInline(StackedInline):
-    rich_fields = frozenset()
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name in self.rich_fields:
-            kwargs['widget'] = CmsTinyMCE()
-            return db_field.formfield(**kwargs)
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
+from src.core.admin_mixins import SingletonUnfoldAdmin
+from src.core.admin_widgets import CmsAdminTextareaWidget
 
 
 class HomeSectionAdmin(SingletonUnfoldAdmin):
@@ -74,41 +53,6 @@ def _register_home(model, fields, rich_fields=(), inlines=(), extra=None):
     admin.site.register(model, type(f'{model.__name__}Admin', (HomeSectionAdmin,), attrs))
 
 
-class HomeStatInline(TinyStackedInline):
-    model = HomeStat
-    extra = 0
-    fields = ('number', 'text', 'sort_order', 'is_active')
-    rich_fields = frozenset({'text'})
-    tab = True
-
-
-class HomeFaqInline(TinyStackedInline):
-    model = FaqItem
-    extra = 0
-    fields = ('question', 'answer', 'sort_order', 'is_active')
-    fk_name = 'home_page'
-    rich_fields = frozenset({'answer'})
-    tab = True
-
-
-class HomeReviewInline(TinyStackedInline):
-    model = Review
-    extra = 0
-    fields = ('name', 'city_name', 'rating', 'text', 'is_published')
-    fk_name = 'home_page'
-    rich_fields = frozenset({'text'})
-    tab = True
-
-
-class HomeServiceInline(TinyStackedInline):
-    model = Service
-    extra = 0
-    fields = ('title', 'image', 'short_desc', 'show_on_home', 'sort_order', 'is_active')
-    fk_name = 'home_page'
-    rich_fields = frozenset({'short_desc'})
-    tab = True
-
-
 _register_home(
     HomeCalcSettings,
     (
@@ -137,52 +81,251 @@ _register_home(
 )
 _register_home(
     HomeWhySettings,
-    ('why_kicker', 'why_title', 'why_title_accent'),
-    ('text',),
-    (HomeStatInline,),
+    (
+        'show_why',
+        'why_kicker',
+        'why_title',
+        'why_title_accent',
+    ),
+    extra={
+        'content_fieldsets': ((
+            'Контент',
+            {
+                'description': (
+                    'Лише заголовок блоку на головній. '
+                    'Цифри — зі сторінки Переваги.'
+                ),
+                'fields': (
+                    'show_why',
+                    'why_kicker',
+                    'why_title',
+                    'why_title_accent',
+                ),
+            },
+        ),),
+    },
 )
 _register_home(
     HomeServicesSettings,
     (
+        'show_services',
         'services_kicker',
         'services_title',
         'services_title_accent',
         'services_lead',
     ),
-    ('short_desc',),
-    (HomeServiceInline,),
+    extra={
+        'content_fieldsets': ((
+            'Контент',
+            {
+                'description': (
+                    'Картки послуг додавайте в розділі Послуги. '
+                    'Тут лише заголовок блоку на головній.'
+                ),
+                'fields': (
+                    'show_services',
+                    'services_kicker',
+                    'services_title',
+                    'services_title_accent',
+                    'services_lead',
+                ),
+            },
+        ),),
+    },
 )
 _register_home(
     HomeFaqSettings,
-    ('faq_kicker', 'faq_title', 'faq_title_accent'),
-    ('answer',),
-    (HomeFaqInline,),
+    (
+        'show_faq',
+        'faq_kicker',
+        'faq_title',
+        'faq_title_accent',
+        'faq_lead',
+    ),
+    extra={
+        'content_fieldsets': ((
+            'Контент',
+            {
+                'description': (
+                    'Питання редагуйте в розділі Питання і відповіді. '
+                    'Тут лише заголовок блоку на головній.'
+                ),
+                'fields': (
+                    'show_faq',
+                    'faq_kicker',
+                    'faq_title',
+                    'faq_title_accent',
+                    'faq_lead',
+                ),
+            },
+        ),),
+    },
 )
 _register_home(
     HomeReviewsSettings,
-    ('reviews_kicker', 'reviews_title'),
-    ('text',),
-    (HomeReviewInline,),
-)
-_register_home(
-    HomeArticlesSettings,
     (
+        'show_reviews',
+        'reviews_kicker',
+        'reviews_title',
+        'reviews_lead',
+    ),
+    extra={
+        'content_fieldsets': ((
+            'Контент',
+            {
+                'description': (
+                    'Відгуки редагуйте в розділі Відгуки. '
+                    'Тут лише заголовок блоку на головній.'
+                ),
+                'fields': (
+                    'show_reviews',
+                    'reviews_kicker',
+                    'reviews_title',
+                    'reviews_lead',
+                ),
+            },
+        ),),
+    },
+)
+
+
+class HomeArticlesAdmin(HomeSectionAdmin):
+    content_fields = (
+        'show_articles',
         'articles_kicker',
         'articles_title',
         'articles_title_accent',
         'articles_lead',
-        'featured_posts',
-    ),
-    extra={'filter_horizontal': ('featured_posts',)},
-)
-_register_page(
-    HomeSearchSettings,
-    ('seo_title', 'seo_description'),
-)
-_register_page(
-    RatesPage,
-    ('title', 'intro', 'seo_title', 'seo_description'),
-)
+    )
+    content_fieldsets = (
+        ('Контент', {
+            'description': (
+                'Статті беруться з розділу Блог. '
+                'Тут лише заголовок блоку на головній.'
+            ),
+            'fields': (
+                'show_articles',
+                'articles_kicker',
+                'articles_title',
+                'articles_title_accent',
+                'articles_lead',
+            ),
+        }),
+    )
+    style_fields = ()
+
+
+admin.site.register(HomeArticlesSettings, HomeArticlesAdmin)
+
+
+class HomeLookAdmin(HomeSectionAdmin):
+    content_fields = ('show_map', 'seo_title', 'seo_description')
+    style_fields = (
+        'color_bg',
+        'color_text',
+        'color_accent',
+        'color_highlight',
+    )
+
+
+admin.site.register(HomeSearchSettings, HomeLookAdmin)
+
+
+class RatesPageAdmin(SingletonUnfoldAdmin):
+    content_fieldsets = (
+        ('Контент', {
+            'description': (
+                'Це сторінка сайту /kursy/ — «Всі валюти». '
+                'Тут лише заголовки й текст над таблицею. '
+                'Валютні пари та таблиця курсів — пункти нижче в цьому розділі.'
+            ),
+            'fields': ('title', 'intro', 'seo_title', 'seo_description'),
+        }),
+    )
+    rich_fields = frozenset()
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'intro':
+            kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 4})
+            return db_field.formfield(**kwargs)
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+
+admin.site.register(RatesPage, RatesPageAdmin)
+
+
+class AdvantagesPageAdmin(SingletonUnfoldAdmin):
+    rich_fields = frozenset({'cmp_us_html', 'cmp_them_html'})
+    content_fieldsets = (
+        ('Чому обирають Обмін21', {
+            'fields': (
+                'title',
+                'seo_title',
+                'seo_description',
+                'hero_kicker',
+                'hero_title',
+                'hero_title_accent',
+                'hero_lead',
+                'hero_btn_primary',
+                'hero_btn_secondary',
+                'hero_banner',
+                'color_hero_bg',
+                'hero_cards_image',
+            ),
+        }),
+        ('Обмін21 у цифрах', {
+            'fields': (
+                'stats_kicker',
+                'stats_title',
+                'stats_title_accent',
+                'stat_1_title',
+                'stat_1_text',
+                'stat_2_title',
+                'stat_2_text',
+                'stat_3_title',
+                'stat_3_text',
+                'stat_4_title',
+                'stat_4_text',
+            ),
+        }),
+        ('Чому люди обирають обмінювати в Обмін21', {
+            'fields': (
+                'why_kicker',
+                'why_title',
+                'why_title_accent',
+                'why_lead',
+                'why_banner',
+                'color_why_banner',
+                'why_coins',
+                'why_banner_title',
+                'why_banner_accent',
+                'why_banner_text',
+                'why_1_title',
+                'why_1_text',
+                'why_2_title',
+                'why_2_text',
+                'why_3_title',
+                'why_3_text',
+                'why_4_title',
+                'why_4_text',
+                'why_5_title',
+                'why_5_text',
+            ),
+        }),
+        ('Обмін21 чи звичайний обмінник', {
+            'fields': (
+                'cmp_kicker',
+                'cmp_title',
+                'cmp_title_accent',
+                'cmp_us_html',
+                'cmp_them_html',
+                'cmp_btn',
+            ),
+        }),
+    )
+
+
+admin.site.register(AdvantagesPage, AdvantagesPageAdmin)
 _register_page(
     ServicesPage,
     (),
@@ -200,10 +343,6 @@ _register_page(
             ),
         }),
     ),
-)
-_register_page(
-    AdvantagesPage,
-    ('title', 'seo_title', 'seo_description'),
 )
 _register_page(
     ContactsPage,
@@ -226,82 +365,81 @@ _register_page(
         'seo_description',
     ),
 )
-_register_page(ReviewsPage, ('title', 'seo_title', 'seo_description'))
 _register_page(CitiesPage, ('title', 'intro', 'seo_title', 'seo_description'))
-_register_page(FaqPage, ('title', 'seo_title', 'seo_description'))
-
-
-class LegalBodyWidget(CmsAdminTextareaWidget):
-    def format_value(self, value):
-        return html_to_plain_legal(super().format_value(value) or '')
-
-
-class LegalPageAdmin(SingletonUnfoldAdmin):
-    rich_fields = frozenset()
-    plain_fields = frozenset({'body'})
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'body':
-            kwargs['widget'] = LegalBodyWidget(attrs={'rows': 20})
-            return db_field.formfield(**kwargs)
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
-
-
 _register_page(
-    PrivacyPage,
-    ('title', 'body', 'seo_title', 'seo_description'),
-    admin_base=LegalPageAdmin,
-)
-_register_page(
-    OfferPage,
-    ('title', 'body', 'seo_title', 'seo_description'),
-    admin_base=LegalPageAdmin,
-)
-_register_page(
-    CookiePage,
-    ('title', 'body', 'seo_title', 'seo_description'),
-    admin_base=LegalPageAdmin,
-)
-
-
-@admin.register(BlogPage)
-class BlogPageAdmin(SingletonUnfoldAdmin):
-    content_fields = (
+    FaqPage,
+    (
+        'kicker',
         'title',
-        'heading',
         'title_accent',
-        'intro',
+        'lead',
+        'cta_title',
+        'cta_title_accent',
+        'cta_text',
+        'cta_phone',
+        'cta_telegram',
         'seo_title',
         'seo_description',
-    )
-    rich_fields = frozenset()
+    ),
+    extra={
+        'content_fieldsets': (
+            ('Заголовок сторінки', {
+                'description': (
+                    'Питання додавайте в пункті «Питання» цього розділу. '
+                    'Той самий список показується на головній та інших сторінках.'
+                ),
+                'fields': (
+                    'kicker',
+                    'title',
+                    'title_accent',
+                    'lead',
+                    'seo_title',
+                    'seo_description',
+                ),
+            }),
+            ('Підказка внизу', {
+                'fields': (
+                    'cta_title',
+                    'cta_title_accent',
+                    'cta_text',
+                    'cta_phone',
+                    'cta_telegram',
+                ),
+            }),
+        ),
+    },
+)
+_register_page(
+    ReviewsPage,
+    (
+        'kicker',
+        'title',
+        'title_accent',
+        'intro',
+        'cta_button',
+        'seo_title',
+        'seo_description',
+    ),
+    extra={
+        'content_fieldsets': (
+            ('Заголовок сторінки', {
+                'description': (
+                    'Відгуки додавайте в пункті «Відгуки клієнтів». '
+                    'Той самий список показується на головній, послугах, перевагах і FAQ.'
+                ),
+                'fields': (
+                    'kicker',
+                    'title',
+                    'title_accent',
+                    'intro',
+                    'cta_button',
+                    'seo_title',
+                    'seo_description',
+                ),
+            }),
+        ),
+    },
+)
 
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'intro':
-            kwargs['widget'] = CmsAdminTextareaWidget()
-            return db_field.formfield(**kwargs)
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
-
-@admin.register(Service)
-class ServiceAdmin(ListUnfoldAdmin):
-    list_display = ('title', 'slug', 'show_on_home', 'is_active', 'sort_order')
-    list_editable = ('show_on_home', 'is_active', 'sort_order')
-    rich_fields = frozenset({'short_desc', 'body'})
-
-
-@admin.register(AdvantageItem)
-class AdvantageItemAdmin(ListUnfoldAdmin):
-    list_display = ('text', 'audience', 'sort_order', 'is_active')
-    list_filter = ('audience', 'is_active')
-    list_editable = ('sort_order', 'is_active')
-    search_fields = ('text', 'description')
-    fields = ('audience', 'text', 'description', 'sort_order', 'is_active')
-
-
-@admin.register(FaqItem)
-class FaqItemAdmin(ListUnfoldAdmin):
-    list_display = ('question', 'sort_order', 'is_active')
-    list_editable = ('sort_order', 'is_active')
-    search_fields = ('question', 'answer')
-    rich_fields = frozenset({'answer'})
+from src.content import admin_items  # noqa: F401,E402

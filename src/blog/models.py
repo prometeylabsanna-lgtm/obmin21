@@ -73,8 +73,8 @@ class Post(models.Model):
     )
     published_at = models.DateTimeField('Опубліковано', null=True, blank=True)
     updated_at = models.DateTimeField('Оновлено', auto_now=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
     faq = models.TextField('Питання та відповіді (необовʼязково)', blank=True)
     figure = models.ImageField(
         'Картинка в статті',

@@ -59,6 +59,9 @@ TEMPLATES = [
             'libraries': {
                 'content_format': 'src.core.templatetags.content_format',
             },
+            'builtins': [
+                'src.core.templatetags.content_format',
+            ],
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.template.context_processors.debug',

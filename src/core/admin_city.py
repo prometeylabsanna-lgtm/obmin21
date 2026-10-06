@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
-from unfold.admin import TabularInline
+from unfold.admin import StackedInline, TabularInline
 
 from src.core.admin_mixins import ListUnfoldAdmin
 from src.network.models import Branch, City
@@ -9,7 +9,7 @@ from src.rates.models import Quote
 from src.rates.services import ensure_city_quotes
 
 
-class BranchInline(TabularInline):
+class BranchInline(StackedInline):
     model = Branch
     extra = 0
     fields = ('address', 'hours', 'phone', 'is_active', 'sort_order')

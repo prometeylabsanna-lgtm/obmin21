@@ -5,9 +5,7 @@ from src.network.models import City
 
 
 class RateBoard(models.TextChoices):
-    RETAIL = 'retail', 'Роздріб'
-    WHOLESALE = 'wholesale', 'Опт'
-    CROSS = 'cross', 'Крос'
+    RETAIL = 'retail', 'Готівка'
     CRYPTO = 'crypto', 'Крипто'
 
 
@@ -19,8 +17,8 @@ class CurrencyPair(models.Model):
     is_active = models.BooleanField('Активна', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     intro = models.TextField('Опис для сторінки пари', blank=True)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
     flag_image = models.ImageField(
         'Іконка прапора',
         upload_to='flags/',

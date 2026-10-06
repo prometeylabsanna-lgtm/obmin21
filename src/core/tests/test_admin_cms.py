@@ -28,6 +28,8 @@ class AdminPanelTests(TestCase):
         self.assertContains(resp, 'images/logo.png')
         self.assertContains(resp, 'cms-color__swatch')
         self.assertContains(resp, 'type="color"')
+        self.assertContains(resp, 'Колір акценту шапки')
+        self.assertContains(resp, 'Колір підсвітки шапки')
 
     def test_home_change_and_theme_css(self):
         HomePage.load()
@@ -57,6 +59,7 @@ class AdminPanelTests(TestCase):
             'color_bg': '#f3f6fb',
             'color_text': '#052145',
             'color_accent': '#ca8d42',
+            'color_highlight': '#b87b2c',
         }, follow=True)
         self.assertEqual(theme_post.status_code, 200)
         home = HomePage.objects.get(pk=1)
@@ -122,13 +125,31 @@ class AdminPanelTests(TestCase):
         self.assertContains(resp, reverse('admin:blog_post_changelist'))
         self.assertContains(resp, reverse('admin:content_homefaqsettings_changelist'))
         self.assertContains(resp, reverse('admin:content_homereviewssettings_changelist'))
+        self.assertContains(resp, reverse('admin:content_faqpage_changelist'))
+        self.assertContains(resp, reverse('admin:content_faqitem_changelist'))
+        self.assertContains(resp, reverse('admin:content_reviewspage_changelist'))
+        self.assertContains(resp, reverse('admin:reviews_review_changelist'))
+        self.assertContains(resp, 'Питання і відповіді')
+        self.assertContains(resp, reverse('admin:network_city_changelist'))
+        self.assertContains(resp, reverse('admin:network_contactcity_changelist'))
         html = resp.content.decode()
         self.assertIn('Сторінка Блог', html)
+        self.assertNotIn('Інші сторінки', html)
+        self.assertNotIn('Міста мережі', html)
+        self.assertIn('Адреси відділень', html)
+        faq_pos = html.find('Питання і відповіді')
+        contacts_pos = html.find('>Контакти<')
+        if contacts_pos == -1:
+            contacts_pos = html.find('Контакти')
+        self.assertNotEqual(faq_pos, -1)
+        self.assertLess(faq_pos, contacts_pos)
         self.assertNotIn('Заголовок сторінки', html)
         self.assertLess(
             html.find('/admin/content/blogpage/'),
             html.find('/admin/blog/post/'),
         )
+        self.assertContains(resp, 'Оформлення')
+        self.assertContains(resp, reverse('admin:content_homesearchsettings_changelist'))
 
     def test_admin_ukrainian_placeholders_and_choices(self):
         index = self.client.get(reverse('admin:index'))
@@ -302,11 +323,36 @@ class AdminPanelTests(TestCase):
             follow=True,
         )
         self.assertNotContains(advantages_admin, 'Вступний текст')
+        self.assertContains(advantages_admin, 'Чому обирають Обмін21')
+        self.assertContains(advantages_admin, 'Обмін21 у цифрах')
+        self.assertContains(advantages_admin, 'Чому люди обирають обмінювати в Обмін21')
+        self.assertContains(advantages_admin, 'Обмін21 чи звичайний обмінник')
+        self.assertContains(advantages_admin, 'Список «Рекомендуємо»')
+        self.assertContains(advantages_admin, 'tinymce')
+        self.assertContains(advantages_admin, 'Фото банера')
+        self.assertContains(advantages_admin, 'Картинка монет')
+        self.assertContains(advantages_admin, 'Сторінка переваг')
         header_admin = self.client.get(
             reverse('admin:core_headersettings_changelist'),
             follow=True,
         )
         self.assertNotContains(header_admin, 'Текст логотипу')
+        self.assertNotContains(header_admin, 'Посилання Telegram')
+        self.assertNotContains(header_admin, 'якщо місто не обрано')
+        footer_admin = self.client.get(
+            reverse('admin:core_footersettings_changelist'),
+            follow=True,
+        )
+        self.assertNotContains(footer_admin, 'Посилання Telegram')
+        self.assertNotContains(footer_admin, 'Посилання Instagram')
+        self.assertNotContains(footer_admin, 'якщо місто не обрано')
+        settings_admin = self.client.get(
+            reverse('admin:core_sitesettings_changelist'),
+            follow=True,
+        )
+        self.assertContains(settings_admin, 'Посилання Telegram')
+        self.assertContains(settings_admin, 'Посилання Instagram')
+        self.assertNotContains(settings_admin, 'якщо місто не обрано')
 
     def test_legal_pages_keep_paragraphs(self):
         from src.content.models import PrivacyPage
@@ -328,4 +374,170 @@ class AdminPanelTests(TestCase):
         )
         self.assertContains(admin, 'textarea')
         self.assertNotContains(admin, 'tinymce')
+
+    def test_short_copy_skips_tinymce(self):
+        from src.content.models import Service
+
+        svc = Service.objects.create(
+            title='Тестова картка',
+            slug='testova-kartka-short',
+            short_desc='Короткий текст без редактора',
+        )
+        page = self.client.get(
+            reverse('admin:content_service_change', args=[svc.pk]),
+        )
+        body = page.content.decode()
+        self.assertContains(page, 'Короткий опис')
+        self.assertRegex(body, r'<textarea[^>]*name="short_desc"')
+        self.assertNotRegex(
+            body,
+            r'<textarea[^>]*name="short_desc"[^>]*class="[^"]*tinymce',
+        )
+        self.assertIn('data-mce-conf', body)
+        self.assertIn('name="body"', body)
+
+    def test_home_articles_use_checkboxes(self):
+        page = self.client.get(
+            reverse('admin:content_homearticlessettings_change', args=[1]),
+        )
+        self.assertContains(page, 'Показувати блок на головній')
+        self.assertContains(page, 'Статті беруться з розділу Блог')
+        self.assertNotContains(page, 'cms-check-list')
+        self.assertNotContains(page, 'Позначте статті')
+
+    def test_reviews_page_renders_html(self):
+        from django.utils import timezone
+        from src.reviews.models import Review
+
+        Review.objects.create(
+            name='Олена',
+            city_name='Київ',
+            text='<p>Швидкий обмін</p>',
+            is_published=True,
+            published_at=timezone.now(),
+        )
+        resp = self.client.get(reverse('reviews:review_list'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Швидкий обмін')
+        self.assertNotContains(resp, 'Invalid filter')
+
+    def test_map_city_has_no_branches(self):
+        from src.network.models import Branch, City
+
+        city = City.objects.filter(is_active=True).first()
+        if city is None:
+            city = City.objects.create(name='Київ', slug='kyiv-test')
+        Branch.objects.get_or_create(
+            city=city,
+            address='вул. Хрещатик, 1',
+            defaults={'hours': '09:00–18:00', 'phone': '+380'},
+        )
+        page = self.client.get(
+            reverse('admin:network_mapcity_change', args=[city.pk]),
+        )
+        self.assertNotContains(page, 'name="branches-0-address"')
+        contacts = self.client.get(
+            reverse('admin:network_contactcity_change', args=[city.pk]),
+        )
+        self.assertContains(contacts, 'data-inline-type="stacked"')
+        self.assertContains(contacts, 'name="branches-0-address"')
+        self.assertContains(contacts, 'Графік')
+        self.assertContains(contacts, 'Адреса')
+        from django.urls import NoReverseMatch
+
+        with self.assertRaises(NoReverseMatch):
+            reverse('admin:network_branch_changelist')
+        index = self.client.get(reverse('admin:index'))
+        self.assertContains(index, 'Картки послуг')
+        self.assertContains(index, reverse('admin:content_service_changelist'))
+
+    def test_rates_page_admin_explains_public_url(self):
+        page = self.client.get(
+            reverse('admin:content_ratespage_changelist'),
+            follow=True,
+        )
+        self.assertContains(page, '/kursy/')
+        self.assertContains(page, 'Всі валюти')
+        self.assertContains(page, 'Основна інформація')
+        self.assertContains(page, 'Валютні пари')
+        self.assertContains(page, 'Таблиця курсів')
+        self.assertNotContains(page, 'tinymce')
+        public = self.client.get(reverse('rates:rates_page'))
+        self.assertEqual(public.status_code, 200)
+        self.assertContains(public, 'rates-page-card')
+        self.assertNotContains(public, 'calc-box')
+        self.assertNotContains(public, 'reviews-section')
+
+    def test_currency_pair_shows_default_flag(self):
+        from src.rates.models import CurrencyPair
+
+        pair = CurrencyPair.objects.create(
+            code='USD/UAH',
+            name='Долар США',
+            slug='usd-uah',
+            base_code='UAH',
+        )
+        page = self.client.get(
+            reverse('admin:rates_currencypair_change', args=[pair.pk]),
+        )
+        self.assertContains(page, 'cms-flag')
+        self.assertContains(page, 'data-code="USD"')
+
+    def test_quote_changelist_splits_cash_and_crypto(self):
+        from src.rates.models import CurrencyPair, Quote, RateBoard
+
+        pair = CurrencyPair.objects.create(
+            code='USD/UAH',
+            name='Долар США',
+            slug='usd-uah-admin',
+            base_code='UAH',
+        )
+        Quote.objects.create(
+            pair=pair,
+            board=RateBoard.RETAIL,
+            buy='41.20',
+            sell='41.65',
+        )
+        Quote.objects.create(
+            pair=pair,
+            board=RateBoard.CRYPTO,
+            buy='41.10',
+            sell='41.50',
+        )
+        cash = self.client.get(reverse('admin:rates_quote_changelist'))
+        self.assertContains(cash, 'Готівка')
+        self.assertContains(cash, 'Крипто')
+        self.assertNotContains(cash, 'Опт')
+        self.assertNotContains(cash, 'Крос')
+        self.assertContains(cash, '41.20')
+        self.assertNotContains(cash, '41.10')
+        crypto = self.client.get(
+            reverse('admin:rates_quote_changelist') + '?board=crypto',
+        )
+        self.assertContains(crypto, '41.10')
+        self.assertNotContains(crypto, '41.20')
+        look = self.client.get(
+            reverse('admin:content_homesearchsettings_changelist'),
+            follow=True,
+        )
+        self.assertContains(look, 'Колір акценту')
+        self.assertContains(look, 'Колір підсвітки')
+
+    def test_service_cards_show_site_image(self):
+        from src.content.models import Service
+
+        svc = Service.objects.create(
+            title='Грошові перекази по Україні',
+            slug='groshovi-perekazy',
+            short_desc='Текст',
+        )
+        listing = self.client.get(reverse('admin:content_service_changelist'))
+        self.assertContains(listing, 'cms-svc-thumb')
+        self.assertContains(listing, 'images/services/groshovi-perekazy.jpg')
+        page = self.client.get(
+            reverse('admin:content_service_change', args=[svc.pk]),
+        )
+        self.assertContains(page, 'cms-image')
+        self.assertContains(page, 'images/services/groshovi-perekazy.jpg')
+        self.assertContains(page, 'data-cms-image-preview')
 

@@ -8,8 +8,8 @@ class City(models.Model):
     phone = models.CharField('Телефон', max_length=32, blank=True)
     is_active = models.BooleanField('Активне', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
-    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
-    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
     banner_image = models.ImageField(
         'Фото банера на головній',
         upload_to='cities/',

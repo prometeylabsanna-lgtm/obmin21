@@ -427,7 +427,6 @@ class Command(BaseCommand):
             )
             for board, bmul, smul in (
                 (RateBoard.RETAIL, '1', '1'),
-                (RateBoard.WHOLESALE, '1.003', '0.997'),
             ):
                 buy_v = (Decimal(buy) * Decimal(bmul)).quantize(Decimal('0.01'))
                 sell_v = (Decimal(sell) * Decimal(smul)).quantize(Decimal('0.01'))
@@ -470,23 +469,7 @@ class Command(BaseCommand):
                         },
                     )
 
-        CurrencyPair.objects.update_or_create(
-            slug='eur-usd',
-            defaults={
-                'code': 'EUR/USD',
-                'name': 'Крос-курс',
-                'base_code': 'USD',
-                'is_active': True,
-                'sort_order': 100,
-            },
-        )
-        cross = CurrencyPair.objects.get(slug='eur-usd')
-        Quote.objects.update_or_create(
-            pair=cross,
-            board=RateBoard.CROSS,
-            city=None,
-            defaults={'buy': Decimal('1.1600'), 'sell': Decimal('1.1640'), 'is_active': True},
-        )
+        CurrencyPair.objects.filter(slug='eur-usd').update(is_active=False)
 
         btc_uah = CurrencyPair.objects.filter(slug='btc-uah').first()
         if btc_uah:

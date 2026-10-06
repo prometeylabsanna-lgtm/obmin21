@@ -1,7 +1,12 @@
 from django.core.cache import cache
 from django.db import models
 
-from src.core.colors import ACCENT_DEFAULT, COLOR_HELP, hex_color_validator
+from src.core.colors import (
+    ACCENT_DEFAULT,
+    ACCENT_HOVER_DEFAULT,
+    COLOR_HELP,
+    hex_color_validator,
+)
 from src.core.theme import bump_theme_cache
 
 
@@ -56,9 +61,16 @@ class SiteSettings(models.Model):
         help_text=COLOR_HELP,
     )
     header_color_accent = models.CharField(
-        'Колір підсвітки шапки',
+        'Колір акценту шапки',
         max_length=7,
         default=ACCENT_DEFAULT,
+        validators=[hex_color_validator],
+        help_text=COLOR_HELP,
+    )
+    header_color_highlight = models.CharField(
+        'Колір підсвітки шапки',
+        max_length=7,
+        default=ACCENT_HOVER_DEFAULT,
         validators=[hex_color_validator],
         help_text=COLOR_HELP,
     )
@@ -77,9 +89,16 @@ class SiteSettings(models.Model):
         help_text=COLOR_HELP,
     )
     footer_color_accent = models.CharField(
-        'Колір підсвітки підвалу',
+        'Колір акценту підвалу',
         max_length=7,
         default=ACCENT_DEFAULT,
+        validators=[hex_color_validator],
+        help_text=COLOR_HELP,
+    )
+    footer_color_highlight = models.CharField(
+        'Колір підсвітки підвалу',
+        max_length=7,
+        default=ACCENT_HOVER_DEFAULT,
         validators=[hex_color_validator],
         help_text=COLOR_HELP,
     )

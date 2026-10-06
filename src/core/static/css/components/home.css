@@ -375,14 +375,14 @@
 
 .promo-banner__coins {
   position: absolute;
-  top: 190px;
-  left: -62%;
+  top: 48px;
+  left: -48%;
   right: auto;
   bottom: auto;
-  width: 205%;
+  width: 196%;
   pointer-events: none;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
   opacity: 1;
 }
@@ -390,7 +390,7 @@
 .promo-banner__coins img {
   width: 100%;
   height: auto;
-  max-height: 100%;
+  max-height: none;
   object-fit: contain;
   display: block;
 }
@@ -1038,18 +1038,20 @@
   }
 
   .promo-banner {
-    margin-top: 120px;
-    min-height: 390px;
-    padding: 30px;
-    overflow: visible;
+    margin-top: 80px;
+    min-height: 360px;
+    padding: 24px;
+    overflow: hidden;
   }
 
   .promo-banner__coins {
-    top: -110px;
+    top: -36px;
     left: auto;
-    right: -40px;
-    bottom: -80px;
-    width: 72%;
+    right: -56px;
+    bottom: auto;
+    width: 88%;
+    margin-top: 0;
+    align-items: flex-start;
   }
 
   .promo-banner__content {
@@ -1214,6 +1216,16 @@
   .svc-card {
     flex: 0 0 calc((100% - 20px) / 2);
   }
+
+  .promo-banner {
+    overflow: hidden;
+  }
+
+  .promo-banner__coins {
+    top: -28px;
+    right: -40px;
+    width: 78%;
+  }
 }
 
 @media (min-width: 1025px) {
@@ -1221,4 +1233,19 @@
     flex-wrap: nowrap;
   }
 
+  .promo-banner {
+    margin-top: 120px;
+    min-height: 390px;
+    padding: 30px;
+    overflow: visible;
+  }
+
+  .promo-banner__coins {
+    top: -112px;
+    left: auto;
+    right: -28px;
+    bottom: auto;
+    width: 65%;
+    margin-top: 0;
+  }
 }

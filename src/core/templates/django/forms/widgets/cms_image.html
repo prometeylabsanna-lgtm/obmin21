@@ -7,7 +7,11 @@
          height="160"
          data-cms-image-preview
          {% if not widget.preview_url %}hidden{% endif %}>
+    {% if widget.flag_code and not widget.preview_url %}
+    <span class="cms-flag" data-code="{{ widget.flag_code }}" data-cms-flag>{{ widget.flag_mark }}</span>
+    {% else %}
     <span class="cms-image__placeholder" data-cms-image-placeholder{% if widget.preview_url %} hidden{% endif %}>Немає зображення</span>
+    {% endif %}
   </div>
   {% if widget.is_initial and not widget.required %}
     <label class="cms-image__clear">
@@ -22,6 +26,8 @@
   </label>
   {% if widget.is_fallback %}
     <p class="cms-image__hint">На сайті зараз це зображення. Оберіть файл, щоб замінити.</p>
+  {% elif widget.flag_code and not widget.preview_url %}
+    <p class="cms-image__hint">На сайті показується стандартний прапор за кодом валюти. Можна завантажити свою іконку.</p>
   {% else %}
     <p class="cms-image__hint">Оберіть файл, щоб замінити картинку. Поточне фото видно вище.</p>
   {% endif %}

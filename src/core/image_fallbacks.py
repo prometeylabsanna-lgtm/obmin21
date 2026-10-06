@@ -8,6 +8,7 @@ IMAGE_FALLBACKS = {
     'footer_logo': 'images/logo-footer.png',
     'promo_image': 'images/coins.png',
     'hero_image': 'images/coins.png',
+    'why_coins': 'images/coins.png',
     'image': 'images/service-1.png',
     'figure': 'images/service-1.png',
     'cover': 'images/service-1.png',
@@ -29,6 +30,11 @@ def image_fallback_url(field_name: str, instance=None) -> str:
         if finders.find(name):
             return static(name)
         return static('images/hero-kyiv.jpg')
+    if field_name == 'image' and instance is not None:
+        src = getattr(instance, 'image_src', None)
+        if callable(src):
+            return src()
+        return static('images/service-1.png')
     path = IMAGE_FALLBACKS.get(field_name)
     return static(path) if path else ''
 

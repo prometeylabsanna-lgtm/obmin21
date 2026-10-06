@@ -1,38 +1,20 @@
 {% extends 'base.html' %}
-{% load static content_format %}
+{% load static %}
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
-<section class="faq-section faq-section--page" data-qa="faq-page">
-  <div class="faq-section__head">
-    <span class="pill">Відповіді</span>
-    <h1 class="faq-section__title">
-      <span class="faq-section__coin" aria-hidden="true"><span class="coin-spin"><img src="{% static 'images/bitcoin.png' %}" alt=""><img src="{% static 'images/bitcoin.png' %}" alt=""><img src="{% static 'images/bitcoin.png' %}" alt=""></span></span>{{ page.title }}
-    </h1>
-  </div>
-  <div class="faq-section__grid faq-section__grid--page" data-faq>
-    {% for item in items %}
-    <div class="faq-card{% if forloop.first %} is-open{% endif %}">
-      <button type="button" class="faq-card__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
-        <span>{{ item.question }}</span>
-        <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="var(--color-accent)" fill="none" stroke-width="1.3"></path></svg>
-      </button>
-      <div class="faq-card__a">{{ item.answer|rich_html }}</div>
-    </div>
-    {% empty %}
-    <p class="u-muted">Питання зʼявляться незабаром</p>
-    {% endfor %}
-  </div>
-</section>
+{% include 'partials/shared_faq_section.html' with extra_class='faq-section--page' qa='faq-page' faq_kicker=page.kicker faq_title=page.title faq_title_accent=page.title_accent faq_lead=page.lead faq_items=faq_items grid_class='faq-section__grid--page' %}
 
 <section class="faq-cta faq-cta--split">
   <div class="faq-cta__copy">
-    <h2 class="faq-cta__title">Не знайшли <span class="u-accent">відповідь?</span></h2>
-    <p class="faq-cta__text">Консультант відповість на будь-яке питання щодня з 8:00 до 21:00.</p>
+    <h2 class="faq-cta__title">{{ page.cta_title }} <span class="u-accent">{{ page.cta_title_accent }}</span></h2>
+    <p class="faq-cta__text">{{ page.cta_text }}</p>
   </div>
   <div class="faq-cta__actions">
-    <a class="btn btn--accent faq-cta__btn" href="tel:{% if active_phone %}{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}{% else %}+380444444444{% endif %}">Зателефонувати</a>
-    <a class="btn faq-cta__tg" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">Написати в Telegram</a>
+    <a class="btn btn--accent faq-cta__btn" href="tel:{% if active_phone %}{{ active_phone|cut:' '|cut:'('|cut:')'|cut:'-' }}{% else %}+380444444444{% endif %}">{{ page.cta_phone }}</a>
+    <a class="btn faq-cta__tg" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">{{ page.cta_telegram }}</a>
   </div>
 </section>
+
+{% include 'partials/shared_reviews_section.html' with reviews_kicker=reviews_page.kicker reviews_title=reviews_page.title reviews_lead=reviews_page.intro reviews_cta=reviews_page.cta_button home_reviews=home_reviews %}
 {% endblock %}

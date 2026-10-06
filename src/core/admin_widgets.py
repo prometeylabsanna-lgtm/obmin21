@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from django.contrib.admin.widgets import AdminTextInputWidget, AdminTextareaWidget
-from django.forms.widgets import ClearableFileInput, TextInput
+from django.forms.widgets import CheckboxSelectMultiple, ClearableFileInput, TextInput
 from tinymce.widgets import TinyMCE
 from unfold.widgets import INPUT_CLASSES, TEXTAREA_CLASSES
 
@@ -65,9 +65,13 @@ class CmsAdminImageWidget(ClearableFileInput):
         attrs: Optional[dict[str, Any]] = None,
         fallback_url: str = '',
         fit: str = 'cover',
+        flag_code: str = '',
+        flag_mark: str = '',
     ) -> None:
         self.fallback_url = fallback_url
         self.fit = fit
+        self.flag_code = flag_code
+        self.flag_mark = flag_mark
         merged = dict(attrs or {})
         extra = merged.pop('class', '')
         merged.setdefault('accept', 'image/*')
@@ -92,7 +96,13 @@ class CmsAdminImageWidget(ClearableFileInput):
         widget['preview_url'] = preview_url
         widget['is_fallback'] = bool(preview_url and not uploaded)
         widget['fit'] = self.fit
+        widget['flag_code'] = self.flag_code
+        widget['flag_mark'] = self.flag_mark
         return context
+
+
+class CmsCheckboxListWidget(CheckboxSelectMultiple):
+    template_name = 'django/forms/widgets/cms_checkboxes.html'
 
 
 class CmsTinyMCE(TinyMCE):

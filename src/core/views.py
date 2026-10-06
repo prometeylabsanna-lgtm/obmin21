@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from src.core.theme import theme_css_cached
 
 from src.blog.selectors import get_published_posts
-from src.content.models import AdvantageItem, FaqItem, HomePage, Service
+from src.content.models import AdvantagesPage, FaqItem, HomePage, Service
 from src.rates.models import RateBoard
 from src.rates.selectors import get_quotes_for_city
 from src.reviews.selectors import get_published_reviews
@@ -43,21 +43,12 @@ class HomeView(TemplateView):
             'boards': RateBoard.choices,
             'home_rates_compact': True,
             'services': Service.objects.filter(is_active=True, show_on_home=True)[:6],
-            'advantage_items': AdvantageItem.objects.filter(is_active=True),
-            'advantage_audiences': AdvantageItem.Audience.choices,
             'faq_items': FaqItem.objects.filter(is_active=True)[:8],
-            'news_posts': _home_posts(page),
+            'news_posts': list(get_published_posts()[:10]),
             'home_reviews': get_published_reviews(8),
-            'home_stats': page.stats.filter(is_active=True),
+            'home_stats': AdvantagesPage.load().iter_stats(),
         })
         return ctx
-
-
-def _home_posts(page):
-    selected = list(page.featured_posts.filter(status='published').select_related('category'))
-    if selected:
-        return selected
-    return list(get_published_posts()[:10])
 
 
 def rates_partial(request):

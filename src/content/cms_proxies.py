@@ -53,8 +53,8 @@ class HomeArticlesSettings(HomePage):
 class HomeSearchSettings(HomePage):
     class Meta:
         proxy = True
-        verbose_name = 'Пошук головної'
-        verbose_name_plural = 'Пошук головної'
+        verbose_name = 'Оформлення головної'
+        verbose_name_plural = 'Оформлення головної'
 
 
 __all__ = (
