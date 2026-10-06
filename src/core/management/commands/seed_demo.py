@@ -12,6 +12,7 @@ from src.blog.article_data import BY_SLUG, body_text
 from src.content.models import (
     AdvantageItem,
     AdvantagesPage,
+    BlogPage,
     CitiesPage,
     ContactsPage,
     CookiePage,
@@ -271,6 +272,16 @@ class Command(BaseCommand):
         home.promo_title_accent = 'USD та EUR'
         home.save()
 
+        blog_page = BlogPage.load()
+        blog_page.title = 'Блог'
+        blog_page.heading = 'Корисні'
+        blog_page.title_accent = 'статті'
+        blog_page.intro = (
+            'Пояснюємо, як працює курс валют, як зберегти заощадження '
+            'та безпечно обміняти гроші.'
+        )
+        blog_page.save()
+
         rates_page = RatesPage.load()
         rates_page.title = 'Курси валют'
         rates_page.intro = (
@@ -293,7 +304,13 @@ class Command(BaseCommand):
         services_page.save()
 
         AdvantagesPage.load()
-        ContactsPage.load()
+        contacts_page = ContactsPage.load()
+        contacts_page.title = 'Контакти'
+        contacts_page.heading = 'Зв’яжіться'
+        contacts_page.title_accent = 'з нами'
+        contacts_page.branches_title = 'Відділення'
+        contacts_page.branches_title_accent = 'по Україні'
+        contacts_page.save()
         CitiesPage.load()
         privacy = PrivacyPage.load()
         privacy.body = (

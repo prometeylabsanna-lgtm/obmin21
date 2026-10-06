@@ -10,7 +10,11 @@ def post_list(request, category_slug=None):
     qs = get_published_posts()
     category = None
     if category_slug:
-        category = get_object_or_404(Category, slug=category_slug)
+        category = get_object_or_404(
+            Category,
+            slug=category_slug,
+            show_in_filter=True,
+        )
         qs = qs.filter(category=category)
     try:
         limit = int(request.GET.get('limit', 6))
@@ -33,7 +37,7 @@ def post_list(request, category_slug=None):
         'has_more': len(rest) > limit,
         'next_limit': limit + 6,
         'list_url': list_url,
-        'categories': Category.objects.all(),
+        'categories': Category.objects.filter(show_in_filter=True),
         'active_category': category,
         'page_title': category.name if category else (page.seo_title or page.title),
         'page_description': page.seo_description or page.intro[:160],

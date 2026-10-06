@@ -6,16 +6,18 @@ from src.core.admin_mixins import ListUnfoldAdmin
 
 @admin.register(Category)
 class CategoryAdmin(ListUnfoldAdmin):
-    list_display = ('name', 'slug', 'sort_order')
-    prepopulated_fields = {'slug': ('name',)}
+    list_display = ('name', 'show_in_filter', 'sort_order')
+    list_editable = ('show_in_filter', 'sort_order')
+    fields = ('name', 'show_in_filter', 'sort_order')
 
 
 @admin.register(Post)
 class PostAdmin(ListUnfoldAdmin):
     list_display = ('title', 'category', 'status', 'published_at')
     list_filter = ('status', 'category')
+    ordering = ('-published_at', '-id')
     search_fields = ('title', 'body')
-    prepopulated_fields = {'slug': ('title',)}
+    search_help_text = 'Пошук за заголовком або текстом статті'
     date_hierarchy = 'published_at'
     filter_horizontal = ('related_posts',)
     rich_fields = frozenset({'body', 'excerpt', 'faq'})
@@ -23,7 +25,6 @@ class PostAdmin(ListUnfoldAdmin):
         ('Стаття', {
             'fields': (
                 'title',
-                'slug',
                 'category',
                 'status',
                 'published_at',

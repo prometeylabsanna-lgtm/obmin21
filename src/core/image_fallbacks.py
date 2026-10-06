@@ -8,7 +8,6 @@ IMAGE_FALLBACKS = {
     'footer_logo': 'images/logo-footer.png',
     'promo_image': 'images/coins.png',
     'hero_image': 'images/coins.png',
-    'map_image': 'images/hero-kyiv.jpg',
     'image': 'images/service-1.png',
     'figure': 'images/service-1.png',
     'cover': 'images/service-1.png',

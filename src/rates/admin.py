@@ -8,12 +8,10 @@ from src.rates.models import CurrencyPair, Quote
 class CurrencyPairAdmin(ListUnfoldAdmin):
     list_display = ('code', 'name', 'slug', 'is_active', 'sort_order')
     list_editable = ('is_active', 'sort_order')
-    prepopulated_fields = {'slug': ('code',)}
     search_fields = ('code', 'name')
     fields = (
         'code',
         'name',
-        'slug',
         'base_code',
         'flag_image',
         'is_active',

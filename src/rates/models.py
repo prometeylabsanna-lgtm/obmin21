@@ -14,13 +14,13 @@ class RateBoard(models.TextChoices):
 class CurrencyPair(models.Model):
     code = models.CharField('Код', max_length=16)
     name = models.CharField('Назва', max_length=80)
-    slug = models.SlugField('Slug', unique=True, max_length=40)
+    slug = models.SlugField('Код у посиланні', unique=True, max_length=40)
     base_code = models.CharField('Базова валюта', max_length=8, default='UAH')
     is_active = models.BooleanField('Активна', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     intro = models.TextField('Опис для сторінки пари', blank=True)
-    seo_title = models.CharField('SEO Title', max_length=160, blank=True)
-    seo_description = models.CharField('SEO Description', max_length=320, blank=True)
+    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
+    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
     flag_image = models.ImageField(
         'Іконка прапора',
         upload_to='flags/',

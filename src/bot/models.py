@@ -5,8 +5,8 @@ from src.network.models import City
 
 
 class TelegramProfile(models.Model):
-    chat_id = models.CharField('Chat ID', max_length=32, unique=True, db_index=True)
-    username = models.CharField('Username', max_length=64, blank=True)
+    chat_id = models.CharField('ID чату', max_length=32, unique=True, db_index=True)
+    username = models.CharField('Нікнейм', max_length=64, blank=True)
     first_name = models.CharField("Ім'я в Telegram", max_length=128, blank=True)
     last_name = models.CharField('Прізвище в Telegram', max_length=128, blank=True)
     phone = models.CharField('Телефон', max_length=32, blank=True)
@@ -34,7 +34,7 @@ class TelegramProfile(models.Model):
 
 
 class BotSession(models.Model):
-    chat_id = models.CharField('Chat ID', max_length=32, unique=True, db_index=True)
+    chat_id = models.CharField('ID чату', max_length=32, unique=True, db_index=True)
     state = models.CharField('Стан FSM', max_length=32, default='idle')
     data = models.JSONField('Дані сценарію', default=dict, blank=True)
     updated_at = models.DateTimeField('Оновлено', auto_now=True)
@@ -52,7 +52,7 @@ class ChatMessage(models.Model):
         USER = 'user', 'Користувач'
         BOT = 'bot', 'Бот'
 
-    chat_id = models.CharField('Chat ID', max_length=32, db_index=True)
+    chat_id = models.CharField('ID чату', max_length=32, db_index=True)
     role = models.CharField('Роль', max_length=8, choices=Role.choices)
     text = models.TextField('Текст')
     buttons = models.JSONField('Кнопки', default=list, blank=True)

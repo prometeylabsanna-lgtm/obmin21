@@ -14,7 +14,7 @@ def review_list(request):
         'form': form,
         'page': page,
         'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or page.intro[:160],
+        'page_description': page.seo_description or page.title,
     })
 
 

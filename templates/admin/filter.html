@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<div class="cms-list-filter">
+    <label class="cms-list-filter__label">{{ title }}</label>
+    <select class="cms-list-filter__select" onchange="window.location.href = this.value">
+        {% for choice in choices %}
+            <option value="{{ choice.query_string|iriencode }}"{% if choice.selected %} selected{% endif %}>
+                {{ choice.display }}
+            </option>
+        {% endfor %}
+    </select>
+</div>

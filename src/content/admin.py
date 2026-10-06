@@ -29,7 +29,8 @@ from src.content.models import (
     ServicesPage,
 )
 from src.core.admin_mixins import ListUnfoldAdmin, SingletonUnfoldAdmin
-from src.core.admin_widgets import CmsTinyMCE
+from src.core.admin_widgets import CmsAdminTextareaWidget, CmsTinyMCE
+from src.core.plain_text import html_to_plain_legal
 from src.reviews.models import Review
 
 
@@ -47,13 +48,15 @@ class HomeSectionAdmin(SingletonUnfoldAdmin):
     style_fields = ()
 
 
-def _register_page(model, content_fields, rich_fields=(), content_fieldsets=(), admin_base=None):
+def _register_page(model, content_fields, rich_fields=(), content_fieldsets=(), admin_base=None, extra=None):
     base = admin_base or SingletonUnfoldAdmin
     attrs = {
         'content_fields': content_fields,
         'content_fieldsets': content_fieldsets,
         'rich_fields': frozenset(rich_fields),
     }
+    if extra:
+        attrs.update(extra)
     if base is HomeSectionAdmin:
         attrs['style_fields'] = ()
     admin.site.register(model, type(f'{model.__name__}Admin', (base,), attrs))
@@ -174,21 +177,19 @@ _register_home(
 )
 _register_page(
     HomeSearchSettings,
-    ('seo_title', 'seo_description', 'seo_block_title', 'seo_block_body'),
-    ('seo_block_body',),
+    ('seo_title', 'seo_description'),
 )
 _register_page(
     RatesPage,
     ('title', 'intro', 'seo_title', 'seo_description'),
-    ('intro',),
 )
 _register_page(
     ServicesPage,
     (),
-    ('intro',),
+    (),
     (
-        ('Пошук і текст', {
-            'fields': ('title', 'intro', 'seo_title', 'seo_description'),
+        ('Пошук', {
+            'fields': ('title', 'seo_title', 'seo_description'),
         }),
         ('Банер сторінки', {
             'fields': (
@@ -202,15 +203,14 @@ _register_page(
 )
 _register_page(
     AdvantagesPage,
-    ('title', 'intro', 'seo_title', 'seo_description'),
-    ('intro',),
+    ('title', 'seo_title', 'seo_description'),
 )
 _register_page(
     ContactsPage,
     (
         'title',
+        'heading',
         'title_accent',
-        'intro',
         'phone',
         'phone_hint',
         'telegram',
@@ -222,26 +222,71 @@ _register_page(
         'branches_kicker',
         'branches_title',
         'branches_title_accent',
-        'map_image',
         'seo_title',
         'seo_description',
     ),
-    ('intro',),
 )
-_register_page(BlogPage, ('title', 'intro', 'seo_title', 'seo_description'), ('intro',))
-_register_page(ReviewsPage, ('title', 'intro', 'seo_title', 'seo_description'), ('intro',))
-_register_page(CitiesPage, ('title', 'intro', 'seo_title', 'seo_description'), ('intro',))
-_register_page(FaqPage, ('title', 'intro', 'seo_title', 'seo_description'), ('intro',))
-_register_page(PrivacyPage, ('title', 'body', 'seo_title', 'seo_description'), ('body',))
-_register_page(OfferPage, ('title', 'body', 'seo_title', 'seo_description'), ('body',))
-_register_page(CookiePage, ('title', 'body', 'seo_title', 'seo_description'), ('body',))
+_register_page(ReviewsPage, ('title', 'seo_title', 'seo_description'))
+_register_page(CitiesPage, ('title', 'intro', 'seo_title', 'seo_description'))
+_register_page(FaqPage, ('title', 'seo_title', 'seo_description'))
+
+
+class LegalBodyWidget(CmsAdminTextareaWidget):
+    def format_value(self, value):
+        return html_to_plain_legal(super().format_value(value) or '')
+
+
+class LegalPageAdmin(SingletonUnfoldAdmin):
+    rich_fields = frozenset()
+    plain_fields = frozenset({'body'})
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'body':
+            kwargs['widget'] = LegalBodyWidget(attrs={'rows': 20})
+            return db_field.formfield(**kwargs)
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+
+_register_page(
+    PrivacyPage,
+    ('title', 'body', 'seo_title', 'seo_description'),
+    admin_base=LegalPageAdmin,
+)
+_register_page(
+    OfferPage,
+    ('title', 'body', 'seo_title', 'seo_description'),
+    admin_base=LegalPageAdmin,
+)
+_register_page(
+    CookiePage,
+    ('title', 'body', 'seo_title', 'seo_description'),
+    admin_base=LegalPageAdmin,
+)
+
+
+@admin.register(BlogPage)
+class BlogPageAdmin(SingletonUnfoldAdmin):
+    content_fields = (
+        'title',
+        'heading',
+        'title_accent',
+        'intro',
+        'seo_title',
+        'seo_description',
+    )
+    rich_fields = frozenset()
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'intro':
+            kwargs['widget'] = CmsAdminTextareaWidget()
+            return db_field.formfield(**kwargs)
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(Service)
 class ServiceAdmin(ListUnfoldAdmin):
     list_display = ('title', 'slug', 'show_on_home', 'is_active', 'sort_order')
     list_editable = ('show_on_home', 'is_active', 'sort_order')
-    prepopulated_fields = {'slug': ('title',)}
     rich_fields = frozenset({'short_desc', 'body'})
 
 

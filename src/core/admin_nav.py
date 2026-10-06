@@ -66,9 +66,9 @@ def build_unfold_navigation():
             'separator': True,
             'collapsible': True,
             'items': [
+                _item('Сторінка Блог', 'article', 'admin:content_blogpage_changelist'),
                 _item('Статті', 'newspaper', 'admin:blog_post_changelist'),
                 _item('Категорії', 'category', 'admin:blog_category_changelist'),
-                _item('Заголовок сторінки', 'title', 'admin:content_blogpage_changelist'),
             ],
         },
         {
@@ -106,7 +106,7 @@ def build_unfold_navigation():
                 _item('Курси валют', 'currency_exchange', 'admin:content_ratespage_changelist'),
                 _item('Послуги', 'handyman', 'admin:content_servicespage_changelist'),
                 _item('Переваги', 'star', 'admin:content_advantagespage_changelist'),
-                _item('FAQ', 'quiz', 'admin:content_faqpage_changelist'),
+                _item('Питання та відповіді', 'quiz', 'admin:content_faqpage_changelist'),
                 _item('Відгуки (сторінка)', 'reviews', 'admin:content_reviewspage_changelist'),
                 _item('Міста мережі', 'location_city', 'admin:network_city_changelist'),
             ],

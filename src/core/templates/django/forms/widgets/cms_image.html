@@ -15,7 +15,11 @@
       Прибрати зображення
     </label>
   {% endif %}
-  <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} data-cms-image-input>
+  <label class="cms-image__pick">
+    <span class="cms-image__pick-btn">Обрати файл</span>
+    <span class="cms-image__pick-name" data-cms-image-filename>Файл не вибрано</span>
+    <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} data-cms-image-input>
+  </label>
   {% if widget.is_fallback %}
     <p class="cms-image__hint">На сайті зараз це зображення. Оберіть файл, щоб замінити.</p>
   {% else %}

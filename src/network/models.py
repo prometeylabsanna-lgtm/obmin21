@@ -4,12 +4,12 @@ from urllib.parse import quote_plus
 
 class City(models.Model):
     name = models.CharField('Назва', max_length=80)
-    slug = models.SlugField('Slug', unique=True, max_length=80)
+    slug = models.SlugField('Код у посиланні', unique=True, max_length=80)
     phone = models.CharField('Телефон', max_length=32, blank=True)
     is_active = models.BooleanField('Активне', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
-    seo_title = models.CharField('SEO Title', max_length=160, blank=True)
-    seo_description = models.CharField('SEO Description', max_length=320, blank=True)
+    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
+    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
     banner_image = models.ImageField(
         'Фото банера на головній',
         upload_to='cities/',

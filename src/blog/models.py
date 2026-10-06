@@ -33,8 +33,12 @@ _READ_ORDER = (
 
 class Category(models.Model):
     name = models.CharField('Назва', max_length=120)
-    slug = models.SlugField('Slug', unique=True, max_length=80)
+    slug = models.SlugField('Код у посиланні', unique=True, max_length=80)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
+    show_in_filter = models.BooleanField(
+        'Показувати у фільтрі на сторінці',
+        default=True,
+    )
 
     class Meta:
         ordering = ['sort_order', 'name']
@@ -57,7 +61,7 @@ class Post(models.Model):
         verbose_name='Категорія',
     )
     title = models.CharField('Заголовок', max_length=200)
-    slug = models.SlugField('Slug', unique=True, max_length=200)
+    slug = models.SlugField('Код у посиланні', unique=True, max_length=200)
     excerpt = models.TextField('Анонс', blank=True)
     body = models.TextField('Текст')
     cover = models.ImageField('Обкладинка', upload_to='blog/', blank=True)
@@ -69,9 +73,9 @@ class Post(models.Model):
     )
     published_at = models.DateTimeField('Опубліковано', null=True, blank=True)
     updated_at = models.DateTimeField('Оновлено', auto_now=True)
-    seo_title = models.CharField('SEO Title', max_length=160, blank=True)
-    seo_description = models.CharField('SEO Description', max_length=320, blank=True)
-    faq = models.TextField('FAQ (опційно)', blank=True)
+    seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
+    seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
+    faq = models.TextField('Питання та відповіді (необовʼязково)', blank=True)
     figure = models.ImageField(
         'Картинка в статті',
         upload_to='blog/figure/',

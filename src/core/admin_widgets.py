@@ -106,6 +106,7 @@ class CmsTinyMCE(TinyMCE):
                 'toolbar': 'undo redo | bold italic underline | bullist numlist | link',
                 'promotion': False,
                 'branding': False,
+                'language': 'uk',
                 'forced_root_block': 'p',
                 'newline_behavior': 'block',
             },

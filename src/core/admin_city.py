@@ -36,6 +36,7 @@ class CitySectionAdmin(ListUnfoldAdmin):
     list_display = ('name', 'slug', 'is_active')
     search_fields = ('name',)
     readonly_fields = ('city_switch',)
+    slug_source = ''
 
     def has_add_permission(self, request):
         return False

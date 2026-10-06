@@ -72,7 +72,7 @@ class ExchangeRequest(models.Model):
         choices=Source.choices,
         default=Source.WEB,
     )
-    telegram_chat_id = models.CharField('Telegram chat id', max_length=32, blank=True)
+    telegram_chat_id = models.CharField('Код чату Telegram', max_length=32, blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -108,7 +108,7 @@ class ContactMessage(models.Model):
         choices=Source.choices,
         default=Source.WEB,
     )
-    telegram_chat_id = models.CharField('Telegram chat id', max_length=32, blank=True)
+    telegram_chat_id = models.CharField('Код чату Telegram', max_length=32, blank=True)
 
     class Meta:
         ordering = ['-created_at']

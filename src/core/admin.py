@@ -9,8 +9,6 @@ from src.core import admin_auth  # noqa: F401
 class SiteSettingsAdmin(SingletonUnfoldAdmin):
     content_fields = (
         'site_name',
-        'logo_text',
-        'logo_accent',
         'default_phone',
         'rate_hold_minutes',
         'telegram_url',
@@ -35,8 +33,6 @@ class HeaderSettingsAdmin(SingletonUnfoldAdmin):
     content_fields = (
         'site_name',
         'header_logo',
-        'logo_text',
-        'logo_accent',
         'default_phone',
         'telegram_url',
     )

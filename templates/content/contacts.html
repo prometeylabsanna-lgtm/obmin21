@@ -5,8 +5,7 @@
 {% block content %}
 <section class="contacts-hero">
   <span class="pill">{{ page.title }}</span>
-  <h1 class="contacts-hero__title">Зв’яжіться <span class="u-accent">{{ page.title_accent }}</span></h1>
-  <div class="contacts-hero__lead">{{ page.intro|rich_html }}</div>
+  <h1 class="contacts-hero__title">{{ page.heading }} <span class="u-accent">{{ page.title_accent }}</span></h1>
   <div class="contacts-cards">
     <a class="contacts-card" href="tel:{{ page.phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">
       <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg>

@@ -122,3 +122,210 @@ class AdminPanelTests(TestCase):
         self.assertContains(resp, reverse('admin:blog_post_changelist'))
         self.assertContains(resp, reverse('admin:content_homefaqsettings_changelist'))
         self.assertContains(resp, reverse('admin:content_homereviewssettings_changelist'))
+        html = resp.content.decode()
+        self.assertIn('Сторінка Блог', html)
+        self.assertNotIn('Заголовок сторінки', html)
+        self.assertLess(
+            html.find('/admin/content/blogpage/'),
+            html.find('/admin/blog/post/'),
+        )
+
+    def test_admin_ukrainian_placeholders_and_choices(self):
+        index = self.client.get(reverse('admin:index'))
+        self.assertContains(index, 'Пошук розділів і сторінок')
+        self.assertNotContains(index, 'Search apps and models')
+
+        add = self.client.get(reverse('admin:blog_post_add'))
+        self.assertEqual(add.status_code, 200)
+        self.assertContains(add, 'Чернетка')
+        self.assertContains(add, 'Оберіть значення')
+        self.assertNotContains(add, 'Select value')
+        self.assertNotContains(add, 'value="draft">draft')
+        html = add.content.decode()
+        self.assertNotIn('>draft<', html)
+
+        from src.blog.models import Category
+        Category.objects.create(name='Поради', slug='porady')
+        Category.objects.create(name='Курси', slug='kursy')
+        listing = self.client.get(reverse('admin:blog_post_changelist'))
+        self.assertContains(listing, 'Введіть запит для пошуку')
+        self.assertNotContains(listing, 'Type to search')
+        self.assertContains(listing, 'cms-list-filter__select')
+        self.assertContains(listing, 'Статус')
+        self.assertContains(listing, 'Категорія')
+        self.assertNotContains(listing, 'За Статус')
+        self.assertNotContains(listing, 'За Категорія')
+        self.assertContains(listing, 'selected')
+        self.assertNotContains(listing, 'id="changelist-filter"')
+
+        from src.network.models import City
+        City.objects.create(name='Київ', slug='kyiv-uk')
+        city = self.client.get(reverse('admin:network_bannercity_changelist'), follow=True)
+        self.assertNotContains(city, '>General<')
+        self.assertContains(city, 'Обрати місто')
+
+    def test_post_slug_is_generated_and_readonly(self):
+        from src.blog.models import Category, Post
+
+        category = Category.objects.create(name='Поради', slug='porady')
+
+        add = self.client.get(reverse('admin:blog_post_add'))
+        self.assertNotContains(add, 'name="slug"')
+        self.assertNotContains(add, '>Slug<')
+
+        created = self.client.post(reverse('admin:blog_post_add'), {
+            'title': 'Як вигідно міняти',
+            'category': category.pk,
+            'status': 'draft',
+            'body': '<p>Текст</p>',
+            'excerpt': '',
+            'seo_title': '',
+            'seo_description': '',
+            'faq': '',
+            'published_at_0': '',
+            'published_at_1': '',
+        }, follow=True)
+        self.assertEqual(created.status_code, 200)
+        post = Post.objects.get(title='Як вигідно міняти')
+        self.assertEqual(post.slug, 'yak-vyhidno-minyaty')
+
+        change = self.client.get(reverse('admin:blog_post_change', args=[post.pk]))
+        self.assertContains(change, 'yak-vyhidno-minyaty')
+        self.assertNotContains(change, 'name="slug"')
+        self.assertContains(change, 'Код у посиланні')
+
+    def test_blog_page_copy_order_and_category_filter(self):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from src.blog.models import Category, Post
+        from src.content.models import BlogPage
+
+        page = BlogPage.load()
+        page.title = 'Блог'
+        page.heading = 'Корисні'
+        page.title_accent = 'статті'
+        page.intro = 'Пояснюємо, як працює курс валют.'
+        page.save()
+
+        visible = Category.objects.create(name='Поради', slug='porady-cms')
+        hidden = Category.objects.create(
+            name='Архів',
+            slug='arkhiv-cms',
+            show_in_filter=False,
+        )
+        now = timezone.now()
+        Post.objects.create(
+            category=visible,
+            title='Старіша',
+            slug='starisha',
+            body='Текст',
+            status=Post.Status.PUBLISHED,
+            published_at=now - timedelta(days=2),
+        )
+        Post.objects.create(
+            category=visible,
+            title='Найсвіжіша',
+            slug='naysvizhisha',
+            body='Текст',
+            status=Post.Status.PUBLISHED,
+            published_at=now,
+        )
+
+        blog = self.client.get(reverse('blog:post_list'))
+        self.assertContains(blog, 'Корисні')
+        self.assertContains(blog, 'статті')
+        self.assertContains(blog, 'Пояснюємо, як працює курс валют.')
+        self.assertContains(blog, 'Поради')
+        self.assertNotContains(blog, 'Архів')
+        html = blog.content.decode()
+        self.assertLess(html.find('Найсвіжіша'), html.find('Старіша'))
+        self.assertEqual(
+            self.client.get(reverse('blog:category', args=['arkhiv-cms'])).status_code,
+            404,
+        )
+
+        admin_page = self.client.get(
+            reverse('admin:content_blogpage_changelist'),
+            follow=True,
+        )
+        self.assertContains(admin_page, 'Мітка')
+        self.assertContains(admin_page, 'Акцент у заголовку')
+        self.assertContains(admin_page, 'name="heading"')
+
+        cat_admin = self.client.get(
+            reverse('admin:blog_category_change', args=[hidden.pk]),
+        )
+        self.assertContains(cat_admin, 'Показувати у фільтрі на сторінці')
+
+    def test_admin_fields_match_public_copy(self):
+        from src.content.models import ContactsPage
+
+        page = ContactsPage.load()
+        page.heading = 'Зв’яжіться'
+        page.title_accent = 'з нами'
+        page.branches_title = 'Відділення'
+        page.branches_title_accent = 'по Україні'
+        page.save()
+
+        contacts_admin = self.client.get(
+            reverse('admin:content_contactspage_changelist'),
+            follow=True,
+        )
+        self.assertContains(contacts_admin, 'name="heading"')
+        self.assertContains(contacts_admin, 'Заголовок блоку відділень')
+        self.assertNotContains(contacts_admin, 'Вступний текст')
+        self.assertNotContains(contacts_admin, 'Зображення карти')
+
+        public = self.client.get(reverse('content:contacts'))
+        self.assertContains(public, 'Зв’яжіться')
+        self.assertNotContains(public, 'contacts-hero__lead')
+
+        services_admin = self.client.get(
+            reverse('admin:content_servicespage_changelist'),
+            follow=True,
+        )
+        self.assertNotContains(services_admin, 'Вступний текст')
+        faq_admin = self.client.get(
+            reverse('admin:content_faqpage_changelist'),
+            follow=True,
+        )
+        self.assertNotContains(faq_admin, 'Вступний текст')
+        reviews_admin = self.client.get(
+            reverse('admin:content_reviewspage_changelist'),
+            follow=True,
+        )
+        self.assertNotContains(reviews_admin, 'Вступний текст')
+        advantages_admin = self.client.get(
+            reverse('admin:content_advantagespage_changelist'),
+            follow=True,
+        )
+        self.assertNotContains(advantages_admin, 'Вступний текст')
+        header_admin = self.client.get(
+            reverse('admin:core_headersettings_changelist'),
+            follow=True,
+        )
+        self.assertNotContains(header_admin, 'Текст логотипу')
+
+    def test_legal_pages_keep_paragraphs(self):
+        from src.content.models import PrivacyPage
+
+        page = PrivacyPage.load()
+        page.body = (
+            '<p>Ми обробляємо персональні дані виключно для заявок. '
+            'Які дані збираємо Контактні дані з форм на сайті. '
+            'Навіщо Щоб підтвердити заявку.</p>'
+        )
+        page.save()
+        public = self.client.get(reverse('content:privacy'))
+        self.assertContains(public, 'legal-block__title')
+        self.assertContains(public, 'Які дані збираємо')
+        self.assertContains(public, 'Навіщо')
+        admin = self.client.get(
+            reverse('admin:content_privacypage_changelist'),
+            follow=True,
+        )
+        self.assertContains(admin, 'textarea')
+        self.assertNotContains(admin, 'tinymce')
+

@@ -14,7 +14,7 @@ from src.network.models import Branch, City
 class BannerCityAdmin(CitySectionAdmin):
     inlines = [CityQuoteInline]
     fieldsets = (
-        (None, {'fields': ('city_switch',)}),
+        ('Обрати місто', {'fields': ('city_switch',)}),
         ('Банер', {
             'fields': (
                 'banner_image',
@@ -31,7 +31,7 @@ class BannerCityAdmin(CitySectionAdmin):
 class MapCityAdmin(CitySectionAdmin):
     inlines = [BranchInline]
     fieldsets = (
-        (None, {'fields': ('city_switch',)}),
+        ('Обрати місто', {'fields': ('city_switch',)}),
         ('Місто', {'fields': ('name', 'phone')}),
     )
 
@@ -40,7 +40,7 @@ class MapCityAdmin(CitySectionAdmin):
 class ContactCityAdmin(CitySectionAdmin):
     inlines = [BranchInline]
     fieldsets = (
-        (None, {'fields': ('city_switch',)}),
+        ('Обрати місто', {'fields': ('city_switch',)}),
         ('Контакти міста', {'fields': ('name', 'phone')}),
     )
 
@@ -49,7 +49,6 @@ class ContactCityAdmin(CitySectionAdmin):
 class CityAdmin(ListUnfoldAdmin):
     list_display = ('name', 'slug', 'phone', 'is_active', 'sort_order')
     list_editable = ('is_active', 'sort_order')
-    prepopulated_fields = {'slug': ('name',)}
     search_fields = ('name',)
     inlines = [BranchInline]
 

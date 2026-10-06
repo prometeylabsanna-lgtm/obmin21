@@ -5,6 +5,8 @@ from django import template
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from src.core.plain_text import html_to_plain_legal
+
 register = template.Library()
 
 _HEADING_END = ('.', '!', '?', ':', '…', ';', ',')
@@ -134,12 +136,10 @@ def _paragraph(inner: str) -> str:
 
 @register.filter(name='format_legal')
 def format_legal(value):
-    """Legal text: TinyMCE HTML or intro + section cards from plain text."""
+    """Legal text: intro + section cards from paragraphs and headings."""
     if not value:
         return ''
-    if looks_like_html(str(value)):
-        return mark_safe(str(value))
-    blocks = re.split(r'\n\s*\n', str(value).strip())
+    blocks = re.split(r'\n\s*\n', html_to_plain_legal(str(value)))
     intro = []
     sections = []
     current = None

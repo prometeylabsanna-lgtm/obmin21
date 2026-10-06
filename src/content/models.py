@@ -239,20 +239,14 @@ class AdvantageItem(models.Model):
 
 class ContactsPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'contacts'
-    title = models.CharField('Заголовок', max_length=120, default='Контакти')
+    title = models.CharField('Мітка', max_length=120, default='Контакти')
+    heading = models.CharField('Заголовок', max_length=120, default='Зв’яжіться')
     title_accent = models.CharField(
         'Акцент у заголовку',
         max_length=80,
         default='з нами',
     )
-    intro = models.TextField(
-        'Вступний текст',
-        blank=True,
-        default=(
-            'Відповімо на питання, підкажемо курс і допоможемо '
-            'забронювати обмін у зручному відділенні.'
-        ),
-    )
+    intro = models.TextField('Вступний текст', blank=True)
     phone = models.CharField('Телефон', max_length=40, default='+38(044)444 44 44')
     phone_hint = models.CharField(
         'Підказка до телефону',
@@ -265,7 +259,7 @@ class ContactsPage(ThemeFieldsMixin, SingletonModel):
         max_length=80,
         default='Відповідаємо за кілька хвилин',
     )
-    email = models.CharField('Email', max_length=80, default='info@obmin21.ua')
+    email = models.CharField('Електронна пошта', max_length=80, default='info@obmin21.ua')
     email_hint = models.CharField(
         'Підказка до email',
         max_length=80,
@@ -420,14 +414,27 @@ class FaqItem(models.Model):
 
 class BlogPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'blog'
-    title = models.CharField('Заголовок', max_length=120, default='Блог')
-    intro = models.TextField('Вступний текст', blank=True)
+    title = models.CharField('Мітка', max_length=120, default='Блог')
+    heading = models.CharField('Заголовок', max_length=120, default='Корисні')
+    title_accent = models.CharField(
+        'Акцент у заголовку',
+        max_length=80,
+        default='статті',
+    )
+    intro = models.TextField(
+        'Вступний текст',
+        blank=True,
+        default=(
+            'Пояснюємо, як працює курс валют, як зберегти заощадження '
+            'та безпечно обміняти гроші.'
+        ),
+    )
     seo_title = models.CharField('Заголовок у пошуку', max_length=160, blank=True)
     seo_description = models.CharField('Опис у пошуку', max_length=320, blank=True)
 
     class Meta:
-        verbose_name = 'Сторінка блогу'
-        verbose_name_plural = 'Сторінка блогу'
+        verbose_name = 'Сторінка Блог'
+        verbose_name_plural = 'Сторінка Блог'
 
     def __str__(self):
         return self.title

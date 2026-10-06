@@ -33,7 +33,7 @@ def services_list(request):
         'home_reviews': get_published_reviews(8),
         'news_posts': list(get_published_posts()[:10]),
         'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or page.intro[:160],
+        'page_description': page.seo_description or page.hero_text[:160],
     })
 
 
@@ -45,7 +45,7 @@ def advantages_page(request):
         'audiences': AdvantageItem.Audience.choices,
         'home_reviews': get_published_reviews(8),
         'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or page.intro[:160],
+        'page_description': page.seo_description or page.title,
     })
 
 
@@ -68,7 +68,7 @@ def contacts_page(request):
         'active_branch': active,
         'branches': request.city_branches,
         'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or page.intro[:160],
+        'page_description': page.seo_description or page.heading,
     })
 
 
@@ -113,5 +113,5 @@ def faq_page(request):
         'page': page,
         'items': FaqItem.objects.filter(is_active=True),
         'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or page.intro[:160],
+        'page_description': page.seo_description or page.title,
     })
