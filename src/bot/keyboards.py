@@ -6,8 +6,6 @@ from telebot.types import (
     ReplyKeyboardRemove,
 )
 
-from src.bot.states import BotState
-
 CB_MENU = 'mn:home'
 CB_RATES = 'mn:rates'
 CB_EX = 'mn:ex'
@@ -102,11 +100,3 @@ def phone_keyboard() -> ReplyKeyboardMarkup:
     markup = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     markup.add(KeyboardButton('Надіслати номер', request_contact=True))
     return markup
-
-
-def purpose_from_state(state: str) -> str:
-    if state in {BotState.EX_CITY, BotState.EX_PAIR}:
-        return 'e'
-    if state == BotState.CITY_PICK:
-        return 'r'
-    return 'b'

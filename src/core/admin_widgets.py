@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from django.contrib.admin.widgets import AdminTextInputWidget, AdminTextareaWidget
-from django.forms.widgets import CheckboxSelectMultiple, ClearableFileInput, TextInput
+from django.forms.widgets import ClearableFileInput, TextInput
 from tinymce.widgets import TinyMCE
 from unfold.widgets import INPUT_CLASSES, TEXTAREA_CLASSES
 
@@ -99,10 +99,6 @@ class CmsAdminImageWidget(ClearableFileInput):
         widget['flag_code'] = self.flag_code
         widget['flag_mark'] = self.flag_mark
         return context
-
-
-class CmsCheckboxListWidget(CheckboxSelectMultiple):
-    template_name = 'django/forms/widgets/cms_checkboxes.html'
 
 
 class CmsTinyMCE(TinyMCE):

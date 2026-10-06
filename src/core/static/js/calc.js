@@ -16,10 +16,6 @@
     });
   }
 
-  function formatNum(value, maxDecimals) {
-    return formatUa(value, typeof maxDecimals === 'number' ? maxDecimals : 2);
-  }
-
   function activeBtn(scope) {
     return (
       scope.querySelector('.calc-codes__btn.is-active') ||
@@ -150,13 +146,8 @@
       .catch(function () {});
   }
 
-  function initFaq() {
-    /* handled in pages/home.js */
-  }
-
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-calc]').forEach(bindCalc);
-    initFaq();
   });
 
   document.body.addEventListener('htmx:afterSwap', function (evt) {
