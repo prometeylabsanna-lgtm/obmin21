@@ -119,5 +119,14 @@ class CmsTinyMCE(TinyMCE):
                 'language': 'uk',
                 'forced_root_block': 'p',
                 'newline_behavior': 'block',
+                'extended_valid_elements': 'span[class],strong/b,em/i,a[href|target],ul,ol,li,p,br',
+                'verify_html': False,
+                'content_style': (
+                    'body{font-size:14px;line-height:1.45;}'
+                    'li{margin:0.4em 0;}'
+                    'li span::after,li strong::before{content:" — ";}'
+                    'li span + strong::before{content:none;}'
+                    'li strong{font-weight:700;}'
+                ),
             },
         )

@@ -17,12 +17,14 @@
         <a class="btn adv-hero__ghost" href="#adv">{{ page.hero_btn_secondary }}</a>
       </div>
     </div>
-    {% if page.hero_cards_src %}
-    <div class="adv-hero__stack adv-hero__stack--photo" aria-hidden="true">
-      <img src="{{ page.hero_cards_src }}" alt="">
-    </div>
-    {% else %}
     <div class="adv-hero__stack" aria-hidden="true">
+      <div class="adv-hero__layer adv-hero__k1">
+        <div class="adv-hero__k1-rot">
+          <div class="adv-hero__float">
+            <img class="adv-hero__coin" src="{% static 'images/coins-d.png' %}" alt="">
+          </div>
+        </div>
+      </div>
       <div class="adv-hero__layer adv-hero__c1">
         <div class="adv-hero__c1-rot">
           <div class="adv-hero__float">
@@ -71,8 +73,14 @@
           </div>
         </div>
       </div>
+      <div class="adv-hero__layer adv-hero__k2">
+        <div class="adv-hero__k2-rot">
+          <div class="adv-hero__float">
+            <img class="adv-hero__coin adv-hero__coin--flip" src="{% static 'images/coins-d.png' %}" alt="">
+          </div>
+        </div>
+      </div>
     </div>
-    {% endif %}
   </div>
 </section>
 
@@ -198,6 +206,6 @@
 
 {% include 'partials/shared_faq_section.html' with extra_class='faq-section--svc' section_id='faq' faq_kicker=faq_page.kicker faq_title=faq_page.title faq_title_accent=faq_page.title_accent faq_lead=faq_page.lead faq_items=faq_items grid_class='faq-section__grid--svc' %}
 
-{% include 'partials/shared_reviews_section.html' with reviews_kicker=reviews_page.kicker reviews_title=reviews_page.title reviews_lead=reviews_page.intro reviews_cta=reviews_page.cta_button home_reviews=home_reviews %}
+{% include 'partials/shared_reviews_section.html' with reviews_kicker=reviews_page.kicker reviews_title=reviews_page.title reviews_cta=reviews_page.cta_button home_reviews=home_reviews %}
 
 {% endblock %}

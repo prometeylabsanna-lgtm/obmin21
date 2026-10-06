@@ -287,6 +287,12 @@ msgstr "Дата до"
 msgid "Select record"
 msgstr "Обрати запис"
 
+msgid "Select action"
+msgstr "Обрати дію"
+
+msgid "Select action to run"
+msgstr "Обрати дію"
+
 msgid "Choose"
 msgstr "Обрати"
 

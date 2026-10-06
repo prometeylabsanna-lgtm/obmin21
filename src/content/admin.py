@@ -140,7 +140,6 @@ _register_home(
         'faq_kicker',
         'faq_title',
         'faq_title_accent',
-        'faq_lead',
     ),
     extra={
         'content_fieldsets': ((
@@ -155,7 +154,6 @@ _register_home(
                     'faq_kicker',
                     'faq_title',
                     'faq_title_accent',
-                    'faq_lead',
                 ),
             },
         ),),
@@ -167,7 +165,6 @@ _register_home(
         'show_reviews',
         'reviews_kicker',
         'reviews_title',
-        'reviews_lead',
     ),
     extra={
         'content_fieldsets': ((
@@ -181,7 +178,6 @@ _register_home(
                     'show_reviews',
                     'reviews_kicker',
                     'reviews_title',
-                    'reviews_lead',
                 ),
             },
         ),),
@@ -219,13 +215,17 @@ admin.site.register(HomeArticlesSettings, HomeArticlesAdmin)
 
 
 class HomeLookAdmin(HomeSectionAdmin):
-    content_fields = ('show_map', 'seo_title', 'seo_description')
-    style_fields = (
-        'color_bg',
-        'color_text',
-        'color_accent',
-        'color_highlight',
+    content_fieldsets = (
+        ('Оформлення', {
+            'fields': (
+                'color_bg',
+                'color_text',
+                'color_accent',
+                'color_highlight',
+            ),
+        }),
     )
+    style_fields = ()
 
 
 admin.site.register(HomeSearchSettings, HomeLookAdmin)
@@ -415,7 +415,6 @@ _register_page(
         'kicker',
         'title',
         'title_accent',
-        'intro',
         'cta_button',
         'seo_title',
         'seo_description',
@@ -431,7 +430,6 @@ _register_page(
                     'kicker',
                     'title',
                     'title_accent',
-                    'intro',
                     'cta_button',
                     'seo_title',
                     'seo_description',

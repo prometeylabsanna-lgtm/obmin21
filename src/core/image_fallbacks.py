@@ -9,12 +9,13 @@ IMAGE_FALLBACKS = {
     'promo_image': 'images/coins.png',
     'hero_image': 'images/coins.png',
     'why_coins': 'images/coins.png',
+    'why_banner': 'images/coins.png',
     'image': 'images/service-1.png',
     'figure': 'images/service-1.png',
     'cover': 'images/service-1.png',
 }
 
-CONTAIN_FIELDS = frozenset({'header_logo', 'footer_logo'})
+CONTAIN_FIELDS = frozenset({'header_logo', 'footer_logo', 'why_banner', 'why_coins'})
 
 
 def image_fallback_url(field_name: str, instance=None) -> str:

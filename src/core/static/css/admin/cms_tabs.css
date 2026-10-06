@@ -1,0 +1,121 @@
+.cms-seg-tabs-wrap {
+  border-bottom: none;
+  margin: 0 0 8px;
+  padding: 4px 0 12px;
+}
+
+.cms-seg-tabs,
+.cms-board-tabs,
+#tabs-items {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 16px;
+  padding: 4px;
+  border: none;
+  border-radius: 14px;
+  background: #eef1f6;
+  box-shadow: none;
+}
+
+.cms-seg-tabs a,
+.cms-board-tabs__btn,
+#tabs-items > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 36px;
+  margin: 0;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  color: #052145;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cms-seg-tabs a:hover,
+.cms-board-tabs__btn:hover,
+#tabs-items > a:hover {
+  background: rgba(5, 33, 69, 0.06);
+  color: #052145;
+}
+
+.cms-seg-tabs a.active,
+.cms-board-tabs__btn.is-active,
+#tabs-items > a.active {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(5, 33, 69, 0.12);
+  color: #052145;
+}
+
+.dark .cms-seg-tabs,
+.dark .cms-board-tabs,
+.dark #tabs-items {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark .cms-seg-tabs a,
+.dark .cms-board-tabs__btn,
+.dark #tabs-items > a {
+  color: #ffffff;
+}
+
+.dark .cms-seg-tabs a:hover,
+.dark .cms-board-tabs__btn:hover,
+.dark #tabs-items > a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.dark .cms-seg-tabs a.active,
+.dark .cms-board-tabs__btn.is-active,
+.dark #tabs-items > a.active {
+  background: #1c2430;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+  color: #ffffff;
+}
+
+@media (max-width: 767px) {
+  .cms-seg-tabs,
+  .cms-board-tabs,
+  #tabs-items {
+    width: 100%;
+  }
+
+  .cms-seg-tabs a,
+  .cms-board-tabs__btn,
+  #tabs-items > a {
+    flex: 1 1 auto;
+    min-height: 44px;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .cms-seg-tabs a,
+  .cms-board-tabs__btn,
+  #tabs-items > a {
+    min-height: 40px;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .cms-seg-tabs a,
+  .cms-board-tabs__btn,
+  #tabs-items > a {
+    min-height: 44px;
+  }
+}

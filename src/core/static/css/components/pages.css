@@ -406,11 +406,26 @@
     position: absolute;
     order: 0;
     right: -4%;
-    top: 8px;
+    top: -24px;
     width: min(58%, max(280px, calc(100% - 520px)));
     margin: 0;
+    height: calc(100% - 64px);
+    max-height: calc(100% - 64px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
     perspective: 900px;
     -webkit-perspective: 900px;
+  }
+
+  .svc-hero__coins img {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: top right;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 
   .svc-hero__copy {
@@ -467,9 +482,21 @@
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .svc-hero__coins {
-    right: -6%;
-    top: 12px;
-    width: min(70%, max(300px, calc(100% - 400px)));
+    right: -8%;
+    top: -32px;
+    width: min(60%, max(260px, calc(100% - 420px)));
+    height: calc(100% - 80px);
+    max-height: calc(100% - 80px);
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (min-width: 768px) {
+    .svc-hero__coins {
+      top: -36px;
+      height: calc(100% - 88px);
+      max-height: calc(100% - 88px);
+    }
   }
 }
 

@@ -11,8 +11,8 @@ class AdminPanelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = User.objects.create_superuser(
-            username='editor',
-            email='editor@example.com',
+            username='tester',
+            email='tester@example.com',
             password='pass-12345',
         )
 
@@ -52,10 +52,6 @@ class AdminPanelTests(TestCase):
 
         search_url = reverse('admin:content_homesearchsettings_change', args=[1])
         theme_post = self.client.post(search_url, {
-            'seo_title': 'Головна',
-            'seo_description': '',
-            'seo_block_title': 'Обмін валют',
-            'seo_block_body': '<p>Текст</p>',
             'color_bg': '#f3f6fb',
             'color_text': '#052145',
             'color_accent': '#ca8d42',
@@ -318,6 +314,7 @@ class AdminPanelTests(TestCase):
             follow=True,
         )
         self.assertNotContains(reviews_admin, 'Вступний текст')
+        self.assertNotContains(reviews_admin, 'Підзаголовок')
         advantages_admin = self.client.get(
             reverse('admin:content_advantagespage_changelist'),
             follow=True,
@@ -332,6 +329,9 @@ class AdminPanelTests(TestCase):
         self.assertContains(advantages_admin, 'Фото банера')
         self.assertContains(advantages_admin, 'Картинка монет')
         self.assertContains(advantages_admin, 'Сторінка переваг')
+        self.assertContains(advantages_admin, 'cms-seg-tabs')
+        self.assertContains(advantages_admin, 'images/coins.png')
+        self.assertContains(advantages_admin, 'li span::after')
         header_admin = self.client.get(
             reverse('admin:core_headersettings_changelist'),
             follow=True,
@@ -505,8 +505,11 @@ class AdminPanelTests(TestCase):
             sell='41.50',
         )
         cash = self.client.get(reverse('admin:rates_quote_changelist'))
+        self.assertContains(cash, 'cms-board-tabs')
         self.assertContains(cash, 'Готівка')
         self.assertContains(cash, 'Крипто')
+        self.assertContains(cash, 'Обрати дію')
+        self.assertNotContains(cash, 'Select action')
         self.assertNotContains(cash, 'Опт')
         self.assertNotContains(cash, 'Крос')
         self.assertContains(cash, '41.20')
@@ -522,6 +525,8 @@ class AdminPanelTests(TestCase):
         )
         self.assertContains(look, 'Колір акценту')
         self.assertContains(look, 'Колір підсвітки')
+        self.assertNotContains(look, 'Назва для SEO')
+        self.assertNotContains(look, 'Показувати блок на головній')
 
     def test_service_cards_show_site_image(self):
         from src.content.models import Service

@@ -7,23 +7,23 @@ NAVY = '#052145'
 
 CMP_US_HTML = (
     '<ul>'
-    '<li><span>Курс</span><strong>Кращий за банківський</strong></li>'
-    '<li><span>Комісія</span><strong>0 ₴ за будь-яку суму</strong></li>'
-    '<li><span>Фіксація курсу</span><strong>Онлайн на 30 хвилин</strong></li>'
-    '<li><span>Зношені купюри</span><strong>Приймаємо та обмінюємо</strong></li>'
-    '<li><span>Криптовалюта</span><strong>USDT, BTC, ETH на готівку</strong></li>'
-    '<li><span>Великі суми</span><strong>Індивідуальний курс</strong></li>'
+    '<li><span class="k">Курс</span><strong>Кращий за банківський</strong></li>'
+    '<li><span class="k">Комісія</span><strong>0 ₴ за будь-яку суму</strong></li>'
+    '<li><span class="k">Фіксація курсу</span><strong>Онлайн на 30 хвилин</strong></li>'
+    '<li><span class="k">Зношені купюри</span><strong>Приймаємо та обмінюємо</strong></li>'
+    '<li><span class="k">Криптовалюта</span><strong>USDT, BTC, ETH на готівку</strong></li>'
+    '<li><span class="k">Великі суми</span><strong>Індивідуальний курс</strong></li>'
     '</ul>'
 )
 
 CMP_THEM_HTML = (
     '<ul>'
-    '<li><span>Курс</span><strong>Курс банку з націнкою</strong></li>'
-    '<li><span>Комісія</span><strong>Від 1 до 3%</strong></li>'
-    '<li><span>Фіксація курсу</span><strong>Лише у відділенні</strong></li>'
-    '<li><span>Зношені купюри</span><strong>Часто відмовляють</strong></li>'
-    '<li><span>Криптовалюта</span><strong>Недоступно</strong></li>'
-    '<li><span>Великі суми</span><strong>Стандартні умови</strong></li>'
+    '<li><span class="k">Курс</span><strong>Курс банку з націнкою</strong></li>'
+    '<li><span class="k">Комісія</span><strong>Від 1 до 3%</strong></li>'
+    '<li><span class="k">Фіксація курсу</span><strong>Лише у відділенні</strong></li>'
+    '<li><span class="k">Зношені купюри</span><strong>Часто відмовляють</strong></li>'
+    '<li><span class="k">Криптовалюта</span><strong>Недоступно</strong></li>'
+    '<li><span class="k">Великі суми</span><strong>Стандартні умови</strong></li>'
     '</ul>'
 )
 

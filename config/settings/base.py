@@ -91,6 +91,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'uk'
+LANGUAGES = [
+    ('uk', 'Українська'),
+]
 TIME_ZONE = 'Europe/Kyiv'
 USE_I18N = True
 USE_TZ = True
@@ -151,7 +154,8 @@ UNFOLD = {
     ],
     'SHOW_HISTORY': True,
     'STYLES': [
-        lambda request: static('css/admin/site_content.css'),
+        lambda request: static('css/admin/site_content.css') + '?v=8',
+        lambda request: static('css/admin/cms_tabs.css') + '?v=1',
     ],
     'SCRIPTS': [
         lambda request: static('js/admin/cms_image_preview.js'),

@@ -6,7 +6,6 @@
 <section class="page-hero">
   <div class="section__head">
     <h1 class="page-hero__title">{{ page.title }} <span class="u-accent">{{ page.title_accent }}</span></h1>
-    {% if page.intro %}<p class="page-hero__lead">{{ page.intro }}</p>{% endif %}
     <button type="button" class="btn btn--accent" data-open-modal="{% url 'reviews:review_submit' %}">{{ page.cta_button }}</button>
   </div>
 </section>
