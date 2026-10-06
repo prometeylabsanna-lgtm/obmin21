@@ -329,18 +329,39 @@ body.change-list {
 }
 
 .change-form .selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  min-width: 0;
   width: 100%;
   max-width: 100%;
 }
 
 .change-form .selector-available,
 .change-form .selector-chosen {
-  width: 100%;
+  min-width: 0;
   max-width: 100%;
   float: none;
+}
+
+.change-form .selector select {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.change-form .grow:has(.selector) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .change-form .selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .change-form .selector-available,
+  .change-form .selector-chosen {
+    width: 100%;
+  }
 }
 
 .change-form .inline-group,

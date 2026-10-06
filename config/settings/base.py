@@ -154,7 +154,7 @@ UNFOLD = {
     ],
     'SHOW_HISTORY': True,
     'STYLES': [
-        lambda request: static('css/admin/site_content.css') + '?v=8',
+        lambda request: static('css/admin/site_content.css') + '?v=9',
         lambda request: static('css/admin/cms_tabs.css') + '?v=1',
     ],
     'SCRIPTS': [

@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from unfold.admin import ModelAdmin
 
+from src.core.admin_guidelines import with_field_limits
 from src.core.admin_widgets import (
     CmsAdminColorWidget,
     CmsAdminImageWidget,
@@ -12,6 +13,7 @@ from src.core.admin_widgets import (
     CmsTinyMCE,
 )
 from src.core.image_fallbacks import image_fallback_url, image_preview_fit
+from src.core.media_webp import convert_instance_images
 from src.core.plain_text import html_to_plain_legal, plain_text
 from src.core.slugs import unique_slug
 
@@ -227,6 +229,9 @@ class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         name = db_field.name
+        kwargs = with_field_limits(
+            db_field, kwargs, rich=_is_rich_field(name, self.rich_fields),
+        )
         if _is_plain_textarea(name, self.rich_fields):
             kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 3})
             return db_field.formfield(**kwargs)
@@ -259,6 +264,7 @@ class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
             if hasattr(obj, name):
                 setattr(obj, name, html_to_plain_legal(getattr(obj, name) or ''))
         _strip_plain_fields(obj, self.rich_fields)
+        convert_instance_images(obj)
         super().save_model(request, obj, form, change)
         messages.success(request, 'Зміни успішно збережено!')
 
@@ -274,6 +280,9 @@ class ListUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         name = db_field.name
+        kwargs = with_field_limits(
+            db_field, kwargs, rich=_is_rich_field(name, self.rich_fields),
+        )
         if _is_plain_textarea(name, self.rich_fields):
             kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 3})
             return db_field.formfield(**kwargs)
@@ -293,4 +302,5 @@ class ListUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         _strip_plain_fields(obj, self.rich_fields)
+        convert_instance_images(obj)
         super().save_model(request, obj, form, change)

@@ -74,7 +74,7 @@ class CmsAdminImageWidget(ClearableFileInput):
         self.flag_mark = flag_mark
         merged = dict(attrs or {})
         extra = merged.pop('class', '')
-        merged.setdefault('accept', 'image/*')
+        merged.setdefault('accept', 'image/jpeg,image/png,image/webp,image/gif')
         super().__init__(attrs={
             **merged,
             'class': _classes(

@@ -25,10 +25,8 @@
     <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} data-cms-image-input>
   </label>
   {% if widget.is_fallback %}
-    <p class="cms-image__hint">На сайті зараз це зображення. Оберіть файл, щоб замінити.</p>
+    <p class="cms-image__hint">Зараз на сайті стандартне фото. Можна замінити своїм.</p>
   {% elif widget.flag_code and not widget.preview_url %}
-    <p class="cms-image__hint">На сайті показується стандартний прапор за кодом валюти. Можна завантажити свою іконку.</p>
-  {% else %}
-    <p class="cms-image__hint">Оберіть файл, щоб замінити картинку. Поточне фото видно вище.</p>
+    <p class="cms-image__hint">Якщо своє фото не завантажити, буде стандартний прапор валюти.</p>
   {% endif %}
 </div>

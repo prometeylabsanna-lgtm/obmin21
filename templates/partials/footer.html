@@ -66,7 +66,20 @@
     </div>
 
     <div class="site-footer__bar">
-      {{ site_settings.footer_copy }}
+      <span class="site-footer__copy">{{ site_settings.footer_copy }}</span>
+      <p class="site-footer__credit">
+        Сайт від
+        {% if request.resolver_match.url_name == 'home' %}
+        <a
+          class="site-footer__credit-link"
+          href="https://www.prometeylabs.com/corporate-website-v2/"
+          target="_blank"
+          rel="nofollow noopener noreferrer"
+        >PrometeyLabs</a>
+        {% else %}
+        <span class="site-footer__credit-name">PrometeyLabs</span>
+        {% endif %}
+      </p>
     </div>
   </div>
 </footer>
