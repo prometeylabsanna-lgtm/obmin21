@@ -34,6 +34,12 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+button.rates-tabs__btn:focus,
+button.rates-tabs__btn:focus-visible {
+  outline: none;
+  outline-offset: 0;
+}
+
 .page {
   min-height: 100vh;
   min-height: 100dvh;

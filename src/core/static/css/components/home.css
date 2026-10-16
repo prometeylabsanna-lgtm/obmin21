@@ -131,11 +131,11 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  border: 0;
+  border: 1px solid #f2f3f5;
   outline: none;
   background: #f2f3f5;
   background-clip: border-box;
-  box-shadow: inset 0 0 0 1px #f2f3f5;
+  box-shadow: none;
   color: #052145;
 }
 
@@ -150,9 +150,10 @@
   height: 40px;
   min-height: 40px;
   max-height: 40px;
-  border: 0;
+  border: 1px solid var(--color-accent);
   background: #fff;
-  box-shadow: inset 0 0 0 1px var(--color-accent);
+  background-clip: border-box;
+  box-shadow: none;
   color: var(--color-accent);
   font-weight: 500;
 }
