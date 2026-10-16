@@ -40,6 +40,7 @@
 </section>
 
 <section class="calc-box" data-calc data-qa="home-calc">
+  {{ calc_currencies|json_script:"home-calc-currencies" }}
   <div class="calc-box__col">
     <div class="calc-box__label">{{ page.calc_give }}</div>
     <div class="field-row">
@@ -81,11 +82,12 @@
     <div class="calc-box__label">{{ page.calc_get }}</div>
     <div class="field-row">
       <div class="field-value" data-calc-result>0</div>
-      <button type="button" class="field-currency" disabled>
-        <span class="flag flag--uah" data-code="UAH" aria-hidden="true"></span>
-        <span>UAH</span>
+      <button type="button" class="field-currency" data-calc-to-toggle aria-haspopup="listbox" aria-expanded="false">
+        <span class="flag" data-calc-to-flag data-code="UAH" aria-hidden="true"></span>
+        <span data-calc-to-code>UAH</span>
         <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
       </button>
+      <div class="currency-menu" data-calc-to-menu hidden></div>
     </div>
   </div>
 

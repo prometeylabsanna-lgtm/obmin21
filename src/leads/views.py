@@ -47,7 +47,7 @@ def _modal_context(request, form=None):
     pair_id = source.get('pair')
     initial_from = (source.get('from') or 'USD').upper()
     initial_to = (source.get('to') or 'UAH').upper()
-    if pair_id:
+    if pair_id and 'from' not in source and 'to' not in source:
         pair = CurrencyPair.objects.filter(pk=pair_id).first()
         if pair and pair.code and '/' not in pair.code:
             initial_from = pair.code.upper()

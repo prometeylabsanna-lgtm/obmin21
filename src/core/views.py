@@ -17,6 +17,24 @@ from src.reviews.selectors import get_published_reviews
 logger = logging.getLogger(__name__)
 
 
+def _calc_currencies(rows):
+    items = [{'code': 'UAH', 'name': 'Гривня', 'buy': '1', 'sell': '1', 'pair_id': ''}]
+    seen = {'UAH'}
+    for row in rows:
+        code = (row['pair'].flag_code or '').upper()
+        if not code or code in seen:
+            continue
+        seen.add(code)
+        items.append({
+            'code': code,
+            'name': row['pair'].name,
+            'buy': str(row['quote'].buy),
+            'sell': str(row['quote'].sell),
+            'pair_id': row['pair'].pk,
+        })
+    return items
+
+
 class HomeView(TemplateView):
     template_name = 'core/home.html'
 
@@ -43,6 +61,7 @@ class HomeView(TemplateView):
         ctx.update({
             'page': page,
             'rate_rows': rows,
+            'calc_currencies': _calc_currencies(rows),
             'rate_updated_at': updated_at,
             'active_board': board,
             'boards': RateBoard.choices,

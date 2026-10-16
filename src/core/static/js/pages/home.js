@@ -83,7 +83,7 @@
       timer = window.setInterval(function () {
         if (document.hidden || root.dataset.pause === '1') return;
         show(index + 1);
-      }, 5000);
+      }, 4000);
     }
 
     dots.forEach(function (dot, i) {

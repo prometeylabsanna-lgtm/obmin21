@@ -6,16 +6,18 @@
 }
 
 .rates-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  flex-wrap: wrap;
   flex: 1 1 100%;
 }
 
 .rates-tabs__btn {
-  width: calc(50% - 6px);
+  width: 100%;
   min-width: 0;
   height: 40px;
+  -webkit-appearance: none;
+  appearance: none;
   border-radius: var(--radius-sm);
   font-family: inherit;
   font-size: 14px;
@@ -214,6 +216,10 @@
   .rates-tabs {
     flex: 0 0 auto;
     gap: 20px;
+    grid-template-columns: 190px 190px;
+    justify-content: start;
+    width: max-content;
+    max-width: 100%;
   }
 
   .rates-tabs__btn {
@@ -271,8 +277,12 @@
     width: 200px;
   }
 
+  .rates-tabs {
+    grid-template-columns: 190px 190px;
+  }
+
   .rates-tabs__btn {
-    width: 140px;
+    width: 190px;
   }
 
   .rates-table .flag {

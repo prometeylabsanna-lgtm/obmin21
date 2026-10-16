@@ -16,6 +16,31 @@
     });
   }
 
+  function esc(value) {
+    return String(value || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+
+  function byCode(list, code) {
+    var i;
+    for (i = 0; i < list.length; i += 1) {
+      if (list[i].code === code) return list[i];
+    }
+    return null;
+  }
+
+  function readCurrencies(scope) {
+    var el = scope.querySelector('#home-calc-currencies');
+    if (!el) return null;
+    try {
+      var list = JSON.parse(el.textContent);
+      return Array.isArray(list) && list.length ? list : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function activeBtn(scope) {
     return (
       scope.querySelector('.calc-codes__btn.is-active') ||
@@ -55,9 +80,192 @@
     }
   }
 
+  function bindCross(scope, list) {
+    scope._calcCurrencies = list;
+    var amountInput = scope.querySelector('[data-calc-amount]');
+    var resultEl = scope.querySelector('[data-calc-result]');
+    var labelEl = scope.querySelector('[data-calc-rate-label]');
+    var fromCodeEl = scope.querySelector('[data-calc-from-code]');
+    var toCodeEl = scope.querySelector('[data-calc-to-code]');
+    var fromFlag = scope.querySelector('[data-calc-from-flag]');
+    var toFlag = scope.querySelector('[data-calc-to-flag]');
+    var fromMenu = scope.querySelector('[data-calc-from-menu]');
+    var toMenu = scope.querySelector('[data-calc-to-menu]');
+    var fromToggle = scope.querySelector('[data-calc-from-toggle]');
+    var toToggle = scope.querySelector('[data-calc-to-toggle]');
+    var fromCode = (fromCodeEl && fromCodeEl.textContent.trim()) || 'USD';
+    var toCode = (toCodeEl && toCodeEl.textContent.trim()) || 'UAH';
+    if (!byCode(list, fromCode)) fromCode = (byCode(list, 'USD') || list[0]).code;
+    if (!byCode(list, toCode) || toCode === fromCode) {
+      toCode = byCode(list, 'UAH') && fromCode !== 'UAH' ? 'UAH' : list[0].code;
+    }
+
+    function setFlag(el, code) {
+      if (!el) return;
+      el.className = 'flag';
+      el.setAttribute('data-code', code);
+      el.textContent = '';
+    }
+
+    function fillMenu(menu, active) {
+      if (!menu) return;
+      var html = '';
+      list.forEach(function (item) {
+        html +=
+          '<button type="button" data-calc-choose="' + esc(item.code) + '"' +
+          (item.code === active ? ' class="is-active"' : '') + '>' +
+          '<span class="flag" data-code="' + esc(item.code) + '"></span>' +
+          '<span class="code">' + esc(item.code) + '</span>' +
+          '<span class="name">' + esc(item.name) + '</span></button>';
+      });
+      menu.innerHTML = html;
+    }
+
+    function closeMenus() {
+      if (fromMenu) fromMenu.setAttribute('hidden', '');
+      if (toMenu) toMenu.setAttribute('hidden', '');
+      if (fromToggle) fromToggle.setAttribute('aria-expanded', 'false');
+      if (toToggle) toToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function rateOf() {
+      var from = byCode(list, fromCode);
+      var to = byCode(list, toCode);
+      if (!from || !to) return 0;
+      var sellTo = parseNum(to.sell) || 1;
+      return parseNum(from.buy) / sellTo;
+    }
+
+    function syncHeads() {
+      if (fromCodeEl) fromCodeEl.textContent = fromCode;
+      if (toCodeEl) toCodeEl.textContent = toCode;
+      setFlag(fromFlag, fromCode);
+      setFlag(toFlag, toCode);
+      fillMenu(fromMenu, fromCode);
+      fillMenu(toMenu, toCode);
+    }
+
+    function recalcCross() {
+      var amount = parseNum(amountInput ? amountInput.value : '0');
+      var rate = rateOf();
+      var to = byCode(list, toCode);
+      var decimals = to && parseNum(to.sell) > 1000 ? 6 : 2;
+      if (resultEl) resultEl.textContent = formatUa(amount * rate, decimals);
+      if (labelEl) {
+        labelEl.textContent =
+          'За поточним курсом 1 ' + fromCode + ' = ' +
+          formatUa(rate, rate < 1 ? 4 : 2) + ' ' + toCode;
+      }
+    }
+
+    scope._recalc = recalcCross;
+
+    function pick(side, code) {
+      if (!byCode(list, code)) return;
+      if (side === 'from') {
+        if (code === toCode) toCode = fromCode;
+        fromCode = code;
+      } else {
+        if (code === fromCode) fromCode = toCode;
+        toCode = code;
+      }
+      closeMenus();
+      syncHeads();
+      recalcCross();
+    }
+
+    function toggleMenu(menu, toggle) {
+      var open = menu && menu.hasAttribute('hidden');
+      closeMenus();
+      if (open && menu) {
+        menu.removeAttribute('hidden');
+        if (toggle) toggle.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    if (fromToggle && fromMenu) {
+      fromToggle.addEventListener('click', function (event) {
+        event.stopPropagation();
+        toggleMenu(fromMenu, fromToggle);
+      });
+    }
+    if (toToggle && toMenu) {
+      toToggle.addEventListener('click', function (event) {
+        event.stopPropagation();
+        toggleMenu(toMenu, toToggle);
+      });
+    }
+
+    scope.addEventListener('click', function (event) {
+      var choice = event.target.closest('[data-calc-choose]');
+      if (choice) {
+        var side = choice.closest('[data-calc-to-menu]') ? 'to' : 'from';
+        pick(side, choice.getAttribute('data-calc-choose'));
+        return;
+      }
+      if (!event.target.closest('[data-calc-from-toggle], [data-calc-to-toggle], .currency-menu')) {
+        closeMenus();
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!scope.contains(event.target)) closeMenus();
+    });
+
+    var swap = scope.querySelector('[data-calc-swap]');
+    if (swap) {
+      swap.addEventListener('click', function () {
+        var tmp = fromCode;
+        fromCode = toCode;
+        toCode = tmp;
+        closeMenus();
+        syncHeads();
+        recalcCross();
+      });
+    }
+
+    if (amountInput) {
+      amountInput.addEventListener('input', function () {
+        recalcCross();
+      });
+    }
+
+    var cont = scope.querySelector('[data-calc-continue]');
+    if (cont) {
+      cont.addEventListener('click', function () {
+        if (!window.Obmin21) return;
+        var amount = amountInput ? amountInput.value : '1000';
+        var rate = rateOf();
+        var pairCode = fromCode === 'UAH' ? toCode : fromCode;
+        var pairItem = byCode(list, pairCode);
+        var pairId = pairItem && pairItem.pair_id ? pairItem.pair_id : '';
+        var receive = formatUa(parseNum(amount) * rate, 2);
+        var url =
+          '/htmx/zayavka/?pair=' + encodeURIComponent(pairId) +
+          '&from=' + encodeURIComponent(fromCode) +
+          '&to=' + encodeURIComponent(toCode) +
+          '&direction=' + (fromCode === 'UAH' ? 'buy' : 'sell') +
+          '&amount_give=' + encodeURIComponent(amount) +
+          '&amount_receive=' + encodeURIComponent(receive) +
+          '&rate_fixed=' + encodeURIComponent(String(rate)) +
+          '&step=1';
+        window.Obmin21.openModal(url);
+      });
+    }
+
+    syncHeads();
+    recalcCross();
+  }
+
   function bindCalc(scope) {
     if (!scope || scope.dataset.calcBound === '1') return;
     scope.dataset.calcBound = '1';
+
+    var currencies = readCurrencies(scope);
+    if (currencies) {
+      bindCross(scope, currencies);
+      return;
+    }
 
     var amountInput = scope.querySelector('[data-calc-amount]');
     if (amountInput) {
@@ -109,6 +317,7 @@
       });
     }
 
+    scope._recalc = function () { recalc(scope); };
     recalc(scope);
   }
 
@@ -124,8 +333,17 @@
           if (el.hasAttribute('data-calc-code')) el.setAttribute('data-calc-code', q.code);
         }
       });
+      if (scope._calcCurrencies) {
+        scope._calcCurrencies.forEach(function (item) {
+          if (String(item.pair_id) === id || (q.code && item.code === String(q.code).toUpperCase())) {
+            item.buy = q.buy;
+            item.sell = q.sell;
+          }
+        });
+      }
     });
-    recalc(scope);
+    if (scope._recalc) scope._recalc();
+    else recalc(scope);
   }
 
   function syncQuotes() {

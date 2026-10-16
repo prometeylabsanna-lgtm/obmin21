@@ -8,8 +8,8 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  min-height: 680px;
-  padding: 24px 16px 16px;
+  min-height: 320px;
+  padding: 20px 16px 16px;
   display: flex;
   flex-direction: column;
   background: #1c3350;
@@ -66,6 +66,7 @@
 
 .hero__cta {
   margin-top: auto;
+  padding-top: 20px;
   pointer-events: auto;
   display: flex;
   align-self: stretch;
@@ -103,14 +104,17 @@
 }
 
 .hero__rates .rates-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
 }
 
 .hero__rates .rates-tabs__btn {
-  width: calc(50% - 10px);
+  width: 100%;
   height: 40px;
   min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
   border-radius: 6px;
   font-family: inherit;
   font-size: 14px;
@@ -287,8 +291,10 @@
 }
 
 .calc-box__swap {
-  padding-top: 36px;
-  display: none;
+  padding-top: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .calc-box__swap-btn {
@@ -304,9 +310,8 @@
   transition: background 0.2s ease, transform 0.3s ease;
 }
 
-.calc-box__swap-btn:hover {
-  background: var(--color-surface);
-  transform: rotate(180deg);
+.calc-box__swap-btn svg {
+  display: block;
 }
 
 .calc-box__rate {
@@ -673,6 +678,7 @@
   margin-top: 56px;
   display: flex;
   flex-wrap: nowrap;
+  align-items: stretch;
   gap: 10px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -692,7 +698,9 @@
   flex: 0 0 calc((100% - 10px) / 2);
   min-width: 0;
   scroll-snap-align: start;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   color: inherit;
   text-decoration: none;
 }
@@ -729,7 +737,8 @@
 }
 
 .svc-card .link-accent {
-  margin-top: 10px;
+  margin-top: auto;
+  padding-top: 10px;
   font-size: 12px;
   font-weight: 500;
   transition: color 0.25s ease;
@@ -1039,7 +1048,7 @@
 
 @media (min-width: 768px) {
   .hero__banner {
-    min-height: 736px;
+    min-height: 520px;
     padding: 32px 30px 30px;
   }
 
@@ -1049,6 +1058,7 @@
 
   .hero__cta {
     margin-top: 40px;
+    padding-top: 0;
     align-self: flex-start;
   }
 
@@ -1057,11 +1067,12 @@
   }
 
   .hero__rates {
-    position: absolute;
-    right: 25px;
-    bottom: 25px;
-    margin-top: 0;
-    width: min(652px, calc(100% - 50px));
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: calc(100% - 50px);
+    margin-top: -120px;
+    margin-left: 25px;
   }
 
   .hero__rates .rates-card {
@@ -1069,9 +1080,13 @@
     box-shadow: 0 12px 40px rgba(8, 20, 45, 0.18);
   }
 
+  .hero__rates .rates-tabs {
+    grid-template-columns: 190px 190px;
+    justify-content: start;
+  }
+
   .hero__rates .rates-tabs__btn {
     width: 190px;
-    flex: none;
   }
 
   .hero__rates .rates-table__head,
@@ -1135,7 +1150,9 @@
   }
 
   .calc-box__swap {
-    display: block;
+    display: flex;
+    width: auto;
+    padding-top: 36px;
   }
 
   .calc-box__action {
@@ -1363,6 +1380,21 @@
 
 }
 
+@media (min-width: 1200px) {
+  .hero__content {
+    max-width: min(680px, calc(100% - 700px));
+  }
+
+  .hero__rates {
+    position: absolute;
+    right: 25px;
+    bottom: 25px;
+    margin-top: 0;
+    margin-left: 0;
+    width: min(652px, calc(100% - 50px));
+  }
+}
+
 @media (min-width: 1025px) {
   .calc-box {
     flex-wrap: nowrap;
@@ -1379,6 +1411,11 @@
     box-shadow: 0 14px 40px rgba(11, 27, 63, 0.12);
     position: relative;
     z-index: 1;
+  }
+
+  .calc-box__swap-btn:hover {
+    background: var(--color-surface);
+    transform: rotate(180deg);
   }
 
   .faq-card:not(.is-open) .faq-card__q:hover {
