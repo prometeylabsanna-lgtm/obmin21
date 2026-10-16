@@ -17,6 +17,13 @@ from src.reviews.selectors import get_published_reviews
 logger = logging.getLogger(__name__)
 
 
+def _home_retail_rows(city):
+    rows, updated_at = get_quotes_for_city(city, RateBoard.RETAIL)
+    preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
+    rows = sorted(rows, key=lambda row: preferred.get(row['pair'].flag_code, 90))
+    return rows, updated_at
+
+
 def _calc_currencies(rows):
     items = [{'code': 'UAH', 'name': 'Гривня', 'buy': '1', 'sell': '1', 'pair_id': ''}]
     seen = {'UAH'}
@@ -44,15 +51,12 @@ class HomeView(TemplateView):
         board = self.request.GET.get('board', RateBoard.RETAIL)
         if board not in RateBoard.values:
             board = RateBoard.RETAIL
-        rows, updated_at = get_quotes_for_city(city, board)
+        if board == RateBoard.CRYPTO:
+            rows, updated_at = _home_retail_rows(city)
+        else:
+            rows, updated_at = get_quotes_for_city(city, board)
         if board == RateBoard.RETAIL:
             preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
-            rows = sorted(
-                rows,
-                key=lambda r: preferred.get(r['pair'].flag_code, 90),
-            )
-        elif board == RateBoard.CRYPTO:
-            preferred = {'BTC': 0, 'ETH': 1, 'USDT': 2}
             rows = sorted(
                 rows,
                 key=lambda r: preferred.get(r['pair'].flag_code, 90),
@@ -79,15 +83,18 @@ def rates_partial(request):
     board = request.GET.get('board', RateBoard.RETAIL)
     if board not in RateBoard.values:
         board = RateBoard.RETAIL
-    rows, updated_at = get_quotes_for_city(request.city, board)
     home_compact = request.GET.get('home') == '1'
+    if home_compact and board == RateBoard.CRYPTO:
+        rows, updated_at = _home_retail_rows(request.city)
+    else:
+        rows, updated_at = get_quotes_for_city(request.city, board)
     if home_compact and board == RateBoard.RETAIL:
         preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
         rows = sorted(
             rows,
             key=lambda r: preferred.get(r['pair'].flag_code, 90),
         )
-    elif board == RateBoard.CRYPTO:
+    elif board == RateBoard.CRYPTO and not home_compact:
         preferred = {'BTC': 0, 'ETH': 1, 'USDT': 2}
         rows = sorted(
             rows,

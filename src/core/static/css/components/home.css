@@ -158,6 +158,28 @@
   font-weight: 500;
 }
 
+.hero__rates .rates-stage {
+  display: grid;
+}
+
+.hero__rates .rates-stage > .rates-crypto,
+.hero__rates .rates-stage > .rates-table {
+  grid-area: 1 / 1;
+}
+
+.hero__rates .rates-table--reserve {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hero__rates .rates-stage > .rates-crypto {
+  z-index: 1;
+  margin-top: 30px;
+  min-height: 0;
+  align-self: stretch;
+  justify-content: center;
+}
+
 .hero__rates .rates-table {
   margin-top: 30px;
 }

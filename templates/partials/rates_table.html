@@ -20,6 +20,7 @@
     {% endif %}
   </div>
 
+  <div class="rates-stage">
   {% if active_board == 'crypto' %}
   <div class="rates-crypto">
     <div class="rates-crypto__title">Криптовалюта <span class="u-accent">від партнерів</span></div>
@@ -29,8 +30,9 @@
       Написати менеджеру
     </a>
   </div>
-  {% else %}
-  <div class="rates-table">
+  {% endif %}
+  {% if active_board != 'crypto' or home_rates_compact %}
+  <div class="rates-table{% if active_board == 'crypto' %} rates-table--reserve{% endif %}"{% if active_board == 'crypto' %} aria-hidden="true"{% endif %}>
     <div class="rates-table__head">
       <div>Валюта</div>
       <div>Купівля</div>
@@ -90,7 +92,11 @@
       {% endfor %}
       <div class="rates-table__empty" data-rates-empty hidden>Нічого не знайдено</div>
     {% endif %}
-    {% if not hide_full_table_link %}
+  </div>
+  {% endif %}
+  </div>
+  {% if not hide_full_table_link %}
+  {% if active_board != 'crypto' or home_rates_compact %}
     <div class="rates-table__foot">
       <a class="link-accent" href="{% url 'rates:rates_page' %}">Всі валюти
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
@@ -100,7 +106,6 @@
         {% if rate_updated_at %}Оновлено сьогодні о {{ rate_updated_at|date:"H:i" }}{% else %}Курси зʼявляться незабаром{% endif %}
       </div>
     </div>
-    {% endif %}
-  </div>
+  {% endif %}
   {% endif %}
 </div>
