@@ -3,8 +3,8 @@
 }
 
 .page-hero__title {
-  margin: 12px 0 0;
-  font-size: clamp(34px, 5vw, 68px);
+  margin: 0;
+  font-size: clamp(30px, 4.3vw, 57px);
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.5px;
@@ -72,7 +72,7 @@
 .svc-hero__title {
   margin: 12px 0 0;
   color: #fff;
-  font-size: clamp(34px, 5vw, 68px);
+  font-size: clamp(30px, 4.3vw, 57px);
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.5px;
@@ -259,7 +259,7 @@
 
 .svc-how__title {
   margin: 10px 0 0;
-  font-size: clamp(32px, 4.6vw, 66px);
+  font-size: clamp(28px, 4vw, 55px);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.5px;

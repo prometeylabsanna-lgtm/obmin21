@@ -1,15 +1,7 @@
-{% load static content_format %}
+{% load content_format %}
 <section class="faq-section {{ extra_class }}"{% if section_id %} id="{{ section_id }}"{% endif %} data-qa="{{ qa|default:'section-faq' }}">
   <div class="faq-section__head">
-    <span class="pill">{{ faq_kicker }}</span>
     <h2 class="faq-section__title">
-      <span class="calc-head__coin faq-section__coin" aria-hidden="true">
-        <span class="coin-spin">
-          <img src="{% static 'images/bitcoin.png' %}" alt="">
-          <img src="{% static 'images/bitcoin.png' %}" alt="">
-          <img src="{% static 'images/bitcoin.png' %}" alt="">
-        </span>
-      </span>
       {{ faq_title }}{% if faq_title_accent %} <span class="u-accent">{{ faq_title_accent }}</span>{% endif %}
     </h2>
     {% if faq_lead %}<p class="faq-section__lead">{{ faq_lead }}</p>{% endif %}

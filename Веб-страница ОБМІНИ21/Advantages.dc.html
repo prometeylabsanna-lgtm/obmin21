@@ -17,6 +17,14 @@ body{margin:0;background:#fff;font-family:'Roboto',sans-serif;color:#052145;-web
 a{color:#052145;text-decoration:none}
 a:hover{color:#CA8D42}
 input{font-family:inherit}
+button[data-rv]{display:flex;align-items:center;justify-content:center}
+button[data-rv] svg path{transition:stroke .25s}
+button[data-rv]:hover svg path{stroke:#CA8D42}
+div[data-rcard]{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+div[data-rcard]:hover{transform:scale(1.04);box-shadow:0 14px 40px rgba(11,27,63,0.12)!important;position:relative;z-index:1}
+button[data-faq]{transition:background .25s,color .25s}
+button[data-faq="closed"]:hover{background:#CA8D42!important;color:#fff!important}
+button[data-faq="closed"]:hover svg path{stroke:#fff}
 a[data-arw]{transition:color .25s}
 a[data-arw] svg{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 a[data-arw]:hover svg{transform:translateX(8px) scale(1.15)}
@@ -72,7 +80,7 @@ footer{margin-top:auto!important}
       <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
       +38(044)444 44 44
     </div>
-    <a href="#" style="display:{{ m.dBlock }};background:#CA8D42;color:#fff;font-weight:600;font-size:16px;padding:16px 29px;border-radius:6px" style-hover="background:#B87B2C;color:#fff">Забронювати заявку</a>
+    <a href="#" style="display:{{ m.dBlock }};background:#CA8D42;color:#fff;font-weight:600;font-size:16px;padding:16px 29px;border-radius:6px" style-hover="background:#B87B2C;color:#fff">Зробити заявку</a>
     <sc-if value="{{ isM }}" hint-placeholder-val="{{ false }}">
       <button onClick="{{ toggleMenu }}" aria-label="Меню" style="width:50px;height:50px;border:0;border-radius:8px;background:#CA8D42;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:{{ burgerGap }};cursor:pointer">
         <span style="width:22px;height:2px;background:#fff;border-radius:1px;transition:transform .25s;transform:{{ burgerTop }}"></span>
@@ -87,19 +95,19 @@ footer{margin-top:auto!important}
       <a href="Obmin21.dc.html" style="display:flex;align-items:center"><img src="assets/logo.png" alt="Obmin21" style="height:40px;width:auto;display:block"></a>
       <button onClick="{{ toggleMenu }}" aria-label="Закрити меню" style="width:54px;height:54px;border:0;border-radius:8px;background:#CA8D42;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M2 2l18 18M20 2L2 20" stroke="#fff" stroke-width="2"></path></svg></button>
     </div>
-    <nav style="margin-top:44px;display:flex;flex-direction:column">
-      <a data-mi="1" href="Services.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">Послуги<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
-      <a data-mi="1" href="Advantages.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">Переваги<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
-      <a data-mi="1" href="FAQ.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">FAQ<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
-      <a data-mi="1" href="Blog.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">Блог<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
-      <a data-mi="1" href="Contacts.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-0.5px;color:#052145" style-hover="color:#CA8D42">Контакти<img src="assets/bitcoin.png" alt="" style="flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1) brightness(1.15) contrast(.9);opacity:.75;transition:filter .3s,opacity .3s"></a>
+    <nav style="margin-top:32px;display:flex;flex-direction:column">
+      <a data-mi="1" href="Services.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:22px;font-weight:600;line-height:1.2;letter-spacing:0;color:#052145" style-hover="color:#CA8D42">Послуги<svg width="7" height="12" viewBox="0 0 6 10" style="flex:none"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg></a>
+      <a data-mi="1" href="Advantages.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:22px;font-weight:600;line-height:1.2;letter-spacing:0;color:#052145" style-hover="color:#CA8D42">Переваги<svg width="7" height="12" viewBox="0 0 6 10" style="flex:none"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg></a>
+      <a data-mi="1" href="FAQ.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:22px;font-weight:600;line-height:1.2;letter-spacing:0;color:#052145" style-hover="color:#CA8D42">FAQ<svg width="7" height="12" viewBox="0 0 6 10" style="flex:none"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg></a>
+      <a data-mi="1" href="Blog.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:22px;font-weight:600;line-height:1.2;letter-spacing:0;color:#052145" style-hover="color:#CA8D42">Блог<svg width="7" height="12" viewBox="0 0 6 10" style="flex:none"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg></a>
+      <a data-mi="1" href="Contacts.dc.html" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #D5D9DF;transition:color .25s;font-size:22px;font-weight:600;line-height:1.2;letter-spacing:0;color:#052145" style-hover="color:#CA8D42">Контакти<svg width="7" height="12" viewBox="0 0 6 10" style="flex:none"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg></a>
     </nav>
     <div style="margin-top:auto;padding-top:40px;display:flex;flex-direction:column;gap:16px">
       <a href="tel:+380444444444" style="display:flex;align-items:center;gap:8px;font-size:15px;color:#052145">
         <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg>
         +38(044)444 44 44
       </a>
-      <a href="#" style="background:#CA8D42;color:#fff;font-weight:600;font-size:16px;padding:17px 0;text-align:center;border-radius:8px" style-hover="background:#B87B2C;color:#fff">Забронювати заявку</a>
+      <a href="#" style="background:#CA8D42;color:#fff;font-weight:600;font-size:16px;padding:17px 0;text-align:center;border-radius:8px" style-hover="background:#B87B2C;color:#fff">Зробити заявку</a>
     </div>
   </div>
 </sc-if>
@@ -108,16 +116,15 @@ footer{margin-top:auto!important}
   <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#B3B4B6"><a href="Obmin21.dc.html" style="color:#B3B4B6">Головна</a><svg width="5" height="8" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#B3B4B6" fill="none" stroke-width="1.5"></path></svg><span style="color:#052145">Переваги</span></div>
   <div data-stagger="1" style="margin-top:{{ m.advHeroMt }};position:relative;overflow:hidden;border-radius:12px;background:radial-gradient(ellipse 60% 70% at 80% 115%,rgba(202,141,66,0.28),rgba(202,141,66,0) 70%),#052145;padding:{{ m.advHeroPad }};display:grid;grid-template-columns:{{ m.heroGrid }};gap:{{ m.advHeroGap }};align-items:center">
     <div style="position:relative;min-width:0">
-      <div style="display:inline-block;border:1px solid #fff;color:#fff;border-radius:20px;padding:5px 11px;font-size:12px">Переваги</div>
-      <h1 style="margin:20px 0 0;color:#fff;font-size:clamp(34px,5vw,68px);font-weight:700;line-height:1.05;letter-spacing:-0.5px">Чому обирають<br><span style="color:#CA8D42">Обмін21</span></h1>
+      <h1 style="margin:0;color:#fff;font-size:clamp(30px,4.3vw,57px);font-weight:700;line-height:1.05;letter-spacing:-0.5px">Чому обирають<br><span style="color:#CA8D42">Обмін21</span></h1>
       <p style="margin:24px 0 0;color:#fff;font-size:17px;line-height:1.55;max-width:460px">Вигідний курс без комісій, фіксація онлайн і перевірка кожної купюри. Ось що цінують наші клієнти {{ cityIn }}.</p>
       <div style="margin-top:{{ m.heroBtnsMt }};display:flex;gap:16px;flex-wrap:wrap">
-        <a href="#" style="flex:{{ m.svcBtnFlex }};background:#CA8D42;color:#fff;font-weight:600;font-size:15px;padding:16px 32px;text-align:center;border-radius:6px" style-hover="background:#B87B2C;color:#fff">Забронювати заявку</a>
+        <a href="#" style="flex:{{ m.svcBtnFlex }};background:#CA8D42;color:#fff;font-weight:600;font-size:15px;padding:16px 32px;text-align:center;border-radius:6px" style-hover="background:#B87B2C;color:#fff">Зробити заявку</a>
         <a href="#adv" style="flex:{{ m.svcBtnFlex }};border:1px solid rgba(255,255,255,0.5);color:#fff;font-weight:600;font-size:15px;padding:15px 28px;text-align:center;border-radius:6px" style-hover="background:#fff;color:#052145">Усі переваги</a>
       </div>
     </div>
     <div aria-hidden="true" style="position:relative;justify-self:{{ m.promJustify }};width:100%;max-width:500px;height:{{ m.stackH }}">
-      <div data-depth="-10" style="position:absolute;top:{{ m.k1T }};left:{{ m.k1L }};width:{{ m.k1W }};transition:transform .9s cubic-bezier(.2,.8,.2,1);will-change:transform"><div style="transform:rotate(-14deg)"><div data-anim="1" style="animation:obFlD 9s ease-in-out infinite"><img src="assets/coins-d.png" alt="" style="display:block;width:100%;height:auto;filter:drop-shadow(0 18px 24px rgba(0,0,0,0.4))"></div></div></div>
+      <div data-depth="-10" style="position:absolute;top:{{ m.k1T }};left:{{ m.k1L }};width:{{ m.k1W }};transition:transform .9s cubic-bezier(.2,.8,.2,1);will-change:transform"><div style="transform:rotate(-14deg)"><div data-anim="1" style="animation:obFlD 9s ease-in-out infinite"><img src="assets/coins-d.png" alt="" style="display:block;width:100%;height:auto;filter:drop-shadow(0 18px 26px rgba(0,0,0,0.4))"></div></div></div>
       <div data-depth="-6" style="position:absolute;top:{{ m.c1T }};right:0;width:{{ m.cardW2 }};transition:transform .9s cubic-bezier(.2,.8,.2,1);will-change:transform"><div style="transform:rotate(9deg)"><div data-anim="1" style="animation:obFlC 9s ease-in-out infinite">
         <div style="position:relative;overflow:hidden;aspect-ratio:1.6;border-radius:16px;background:linear-gradient(145deg,#15396F 0%,#0B2649 55%,#071B38 100%);border:1px solid rgba(255,255,255,0.12);padding:{{ m.cPad }};display:flex;flex-direction:column;color:#fff;box-shadow:0 20px 50px rgba(0,0,0,0.35)">
           <div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,0) 35%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0) 65%)"></div>
@@ -139,14 +146,13 @@ footer{margin-top:auto!important}
           <div style="margin-top:14px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="font-size:{{ m.c3Num }};font-weight:700;letter-spacing:-0.3px;font-variant-numeric:tabular-nums">41 650 ₴</span><span style="font-size:13px;color:#8A909C">за 1 000 USD</span></div>
           <div style="margin-top:16px;height:4px;border-radius:2px;background:#F2F3F5"><div style="height:100%;border-radius:2px;background:#CA8D42;width:{{ fixPct }};transition:width 1s linear"></div></div>
         </div></div></div></div>
-      <div data-depth="24" style="position:absolute;top:{{ m.k2T }};right:{{ m.k2R }};width:{{ m.k2W }};transition:transform .9s cubic-bezier(.2,.8,.2,1);will-change:transform"><div style="transform:rotate(18deg)"><div data-anim="1" style="animation:obFlB 7s ease-in-out infinite"><img src="assets/coins-d.png" alt="" style="display:block;width:100%;height:auto;transform:scaleX(-1);filter:drop-shadow(0 16px 20px rgba(0,0,0,0.45))"></div></div></div>
+      <div data-depth="24" style="position:absolute;top:{{ m.k2T }};right:{{ m.k2R }};width:{{ m.k2W }};transition:transform .9s cubic-bezier(.2,.8,.2,1);will-change:transform"><div style="transform:rotate(18deg)"><div data-anim="1" style="animation:obFlB 7s ease-in-out infinite"><img src="assets/coins-d.png" alt="" style="display:block;width:100%;height:auto;filter:drop-shadow(0 18px 26px rgba(0,0,0,0.4))"></div></div></div>
     </div>
   </div>
 </section>
 
 <section ref="{{ statsRef }}" style="margin-top:{{ m.svcListMt }};padding:{{ m.statsPad }}">
-  <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Цифри</div>
-  <h2 style="margin:14px 0 0;font-size:clamp(32px,4.6vw,66px);font-weight:700;line-height:1.05;letter-spacing:-0.5px">Обмін21 <span style="color:#CA8D42">у цифрах</span></h2>
+  <h2 style="margin:0;font-size:clamp(28px,4.0vw,55px);font-weight:700;line-height:1.05;letter-spacing:-0.5px">Обмін21 <span style="color:#CA8D42">у цифрах</span></h2>
   <div data-stagger="1" style="margin-top:{{ m.statsMt }};display:grid;grid-template-columns:{{ m.statsCols }};gap:{{ m.statsGap }};color:#B3B4B6;font-size:{{ m.statsFs }};line-height:1.3">
     <div style="border-top:{{ m.statBorder }};padding-top:{{ m.statPt }}"><div style="font-size:{{ m.statNum }};font-weight:500;line-height:1;color:#052145;margin-bottom:{{ m.statNumMb }};font-variant-numeric:tabular-nums">{{ stat1 }}</div><div style="max-width:480px"><b style="color:#8A909C">Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для <b style="color:#8A909C">швидкого та зручного обміну валют</b> і криптоактивів</div></div>
     <div style="border-top:{{ m.statBorder }};padding-top:{{ m.statPt }}"><div style="font-size:{{ m.statNum }};font-weight:500;line-height:1;color:#052145;margin-bottom:{{ m.statNumMb }};font-variant-numeric:tabular-nums">{{ stat2 }}</div><div style="max-width:480px"><b style="color:#8A909C">Відділень в Україні</b> — обмінюйте валюту <b style="color:#8A909C">у зручному для вас відділенні</b> та отримуйте якісний сервіс</div></div>
@@ -157,15 +163,12 @@ footer{margin-top:auto!important}
 
 <section id="adv" style="margin-top:{{ m.svcListMt }};scroll-margin-top:24px">
   <div style="text-align:center">
-    <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Чому ми</div>
-    <h2 style="margin:10px auto 0;font-size:clamp(32px,4.6vw,66px);font-weight:700;line-height:1.05;letter-spacing:-0.5px;max-width:900px">Чому люди обирають обмінювати <span style="color:#CA8D42">в Обмін21</span></h2>
+    <h2 style="margin:0 auto;font-size:clamp(28px,4.0vw,55px);font-weight:700;line-height:1.05;letter-spacing:-0.5px;max-width:900px">Чому люди обирають обмінювати <span style="color:#CA8D42">в Обмін21</span></h2>
     <p style="margin:16px auto 0;color:#B3B4B6;font-size:16px;line-height:1.4;max-width:560px">Шість причин, через які клієнти повертаються до нас знову і радять друзям</p>
   </div>
   <div data-stagger="1" style="margin-top:{{ m.advMt }};display:grid;grid-template-columns:{{ m.advCols }};gap:{{ m.advGap }}">
     <div style="grid-column:{{ m.advSpanA }};grid-row:{{ m.advRowA }};position:relative;overflow:hidden;background:#052145;border-radius:10px;padding:{{ m.advPadA }};color:#fff;display:flex;flex-direction:column;gap:28px;min-height:{{ m.advAH }}">
-      
       <img src="assets/coins.png" alt="" aria-hidden="true" data-anim="1" style="position:absolute;left:{{ m.advCoinL }};top:{{ m.advCoinT }};max-width:none;width:{{ m.advCoinW }};pointer-events:none;filter:drop-shadow(0 24px 34px rgba(0,0,0,0.4));animation:obFlA 11s ease-in-out infinite">
-      
       <div style="position:relative;margin-top:auto;max-width:{{ m.advTextMax }}">
         <div style="font-size:{{ m.advTA }};font-weight:700;line-height:1.08;letter-spacing:-0.4px">Курс кращий, <span style="color:#CA8D42">ніж у банку</span></div>
         <div style="margin-top:14px;color:rgba(255,255,255,0.75);font-size:16px;line-height:1.4">Щодня порівнюємо курси з ринком і тримаємо різницю між купівлею та продажем мінімальною.</div>
@@ -212,8 +215,7 @@ footer{margin-top:auto!important}
 
 <section style="margin-top:{{ m.svcListMt }}">
   <div style="text-align:center">
-    <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Порівняння</div>
-    <h2 style="margin:10px 0 0;font-size:clamp(32px,4.6vw,66px);font-weight:700;line-height:1.1;letter-spacing:-0.5px">Обмін21 чи <span style="color:#CA8D42">звичайний обмінник</span></h2>
+    <h2 style="margin:0;font-size:clamp(28px,4.0vw,55px);font-weight:700;line-height:1.1;letter-spacing:-0.5px">Обмін21 чи <span style="color:#CA8D42">звичайний обмінник</span></h2>
   </div>
   <div style="margin-top:{{ m.advMt }};display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:{{ m.advGap }};align-items:stretch">
     <div style="background:#052145;border-radius:12px;padding:{{ m.cmpCard }};display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(5,33,69,0.22)">
@@ -253,8 +255,7 @@ footer{margin-top:auto!important}
 
 <section style="margin-top:{{ m.svcListMt }}">
   <div style="text-align:center">
-    <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Як це працює</div>
-    <h2 style="margin:10px 0 0;font-size:clamp(32px,4.6vw,66px);font-weight:700;line-height:1.1;letter-spacing:-0.5px">Три кроки до <span style="color:#CA8D42">обміну</span></h2>
+    <h2 style="margin:0;font-size:clamp(28px,4.0vw,55px);font-weight:700;line-height:1.1;letter-spacing:-0.5px">Три кроки до <span style="color:#CA8D42">обміну</span></h2>
   </div>
   <div data-stagger="1" style="margin-top:clamp(40px,5vw,64px);display:grid;grid-template-columns:{{ m.stepCols }};gap:clamp(16px,2vw,24px)">
     <sc-for list="{{ steps }}" as="st" hint-placeholder-count="3">
@@ -268,8 +269,7 @@ footer{margin-top:auto!important}
 
 <section style="margin-top:{{ m.svcListMt }}">
   <div style="text-align:center">
-    <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Відповіді</div>
-    <h2 style="margin:10px auto 0;font-size:clamp(32px,4.6vw,66px);font-weight:700;line-height:1.05;letter-spacing:-0.5px;max-width:860px">
+        <h2 style="margin:0 auto;font-size:clamp(28px,4.0vw,55px);font-weight:700;line-height:1.05;letter-spacing:-0.5px;max-width:860px">
       Відповіді на <span style="color:#CA8D42">поширені запитання</span>
     </h2>
   </div>
@@ -277,8 +277,8 @@ footer{margin-top:auto!important}
     <sc-for list="{{ faqCols }}" as="col" hint-placeholder-count="2">
       <div style="display:flex;flex-direction:column;gap:20px">
         <sc-for list="{{ col }}" as="q" hint-placeholder-count="3">
-          <div style="background:#fff;border-radius:6px;box-shadow:0 4px 24px rgba(11,27,63,0.06)">
-            <button onClick="{{ q.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:{{ m.faqPad }};border:0;background:transparent;font-family:inherit;font-size:{{ m.faqFs }};font-weight:600;color:#052145;text-align:left;cursor:pointer">
+          <div style="background:#fff;border-radius:6px;box-shadow:0 4px 24px rgba(11,27,63,0.06);overflow:hidden">
+            <button data-faq="{{ q.st }}" onClick="{{ q.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:{{ m.faqPad }};border:0;background:transparent;font-family:inherit;font-size:{{ m.faqFs }};font-weight:600;color:#052145;text-align:left;cursor:pointer">
               {{ q.q }}
               <svg width="12" height="7" viewBox="0 0 10 6" style="flex:none;transition:transform .2s;transform:{{ q.rot }}"><path d="M1 1l4 4 4-4" stroke="#CA8D42" fill="none" stroke-width="1.3"></path></svg>
             </button>
@@ -295,17 +295,16 @@ footer{margin-top:auto!important}
 <section style="margin-top:{{ m.svcListMt }}">
   <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
     <div style="text-align:{{ m.revAlign }};flex:{{ m.revHeadFlex }}">
-      <div style="display:{{ m.dInline }};border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Статті</div>
-      <h2 style="margin:10px 0 0;font-size:clamp(32px,4.6vw,66px);font-weight:700;line-height:1.1;letter-spacing:-0.5px">Відгуки</h2>
+      <h2 style="margin:0;font-size:clamp(28px,4.0vw,55px);font-weight:700;line-height:1.1;letter-spacing:-0.5px">Відгуки</h2>
     </div>
     <div style="display:{{ m.dFlex }};gap:10px;margin-bottom:8px">
-      <button onClick="{{ revPrev }}" style="width:50px;height:50px;border:0;border-radius:4px;background:{{ revPrevBg }};color:#fff;font-size:18px;cursor:pointer;transition:background .25s">‹</button>
-      <button onClick="{{ revNext }}" style="width:50px;height:50px;border:0;border-radius:4px;background:{{ revNextBg }};color:#fff;font-size:18px;cursor:pointer;transition:background .25s">›</button>
+      <button data-rv="1" aria-label="Попередній відгук" onClick="{{ revPrev }}" style="width:50px;height:50px;border:0;border-radius:4px;background:{{ revPrevBg }};color:#fff;font-size:18px;cursor:pointer;transition:background .25s"><svg width="9" height="14" viewBox="0 0 9 14"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+      <button data-rv="1" aria-label="Наступний відгук" onClick="{{ revNext }}" style="width:50px;height:50px;border:0;border-radius:4px;background:{{ revNextBg }};color:#fff;font-size:18px;cursor:pointer;transition:background .25s"><svg width="9" height="14" viewBox="0 0 9 14"><path d="M1.5 1.5L7 7l-5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
     </div>
   </div>
-  <div data-stagger="1" ref="{{ revRef }}" onScroll="{{ onRevScroll }}" style="margin:24px -20px 0;padding:20px;display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 20px;scroll-behavior:smooth;scrollbar-width:none">
+  <div ref="{{ revRef }}" onScroll="{{ onRevScroll }}" style="margin:24px -20px 0;padding:20px;display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 20px;scroll-behavior:smooth;scrollbar-width:none">
     <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="4">
-      <div style="flex:{{ m.revCard }};min-width:{{ m.cardMin }};scroll-snap-align:start;background:#fff;border-radius:6px;box-shadow:0 4px 24px rgba(11,27,63,0.06);padding:22px 20px 24px;min-height:206px;display:flex;flex-direction:column;justify-content:space-between;gap:24px">
+      <div data-rcard="1" style="flex:{{ m.revCard }};min-width:{{ m.cardMin }};scroll-snap-align:start;background:#fff;border-radius:6px;box-shadow:0 4px 24px rgba(11,27,63,0.06);padding:22px 20px 24px;min-height:206px;display:flex;flex-direction:column;justify-content:space-between;gap:24px">
         <div>
           <div style="font-size:18px;font-weight:600">{{ r.name }}</div>
           <div style="margin-top:8px;display:flex;gap:3px"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="#052145" stroke="#052145" stroke-width="1.6" stroke-linejoin="round"></path></svg><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="#052145" stroke="#052145" stroke-width="1.6" stroke-linejoin="round"></path></svg><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="#052145" stroke="#052145" stroke-width="1.6" stroke-linejoin="round"></path></svg><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="#052145" stroke="#052145" stroke-width="1.6" stroke-linejoin="round"></path></svg><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="{{ r.lastStar }}" stroke="{{ r.lastStar }}" stroke-width="1.6" stroke-linejoin="round"></path></svg></div>
@@ -317,8 +316,8 @@ footer{margin-top:auto!important}
   <div style="margin-top:{{ m.revBtnMt }};display:flex;gap:10px;align-items:center">
     <a href="#" onClick="{{ openReview }}" style="flex:{{ m.revBtnFlex }};background:#CA8D42;color:#fff;font-weight:600;font-size:15px;padding:16px 0;width:{{ m.btnW292 }};text-align:center;border-radius:6px" style-hover="background:#B87B2C;color:#fff">Залишити відгук</a>
     <sc-if value="{{ isM }}" hint-placeholder-val="{{ false }}">
-      <button onClick="{{ revPrev }}" style="flex:none;width:50px;height:50px;border:0;border-radius:4px;background:{{ revPrevBg }};color:#fff;font-size:18px;cursor:pointer;transition:background .25s">‹</button>
-      <button onClick="{{ revNext }}" style="flex:none;width:50px;height:50px;border:0;border-radius:4px;background:{{ revNextBg }};color:#fff;font-size:18px;cursor:pointer;transition:background .25s">›</button>
+      <button data-rv="1" aria-label="Попередній відгук" onClick="{{ revPrev }}" style="flex:none;width:50px;height:50px;border:0;border-radius:4px;background:{{ revPrevBg }};color:#fff;font-size:18px;cursor:pointer;transition:background .25s"><svg width="9" height="14" viewBox="0 0 9 14"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+      <button data-rv="1" aria-label="Наступний відгук" onClick="{{ revNext }}" style="flex:none;width:50px;height:50px;border:0;border-radius:4px;background:{{ revNextBg }};color:#fff;font-size:18px;cursor:pointer;transition:background .25s"><svg width="9" height="14" viewBox="0 0 9 14"><path d="M1.5 1.5L7 7l-5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
     </sc-if>
   </div>
 </section>
@@ -373,7 +372,6 @@ footer{margin-top:auto!important}
       <button onClick="{{ closeReview }}" aria-label="Закрити" style="position:absolute;top:18px;right:18px;width:36px;height:36px;border:0;border-radius:50%;background:#F4F5F7;color:#052145;font-size:18px;cursor:pointer">×</button>
       <sc-if value="{{ revForm }}" hint-placeholder-val="{{ true }}">
         <div>
-          <div style="display:inline-block;border:1px solid #052145;border-radius:20px;padding:5px 11px;font-size:12px">Відгук</div>
           <h2 style="margin:12px 0 0;font-size:{{ m.revModalH }};font-weight:700;line-height:1.1">Поділіться <span style="color:#CA8D42">враженнями</span></h2>
           <p style="margin:10px 0 0;color:#B3B4B6;font-size:15px;line-height:1.35">Ваш відгук допомагає нам ставати кращими</p>
           <div style="margin-top:24px;font-size:14px">Ваша оцінка</div>
@@ -389,6 +387,7 @@ footer{margin-top:auto!important}
               <sc-for list="{{ cityNames }}" as="c" hint-placeholder-count="11"><option>{{ c }}</option></sc-for>
             </select>
           </div>
+          <input type="tel" inputmode="tel" placeholder="Телефон (необов’язково)" style="margin-top:12px;width:100%;height:50px;border:1px solid #EEF0F3;border-radius:6px;padding:0 16px;font-size:15px;color:#052145;outline:none">
           <textarea value="{{ revText }}" onChange="{{ onRevText }}" maxLength="300" placeholder="Розкажіть, як пройшов обмін" style="margin-top:12px;width:100%;height:120px;border:1px solid #EEF0F3;border-radius:6px;padding:14px 16px;font-size:15px;color:#052145;resize:none;outline:none"></textarea>
           <div style="margin-top:6px;text-align:right;font-size:12px;color:#B3B4B6">{{ revCount }} / 300</div>
           <button onClick="{{ sendReview }}" style="margin-top:14px;width:100%;height:52px;border:0;border-radius:6px;background:#CA8D42;color:#fff;font-weight:600;font-size:16px;cursor:pointer" style-hover="background:#B87B2C">Надіслати відгук</button>
@@ -408,11 +407,11 @@ footer{margin-top:auto!important}
 </sc-if>
 <sc-if value="{{ bk1 }}" hint-placeholder-val="{{ false }}">
   <div data-bk="1" onClick="{{ bOverlay }}" style="position:fixed;inset:0;z-index:950;background:rgba(5,33,69,0.55);display:flex;padding:16px;overflow-y:auto">
-    <div role="dialog" aria-modal="true" aria-label="Зафіксувати курс" style="margin:auto;width:100%;max-width:440px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(5,33,69,0.3);padding:36px clamp(20px,5vw,32px) 28px;position:relative;color:#052145;animation:obBkIn .45s cubic-bezier(.16,1,.3,1) both">
+    <div role="dialog" aria-modal="true" aria-label="Обмін валюти" style="margin:auto;width:100%;max-width:440px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(5,33,69,0.3);padding:36px clamp(20px,5vw,32px) 28px;position:relative;color:#052145;animation:obBkIn .45s cubic-bezier(.16,1,.3,1) both">
       <button onClick="{{ bClose }}" aria-label="Закрити" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border:0;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="#8A909C" stroke-width="1.4"></path></svg></button>
       <div style="font-size:13px;color:#8A909C">Крок 1 з 2</div>
-      <div style="margin-top:8px;font-size:28px;font-weight:700;line-height:1.15;letter-spacing:-0.3px">Зафіксувати <span style="color:#CA8D42">курс</span></div>
-      <div style="margin-top:12px;font-size:15px;line-height:1.5;color:#8A909C">Оберіть валюти та суму. Після фіксації курс діятиме 30 хвилин.</div>
+      <div style="margin-top:8px;font-size:28px;font-weight:700;line-height:1.15;letter-spacing:-0.3px">Обмін <span style="color:#CA8D42">валюти</span></div>
+      <div style="margin-top:12px;font-size:15px;line-height:1.5;color:#8A909C">Оберіть валюти, суму та відділення. Курс розраховано для обраного міста</div>
       <div style="margin-top:24px;display:flex;flex-direction:column;gap:8px">
         <div>
           <div style="font-size:13px;color:#8A909C;margin-bottom:8px">Віддаю</div>
@@ -445,8 +444,18 @@ footer{margin-top:auto!important}
         </div>
         <div style="margin-top:4px;font-size:13px;color:#8A909C;font-variant-numeric:tabular-nums">Курс: 1 {{ bFromCode }} = {{ bRate }} {{ bToCode }} · без комісій</div>
       </div>
-      <div style="margin-top:16px;display:flex;align-items:center;gap:10px;font-size:14px"><svg width="14" height="16" viewBox="0 0 12 14" style="flex:none"><path d="M6 0a5 5 0 0 0-5 5c0 3.6 5 9 5 9s5-5.4 5-9a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="#CA8D42"></path></svg>{{ bAddr }}</div>
-      <button onClick="{{ bFix }}" style="margin-top:24px;width:100%;height:54px;border:0;border-radius:8px;background:{{ bFixBg }};color:#fff;font-family:inherit;font-weight:600;font-size:17px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:background .2s" style-hover="background:#B87B2C"><svg width="13" height="14" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#fff" fill="none" stroke-width="1.3"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#fff" fill="none" stroke-width="1.3"></path></svg>Зафіксувати на 30 хв</button>
+      <div style="margin-top:16px;position:relative">
+        <div style="font-size:13px;color:#8A909C;margin-bottom:8px">Відділення</div>
+        <button onClick="{{ bCityToggle }}" style="width:100%;display:flex;align-items:center;gap:10px;height:54px;padding:0 16px;border:1px solid #EEF0F3;border-radius:8px;background:#fff;font-family:inherit;font-size:15px;color:#052145;text-align:left;cursor:pointer"><svg width="14" height="16" viewBox="0 0 12 14" style="flex:none"><path d="M6 0a5 5 0 0 0-5 5c0 3.6 5 9 5 9s5-5.4 5-9a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="#CA8D42"></path></svg><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ bAddr }}</span><svg width="10" height="6" viewBox="0 0 10 6" style="flex:none"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg></button>
+        <sc-if value="{{ bCityOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;bottom:calc(100% + 6px);left:0;right:0;z-index:5;max-height:260px;overflow-y:auto;background:#fff;border-radius:8px;box-shadow:0 12px 36px rgba(5,33,69,0.16);padding:6px">
+            <sc-for list="{{ bCityList }}" as="c" hint-placeholder-count="6">
+              <button onClick="{{ c.pick }}" style="width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border:0;border-radius:6px;background:{{ c.bg }};font-family:inherit;color:#052145;text-align:left;cursor:pointer" style-hover="background:#F4F5F7"><span style="font-size:15px;font-weight:600">{{ c.name }}</span><span style="font-size:13px;color:#8A909C">{{ c.addr }}</span></button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <button onClick="{{ bFix }}" style="margin-top:24px;width:100%;height:54px;border:0;border-radius:8px;background:{{ bFixBg }};color:#fff;font-family:inherit;font-weight:600;font-size:17px;cursor:pointer;transition:background .2s" style-hover="background:#B87B2C">Продовжити</button>
     </div>
   </div>
 </sc-if>
@@ -454,13 +463,10 @@ footer{margin-top:auto!important}
   <div data-bk="1" onClick="{{ bOverlay }}" style="position:fixed;inset:0;z-index:950;background:rgba(5,33,69,0.55);display:flex;padding:16px;overflow-y:auto">
     <div role="dialog" aria-modal="true" aria-label="Зв’язатися" style="margin:auto;width:100%;max-width:440px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(5,33,69,0.3);padding:36px clamp(20px,5vw,32px) 28px;position:relative;color:#052145;animation:obBkIn .45s cubic-bezier(.16,1,.3,1) both">
       <button onClick="{{ bClose }}" aria-label="Закрити" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border:0;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="#8A909C" stroke-width="1.4"></path></svg></button>
-      <div style="font-size:13px;color:#8A909C">Крок 2 з 2</div>
-      <div style="margin-top:8px;font-size:28px;font-weight:700;line-height:1.15;letter-spacing:-0.3px">Забронювати <span style="color:#CA8D42">заявку</span></div>
-      <div style="margin-top:12px;font-size:15px;line-height:1.5;color:#8A909C">Оберіть зручний спосіб зв’язку. Консультант підтвердить заявку і підготує суму.</div>
-      <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-radius:8px;background:#F4F5F7">
-        <span style="min-width:0"><span style="display:flex;align-items:center;gap:8px;font-size:13px;color:#8A909C"><svg width="12" height="13" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#CA8D42" fill="none" stroke-width="1.2"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#CA8D42" fill="none" stroke-width="1.2"></path></svg>Курс зафіксовано</span><span style="display:block;margin-top:4px;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums">{{ bFixText }}</span></span>
-        <span style="flex:none;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">{{ fwLeft }}</span>
-      </div>
+      <sc-if value="{{ bStepped }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#8A909C;margin-bottom:8px">Крок 2 з 2</div></sc-if>
+      <div style="font-size:28px;font-weight:700;line-height:1.15;letter-spacing:-0.3px">Зробити <span style="color:#CA8D42">заявку</span></div>
+      <div style="margin-top:12px;font-size:15px;line-height:1.5;color:#8A909C">Оберіть зручний спосіб зв’язку. Консультант відповість на питання та оформить заявку</div>
+      
       <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px">
         <a href="tel:+380444444444" style="display:flex;align-items:center;gap:16px;padding:16px 18px;border:1px solid #EEF0F3;border-radius:8px;color:#052145;transition:border-color .2s" style-hover="border-color:#CA8D42;color:#052145">
           <span style="flex:none;width:44px;height:44px;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="#CA8D42"></path></svg></span>
@@ -473,19 +479,8 @@ footer{margin-top:auto!important}
           <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="#CA8D42" fill="none" stroke-width="1.5"></path></svg>
         </a>
       </div>
-      <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:#8A909C"><button onClick="{{ bBack }}" style="border:0;background:transparent;padding:0;font-family:inherit;font-size:13px;color:#CA8D42;cursor:pointer">← Змінити суму</button><span>Щодня з 8:00 до 21:00</span></div>
+      <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:#8A909C"><sc-if value="{{ bStepped }}" hint-placeholder-val="{{ false }}"><button onClick="{{ bBack }}" style="border:0;background:transparent;padding:0;font-family:inherit;font-size:13px;color:#CA8D42;cursor:pointer">← Змінити суму</button></sc-if><span>Щодня з 8:00 до 21:00</span></div>
     </div>
-  </div>
-</sc-if>
-<sc-if value="{{ fw }}" hint-placeholder-val="{{ false }}">
-  <div role="status" style="position:fixed;right:16px;bottom:16px;z-index:800;width:min(340px, calc(100vw - 32px));background:#fff;border-radius:12px;box-shadow:0 18px 50px rgba(5,33,69,0.22);padding:18px 20px 16px;color:#052145;animation:obFwIn .6s cubic-bezier(.16,1,.3,1) both">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-      <span style="display:flex;align-items:center;gap:8px;font-size:14px;color:#8A909C"><svg width="13" height="14" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" stroke="#CA8D42" fill="none" stroke-width="1.2"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2" stroke="#CA8D42" fill="none" stroke-width="1.2"></path></svg>Курс зафіксовано</span>
-      <span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{ fwLeft }}</span><button onClick="{{ closeFix }}" aria-label="Скасувати фіксацію" style="width:28px;height:28px;border:0;border-radius:50%;background:#F4F5F7;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="#8A909C" stroke-width="1.4"></path></svg></button></span>
-    </div>
-    <div style="margin-top:12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:32px;font-weight:700;letter-spacing:-0.5px;font-variant-numeric:tabular-nums">{{ fwResult }}</span><span style="font-size:14px;color:#8A909C">{{ fwFor }}</span></div>
-    <div style="margin-top:12px;height:4px;border-radius:2px;background:#F2F3F5;overflow:hidden"><div data-anim="1" style="position:relative;height:100%;border-radius:2px;width:{{ fwPct }};transition:width 1s linear;background:linear-gradient(90deg,#CA8D42 0%,#CA8D42 35%,#F0C58A 50%,#CA8D42 65%,#CA8D42 100%);background-size:200% 100%;animation:obFwSweep 1.8s linear infinite"></div></div>
-    <div style="margin-top:12px;font-size:13px;line-height:1.4;color:#8A909C">Очікуємо на вас за адресою: {{ fwAddr }}</div>
   </div>
 </sc-if>
 </x-dc>
@@ -524,12 +519,12 @@ class Component extends DCLogic {
       heroH: v('680px', '736px'), heroPad: v('24px 16px 16px', '32px 30px 30px'),
       heroGrad: v('linear-gradient(180deg,rgba(8,20,45,0.55),rgba(8,20,45,0) 45%)', 'linear-gradient(90deg,rgba(8,20,45,0.45),rgba(8,20,45,0) 55%)'),
       heroBtnAlign: v('stretch', 'flex-start'), heroBtnMt: v('auto', '40px'),
-      cardPos: v('relative', 'absolute'), curTopPad: v('8px 0 0', '24px 0 0'), svcHeroPad: v('20px 16px', '32px'), svcHeroGap: v('16px', '20px'), svcHeroOv: v('hidden', 'visible'), svcTextMax: v('none', '500px'), svcCoinPos: v('relative', 'absolute'), svcCoinOrder: v('2', '0'), svcChipOrder: v('3', '0'), svcCoinM: v('-20px 0 -20px -30%', '0'), svcHeroH: v('auto', '400px'), svcCoinR: v('auto', '-4%'), svcCoinT: v('auto', '-24px'), svcCoinW: v('160%', 'min(58%, max(280px, calc(100% - 520px)))'), svcListMt: v('96px', '160px'), heroGrid: v('1fr', 'repeat(auto-fit, minmax(min(400px,100%), 1fr))'), advHeroMt: v('20px', '24px'), advHeroGap: v('40px', '48px clamp(40px,5.5vw,80px)'), rateCardM: v('0', '0'), stackH: v('330px', '440px'), cardW2: v('68%', '300px'), cardW3: v('82%', '340px'), c1T: v('0', '0'), c2T: v('70px', '96px'), c3T: v('170px', '232px'), c3L: v('9%', '90px'), cPad: v('16px 18px', '22px 24px'), cPad3: v('18px 18px', '22px 24px 24px'), cNum: v('28px', '36px'), c3Num: v('24px', '30px'), k1T: v('-24px', '-36px'), k1L: v('26%', '150px'), k1W: v('100px', '150px'), k2T: v('268px', '356px'), k2R: v('2%', '10px'), k2W: v('64px', '96px'), rateCardPad: v('24px 20px', '36px 36px 28px'), promJustify: v('center', 'center'), promFs: v('16px', '18px'), advHeroPad: v('32px 20px 20px', 'clamp(48px,5.5vw,80px) clamp(32px,5vw,72px)'), heroBtnsMt: v('32px', '48px'), rateRowH: v('60px', '68px'), advGap: v('16px', '24px'), advCardH: v('0', '250px'), advCols: v('1fr', 'repeat(6, minmax(0,1fr))'), advSpanA: v('auto', 'span 4'), advRowA: v('auto', 'span 2'), advSpanB: v('auto', 'span 2'), advSpanC: v('auto', 'span 2'), advPad: v('24px 20px', '36px 32px'), advPadA: v('24px 20px', '36px 36px 32px'), advAH: v('460px', '520px'), advT: v('20px', '22px'), advTA: v('30px', '44px'), advMt: v('40px', '72px'), advCoinR: v('-60px', '-50px'), advCoinT: v('0px', '-44px'), advCoinL: v('-12.5%', '7%'), advCoinW: v('125%', '86%'), advTextMax: v('100%', '560px'), advStatCols: v('repeat(2, minmax(0,1fr))', 'repeat(4, minmax(0,1fr))'), advStatGap: v('28px 16px', '40px'), advStatN: v('44px', 'clamp(56px,5.5vw,84px)'), cmpCols: v('1fr 1fr', '1.1fr 1fr 1fr'), cmpPad: v('16px 12px', '32px 32px 28px'), cmpCard: v('24px 20px', '36px 40px'), cmpVal: v('16px', '18px'), cmpCellX: v('12px', '24px'), cmpLabelCol: v('1 / -1', 'auto'), cmpLabelPad: v('14px 0 8px', '18px 0'), cmpLabelFs: v('14px', '16px'), cmpFs: v('13px', '15px'), svcRowGap: v('64px', '110px'), svcInnerGap: v('24px', '70px'), svcBigImgH: v('240px', '420px'), svcBigT: v('28px', '44px'), svcBtnFlex: v('1 1 100%', '0 0 auto'), stepCols: v('1fr', 'repeat(3, minmax(0,1fr))'), revModalPad: v('28px 20px 22px', '32px 32px 28px'), revModalH: v('26px', '30px'), revModalCols: v('1fr', '1fr 1fr'), cityDdRight: v('-60px', '-20px'), cardOff: v('auto', '25px'), cardMt: v('16px', '0'), cardW: v('100%', 'min(652px, calc(100% - 50px))'),
+      cardPos: v('relative', 'absolute'), curTopPad: v('8px 0 0', '24px 0 0'), svcHeroPad: v('20px 16px', '32px'), svcHeroGap: v('16px', '20px'), svcHeroOv: v('hidden', 'visible'), svcTextMax: v('none', '500px'), svcCoinPos: v('relative', 'absolute'), svcCoinOrder: v('2', '0'), svcChipOrder: v('3', '0'), svcCoinM: v('-20px 0 -20px -30%', '0'), svcHeroH: v('auto', '400px'), svcCoinR: v('auto', '-4%'), svcCoinT: v('auto', '-24px'), svcCoinW: v('160%', 'min(58%, max(280px, calc(100% - 520px)))'), svcListMt: v('64px', '96px'), heroGrid: v('1fr', 'repeat(auto-fit, minmax(min(400px,100%), 1fr))'), advHeroMt: v('20px', '24px'), advHeroGap: v('40px', '48px clamp(40px,5.5vw,80px)'), rateCardM: v('0', '0'), stackH: v('330px', '440px'), cardW2: v('68%', '300px'), cardW3: v('82%', '340px'), c1T: v('0', '0'), c2T: v('70px', '96px'), c3T: v('170px', '232px'), c3L: v('9%', '90px'), cPad: v('16px 18px', '22px 24px'), cPad3: v('18px 18px', '22px 24px 24px'), cNum: v('28px', '36px'), c3Num: v('24px', '30px'), k1T: v('-24px', '-36px'), k1L: v('26%', '150px'), k1W: v('100px', '150px'), k2T: v('268px', '356px'), k2R: v('2%', '10px'), k2W: v('64px', '96px'), rateCardPad: v('24px 20px', '36px 36px 28px'), promJustify: v('center', 'center'), promFs: v('16px', '18px'), advHeroPad: v('32px 20px 20px', 'clamp(48px,5.5vw,80px) clamp(32px,5vw,72px)'), heroBtnsMt: v('32px', '48px'), rateRowH: v('60px', '68px'), advGap: v('16px', '24px'), advCardH: v('0', '250px'), advCols: v('1fr', 'repeat(6, minmax(0,1fr))'), advSpanA: v('auto', 'span 4'), advRowA: v('auto', 'span 2'), advSpanB: v('auto', 'span 2'), advSpanC: v('auto', 'span 2'), advPad: v('24px 20px', '36px 32px'), advPadA: v('24px 20px', '36px 36px 32px'), advAH: v('460px', '520px'), advT: v('20px', '22px'), advTA: v('30px', '44px'), advMt: v('40px', '72px'), advCoinR: v('-60px', '-50px'), advCoinT: v('0px', '-44px'), advCoinL: v('-12.5%', '7%'), advCoinW: v('125%', '86%'), advTextMax: v('100%', '560px'), advStatCols: v('repeat(2, minmax(0,1fr))', 'repeat(4, minmax(0,1fr))'), advStatGap: v('28px 16px', '40px'), advStatN: v('44px', 'clamp(56px,5.5vw,84px)'), cmpCols: v('1fr 1fr', '1.1fr 1fr 1fr'), cmpPad: v('16px 12px', '32px 32px 28px'), cmpCard: v('24px 20px', '36px 40px'), cmpVal: v('16px', '18px'), cmpCellX: v('12px', '24px'), cmpLabelCol: v('1 / -1', 'auto'), cmpLabelPad: v('14px 0 8px', '18px 0'), cmpLabelFs: v('14px', '16px'), cmpFs: v('13px', '15px'), svcRowGap: v('64px', '110px'), svcInnerGap: v('24px', '70px'), svcBigImgH: v('240px', '420px'), svcBigT: v('28px', '44px'), svcBtnFlex: v('1 1 100%', '0 0 auto'), stepCols: v('1fr', 'repeat(3, minmax(0,1fr))'), revModalPad: v('28px 20px 22px', '32px 32px 28px'), revModalH: v('26px', '30px'), revModalCols: v('1fr', '1fr 1fr'), cityDdRight: v('-60px', '-20px'), cardOff: v('auto', '25px'), cardMt: v('16px', '0'), cardW: v('100%', 'min(652px, calc(100% - 50px))'),
       cardPad: v('16px 16px 14px', '20px 20px 18px'), cardShadow: v('0 4px 24px rgba(11,27,63,0.08)', '0 12px 40px rgba(8,20,45,0.18)'),
       tabW: v('calc(50% - 10px)', '190px'), rateCols: v('1.7fr 1fr 1fr 44px', '1.6fr 1fr 1fr 1.2fr'),
       flagW: v('36px', '52px'), flagH: v('26px', '36px'), pairFs: v('13px', '17px'), pairFw: v('600', '500'),
       rowH: v('56px', '56px'), rowFs: v('15px', '17px'), updFs: v('11px', '13px'),
-      calcHeadPad: v('80px 0 32px', '120px 0 56px'), coinS: v('40px', '58px'), coinMr: v('10px', '18px'),
+      secGap: v('64px', '96px'), revSecMt: v('48px', '72px'), calcHeadPad: v('64px 0 28px', '96px 0 40px'), coinS: v('40px', '58px'), coinMr: v('10px', '18px'),
       calcPad: v('20px 16px', '30px 30px 26px'), calcBtnPt: v('8px', '34px'), curPad: v('0 14px 0 12px', '0 24px 0 18px'),
       cFlagW: v('34px', '46px'), cFlagH: v('24px', '32px'), inPad: v('0 16px', '0 20px'),
       banH: v('600px', '390px'), banPad: v('20px 16px', '30px'),
@@ -572,17 +567,21 @@ class Component extends DCLogic {
     BTC: ['Bitcoin', 2606151, 2658369, '#F7931A'],
     ETH: ['Ethereum', 107477, 110024, '#627EEA']
   };
-  openBk(p) { const s = this.state; this.setState({ bk: 1, bkOpen: null, menuOpen: false, bFrom: (p && p.from) || s.bFrom || 'USD', bTo: (p && p.to) || s.bTo || 'UAH', bAmt: p && p.amount != null ? String(p.amount) : (s.bAmt ?? '1000') }); }
+  openContact() { this.setState({ bk: 2, bkDirect: true, bkOpen: null, menuOpen: false }); }
+  openBk(p) { const s = this.state; this.setState({ bk: 1, bkDirect: false, bkOpen: null, menuOpen: false, bFrom: (p && p.from) || s.bFrom || 'USD', bTo: (p && p.to) || s.bTo || 'UAH', bAmt: p && p.amount != null ? String(p.amount) : (s.bAmt ?? '1000') }); }
   bkVals() {
     const C = this.bkCur, st = this.state, close = () => this.setState({ bk: 0, bkOpen: null });
     if (!st.bk) return { bk1: false, bk2: false, bClose: close };
-    const from = C[st.bFrom] ? st.bFrom : 'USD', to = C[st.bTo] ? st.bTo : 'UAH', rate = C[from][1] / C[to][2];
+    const cs = this.cities || [], ci = cs.find(c => c[0] === st.city) || cs[0] || ['Київ', '', ''];
+    const addr = ci[2] || ci[0];
+    const dd = [0, 0.06, -0.04, 0.09, -0.07, 0.03, -0.02, 0.05, -0.05, 0.08, -0.03][Math.max(0, cs.indexOf(ci))] || 0;
+    const adj = (code, k) => code === 'UAH' ? 1 : C[code][k] * (1 + dd / 41.4);
+    const from = C[st.bFrom] ? st.bFrom : 'USD', to = C[st.bTo] ? st.bTo : 'UAH';
+    const rate = adj(from, 1) / adj(to, 2);
     const n = parseFloat(String(st.bAmt ?? '1000').replace(/\s/g, '').replace(',', '.')) || 0;
     const fmt = (x, d) => x.toLocaleString('uk-UA', { maximumFractionDigits: d });
     const dTo = C[to][2] > 1000 ? 6 : 2;
     const sym = { UAH: '₴', USD: '$', EUR: '€', PLN: 'zł', GBP: '£', CHF: 'CHF', USDT: 'USDT', BTC: 'BTC', ETH: 'ETH' };
-    const cs = this.cities || [], ci = cs.find(c => c[0] === st.city) || cs[0] || ['Київ', '', ''];
-    const addr = ci[2] || ci[0];
     const pick = (side, code) => { const upd = side === 'from' ? { bFrom: code } : { bTo: code }; if (code === (side === 'from' ? to : from)) Object.assign(upd, side === 'from' ? { bTo: from } : { bFrom: to }); this.setState({ ...upd, bkOpen: null }); };
     const list = side => Object.keys(C).map(code => ({ code, name: C[code][0], flag: C[code][3], bg: code === (side === 'from' ? from : to) ? '#F4F5F7' : 'transparent', pick: () => pick(side, code) }));
     const f = st.fix;
@@ -597,10 +596,10 @@ class Component extends DCLogic {
       bFromList: list('from'), bToList: list('to'),
       bSwap: () => this.setState({ bFrom: to, bTo: from, bkOpen: null }),
       bResult: fmt(n * rate, dTo), bRate: fmt(rate, rate < 1 ? 6 : 2), bAddr: addr, bFixBg: n ? '#CA8D42' : '#D5D9DF',
-      bFix: () => { if (!n) return;
-        this.saveFix({ id: 'local-' + Date.now(), status: 'local', from, to, amount: n, rate, result: n * rate, resultText: fmt(n * rate, dTo) + ' ' + sym[to], forText: 'за ' + fmt(n, 6) + ' ' + sym[from], city: ci[0], addr, createdAt: Date.now(), expiresAt: Date.now() + 30 * 60 * 1000 });
-        this.setState({ bk: 2, bkOpen: null }); },
-      bFixText: f ? f.resultText + ' ' + f.forText : '',
+      bFix: () => { if (!n) return; this.setState({ bk: 2, bkDirect: false, bkOpen: null }); },
+      bCityOpen: st.bkOpen === 'city', bCityToggle: () => this.setState(s => ({ bkOpen: s.bkOpen === 'city' ? null : 'city' })),
+      bCityList: cs.map(c => ({ name: c[0], addr: c[2], bg: c === ci ? '#F4F5F7' : 'transparent', pick: () => this.setState({ city: c[0], bkOpen: null }) })),
+      bFixText: f ? f.resultText + ' ' + f.forText : '', bHasFix: false, bStepped: !st.bkDirect,
       bBack: () => this.setState({ bk: 1 })
     };
   }
@@ -615,7 +614,7 @@ class Component extends DCLogic {
     let wrap = b; while (wrap.parentElement && !wrap.parentElement.querySelector(':scope > header')) wrap = wrap.parentElement;
     wrap = wrap.parentElement || b.parentElement;
     const header = wrap.querySelector(':scope > header'), footer = wrap.nextElementSibling;
-    const blocks = [...wrap.querySelectorAll(':scope > section')]; if (footer && footer.tagName === 'FOOTER') blocks.push(footer);
+    const blocks = [...wrap.querySelectorAll(':scope > section:not([data-noreveal])')]; if (footer && footer.tagName === 'FOOTER') blocks.push(footer);
     const ease = 'cubic-bezier(.16,1,.3,1)';
     const collect = (el, out) => { [...el.children].forEach(c => { if (c.nodeType !== 1 || c.tagName === 'SC-IF') return; if (c.matches('[data-stagger]') || c.querySelector('[data-stagger]')) { if (c.matches('[data-stagger]')) [...c.children].forEach(k => k.nodeType === 1 && out.push(k)); else collect(c, out); } else out.push(c); }); return out; };
     const saved = new WeakMap();
@@ -650,7 +649,8 @@ class Component extends DCLogic {
     if (a !== !!this.state[s] || b !== !!this.state[e]) this.setState({ [s]: a, [e]: b });
   }
   componentDidMount() {
-    this.onBkClick = e => { const b = e.target.closest && e.target.closest('a,button'); if (!b || b.closest('[data-bk]')) return; const tx = b.textContent.replace(/\s+/g, ' ').trim(); if (tx === 'Забронювати заявку' || tx === 'Зафіксувати курс') { e.preventDefault(); this.openBk(); } };
+    try { localStorage.removeItem('obmin21-fix'); } catch (e) {}
+    this.onBkClick = e => { const b = e.target.closest && e.target.closest('a,button'); if (!b || b.closest('[data-bk]')) return; const tx = b.textContent.replace(/\s+/g, ' ').trim(); if (tx === 'Зробити заявку') { e.preventDefault(); this.openContact(); } else if (tx === 'Зафіксувати курс') { e.preventDefault(); this.openBk(); } };
     this.onBkKey = e => { if (e.key === 'Escape' && this.state.bk) this.setState({ bk: 0, bkOpen: null }); };
     document.addEventListener('click', this.onBkClick); document.addEventListener('keydown', this.onBkKey);
     this.setState({ fix: this.loadFix() });
@@ -665,14 +665,7 @@ class Component extends DCLogic {
     };
     this.onHeroLeave = () => { const b = this.bannerRef.current; if (b) b.querySelectorAll('[data-depth]').forEach(el => { el.style.transform = ''; }); };
     if (this.bannerRef.current && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { this.bannerRef.current.addEventListener('mousemove', this.onHeroMove); this.bannerRef.current.addEventListener('mouseleave', this.onHeroLeave); }
-    this.onScroll = () => {
-      const b = this.bannerRef.current, c = this.coinsRef.current;
-      if (!b || !c) return;
-      const r = b.getBoundingClientRect(), vh = window.innerHeight;
-      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
-      const k = p - 0.5;
-      c.style.transform = `translate3d(${k * -40}px, ${k * -120}px, 0) rotate(${k * 10}deg) scale(${0.92 + Math.sin(p * Math.PI) * 0.1})`;
-    };
+    this.onScroll = () => { const c = this.coinsRef && this.coinsRef.current; if (c) c.style.transform = ''; };
     window.addEventListener('scroll', this.onScroll, { passive: true, capture: true });
     window.addEventListener('resize', this.onScroll);
     window.addEventListener('resize', this.onResize);
@@ -719,10 +712,10 @@ class Component extends DCLogic {
       ['Які документи потрібні?', 'Для обміну в межах лімітів достатньо паспорта або ID-картки. Для великих сум можуть знадобитися додаткові підтвердження згідно з вимогами фінмоніторингу'],
       ['Чи приймаєте ви зношені або пошкоджені купюри?', 'Так. Надірвані, потерті чи купюри старого зразка перевіряємо на місці. Вартість обміну залежить від стану банкноти, консультант назве її до операції.'],
       ['Як обміняти криптовалюту на готівку?', 'Оберіть монету у вкладці «Крипто», зафіксуйте курс і приходьте у відділення. Переказ USDT, BTC чи ETH підтверджується за кілька хвилин, після чого ви отримуєте готівку.'],
-      ['Як зафіксувати курс онлайн?', 'Вкажіть суму в калькуляторі та натисніть «Забронювати заявку». Залиште ім’я і телефон — менеджер підтвердить заявку, а курс закріпиться за вами.'],
+      ['Як зафіксувати курс онлайн?', 'Вкажіть суму в калькуляторі та натисніть «Зробити заявку». Залиште ім’я і телефон — менеджер підтвердить заявку, а курс закріпиться за вами.'],
       ['Чи є комісія за обмін?', 'Ні, додаткових комісій немає. Ви отримуєте рівно ту суму, яку бачите в калькуляторі за вказаним курсом.'],
       ['Скільки діє заброньований курс?', 'Заброньований курс діє 30 хвилин з моменту підтвердження. Якщо не встигаєте, зателефонуйте — ми продовжимо бронь або оновимо курс.']
-    ].map(([q, a], i) => ({ q, a, open: open === i && !!a, rot: open === i && a ? 'rotate(180deg)' : 'none',
+    ].map(([q, a], i) => ({ q, a, open: open === i && !!a, rot: open === i && a ? 'rotate(180deg)' : 'none', st: open === i && a ? 'open' : 'closed',
       toggle: () => this.setState({ faqOpen: open === i ? -1 : i }) }));
     const review = { name: 'Дарія, Київ', text: 'Швидко обміняли велику суму, усе прозоро й без зайвих питань' };
     const art = [
@@ -746,8 +739,8 @@ class Component extends DCLogic {
       city: cur[0], cityIn: cur[1], cityAddr: cur[2], citySlug: cur[3].toLowerCase(),
       isKyiv: ci === 0, hasCityImg: !!cur[4], needCitySlot: ci !== 0 && !cur[4],
       cityImg: !cur[4] ? '' : /^(https?:|assets\/)/.test(cur[4]) ? cur[4] : `https://images.unsplash.com/${cur[4]}?fm=jpg&q=80&w=2400&auto=format&fit=crop`,
-      mapEmbed: `https://maps.google.com/maps?q=${encodeURIComponent(cur[3] + ', Ukraine')}&z=11&output=embed`,
-      mapLink: `https://maps.google.com/?q=${encodeURIComponent(cur[2])}`,
+      mapEmbed: `https://maps.google.com/maps?q=${encodeURIComponent(cur[3] + ', Україна')}&z=11&hl=uk&output=embed`,
+      mapLink: `https://maps.google.com/?hl=uk&q=${encodeURIComponent(cur[2])}`,
       cityOpen: this.state.cityOpen, cityChevron: this.state.cityOpen ? 'rotate(180deg)' : 'none',
       toggleCity: () => this.setState(s => ({ cityOpen: !s.cityOpen })),
       cityList: CITIES.filter((c, i) => i !== ci).map(c => ({ name: c[0], pick: () => this.pickCity(c[0]) })),
@@ -814,14 +807,14 @@ class Component extends DCLogic {
       revRef: this.revRef,
       onRevScroll: () => this.syncTrack(this.revRef, 'rStart', 'rEnd'),
       revPrev: () => this.slide(-1, this.revRef), revNext: () => this.slide(1, this.revRef),
-      revPrevBg: this.state.rStart ?? true ? '#C3CAD2' : '#052145', revNextBg: this.state.rEnd ? '#C3CAD2' : '#052145',
+      revPrevBg: '#052145', revNextBg: '#052145',
       articles: artSorted.map(([title, text, pid, name, user], i) => ({ id: i + 1, title, text,
         img: `https://unsplash.com/photos/${pid}/download?w=900`,
         credit: `Photo by ${name} on Unsplash` })),
       trackRef: this.trackRef,
       onTrackScroll: () => this.syncTrack(),
       artPrev: () => this.slide(-1), artNext: () => this.slide(1),
-      prevBg: atStart ? '#C3CAD2' : '#052145', nextBg: atEnd ? '#C3CAD2' : '#052145',
+      prevBg: '#052145', nextBg: '#052145',
       rates, amount: this.state.amount,
       result: (n * 42.2).toLocaleString('uk-UA', { maximumFractionDigits: 2 }),
       onAmount: e => this.setState({ amount: e.target.value.replace(/[^\d.,]/g, '') }),

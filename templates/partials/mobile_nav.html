@@ -38,8 +38,8 @@
       {{ active_phone }}
     </a>
     {% endif %}
-    <button type="button" class="btn btn--accent btn--block" data-open-modal="{% url 'leads:request_modal' %}" data-menu-close>
-      Забронювати заявку
+    <button type="button" class="btn btn--accent btn--block" data-open-modal="{% url 'leads:request_modal' %}?direct=1" data-menu-close>
+      Зробити заявку
     </button>
   </div>
 </div>

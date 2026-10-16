@@ -9,7 +9,6 @@
     style="background-color: {{ page.color_hero_bg }};{% if page.hero_banner_src %}background-image: radial-gradient(ellipse 60% 70% at 80% 115%, rgba(var(--color-accent-rgb), 0.28), rgba(var(--color-accent-rgb), 0) 70%), url('{{ page.hero_banner_src }}');background-size: auto, cover;background-position: 80% 115%, right center;background-repeat: no-repeat;{% endif %}"
   >
     <div class="adv-hero__copy">
-      <span class="pill pill--light">{{ page.hero_kicker }}</span>
       <h1 class="adv-hero__title">{{ page.hero_title }}<br><span class="u-accent">{{ page.hero_title_accent }}</span></h1>
       <p class="adv-hero__lead">{{ page.hero_lead }}</p>
       <div class="adv-hero__btns">
@@ -85,7 +84,6 @@
 </section>
 
 <section class="stats-section stats-section--adv">
-  <span class="pill">{{ page.stats_kicker }}</span>
   <h2 class="stats-section__title">{{ page.stats_title }} <span class="u-accent">{{ page.stats_title_accent }}</span></h2>
   <div class="stats-section__grid">
     {% for row in page.iter_stats %}
@@ -99,7 +97,6 @@
 
 <section class="why-adv" id="adv">
   <div class="why-adv__head">
-    <span class="pill">{{ page.why_kicker }}</span>
     <h2 class="why-adv__title">{{ page.why_title }} <span class="u-accent">{{ page.why_title_accent }}</span></h2>
     <p class="why-adv__lead">{{ page.why_lead }}</p>
   </div>
@@ -164,7 +161,6 @@
 
 <section class="cmp-adv">
   <div class="cmp-adv__head">
-    <span class="pill">{{ page.cmp_kicker }}</span>
     <h2 class="cmp-adv__title">{{ page.cmp_title }} <span class="u-accent">{{ page.cmp_title_accent }}</span></h2>
   </div>
   <div class="cmp-adv__grid">
@@ -185,7 +181,6 @@
 
 <section class="svc-how svc-how--adv">
   <div class="svc-how__head">
-    <span class="pill">Як це працює</span>
     <h2 class="svc-how__title">Три кроки до <span class="u-accent">обміну</span></h2>
   </div>
   <div class="svc-how__grid">

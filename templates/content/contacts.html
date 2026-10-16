@@ -4,7 +4,6 @@
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
 {% block content %}
 <section class="contacts-hero">
-  <span class="pill">{{ page.title }}</span>
   <h1 class="contacts-hero__title">{{ page.heading }} <span class="u-accent">{{ page.title_accent }}</span></h1>
   <div class="contacts-cards">
     {% with contact_phone=active_phone|default:page.phone %}
@@ -45,7 +44,6 @@
 </section>
 
 <section class="contacts-map" id="branches" data-branches>
-  <span class="pill">{{ page.branches_kicker }}</span>
   <h2 class="contacts-map__title">{{ page.branches_title }} <span class="u-accent">{{ page.branches_title_accent }}</span></h2>
   {% if map_branches %}
   <div class="contacts-map__layout">

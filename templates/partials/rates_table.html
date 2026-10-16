@@ -1,5 +1,5 @@
 {% load content_format %}
-<div id="rates-panel" class="rates-card" data-qa="rates-panel">
+<div id="rates-panel" class="rates-card{% if active_board == 'crypto' %} is-crypto{% endif %}" data-qa="rates-panel">
   <div class="rates-toolbar">
     <div class="rates-tabs" role="tablist">
       {% for value, label in boards %}
@@ -20,6 +20,16 @@
     {% endif %}
   </div>
 
+  {% if active_board == 'crypto' %}
+  <div class="rates-crypto">
+    <div class="rates-crypto__title">Криптовалюта <span class="u-accent">від партнерів</span></div>
+    <p class="rates-crypto__text">Обмін USDT, BTC, ETH та інших монет здійснюють наші партнери. Менеджер розрахує курс і розповість про умови</p>
+    <a class="btn rates-crypto__cta" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 4.3L2.9 11.5c-1.1.4-1.1 1.1-.2 1.4l4.7 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.8-.4l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-14.8c.3-1.3-.5-1.9-1.3-1.5zM8.7 14l9.7-6.1c.5-.3.9-.1.5.2l-8 7.3-.3 3.4z" fill="#fff"></path></svg>
+      Написати менеджеру
+    </a>
+  </div>
+  {% else %}
   <div class="rates-table">
     <div class="rates-table__head">
       <div>Валюта</div>
@@ -92,4 +102,5 @@
     </div>
     {% endif %}
   </div>
+  {% endif %}
 </div>

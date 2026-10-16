@@ -1,5 +1,6 @@
 from django import forms
 
+from src.network.models import City
 from src.reviews.models import Review
 
 
@@ -8,10 +9,19 @@ class ReviewForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['rating'].initial = 5
         self.fields['rating'].required = False
+        self.fields['phone'].required = False
+        names = list(
+            City.objects.filter(is_active=True).order_by('sort_order', 'name').values_list('name', flat=True)
+        )
+        if names:
+            self.fields['city_name'].widget = forms.Select(
+                attrs={'class': 'form__input'},
+                choices=[('', 'Місто')] + [(name, name) for name in names],
+            )
 
     class Meta:
         model = Review
-        fields = ['name', 'text', 'city_name', 'consent', 'rating']
+        fields = ['name', 'text', 'city_name', 'phone', 'consent', 'rating']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form__input',
@@ -27,6 +37,13 @@ class ReviewForm(forms.ModelForm):
             'city_name': forms.TextInput(attrs={
                 'class': 'form__input',
                 'placeholder': 'Місто',
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form__input',
+                'type': 'tel',
+                'inputmode': 'tel',
+                'autocomplete': 'tel',
+                'placeholder': 'Телефон (необов’язково)',
             }),
             'consent': forms.CheckboxInput(attrs={'class': 'form__checkbox'}),
             'rating': forms.HiddenInput(),

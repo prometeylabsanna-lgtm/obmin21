@@ -2,13 +2,12 @@
 <section class="reviews-section" id="reviews" data-qa="section-reviews">
   <div class="slider-head">
     <div class="slider-head__copy">
-      <span class="pill">{{ reviews_kicker|default:'Відгуки' }}</span>
       <h2 class="slider-head__title">{{ reviews_title|default:'Відгуки' }}</h2>
       {% if reviews_lead %}<p class="articles-section__lead">{{ reviews_lead }}</p>{% endif %}
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="reviews">
-      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
-      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+      <button type="button" class="slider-nav__btn" data-slider-next aria-label="Далі"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M1.5 1.5L7 7l-5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
     </div>
   </div>
   <div class="reviews-track" data-slider="reviews">
@@ -31,8 +30,8 @@
   <div class="reviews-section__cta-row">
     <button type="button" class="btn btn--accent reviews-section__cta" data-open-modal="{% url 'reviews:review_submit' %}">{{ reviews_cta|default:'Залишити відгук' }}</button>
     <div class="slider-nav slider-nav--mob" data-slider-nav="reviews">
-      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
-      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+      <button type="button" class="slider-nav__btn" data-slider-next aria-label="Далі"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M1.5 1.5L7 7l-5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
     </div>
   </div>
 </section>

@@ -49,9 +49,9 @@
 }
 
 .article-banner__title {
-  margin: 16px 0 0;
+  margin: 0;
   color: #fff;
-  font-size: clamp(32px, 4.6vw, 60px);
+  font-size: clamp(28px, 4vw, 50px);
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.5px;
@@ -202,7 +202,7 @@
 
 .article-related__title {
   margin: 0;
-  font-size: clamp(28px, 3.4vw, 44px);
+  font-size: clamp(25px, 2.9vw, 37px);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.3px;

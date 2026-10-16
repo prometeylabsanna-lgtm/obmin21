@@ -2,7 +2,6 @@
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="review-title" data-qa="modal-review">
     <button type="button" class="modal__close" data-close-modal aria-label="Закрити">×</button>
 
-    <div class="modal__pill">Відгук</div>
     <h2 class="modal__title" id="review-title">Поділіться <span class="accent">враженнями</span></h2>
     <p class="modal__lead">Ваш відгук допомагає нам ставати кращими</p>
 
@@ -35,6 +34,10 @@
           {% if form.city_name.errors %}<span class="form__error">{{ form.city_name.errors.0 }}</span>{% endif %}
         </label>
       </div>
+      <label class="form__label">
+        {{ form.phone }}
+        {% if form.phone.errors %}<span class="form__error">{{ form.phone.errors.0 }}</span>{% endif %}
+      </label>
       <label class="form__label">
         {{ form.text }}
         {% if form.text.errors %}<span class="form__error">{{ form.text.errors.0 }}</span>{% endif %}

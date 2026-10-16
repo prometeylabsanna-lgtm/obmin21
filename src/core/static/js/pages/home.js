@@ -58,8 +58,77 @@
     });
   }
 
+  function initPromo() {
+    var root = document.querySelector('[data-promo]');
+    if (!root) return;
+    var slides = Array.prototype.slice.call(root.querySelectorAll('[data-promo-slide]'));
+    var dots = Array.prototype.slice.call(root.querySelectorAll('[data-promo-dot]'));
+    if (!slides.length) return;
+    var index = 0;
+    var timer = 0;
+
+    function show(next) {
+      index = (next + slides.length) % slides.length;
+      slides.forEach(function (slide, i) {
+        slide.classList.toggle('is-active', i === index);
+      });
+      dots.forEach(function (dot, i) {
+        dot.classList.toggle('is-active', i === index);
+        dot.setAttribute('aria-current', i === index ? 'true' : 'false');
+      });
+    }
+
+    function start() {
+      window.clearInterval(timer);
+      timer = window.setInterval(function () {
+        if (document.hidden || root.dataset.pause === '1') return;
+        show(index + 1);
+      }, 5000);
+    }
+
+    dots.forEach(function (dot, i) {
+      dot.addEventListener('click', function (event) {
+        event.stopPropagation();
+        show(i);
+        start();
+      });
+    });
+
+    root.addEventListener('click', function (event) {
+      if (window.innerWidth >= 768) return;
+      if (event.target.closest('a, button, [data-promo-dot]')) return;
+      var slide = slides[index];
+      if (!slide) return;
+      if (slide.getAttribute('data-modal') === '1') {
+        var opener = slide.querySelector('[data-open-modal]');
+        if (opener) opener.click();
+        return;
+      }
+      var href = slide.getAttribute('data-href');
+      if (!href) return;
+      if (slide.getAttribute('data-blank') === '1') {
+        window.open(href, '_blank', 'noopener');
+      } else {
+        window.location.href = href;
+      }
+    });
+
+    root.addEventListener('mouseenter', function () {
+      root.dataset.pause = '1';
+    });
+    root.addEventListener('mouseleave', function () {
+      delete root.dataset.pause;
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) start();
+    });
+    show(0);
+    start();
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initFaq();
     initSliders();
+    initPromo();
   });
 })();

@@ -210,7 +210,7 @@
 }
 
 .mobile-menu__nav {
-  margin-top: 44px;
+  margin-top: 32px;
   display: flex;
   flex-direction: column;
 }
@@ -220,11 +220,11 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 10px 0;
+  padding: 16px 0;
   border-bottom: 1px solid #d5d9df;
-  font-size: 40px;
-  font-weight: 700;
-  line-height: 1.1;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
   letter-spacing: -0.5px;
   color: var(--color-text);
   transition: color 0.25s ease;
@@ -271,7 +271,7 @@
   }
 
   .mobile-menu__nav a {
-    font-size: clamp(28px, 8vw, 40px);
+    font-size: 22px;
   }
 }
 

@@ -289,6 +289,54 @@
   display: none;
 }
 
+.rates-card.is-crypto .rates-search {
+  visibility: hidden;
+}
+
+.rates-crypto {
+  margin-top: 24px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.rates-crypto__title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #052145;
+}
+
+.rates-crypto__text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #8a909c;
+  max-width: 440px;
+}
+
+.rates-crypto__cta {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #052145;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 24px;
+  border-radius: 6px;
+  min-height: 48px;
+}
+
+.rates-crypto__cta:hover {
+  background: #1c2f5c;
+  color: #fff;
+}
+
 .rates-table__action .btn {
   width: 44px;
   height: 44px;

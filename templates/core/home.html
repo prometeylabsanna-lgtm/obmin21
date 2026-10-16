@@ -34,18 +34,9 @@
 </section>
 
 <section class="calc-head" id="calculator">
-  <div class="badge-row"><span class="pill">{{ page.calc_kicker }}</span></div>
   <h2 class="calc-head__title">
-    <span class="calc-head__coin" aria-hidden="true">
-      <span class="coin-spin">
-        <img src="{% static 'images/bitcoin.png' %}" alt="">
-        <img src="{% static 'images/bitcoin.png' %}" alt="">
-        <img src="{% static 'images/bitcoin.png' %}" alt="">
-      </span>
-    </span>
     <span>{{ page.calc_title }} <span class="u-accent">{{ page.calc_title_accent }}</span></span>
   </h2>
-  <p class="calc-head__lead">{{ page.calc_lead }}</p>
 </section>
 
 <section class="calc-box" data-calc data-qa="home-calc">
@@ -107,19 +98,54 @@
   </div>
 </section>
 
-<section class="promo-banner" data-qa="promo-banner">
-  <div class="promo-banner__coins" aria-hidden="true">
-    {% if page.promo_image %}
-    <img src="{{ page.promo_image.url }}" alt="" width="640" height="480" loading="lazy">
-    {% else %}
-    <img src="{% static 'images/coins.png' %}" alt="" width="640" height="480" loading="lazy">
-    {% endif %}
+<section class="promo-banner" data-promo data-qa="promo-banner">
+  <div class="promo-banner__stage">
+    <article class="promo-banner__slide is-active" data-promo-slide data-href="{% url 'rates:rates_page' %}">
+      <div class="promo-banner__media" aria-hidden="true">
+        <img src="{% static 'images/bills.png' %}" alt="" width="900" height="520" loading="lazy">
+      </div>
+      <div class="promo-banner__content">
+        <h2 class="promo-banner__title">Вигідний курс на<br><span class="u-accent">USD та EUR</span></h2>
+        <p class="promo-banner__text">Обмінюйте валюту за актуальним курсом без зайвих кроків</p>
+        <a class="btn btn--accent promo-banner__cta" href="{% url 'rates:rates_page' %}">Обрати валюту</a>
+      </div>
+    </article>
+    <article class="promo-banner__slide" data-promo-slide data-href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" data-blank="1">
+      <div class="promo-banner__media" aria-hidden="true">
+        <img src="{% static 'images/coins.png' %}" alt="" width="900" height="520" loading="lazy">
+      </div>
+      <div class="promo-banner__content">
+        <h2 class="promo-banner__title">USDT, BTC, ETH<br><span class="u-accent">на готівку</span></h2>
+        <p class="promo-banner__text">Обмін криптовалюти від наших партнерів. Менеджер розрахує курс і розповість про умови</p>
+        <a class="btn btn--accent promo-banner__cta" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">Написати менеджеру</a>
+      </div>
+    </article>
+    <article class="promo-banner__slide" data-promo-slide data-href="{% url 'content:services' %}">
+      <div class="promo-banner__media" aria-hidden="true">
+        <img src="{% static 'images/promo-transfers.png' %}" alt="" width="900" height="520" loading="lazy">
+      </div>
+      <div class="promo-banner__content">
+        <h2 class="promo-banner__title">Грошові перекази<br><span class="u-accent">по Україні та світу</span></h2>
+        <p class="promo-banner__text">Надсилайте гроші рідним готівкою або на картку отримувача</p>
+        <a class="btn btn--accent promo-banner__cta" href="{% url 'content:services' %}">Детальніше</a>
+      </div>
+    </article>
+    <article class="promo-banner__slide" data-promo-slide data-modal="1">
+      <div class="promo-banner__media" aria-hidden="true">
+        <img src="{% static 'images/promo-swift.png' %}" alt="" width="900" height="520" loading="lazy">
+      </div>
+      <div class="promo-banner__content">
+        <h2 class="promo-banner__title">SWIFT-перекази<br><span class="u-accent">за кордон</span></h2>
+        <p class="promo-banner__text">Міжнародні перекази на рахунки в банках понад 100 країн</p>
+        <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{% url 'leads:request_modal' %}?direct=1">Зробити заявку</button>
+      </div>
+    </article>
   </div>
-  <div class="promo-banner__content">
-    <span class="pill pill--light">{{ page.promo_kicker }}</span>
-    <h2 class="promo-banner__title">{{ page.promo_title }}<br>на <span class="u-accent">{{ page.promo_title_accent }}</span></h2>
-    <p class="promo-banner__text">{{ page.promo_text }}</p>
-    <a href="{% url 'rates:rates_page' %}" class="btn btn--accent promo-banner__cta">{{ page.promo_button }}</a>
+  <div class="promo-banner__dots" data-promo-dots>
+    <button type="button" class="is-active" data-promo-dot aria-label="USD та EUR"></button>
+    <button type="button" data-promo-dot aria-label="Криптовалюта"></button>
+    <button type="button" data-promo-dot aria-label="Перекази"></button>
+    <button type="button" data-promo-dot aria-label="SWIFT"></button>
   </div>
 </section>
 
@@ -127,7 +153,6 @@
 <section class="map-section" id="contacts" data-qa="section-map">
   {% with branch=city_branches.0 %}
   <div class="map-section__info">
-    <span class="pill">{{ page.map_kicker }} {% if active_city %}{{ active_city.name_in }}{% endif %}</span>
     <h2 class="map-section__title">{{ page.map_title }}<br><span class="u-accent">{{ page.map_title_accent }}</span></h2>
     <div class="map-section__details">
       <div>
@@ -137,6 +162,24 @@
       <div>
         <div class="map-section__label">{{ page.map_phone_label }}</div>
         <div>{% if branch.phone %}{{ branch.phone }}{% elif active_phone %}{{ active_phone }}{% endif %}</div>
+      </div>
+      <div>
+        <div class="map-section__label">Місто:</div>
+        <div class="map-city" data-city-select>
+          <button type="button" class="map-city__btn" data-city-toggle aria-expanded="false" aria-haspopup="listbox">
+            <span>{{ active_city.name|default:"Місто" }}</span>
+            <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
+          </button>
+          <div class="map-city__menu" data-city-menu hidden role="listbox">
+            {% for c in cities %}
+            <form method="post" action="{% url 'network:set_city' %}">
+              {% csrf_token %}
+              <input type="hidden" name="city" value="{{ c.slug }}">
+              <button type="submit" class="map-city__option{% if active_city.slug == c.slug %} is-active{% endif %}">{{ c.name }}</button>
+            </form>
+            {% endfor %}
+          </div>
+        </div>
       </div>
       <div>
         <div class="map-section__label">{{ page.map_address_label }}</div>
@@ -160,7 +203,6 @@
 
 {% if page.show_why %}
 <section class="stats-section" id="advantages" data-qa="section-stats">
-  <span class="pill">{{ page.why_kicker }}</span>
   <h2 class="stats-section__title">{{ page.why_title }} <span class="u-accent">{{ page.why_title_accent }}</span></h2>
   <div class="stats-section__grid">
     {% for item in home_stats %}
@@ -181,22 +223,21 @@
 {% if page.show_services %}
 <section class="services-section" id="services" data-qa="section-services">
   <div class="services-section__head">
-    <span class="pill">{{ page.services_kicker }}</span>
     <h2 class="services-section__title">{{ page.services_title }} <span class="u-accent">{{ page.services_title_accent }}</span></h2>
     <p class="services-section__lead">{{ page.services_lead }}</p>
   </div>
   <div class="services-section__grid" data-slider="services">
     {% for svc in services %}
-    <article class="svc-card">
+    <a class="svc-card" href="{% url 'content:services' %}#svc-{{ svc.slug }}">
       <div class="svc-card__media">
         <img src="{{ svc.image_src }}" alt="" loading="lazy">
       </div>
       <h3 class="svc-card__title">{{ svc.title }}</h3>
       <div class="svc-card__text">{{ svc.short_desc }}</div>
-      <a class="link-accent" href="{% url 'content:services' %}#svc-{{ svc.slug }}">Детальніше
-        <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
-      </a>
-    </article>
+      <span class="link-accent">Детальніше
+        <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="currentColor" fill="none" stroke-width="1.5"></path></svg>
+      </span>
+    </a>
     {% endfor %}
   </div>
 </section>
@@ -214,13 +255,12 @@
 <section class="articles-section" id="news" data-qa="section-news">
   <div class="slider-head">
     <div>
-      <span class="pill">{{ page.articles_kicker }}</span>
       <h2 class="slider-head__title">{{ page.articles_title }} <span class="u-accent">{{ page.articles_title_accent }}</span></h2>
       <p class="articles-section__lead">{{ page.articles_lead }}</p>
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
-      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
-      <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+      <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Попередній"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+      <button type="button" class="slider-nav__btn" data-slider-next aria-label="Наступний"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M1.5 1.5L7 7l-5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
     </div>
   </div>
   <div class="articles-track" data-slider="articles">
@@ -240,8 +280,8 @@
     {% endfor %}
   </div>
   <div class="slider-nav slider-nav--mob" data-slider-nav="articles">
-    <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад">‹</button>
-    <button type="button" class="slider-nav__btn is-active" data-slider-next aria-label="Далі">›</button>
+    <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Попередній"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+    <button type="button" class="slider-nav__btn" data-slider-next aria-label="Наступний"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M1.5 1.5L7 7l-5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
   </div>
 </section>
 {% endif %}

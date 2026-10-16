@@ -7,6 +7,7 @@ class Review(models.Model):
     name = models.CharField("Ім'я", max_length=120)
     text = models.TextField('Текст')
     city_name = models.CharField('Місто (текст)', max_length=80, blank=True)
+    phone = models.CharField('Телефон', max_length=32, blank=True)
     rating = models.PositiveSmallIntegerField(
         'Оцінка',
         default=5,

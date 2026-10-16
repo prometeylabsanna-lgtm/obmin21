@@ -4,10 +4,9 @@
       <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9" stroke="#8A909C" stroke-width="1.4"></path></svg>
     </button>
 
-    <div class="bk-step" data-bk-panel="1"{% if form.is_bound and form.errors %} hidden{% endif %}>
-      <div class="modal__step">Крок 1 з 2</div>
-      <h2 class="modal__title" id="request-title">Зафіксувати <span class="accent">курс</span></h2>
-      <p class="modal__lead">Оберіть валюти та суму. Курс закріпиться після відправки заявки і діятиме 30 хвилин.</p>
+    <div class="bk-step" data-bk-panel="1"{% if booking_direct or form.is_bound and form.errors %} hidden{% endif %}>
+      <h2 class="modal__title" id="request-title">Обмін <span class="accent">валюти</span></h2>
+      <p class="modal__lead">Оберіть валюти, суму та відділення. Курс розраховано для обраного міста</p>
 
       <div class="bk-calc">
         <div>
@@ -43,9 +42,17 @@
         <div class="bk-rate" data-bk-rate></div>
       </div>
 
-      <div class="bk-addr">
-        <svg width="14" height="16" viewBox="0 0 12 14" aria-hidden="true"><path d="M6 0a5 5 0 0 0-5 5c0 3.6 5 9 5 9s5-5.4 5-9a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="var(--color-accent)"></path></svg>
-        <span data-bk-addr>{{ branch_address }}</span>
+      <div class="bk-branch">
+        <div class="bk-label">Відділення</div>
+        {% if branches %}
+        <select class="bk-branch__select" name="branch" form="booking-form">
+          {% for b in branches %}
+          <option value="{{ b.pk }}"{% if form.branch.value|stringformat:"s" == b.pk|stringformat:"s" %} selected{% endif %}>{{ b.address }}</option>
+          {% endfor %}
+        </select>
+        {% else %}
+        <div class="bk-branch__select">{{ branch_address }}</div>
+        {% endif %}
       </div>
 
       <button type="button" class="btn btn--accent btn--block bk-fix" data-bk-fix>
@@ -53,12 +60,12 @@
       </button>
     </div>
 
-    <div class="bk-step" data-bk-panel="2"{% if not form.is_bound or not form.errors %} hidden{% endif %}>
-      <div class="modal__step">Крок 2 з 2</div>
-      <h2 class="modal__title">Забронювати <span class="accent">заявку</span></h2>
-      <p class="modal__lead">Залиште контакти. Курс закріпиться після відправки заявки.</p>
+    <div class="bk-step" data-bk-panel="2"{% if not booking_direct and not form.errors %} hidden{% endif %}>
+      {% if not booking_direct %}<div class="modal__step">Крок 2 з 2</div>{% endif %}
+      <h2 class="modal__title">Зробити <span class="accent">заявку</span></h2>
+      <p class="modal__lead">Оберіть зручний спосіб зв’язку. Консультант відповість на питання та оформить заявку</p>
 
-      <div class="bk-fixed">
+      <div class="bk-fixed" hidden>
         <span>
           <span class="bk-fixed__label">Попередній розрахунок</span>
           <span class="bk-fixed__text" data-bk-fix-text></span>
@@ -67,6 +74,7 @@
       </div>
 
       <form class="form"
+            id="booking-form"
             method="post"
             action="{% url 'leads:request_modal' %}"
             hx-post="{% url 'leads:request_modal' %}"
@@ -81,7 +89,7 @@
         {{ form.amount_give }}
         {{ form.amount_receive }}
         {{ form.rate_fixed }}
-        {{ form.branch }}
+        {% if not branches %}{{ form.branch }}{% endif %}
         {{ form.messenger }}
         <label class="form__label">Імʼя
           {{ form.name }}
@@ -125,7 +133,7 @@
       {% endif %}
 
       <div class="bk-foot">
-        <button type="button" class="bk-back" data-bk-back>← Змінити суму</button>
+        {% if not booking_direct %}<button type="button" class="bk-back" data-bk-back>← Змінити суму</button>{% endif %}
         <span>Щодня з 8:00 до 21:00</span>
       </div>
     </div>

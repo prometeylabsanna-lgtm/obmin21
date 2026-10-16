@@ -9,7 +9,7 @@
 
 .why-adv__title {
   margin: 10px auto 0;
-  font-size: clamp(32px, 4.6vw, 66px);
+  font-size: clamp(28px, 4vw, 55px);
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.5px;

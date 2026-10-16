@@ -94,6 +94,8 @@ def _modal_context(request, form=None):
         'initial_to': initial_to,
         'initial_amount': amount,
         'branch_address': branch.address if branch else '',
+        'branches': list(get_city_branches(city)) if city else [],
+        'booking_direct': request.method != 'POST' and request.GET.get('direct') == '1',
         'phone_display': phone,
         'phone_tel': phone_tel(phone),
         'telegram_url': telegram_url,
