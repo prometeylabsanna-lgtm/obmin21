@@ -8,32 +8,46 @@
 .rates-tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 40px;
+  align-items: stretch;
   gap: 12px;
   flex: 1 1 100%;
 }
 
 .rates-tabs__btn {
+  box-sizing: border-box;
   width: 100%;
   min-width: 0;
   height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  margin: 0;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   -webkit-appearance: none;
   appearance: none;
   border-radius: var(--radius-sm);
   font-family: inherit;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   border: 1px solid transparent;
   background: var(--color-surface);
   color: var(--color-navy);
-  padding: 0 16px;
 }
 
 .rates-tabs__btn.is-active,
 .rates-tabs__btn[aria-selected="true"] {
-  border-color: var(--color-accent);
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  border: 1px solid var(--color-accent);
   background: #fff;
   color: var(--color-accent);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .rates-table {
