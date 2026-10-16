@@ -110,7 +110,7 @@ def _send_email(site, subject, body):
         logger.info('Lead notify email skipped (empty notify_email): %s', subject)
         return
     try:
-        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [to], fail_silently=True)
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [to], fail_silently=False)
     except Exception:
         logger.exception('Email notify failed')
 

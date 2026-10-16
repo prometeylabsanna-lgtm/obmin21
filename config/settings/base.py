@@ -201,10 +201,13 @@ CITY_COOKIE_NAME = 'obmin21_city'
 CITY_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 RATE_HOLD_MINUTES = config('RATE_HOLD_MINUTES', default=30, cast=int)
 
-EMAIL_BACKEND = config(
-    'EMAIL_BACKEND',
-    default='django.core.mail.backends.console.EmailBackend',
+RESEND_API_KEY = config('RESEND_API_KEY', default='')
+_EMAIL_DEFAULT = (
+    'src.core.mail.ResendEmailBackend'
+    if RESEND_API_KEY
+    else 'django.core.mail.backends.console.EmailBackend'
 )
+EMAIL_BACKEND = config('EMAIL_BACKEND', default=_EMAIL_DEFAULT)
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@obmin21.local')
 
 TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN', default='')

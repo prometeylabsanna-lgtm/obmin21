@@ -129,5 +129,3 @@ STORAGES = {
         'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
     },
 }
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
