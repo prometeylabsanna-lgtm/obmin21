@@ -43,9 +43,15 @@
       </div>
 
       <div class="bk-branch">
-        <div class="bk-label">Відділення</div>
+        <div class="bk-label">Місто</div>
+        <select class="bk-branch__select" data-bk-city aria-label="Місто">
+          {% for place in booking_places %}
+          <option value="{{ place.id }}"{% if place.id == booking_city_id %} selected{% endif %}>{{ place.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="bk-label bk-branch__label">Відділення</div>
         {% if branches %}
-        <select class="bk-branch__select" name="branch" form="booking-form">
+        <select class="bk-branch__select" name="branch" form="booking-form" data-bk-branch aria-label="Відділення">
           {% for b in branches %}
           <option value="{{ b.pk }}"{% if form.branch.value|stringformat:"s" == b.pk|stringformat:"s" %} selected{% endif %}>{{ b.address }}</option>
           {% endfor %}
@@ -139,5 +145,6 @@
     </div>
 
     {{ currencies|json_script:"bk-currencies" }}
+    {{ booking_places|json_script:"bk-places" }}
   </div>
 </div>

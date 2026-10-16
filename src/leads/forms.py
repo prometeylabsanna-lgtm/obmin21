@@ -5,7 +5,6 @@ from django import forms
 from src.leads.models import ContactMessage, ExchangeRequest
 from src.leads.services import validate_phone
 from src.network.models import Branch
-from src.network.selectors import get_city_branches
 from src.rates.models import CurrencyPair, RateBoard
 from src.rates.selectors import get_quote
 
@@ -60,10 +59,10 @@ class ExchangeRequestForm(forms.ModelForm):
         self.fields['rate_fixed'].required = False
         self.fields['amount_receive'].required = False
         self.fields['messenger'].required = False
-        if city is not None:
-            self.fields['branch'].queryset = get_city_branches(city)
-        else:
-            self.fields['branch'].queryset = Branch.objects.none()
+        self.fields['branch'].queryset = Branch.objects.filter(
+            is_active=True,
+            city__is_active=True,
+        )
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
@@ -91,7 +90,9 @@ class ExchangeRequestForm(forms.ModelForm):
         amount_give = cleaned.get('amount_give')
         if not pair:
             return cleaned
-        quote = get_quote(pair, self.city, board)
+        branch = cleaned.get('branch')
+        quote_city = branch.city if branch is not None else self.city
+        quote = get_quote(pair, quote_city, board)
         if quote is None:
             self.add_error('pair', 'Немає курсу для цієї пари')
             return cleaned

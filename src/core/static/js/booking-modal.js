@@ -222,6 +222,38 @@
       });
     }
 
+    var citySel = root.querySelector('[data-bk-city]');
+    var branchSel = root.querySelector('[data-bk-branch]');
+    var placesEl = root.querySelector('#bk-places');
+    if (citySel && branchSel && placesEl) {
+      var places = [];
+      try {
+        places = JSON.parse(placesEl.textContent);
+      } catch (err) {
+        places = [];
+      }
+      citySel.addEventListener('change', function () {
+        var place = null;
+        var i;
+        for (i = 0; i < places.length; i += 1) {
+          if (String(places[i].id) === String(citySel.value)) {
+            place = places[i];
+            break;
+          }
+        }
+        if (!place) return;
+        var previous = branchSel.value;
+        branchSel.replaceChildren();
+        place.branches.forEach(function (item) {
+          var option = document.createElement('option');
+          option.value = String(item.id);
+          option.textContent = item.address;
+          branchSel.appendChild(option);
+        });
+        if (previous) branchSel.value = previous;
+      });
+    }
+
     if (fixBtn) fixBtn.addEventListener('click', goStep2);
 
     var back = root.querySelector('[data-bk-back]');

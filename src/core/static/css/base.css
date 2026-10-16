@@ -121,3 +121,9 @@ html.is-menu-open body {
     padding-bottom: 80px;
   }
 }
+
+@media (min-width: 1200px) {
+  html {
+    zoom: 1.25;
+  }
+}

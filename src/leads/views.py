@@ -7,6 +7,7 @@ from src.core.models import SiteSettings
 from src.core.phones import phone_tel
 from src.leads.forms import ContactMessageForm, ExchangeRequestForm
 from src.leads.services import create_contact_message, create_exchange_request
+from src.network.models import Branch
 from src.network.selectors import get_city_branches
 from src.rates.models import CurrencyPair, RateBoard
 from src.rates.selectors import get_active_pairs, get_quote, get_quotes_for_city
@@ -72,6 +73,20 @@ def _modal_context(request, form=None):
             if item['code'] == initial_from and item.get('pair_id'):
                 resolved_pair = CurrencyPair.objects.filter(pk=item['pair_id']).first()
                 break
+    places = []
+    for item in getattr(request, 'cities', []):
+        branch_rows = [
+            {'id': b.pk, 'address': b.address}
+            for b in get_city_branches(item)
+        ]
+        if branch_rows:
+            places.append({'id': item.pk, 'name': item.name, 'branches': branch_rows})
+    selected_city = city
+    raw_branch = form['branch'].value() if form is not None else None
+    if raw_branch:
+        chosen = Branch.objects.filter(pk=raw_branch, is_active=True).select_related('city').first()
+        if chosen and chosen.city_id:
+            selected_city = chosen.city
     site = SiteSettings.load()
     phone = ''
     if city and city.phone:
@@ -94,7 +109,9 @@ def _modal_context(request, form=None):
         'initial_to': initial_to,
         'initial_amount': amount,
         'branch_address': branch.address if branch else '',
-        'branches': list(get_city_branches(city)) if city else [],
+        'branches': list(get_city_branches(selected_city)) if selected_city else [],
+        'booking_places': places,
+        'booking_city_id': selected_city.pk if selected_city else '',
         'booking_direct': request.method != 'POST' and request.GET.get('direct') == '1',
         'phone_display': phone,
         'phone_tel': phone_tel(phone),
@@ -109,7 +126,9 @@ def exchange_request_modal(request):
     if request.method == 'POST':
         form = ExchangeRequestForm(request.POST, city=city)
         if form.is_valid() and city is not None:
-            obj = create_exchange_request(cleaned=form.cleaned_data, city=city)
+            branch = form.cleaned_data.get('branch')
+            lead_city = branch.city if branch is not None else city
+            obj = create_exchange_request(cleaned=form.cleaned_data, city=lead_city)
             return render(request, 'partials/form_success.html', {
                 'title': 'Заявку прийнято',
                 'message': (
