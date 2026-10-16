@@ -34,6 +34,10 @@ class SiteSettings(models.Model):
         'Хвилин фіксації курсу',
         default=30,
     )
+    crypto_enabled = models.BooleanField(
+        'Показувати криптовалюту на сайті',
+        default=True,
+    )
     notify_email = models.EmailField('Email для сповіщень', blank=True)
     notify_telegram_chat_id = models.CharField(
         'Номер чату Telegram для сповіщень',

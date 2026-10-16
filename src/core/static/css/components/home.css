@@ -111,6 +111,10 @@
   gap: 20px;
 }
 
+.hero__rates .rates-tabs:has(> .rates-tabs__btn:only-child) {
+  grid-template-columns: max-content;
+}
+
 .hero__rates .rates-tabs__btn {
   box-sizing: border-box;
   width: 100%;
@@ -1138,6 +1142,10 @@
   .hero__rates .rates-tabs {
     grid-template-columns: 190px 190px;
     justify-content: start;
+  }
+
+  .hero__rates .rates-tabs:has(> .rates-tabs__btn:only-child) {
+    grid-template-columns: 190px;
   }
 
   .hero__rates .rates-tabs__btn {

@@ -1,15 +1,15 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
 from src.content.models import RatesPage
 from src.core.breadcrumbs import safe_reverse, trail
 from src.rates.models import CurrencyPair, RateBoard
-from src.rates.selectors import get_quote, get_quotes_for_city
+from src.core.crypto_visibility import crypto_enabled, pair_is_crypto
+from src.rates.selectors import get_quote, get_quotes_for_city, public_board, public_boards
 
 
 def rates_page(request):
-    board = request.GET.get('board', RateBoard.RETAIL)
-    if board not in RateBoard.values:
-        board = RateBoard.RETAIL
+    board = public_board(request.GET.get('board', RateBoard.RETAIL))
     if board not in (RateBoard.RETAIL, RateBoard.CRYPTO):
         board = RateBoard.RETAIL
     rows, updated_at = get_quotes_for_city(request.city, board)
@@ -19,7 +19,7 @@ def rates_page(request):
         'rate_rows': rows,
         'rate_updated_at': updated_at,
         'active_board': board,
-        'boards': RateBoard.choices,
+        'boards': public_boards(),
         'page_title': page.seo_title or page.title,
         'page_description': page.seo_description or (page.intro[:160] if page.intro else ''),
     })
@@ -27,6 +27,8 @@ def rates_page(request):
 
 def pair_detail(request, slug):
     pair = get_object_or_404(CurrencyPair, slug=slug, is_active=True)
+    if not crypto_enabled() and pair_is_crypto(pair):
+        raise Http404
     quote = get_quote(pair, request.city, RateBoard.RETAIL)
     return render(request, 'rates/pair_detail.html', {
         'pair': pair,

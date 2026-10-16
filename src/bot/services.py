@@ -105,13 +105,18 @@ def resolve_city(profile: TelegramProfile | None, data: dict) -> City | None:
 
 
 def exchange_pairs():
-    return list(
-        CurrencyPair.objects.filter(is_active=True).exclude(code__contains='/')
-    )
+    from src.rates.selectors import get_active_pairs
+
+    return list(get_active_pairs().exclude(code__contains='/'))
 
 
 def pair_by_id(pair_id: int) -> CurrencyPair | None:
-    return CurrencyPair.objects.filter(pk=pair_id, is_active=True).first()
+    from src.core.crypto_visibility import crypto_enabled, pair_is_crypto
+
+    pair = CurrencyPair.objects.filter(pk=pair_id, is_active=True).first()
+    if pair and not crypto_enabled() and pair_is_crypto(pair):
+        return None
+    return pair
 
 
 def branch_by_id(branch_id: int, city: City) -> Branch | None:

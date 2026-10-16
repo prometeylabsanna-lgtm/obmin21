@@ -54,7 +54,9 @@ class ExchangeRequestForm(forms.ModelForm):
     def __init__(self, *args, city=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.city = city
-        self.fields['pair'].queryset = CurrencyPair.objects.filter(is_active=True)
+        from src.rates.selectors import get_active_pairs
+
+        self.fields['pair'].queryset = get_active_pairs()
         self.fields['board'].choices = RateBoard.choices
         self.fields['rate_fixed'].required = False
         self.fields['amount_receive'].required = False

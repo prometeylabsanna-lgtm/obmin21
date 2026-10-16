@@ -1,10 +1,27 @@
 from django.db.models import Q
 
+from src.core.crypto_visibility import crypto_enabled, pair_is_crypto
 from src.rates.models import CurrencyPair, Quote, RateBoard
 
 
 def get_active_pairs():
-    return CurrencyPair.objects.filter(is_active=True)
+    qs = CurrencyPair.objects.filter(is_active=True)
+    if crypto_enabled():
+        return qs
+    kept = [pair.pk for pair in qs if not pair_is_crypto(pair)]
+    return qs.filter(pk__in=kept)
+
+
+def public_board(board):
+    if board == RateBoard.CRYPTO and not crypto_enabled():
+        return RateBoard.RETAIL
+    return board
+
+
+def public_boards():
+    if crypto_enabled():
+        return RateBoard.choices
+    return [item for item in RateBoard.choices if item[0] != RateBoard.CRYPTO]
 
 
 def get_quotes_for_city(city, board=RateBoard.RETAIL):

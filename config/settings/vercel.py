@@ -45,6 +45,34 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
 ]
 
+def _ensure_crypto_flag(db_path):
+    """Seed DB is copied as-is. Add the crypto switch if this deploy is ahead of it."""
+    import sqlite3
+
+    connection = sqlite3.connect(db_path)
+    try:
+        tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if 'core_sitesettings' not in tables:
+            return
+        columns = {row[1] for row in connection.execute('PRAGMA table_info(core_sitesettings)')}
+        if 'crypto_enabled' not in columns:
+            connection.execute(
+                'ALTER TABLE core_sitesettings ADD COLUMN crypto_enabled bool NOT NULL DEFAULT 1'
+            )
+        if 'django_migrations' in tables:
+            exists = connection.execute(
+                "SELECT 1 FROM django_migrations WHERE app='core' AND name='0006_sitesettings_crypto_enabled'"
+            ).fetchone()
+            if exists is None:
+                connection.execute(
+                    "INSERT INTO django_migrations (app, name, applied) "
+                    "VALUES ('core', '0006_sitesettings_crypto_enabled', datetime('now'))"
+                )
+        connection.commit()
+    finally:
+        connection.close()
+
+
 def _ensure_review_phone(db_path):
     """Seed DB is copied as-is. Add the review phone column if this deploy is ahead of it."""
     import sqlite3
@@ -81,6 +109,7 @@ if _SEED_DB.is_file() and not _RUNTIME_DB.exists():
 _ACTIVE_DB = _RUNTIME_DB if _RUNTIME_DB.exists() else _SEED_DB
 if _ACTIVE_DB.is_file():
     _ensure_review_phone(_ACTIVE_DB)
+    _ensure_crypto_flag(_ACTIVE_DB)
 
 DATABASES = {
     'default': {

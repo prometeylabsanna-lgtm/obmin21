@@ -15,6 +15,7 @@ from src.content.models import (
     ServicesPage,
 )
 from src.content.service_blocks import SERVICE_BLOCKS
+from src.core.crypto_visibility import mentions_crypto, visible_queryset
 from src.network.models import Branch
 from src.reviews.selectors import get_published_reviews
 
@@ -24,7 +25,10 @@ def _shared_blocks():
     reviews_page = ReviewsPage.load()
     return {
         'faq_page': faq_page,
-        'faq_items': FaqItem.objects.filter(is_active=True)[:8],
+        'faq_items': visible_queryset(
+            FaqItem.objects.filter(is_active=True),
+            'question', 'answer',
+        )[:8],
         'home_reviews': get_published_reviews(8),
         'reviews_page': reviews_page,
     }
@@ -33,11 +37,17 @@ def _shared_blocks():
 def services_list(request):
     page = ServicesPage.load()
     services = []
-    for svc in Service.objects.filter(is_active=True):
+    for svc in visible_queryset(
+        Service.objects.filter(is_active=True),
+        'title', 'slug', 'short_desc', 'body', 'seo_title', 'seo_description',
+    ):
         block = SERVICE_BLOCKS.get(svc.slug, {})
         svc.block_text = block.get('text') or svc.short_desc
         svc.block_points = list(block.get('points', ()))
         svc.block_cta = block.get('cta', 'Забронювати заявку')
+        blob = ' '.join([svc.block_text, svc.block_cta, *svc.block_points])
+        if mentions_crypto(blob):
+            continue
         services.append(svc)
     ctx = {
         'page': page,
@@ -54,7 +64,10 @@ def advantages_page(request):
     page = AdvantagesPage.load()
     ctx = {
         'page': page,
-        'items': AdvantageItem.objects.filter(is_active=True),
+        'items': visible_queryset(
+            AdvantageItem.objects.filter(is_active=True),
+            'text', 'description',
+        ),
         'audiences': AdvantageItem.Audience.choices,
         'page_title': page.seo_title or page.title,
         'page_description': page.seo_description or page.hero_lead[:160],
@@ -129,5 +142,8 @@ def faq_page(request):
         'page_description': page.seo_description or page.lead or page.title,
     }
     ctx.update(_shared_blocks())
-    ctx['faq_items'] = FaqItem.objects.filter(is_active=True)
+    ctx['faq_items'] = visible_queryset(
+        FaqItem.objects.filter(is_active=True),
+        'question', 'answer',
+    )
     return render(request, 'content/faq.html', ctx)

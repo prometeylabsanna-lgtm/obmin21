@@ -5,13 +5,14 @@ from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap as django_sitemap
 import logging
 
+from src.core.crypto_visibility import visible_queryset
 from src.core.sitemaps import sitemaps
 from src.core.theme import theme_css_cached
 
 from src.blog.selectors import get_published_posts
 from src.content.models import AdvantagesPage, FaqItem, HomePage, Service
 from src.rates.models import RateBoard
-from src.rates.selectors import get_quotes_for_city
+from src.rates.selectors import get_quotes_for_city, public_board, public_boards
 from src.reviews.selectors import get_published_reviews
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         city = self.request.city
-        board = self.request.GET.get('board', RateBoard.RETAIL)
+        board = public_board(self.request.GET.get('board', RateBoard.RETAIL))
         if board not in RateBoard.values:
             board = RateBoard.RETAIL
         if board == RateBoard.CRYPTO:
@@ -68,10 +69,16 @@ class HomeView(TemplateView):
             'calc_currencies': _calc_currencies(rows),
             'rate_updated_at': updated_at,
             'active_board': board,
-            'boards': RateBoard.choices,
+            'boards': public_boards(),
             'home_rates_compact': True,
-            'services': Service.objects.filter(is_active=True, show_on_home=True)[:6],
-            'faq_items': FaqItem.objects.filter(is_active=True)[:8],
+            'services': visible_queryset(
+                Service.objects.filter(is_active=True, show_on_home=True),
+                'title', 'slug', 'short_desc', 'body', 'seo_title', 'seo_description',
+            )[:6],
+            'faq_items': visible_queryset(
+                FaqItem.objects.filter(is_active=True),
+                'question', 'answer',
+            )[:8],
             'news_posts': list(get_published_posts()[:10]),
             'home_reviews': get_published_reviews(8),
             'home_stats': AdvantagesPage.load().iter_stats(),
@@ -80,7 +87,7 @@ class HomeView(TemplateView):
 
 
 def rates_partial(request):
-    board = request.GET.get('board', RateBoard.RETAIL)
+    board = public_board(request.GET.get('board', RateBoard.RETAIL))
     if board not in RateBoard.values:
         board = RateBoard.RETAIL
     home_compact = request.GET.get('home') == '1'
@@ -104,14 +111,14 @@ def rates_partial(request):
         'rate_rows': rows,
         'rate_updated_at': updated_at,
         'active_board': board,
-        'boards': RateBoard.choices,
+        'boards': public_boards(),
         'hide_full_table_link': request.GET.get('hide_full') == '1',
         'home_rates_compact': home_compact,
     })
 
 
 def quotes_json(request):
-    board = request.GET.get('board', RateBoard.RETAIL)
+    board = public_board(request.GET.get('board', RateBoard.RETAIL))
     if board not in RateBoard.values:
         board = RateBoard.RETAIL
     rows, _updated = get_quotes_for_city(request.city, board)

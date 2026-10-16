@@ -112,6 +112,7 @@
         <a class="btn btn--accent promo-banner__cta" href="{% url 'rates:rates_page' %}">Обрати валюту</a>
       </div>
     </article>
+    {% if crypto_enabled %}
     <article class="promo-banner__slide" data-promo-slide data-href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" data-blank="1">
       <div class="promo-banner__media" aria-hidden="true">
         <img src="{% static 'images/coins.png' %}" alt="" width="900" height="520" loading="lazy">
@@ -122,6 +123,7 @@
         <a class="btn btn--accent promo-banner__cta" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">Написати менеджеру</a>
       </div>
     </article>
+    {% endif %}
     <article class="promo-banner__slide" data-promo-slide data-href="{% url 'content:services' %}">
       <div class="promo-banner__media" aria-hidden="true">
         <img src="{% static 'images/promo-transfers.png' %}" alt="" width="900" height="520" loading="lazy">
@@ -145,7 +147,7 @@
   </div>
   <div class="promo-banner__dots" data-promo-dots>
     <button type="button" class="is-active" data-promo-dot aria-label="USD та EUR"></button>
-    <button type="button" data-promo-dot aria-label="Криптовалюта"></button>
+    {% if crypto_enabled %}<button type="button" data-promo-dot aria-label="Криптовалюта"></button>{% endif %}
     <button type="button" data-promo-dot aria-label="Перекази"></button>
     <button type="button" data-promo-dot aria-label="SWIFT"></button>
   </div>
@@ -215,7 +217,7 @@
     {% empty %}
     <div class="stats-section__item">
       <div class="stats-section__num">7K</div>
-      <p><b>Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для <b>швидкого та зручного обміну валют</b> і криптоактивів</p>
+      <p><b>Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для швидкого та зручного обміну валют</p>
     </div>
     {% endfor %}
   </div>
@@ -226,7 +228,7 @@
 <section class="services-section" id="services" data-qa="section-services">
   <div class="services-section__head">
     <h2 class="services-section__title">{{ page.services_title }} <span class="u-accent">{{ page.services_title_accent }}</span></h2>
-    <p class="services-section__lead">{{ page.services_lead }}</p>
+    <p class="services-section__lead">{{ page.services_lead|hide_if_crypto }}</p>
   </div>
   <div class="services-section__grid" data-slider="services">
     {% for svc in services %}
@@ -258,7 +260,7 @@
   <div class="slider-head">
     <div>
       <h2 class="slider-head__title">{{ page.articles_title }} <span class="u-accent">{{ page.articles_title_accent }}</span></h2>
-      <p class="articles-section__lead">{{ page.articles_lead }}</p>
+      <p class="articles-section__lead">{{ page.articles_lead|hide_if_crypto }}</p>
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Попередній"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>

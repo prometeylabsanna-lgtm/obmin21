@@ -169,12 +169,12 @@
         <img src="{% static 'images/logo-footer.png' %}?v=13" alt="Obmin21" width="140" height="40">
         <span class="cmp-adv__badge">Рекомендуємо</span>
       </div>
-      <div class="cmp-adv__html">{{ page.cmp_us_html|rich_html }}</div>
+      <div class="cmp-adv__html">{{ page.cmp_us_html|strip_crypto_items|rich_html }}</div>
       <button type="button" class="btn btn--accent cmp-adv__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ page.cmp_btn }}</button>
     </article>
     <article class="cmp-adv__them">
       <div class="cmp-adv__them-top">Інші обмінники</div>
-      <div class="cmp-adv__html cmp-adv__html--them">{{ page.cmp_them_html|rich_html }}</div>
+      <div class="cmp-adv__html cmp-adv__html--them">{{ page.cmp_them_html|strip_crypto_items|rich_html }}</div>
     </article>
   </div>
 </section>

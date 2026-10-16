@@ -1,9 +1,9 @@
 from django.contrib.sitemaps import Sitemap
 
-from src.blog.models import Post
+from src.blog.selectors import get_published_posts
 from src.core.breadcrumbs import safe_reverse
 from src.network.models import City
-from src.rates.models import CurrencyPair
+from src.rates.selectors import get_active_pairs
 
 
 class StaticSitemap(Sitemap):
@@ -38,7 +38,7 @@ class PostSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        return Post.objects.filter(status=Post.Status.PUBLISHED).exclude(slug='')
+        return get_published_posts().exclude(slug='')
 
     def lastmod(self, obj):
         return obj.updated_at
@@ -53,7 +53,7 @@ class PairSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        return CurrencyPair.objects.filter(is_active=True).exclude(slug='')
+        return get_active_pairs().exclude(slug='')
 
     def location(self, obj):
         return safe_reverse('rates:pair_detail', slug=obj.slug) or '/'
