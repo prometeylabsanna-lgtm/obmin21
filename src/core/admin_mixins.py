@@ -220,11 +220,12 @@ class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
             f.name for f in self.model._meta.fields
             if f.name not in ('id', 'slug') and f.name not in self.style_fields
         )
-        blocks = [('Контент', {'classes': ['tab'], 'fields': content})]
-        if self.style_fields:
-            blocks.append(
-                ('Оформлення', {'classes': ['tab'], 'fields': self.style_fields}),
-            )
+        if not self.style_fields:
+            return self._slug_fieldsets(((None, {'fields': content}),), obj)
+        blocks = [
+            ('Контент', {'classes': ['tab'], 'fields': content}),
+            ('Оформлення', {'classes': ['tab'], 'fields': self.style_fields}),
+        ]
         return self._slug_fieldsets(tuple(blocks), obj)
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
