@@ -45,16 +45,47 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
 ]
 
+def _ensure_review_phone(db_path):
+    """Seed DB is copied as-is. Add the review phone column if this deploy is ahead of it."""
+    import sqlite3
+
+    connection = sqlite3.connect(db_path)
+    try:
+        tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if 'reviews_review' not in tables:
+            return
+        columns = {row[1] for row in connection.execute('PRAGMA table_info(reviews_review)')}
+        if 'phone' not in columns:
+            connection.execute(
+                "ALTER TABLE reviews_review ADD COLUMN phone varchar(32) NOT NULL DEFAULT ''"
+            )
+        if 'django_migrations' in tables:
+            exists = connection.execute(
+                "SELECT 1 FROM django_migrations WHERE app='reviews' AND name='0004_review_phone'"
+            ).fetchone()
+            if exists is None:
+                connection.execute(
+                    "INSERT INTO django_migrations (app, name, applied) "
+                    "VALUES ('reviews', '0004_review_phone', datetime('now'))"
+                )
+        connection.commit()
+    finally:
+        connection.close()
+
+
 # Read-only deploy FS → copy seed DB to /tmp so admin/sessions can write.
 _SEED_DB = BASE_DIR / 'db.sqlite3'  # noqa: F405
 _RUNTIME_DB = Path('/tmp/obmin21.sqlite3')
 if _SEED_DB.is_file() and not _RUNTIME_DB.exists():
     shutil.copy2(_SEED_DB, _RUNTIME_DB)
+_ACTIVE_DB = _RUNTIME_DB if _RUNTIME_DB.exists() else _SEED_DB
+if _ACTIVE_DB.is_file():
+    _ensure_review_phone(_ACTIVE_DB)
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(_RUNTIME_DB if _RUNTIME_DB.exists() else _SEED_DB),
+        'NAME': str(_ACTIVE_DB),
     }
 }
 
