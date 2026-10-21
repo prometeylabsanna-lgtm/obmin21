@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'src.network.middleware.CityMiddleware',
     'src.core.hidden_response.HiddenPageMiddleware',
+    'src.core.seo_public.PublicSeoMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
