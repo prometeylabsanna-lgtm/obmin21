@@ -67,6 +67,12 @@
     var index = 0;
     var timer = 0;
 
+    function autoplayOn() {
+      if (root.getAttribute('data-autoplay') === '0') return false;
+      if (root.getAttribute('data-slides') === '1') return false;
+      return slides.length > 1;
+    }
+
     function show(next) {
       index = (next + slides.length) % slides.length;
       slides.forEach(function (slide, i) {
@@ -80,6 +86,7 @@
 
     function start() {
       window.clearInterval(timer);
+      if (!autoplayOn()) return;
       timer = window.setInterval(function () {
         if (document.hidden || root.dataset.pause === '1') return;
         show(index + 1);
