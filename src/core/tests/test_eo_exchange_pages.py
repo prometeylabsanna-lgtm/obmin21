@@ -11,6 +11,7 @@ from src.core.tests.eo_realdb import (
     classify_eur_usd,
     copy_real_db,
     exchange_paths,
+    inactive_pair_paths,
     prefixed_paths,
     restore_test_db,
 )
@@ -69,10 +70,12 @@ class ExchangePagesStayTests(RealDataTestCase):
 
     def _assert_ok(self, enabled):
         env = {'EXCHANGE_ONLY_MODE': '1' if enabled else '0'}
+        inactive = set(inactive_pair_paths())
+        paths = [path for path in exchange_paths() if path not in inactive]
         with patch.dict(os.environ, env):
             cache.clear()
             problems = []
-            for url in prefixed_paths(exchange_paths()):
+            for url in prefixed_paths(paths):
                 response = self.client.get(url)
                 if response.status_code != 200:
                     problems.append(f'{url} | status | {response.status_code}')

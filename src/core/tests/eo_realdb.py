@@ -385,9 +385,21 @@ def explicit_exchange_pair_paths():
     return []
 
 
+def inactive_pair_paths():
+    from src.rates.models import CurrencyPair
+
+    slugs = (
+        CurrencyPair.objects.filter(is_active=False)
+        .exclude(slug='')
+        .values_list('slug', flat=True)
+    )
+    return [f'/{slug}/' for slug in slugs]
+
+
 def spider_extra_paths():
-    """Фіатна пара поза sitemap: павук має зайти на неї сам."""
-    return explicit_exchange_pair_paths()
+    """Активна фіатна пара поза sitemap: павук має зайти на неї сам."""
+    inactive = set(inactive_pair_paths())
+    return [path for path in explicit_exchange_pair_paths() if path not in inactive]
 
 
 def _published_posts():
