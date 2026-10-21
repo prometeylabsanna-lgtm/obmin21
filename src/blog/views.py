@@ -5,7 +5,7 @@ from src.blog.models import Category, Post
 from src.blog.selectors import category_is_public, get_published_posts, visible_categories
 from src.content.models import BlogPage
 from src.core.breadcrumbs import safe_reverse, trail
-from src.core.exchange_mode import exchange_only, raise_hidden
+from src.core.exchange_mode import exchange_only, mode_meta, raise_hidden
 
 
 def _related_posts(post):
@@ -72,8 +72,12 @@ def post_list(request, category_slug=None):
         'list_url': list_url,
         'categories': visible_categories(),
         'active_category': category,
-        'page_title': category.name if category else (page.seo_title or page.title),
-        'page_description': page.seo_description or page.intro[:160],
+        'page_title': (
+            category.name
+            if category
+            else mode_meta(page, 'seo_title', 'title', limit=None, request=request)
+        ),
+        'page_description': mode_meta(page, 'seo_description', 'intro', request=request),
     }
     if category:
         context['breadcrumb_items'] = trail(
@@ -100,8 +104,8 @@ def post_detail(request, slug):
         'post': post,
         'art': layout,
         'related': _related_posts(post),
-        'page_title': post.seo_title or post.title,
-        'page_description': post.seo_description or post.excerpt[:160],
+        'page_title': mode_meta(post, 'seo_title', 'title', limit=None, request=request),
+        'page_description': mode_meta(post, 'seo_description', 'excerpt', request=request),
         'breadcrumb_items': trail(
             ('Блог', safe_reverse('blog:post_list')),
             (crumb, None),

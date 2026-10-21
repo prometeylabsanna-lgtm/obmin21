@@ -58,6 +58,39 @@ def mode_text(obj, field, request=None):
     return str(value).strip()
 
 
+NEUTRAL_DESCRIPTION = 'Обмін готівкової валюти у касі'
+
+
+def mode_meta(obj, *fields, limit=160, request=None, outside_default=''):
+    """Перше непорожнє поле для title або description.
+
+    Поза режимом значення як у ``a or b``: поля після першого ріжуться до
+    ``limit``, якщо ліміт задано. Порожній ланцюжок повертає ``outside_default``.
+
+    У режимі лише ``mode_text``. Якщо всі ``*_mode`` порожні або поля немає,
+    повертає ``NEUTRAL_DESCRIPTION``.
+    """
+    in_mode = is_exchange_only(request)
+    for index, field in enumerate(fields):
+        if in_mode:
+            text = mode_text(obj, field, request)
+        else:
+            raw = getattr(obj, field, '')
+            if raw is None:
+                text = ''
+            elif isinstance(raw, str):
+                text = raw
+            else:
+                text = str(raw)
+        if text and index and limit is not None:
+            text = text[:limit]
+        if text:
+            return text
+    if in_mode:
+        return NEUTRAL_DESCRIPTION
+    return outside_default
+
+
 def hidden_page_status(request=None):
     if request is not None:
         cached = getattr(request, _REQUEST_STATUS, None)
