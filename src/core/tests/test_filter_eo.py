@@ -6,7 +6,6 @@ from unittest.mock import patch
 from django.conf import settings
 from django.core.cache import cache
 from django.http import Http404
-from django.template import Context, Template
 from django.test import TestCase
 from django.urls import reverse
 
@@ -397,18 +396,12 @@ class ParserRemovedTests(_ModeCase):
         with self.assertRaises(ModuleNotFoundError):
             importlib.import_module('src.core.crypto_visibility')
 
-    def test_template_filters_do_not_cut_text(self):
-        self._mode(True)
-        rendered = Template(
-            '{% load content_format %}'
-            '{{ html|strip_crypto_items }}|{{ text|hide_if_crypto }}',
-        ).render(Context({
-            'html': '<ul><li>Криптовалюта USDT</li><li>Курс</li></ul>',
-            'text': 'обмін криптовалюти',
-        }))
-        self.assertIn('Криптовалюта USDT', rendered)
-        self.assertIn('Курс', rendered)
-        self.assertIn('обмін криптовалюти', rendered)
+    def test_crypto_text_filters_removed_and_stats_keep_wording(self):
+        module = importlib.import_module('src.core.templatetags.content_format')
+        self.assertFalse(hasattr(module, 'strip_crypto_items'))
+        self.assertFalse(hasattr(module, 'hide_if_crypto'))
+        self.assertNotIn('strip_crypto_items', module.register.filters)
+        self.assertNotIn('hide_if_crypto', module.register.filters)
         blob = ' '.join(row['text'] for row in AdvantagesPage.load().iter_stats())
         self.assertIn('криптоактивів', blob)
 
