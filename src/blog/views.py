@@ -2,11 +2,37 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
 from src.blog.models import Category, Post
-from src.blog.selectors import get_published_posts
+from src.blog.selectors import get_published_posts, visible_categories
 from src.content.models import BlogPage
 from src.core.breadcrumbs import safe_reverse, trail
-from src.core.crypto_visibility import mentions_crypto
-from src.core.exchange_mode import exchange_only
+from src.core.exchange_mode import raise_hidden
+
+
+def _related_posts(post):
+    candidates = list(
+        post.related_posts.filter(status=Post.Status.PUBLISHED)[:12]
+    )
+    visible_ids = set()
+    if candidates:
+        visible_ids = set(
+            Post.objects.visible()
+            .filter(pk__in=[item.pk for item in candidates])
+            .values_list('pk', flat=True)
+        )
+    related = [item for item in candidates if item.pk in visible_ids][:6]
+    if related:
+        return related
+    posts = list(get_published_posts())
+    idx = next((i for i, item in enumerate(posts) if item.pk == post.pk), 0)
+    related = []
+    step = 1
+    total = max(len(posts), 1)
+    while len(related) < 6 and step < total:
+        cand = posts[(idx + step) % len(posts)]
+        if cand.pk != post.pk:
+            related.append(cand)
+        step += 1
+    return related
 
 
 def post_list(request, category_slug=None):
@@ -18,8 +44,8 @@ def post_list(request, category_slug=None):
             slug=category_slug,
             show_in_filter=True,
         )
-        if exchange_only() and mentions_crypto(f'{category.name} {category.slug}'):
-            raise Http404
+        if not qs.filter(category=category).exists():
+            raise_hidden()
         qs = qs.filter(category=category)
     try:
         limit = int(request.GET.get('limit', 6))
@@ -42,10 +68,7 @@ def post_list(request, category_slug=None):
         'has_more': len(rest) > limit,
         'next_limit': limit + 6,
         'list_url': list_url,
-        'categories': [
-            item for item in Category.objects.filter(show_in_filter=True)
-            if not exchange_only() or not mentions_crypto(f'{item.name} {item.slug}')
-        ],
+        'categories': visible_categories(),
         'active_category': category,
         'page_title': category.name if category else (page.seo_title or page.title),
         'page_description': page.seo_description or page.intro[:160],
@@ -61,31 +84,11 @@ def post_list(request, category_slug=None):
 
 
 def post_detail(request, slug):
-    post = get_object_or_404(
-        Post,
-        slug=slug,
-        status=Post.Status.PUBLISHED,
-    )
-    if exchange_only() and mentions_crypto(
-        f'{post.title} {post.slug} {post.excerpt} {post.body} {post.faq}'
-    ):
+    post = Post.objects.filter(slug=slug, status=Post.Status.PUBLISHED).first()
+    if post is None:
         raise Http404
-    related = [
-        item for item in post.related_posts.filter(status=Post.Status.PUBLISHED)[:12]
-        if not exchange_only() or not mentions_crypto(
-            f'{item.title} {item.slug} {item.excerpt} {item.body}'
-        )
-    ][:6]
-    if not related:
-        posts = list(get_published_posts())
-        idx = next((i for i, item in enumerate(posts) if item.pk == post.pk), 0)
-        related = []
-        step = 1
-        while len(related) < 6 and step < max(len(posts), 1):
-            cand = posts[(idx + step) % len(posts)]
-            if cand.pk != post.pk:
-                related.append(cand)
-            step += 1
+    if not Post.objects.visible().filter(pk=post.pk).exists():
+        raise_hidden()
     crumb = post.title
     layout = post.article_layout()
     if layout.get('h1b'):
@@ -93,7 +96,7 @@ def post_detail(request, slug):
     return render(request, 'blog/post_detail.html', {
         'post': post,
         'art': layout,
-        'related': related,
+        'related': _related_posts(post),
         'page_title': post.seo_title or post.title,
         'page_description': post.seo_description or post.excerpt[:160],
         'breadcrumb_items': trail(

@@ -219,31 +219,19 @@ class AdvantagesSectionsMixin(models.Model):
         return self._file_src('why_coins', 'images/coins.png')
 
     def iter_stats(self):
-        from src.core.crypto_visibility import mentions_crypto
-        from src.core.exchange_mode import exchange_only
-
-        hide_crypto = exchange_only()
         rows = []
         for index in range(1, 5):
             title = (getattr(self, f'stat_{index}_title') or '').strip()
             text = (getattr(self, f'stat_{index}_text') or '').strip()
-            if hide_crypto and mentions_crypto(f'{title} {text}'):
-                continue
             if title or text:
                 rows.append({'title': title, 'text': text})
         return rows
 
     def iter_why(self):
-        from src.core.crypto_visibility import mentions_crypto
-        from src.core.exchange_mode import exchange_only
-
-        hide_crypto = exchange_only()
         rows = []
         for index in range(1, 6):
             title = (getattr(self, f'why_{index}_title') or '').strip()
             text = (getattr(self, f'why_{index}_text') or '').strip()
-            if hide_crypto and mentions_crypto(f'{title} {text}'):
-                continue
             if title or text:
                 rows.append({'title': title, 'text': text})
         return rows

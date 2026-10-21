@@ -1,16 +1,11 @@
 from django.db.models import Q
 
-from src.core.crypto_visibility import pair_is_crypto
 from src.core.exchange_mode import exchange_only
 from src.rates.models import CurrencyPair, Quote, RateBoard
 
 
 def get_active_pairs():
-    qs = CurrencyPair.objects.filter(is_active=True)
-    if not exchange_only():
-        return qs
-    kept = [pair.pk for pair in qs if not pair_is_crypto(pair)]
-    return qs.filter(pk__in=kept)
+    return CurrencyPair.objects.filter(is_active=True).visible()
 
 
 def public_board(board):
@@ -66,6 +61,10 @@ def get_quotes_for_city(city, board=RateBoard.RETAIL):
 
 
 def get_quote(pair, city, board=RateBoard.RETAIL):
+    if pair is None or not getattr(pair, 'pk', None):
+        return None
+    if not CurrencyPair.objects.visible().filter(pk=pair.pk).exists():
+        return None
     city_id = city.id if city else None
     qs = Quote.objects.filter(pair=pair, board=board, is_active=True)
     city_quote = qs.filter(city_id=city_id).first() if city_id else None

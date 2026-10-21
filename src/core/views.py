@@ -1,28 +1,43 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.utils.html import strip_tags
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap as django_sitemap
 import logging
 
-from src.core.crypto_visibility import visible_queryset
 from src.core.sitemaps import sitemaps
 from src.core.theme import theme_css_cached
 
 from src.blog.selectors import get_published_posts
-from src.content.models import AdvantagesPage, FaqItem, HomePage, Service
+from src.content.models import FaqItem, HomePage, HomeStat, Service
 from src.rates.models import RateBoard
 from src.rates.selectors import get_quotes_for_city, public_board, public_boards
 from src.reviews.selectors import get_published_reviews
 
 logger = logging.getLogger(__name__)
 
+_RETAIL_ORDER = {'USD': 0, 'EUR': 1, 'PLN': 2}
+_CRYPTO_ORDER = {'BTC': 0, 'ETH': 1, 'USDT': 2}
+
+
+def _ordered_rows(rows, preferred):
+    return sorted(rows, key=lambda row: preferred.get(row['pair'].flag_code, 90))
+
 
 def _home_retail_rows(city):
     rows, updated_at = get_quotes_for_city(city, RateBoard.RETAIL)
-    preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
-    rows = sorted(rows, key=lambda row: preferred.get(row['pair'].flag_code, 90))
-    return rows, updated_at
+    return _ordered_rows(rows, _RETAIL_ORDER), updated_at
+
+
+def _home_stat_cards(page):
+    cards = []
+    for item in HomeStat.objects.filter(page=page, is_active=True).visible():
+        title = strip_tags(item.number or '').strip()
+        text = strip_tags(item.text or '').strip()
+        if title or text:
+            cards.append({'title': title, 'text': text})
+    return cards
 
 
 def _calc_currencies(rows):
@@ -57,11 +72,7 @@ class HomeView(TemplateView):
         else:
             rows, updated_at = get_quotes_for_city(city, board)
         if board == RateBoard.RETAIL:
-            preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
-            rows = sorted(
-                rows,
-                key=lambda r: preferred.get(r['pair'].flag_code, 90),
-            )
+            rows = _ordered_rows(rows, _RETAIL_ORDER)
         page = HomePage.load()
         ctx.update({
             'page': page,
@@ -71,17 +82,14 @@ class HomeView(TemplateView):
             'active_board': board,
             'boards': public_boards(),
             'home_rates_compact': True,
-            'services': visible_queryset(
-                Service.objects.filter(is_active=True, show_on_home=True),
-                'title', 'slug', 'short_desc', 'body', 'seo_title', 'seo_description',
-            )[:6],
-            'faq_items': visible_queryset(
-                FaqItem.objects.filter(is_active=True),
-                'question', 'answer',
-            )[:8],
+            'services': Service.objects.filter(
+                is_active=True,
+                show_on_home=True,
+            ).visible()[:6],
+            'faq_items': FaqItem.objects.filter(is_active=True).visible()[:8],
             'news_posts': list(get_published_posts()[:10]),
             'home_reviews': get_published_reviews(8),
-            'home_stats': AdvantagesPage.load().iter_stats(),
+            'home_stats': _home_stat_cards(page),
         })
         return ctx
 
@@ -96,17 +104,9 @@ def rates_partial(request):
     else:
         rows, updated_at = get_quotes_for_city(request.city, board)
     if home_compact and board == RateBoard.RETAIL:
-        preferred = {'USD': 0, 'EUR': 1, 'PLN': 2}
-        rows = sorted(
-            rows,
-            key=lambda r: preferred.get(r['pair'].flag_code, 90),
-        )
+        rows = _ordered_rows(rows, _RETAIL_ORDER)
     elif board == RateBoard.CRYPTO and not home_compact:
-        preferred = {'BTC': 0, 'ETH': 1, 'USDT': 2}
-        rows = sorted(
-            rows,
-            key=lambda r: preferred.get(r['pair'].flag_code, 90),
-        )
+        rows = _ordered_rows(rows, _CRYPTO_ORDER)
     return render(request, 'partials/rates_table.html', {
         'rate_rows': rows,
         'rate_updated_at': updated_at,
@@ -122,6 +122,8 @@ def quotes_json(request):
     if board not in RateBoard.values:
         board = RateBoard.RETAIL
     rows, _updated = get_quotes_for_city(request.city, board)
+    if board == RateBoard.CRYPTO:
+        rows = _ordered_rows(rows, _CRYPTO_ORDER)
     payload = []
     for row in rows:
         payload.append({

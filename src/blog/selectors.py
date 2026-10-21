@@ -1,17 +1,19 @@
 from django.db.models import F
 
-from src.blog.models import Post
-from src.core.crypto_visibility import visible_queryset
+from src.blog.models import Category, Post
 
 
 def get_published_posts():
-    qs = (
-        Post.objects.filter(status=Post.Status.PUBLISHED)
+    return (
+        Post.objects.visible()
+        .filter(status=Post.Status.PUBLISHED)
         .select_related('category')
         .order_by(F('published_at').desc(nulls_last=True), '-id')
     )
-    return visible_queryset(
-        qs,
-        'title', 'slug', 'excerpt', 'body', 'faq',
-        'seo_title', 'seo_description', 'category__name', 'category__slug',
+
+
+def visible_categories():
+    return Category.objects.filter(
+        show_in_filter=True,
+        pk__in=get_published_posts().values('category_id'),
     )

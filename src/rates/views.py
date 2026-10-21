@@ -1,11 +1,10 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 
 from src.content.models import RatesPage
 from src.core.breadcrumbs import safe_reverse, trail
+from src.core.exchange_mode import raise_hidden
 from src.rates.models import CurrencyPair, RateBoard
-from src.core.crypto_visibility import pair_is_crypto
-from src.core.exchange_mode import exchange_only
 from src.rates.selectors import get_quote, get_quotes_for_city, public_board, public_boards
 
 
@@ -27,9 +26,11 @@ def rates_page(request):
 
 
 def pair_detail(request, slug):
-    pair = get_object_or_404(CurrencyPair, slug=slug, is_active=True)
-    if exchange_only() and pair_is_crypto(pair):
+    pair = CurrencyPair.objects.filter(slug=slug, is_active=True).first()
+    if pair is None:
         raise Http404
+    if not CurrencyPair.objects.visible().filter(pk=pair.pk).exists():
+        raise_hidden()
     quote = get_quote(pair, request.city, RateBoard.RETAIL)
     return render(request, 'rates/pair_detail.html', {
         'pair': pair,

@@ -1,6 +1,7 @@
 import os
 
 from django.db import models
+from django.http import Http404
 
 from src.core.exchange_fields import EXCHANGE_SAFE_HELP, EXCHANGE_SAFE_VERBOSE
 
@@ -65,6 +66,11 @@ def hidden_page_status(request=None):
     if request is not None:
         setattr(request, _REQUEST_STATUS, value)
     return value
+
+
+def raise_hidden():
+    """Прихована сторінка. На цьому етапі завжди 404; 503 підключить наступний етап."""
+    raise Http404
 
 
 class ExchangeVisibleQuerySet(models.QuerySet):
