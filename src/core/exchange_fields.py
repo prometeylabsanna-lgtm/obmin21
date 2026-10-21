@@ -1,4 +1,3 @@
-from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
 MODE_FIELD_HELP = (
@@ -44,28 +43,15 @@ def mode_json(label):
     )
 
 
-def _model_has_field(instance, name):
-    meta = getattr(instance, '_meta', None)
-    if meta is None:
-        return False
-    try:
-        meta.get_field(name)
-    except FieldDoesNotExist:
-        return False
-    return True
-
-
 def resolved_text(instance, name, default=''):
-    """Поле запису, або його варіант для режиму, коли режим увімкнено.
+    """Поза режимом — непорожнє поле, інакше ``default``.
 
-    Порожнє основне поле замінюється на ``default``.
-    Порожнє поле режиму лишається порожнім.
+    У режимі делегує ``exchange_mode.mode_text``.
     """
-    from src.core.exchange_mode import exchange_only
+    from src.core import exchange_mode
 
-    mode_name = f'{name}_mode'
-    if exchange_only() and _model_has_field(instance, mode_name):
-        return (getattr(instance, mode_name) or '').strip()
+    if exchange_mode.exchange_only():
+        return exchange_mode.mode_text(instance, name)
     raw = getattr(instance, name, '') or ''
     if isinstance(raw, str) and raw.strip():
         return raw

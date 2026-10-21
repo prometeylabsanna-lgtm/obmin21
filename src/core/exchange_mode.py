@@ -47,6 +47,16 @@ def is_exchange_only(request=None):
 exchange_only = is_exchange_only
 
 
+def mode_text(obj, field, request=None):
+    """Поза режимом — поле як є. У режимі — лише strip ``field_mode``, інакше ''."""
+    if not is_exchange_only(request):
+        return getattr(obj, field)
+    value = getattr(obj, field + '_mode', '')
+    if value is None:
+        return ''
+    return str(value).strip()
+
+
 def hidden_page_status(request=None):
     if request is not None:
         cached = getattr(request, _REQUEST_STATUS, None)

@@ -107,10 +107,12 @@ def _empty_block():
 
 
 def _mode_block(row):
+    from src.core import exchange_mode
+
     return {
-        'text': (row.block_text_mode or '').strip(),
-        'points': _points(row.block_points_mode),
-        'cta': (row.block_cta_mode or '').strip(),
+        'text': exchange_mode.mode_text(row, 'block_text'),
+        'points': _points(exchange_mode.mode_text(row, 'block_points')),
+        'cta': exchange_mode.mode_text(row, 'block_cta'),
     }
 
 

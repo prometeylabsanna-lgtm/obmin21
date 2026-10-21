@@ -134,6 +134,38 @@ class ServicesPageModeTests(TestCase):
             matches_stop_words(resolved_text(self.page, 'seo_description')),
         )
 
+    def test_resolved_text_in_mode_equals_mode_text(self):
+        from src.core.exchange_mode import mode_text
+
+        class Row:
+            def __init__(self, **fields):
+                self.__dict__.update(fields)
+
+        self._mode(True)
+        spaced = Row(hero_text='основний', hero_text_mode='  Лише готівка  ')
+        empty = Row(hero_text='основний', hero_text_mode=None)
+        missing = Row(title='без mode-поля')
+        for row, name in (
+            (spaced, 'hero_text'),
+            (empty, 'hero_text'),
+            (missing, 'title'),
+        ):
+            self.assertEqual(resolved_text(row, name), mode_text(row, name))
+            self.assertEqual(
+                resolved_text(row, name, 'запасний'),
+                mode_text(row, name),
+            )
+        self.assertEqual(resolved_text(spaced, 'hero_text'), 'Лише готівка')
+        self.assertEqual(resolved_text(empty, 'hero_text'), '')
+        self.assertEqual(resolved_text(missing, 'title', 'запасний'), '')
+        self.page.hero_text = 'основний'
+        self.page.hero_text_mode = '  Лише готівка  '
+        self.page.save(update_fields=['hero_text', 'hero_text_mode'])
+        self.assertEqual(
+            resolved_text(self.page, 'hero_text', 'запасний'),
+            mode_text(self.page, 'hero_text'),
+        )
+
     def test_migration_calls_fill_and_noop_reverse(self):
         root = Path(__file__).resolve().parents[3]
         content = '\n'.join(
