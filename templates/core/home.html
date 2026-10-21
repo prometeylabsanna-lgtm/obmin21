@@ -21,8 +21,8 @@
     </div>
     <div class="hero__overlay" aria-hidden="true"></div>
     <div class="hero__content">
-      <h1 class="hero__title"><span data-hero-title>{% if active_city %}{{ active_city.banner_title }}{% else %}Обмін валют{% endif %}</span><br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{{ active_city.banner_suffix }}{% else %}за вигідним курсом{% endif %}</span></h1>
-      <p class="hero__lead" data-hero-lead>{% if active_city %}{{ active_city.banner_text }}{% else %}Фіксуйте курс онлайн та обмінюйте за вигідним курсом{% endif %}</p>
+      <h1 class="hero__title">{% if eo %}{% if active_city %}{% if active_city.banner_title_mode %}<span data-hero-title>{{ active_city.banner_title_mode }}</span>{% endif %}{% else %}<span data-hero-title>Обмін валют</span>{% endif %}{% else %}<span data-hero-title>{% if active_city %}{{ active_city.banner_title }}{% else %}Обмін валют{% endif %}</span>{% endif %}<br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{{ active_city.banner_suffix }}{% else %}за вигідним курсом{% endif %}</span></h1>
+      {% if eo %}{% if active_city %}{% if active_city.banner_text_mode %}<p class="hero__lead" data-hero-lead>{{ active_city.banner_text_mode }}</p>{% endif %}{% else %}<p class="hero__lead" data-hero-lead>Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>{% endif %}{% else %}<p class="hero__lead" data-hero-lead>{% if active_city %}{{ active_city.banner_text }}{% else %}Фіксуйте курс онлайн та обмінюйте за вигідним курсом{% endif %}</p>{% endif %}
       <div class="hero__cta">
         <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">{% if active_city %}{{ active_city.banner_button }}{% else %}Зафіксувати курс{% endif %}</button>
       </div>

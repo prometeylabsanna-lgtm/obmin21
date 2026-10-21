@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% load static content_format %}
+{% load static content_format exchange_mode %}
 
 {% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
-{% block content %}
+{% block content %}{% is_exchange_only as eo %}
 <section class="svc-hero">
   <div class="svc-hero__banner">
     <div class="svc-hero__coins" aria-hidden="true">
@@ -14,17 +14,17 @@
     </div>
     <div class="svc-hero__copy">
       <h1 class="svc-hero__title">{{ page.hero_title }}<br><span class="u-accent">{{ page.hero_title_accent }}</span></h1>
-      <p class="svc-hero__lead">{{ page.hero_text }}</p>
+      {% if not eo %}<p class="svc-hero__lead">{{ page.hero_text }}</p>{% endif %}
     </div>
     <div class="svc-hero__chips">
-      {% for svc in services %}
+      {% for svc in services %}{% if not eo or svc.exchange_safe %}
       <a href="#svc-{{ svc.slug }}">{{ svc.title }}</a>
-      {% endfor %}
+      {% endif %}{% endfor %}
     </div>
   </div>
 </section>
 
-{% for svc in services %}
+{% for svc in services %}{% if not eo or svc.exchange_safe %}
 <article class="svc-row{% if forloop.counter|divisibleby:2 %} svc-row--rev{% endif %}" id="svc-{{ svc.slug }}">
   <div class="svc-row__media">
     <img src="{{ svc.image_src }}" alt="{{ svc.title }}" width="800" height="420" decoding="async">
@@ -49,7 +49,7 @@
       <a class="svc-row__consult" href="tel:+380444444444">Консультація</a>
     </div>
   </div>
-</article>
+</article>{% endif %}
 {% empty %}
 <p class="u-muted">Послуги зʼявляться незабаром</p>
 {% endfor %}
@@ -82,7 +82,7 @@
   <div class="slider-head">
     <div>
       <h2 class="slider-head__title">Корисні <span class="u-accent">статті</span></h2>
-      <p class="articles-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
+      {% if eo %}{% if page.intro_mode %}<p class="articles-section__lead">{{ page.intro_mode }}</p>{% endif %}{% else %}<p class="articles-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>{% endif %}
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
@@ -90,7 +90,7 @@
     </div>
   </div>
   <div class="articles-track" data-slider="articles">
-    {% for post in news_posts %}
+    {% for post in news_posts %}{% if not eo or post.exchange_safe %}
     <article class="article-slide">
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
         <img src="{{ post.image_url }}" alt="{{ post.title }}" width="330" height="194" decoding="async">
@@ -100,7 +100,7 @@
       <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати повністю
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </a>
-    </article>
+    </article>{% endif %}
     {% empty %}
     <p class="u-muted">Статті зʼявляться незабаром</p>
     {% endfor %}

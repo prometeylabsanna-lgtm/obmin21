@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
+{% load exchange_mode %}
 
-{% block content %}
+{% block content %}{% is_exchange_only as eo %}
 <section class="page-hero">
-  <h1 class="page-hero__title">{{ city.name }}</h1>
+  <h1 class="page-hero__title">{{ city.name }}</h1>{% if eo and city.banner_title_mode %}<p class="page-hero__lead">{{ city.banner_title_mode }}</p>{% endif %}{% if eo and city.banner_text_mode %}<p class="page-hero__lead">{{ city.banner_text_mode }}</p>{% endif %}
 </section>
 <section>
   <div class="card-grid card-grid--2">

@@ -1,11 +1,14 @@
 import os
+import re
 
 from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
 
-from src.content.models import AdvantagesPage, FaqItem, HomePage, Service
+from src.blog.models import Category, Post
+from src.content.models import AdvantagesPage, FaqItem, HomePage, Service, ServicesPage
 from src.core.models import SiteSettings
+from src.network.models import Branch, City
 
 _ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS')
 
@@ -320,3 +323,270 @@ class ExchangeOnlyHomeTemplateTests(TestCase):
         self.assertNotIn('Постійних клієнтів', on)
         self.assertNotIn('криптоактивів', on)
         self.assertNotIn('швидкого та зручного обміну валют', on)
+
+
+_WORD_STOPS = ('eth', 'btc', 'gold', 'swift', 'usdt', 'usdc')
+_SERVICES_LEAD = (
+    'Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, '
+    'міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.'
+)
+_INTRO_MODE = 'Курси готівки у відділеннях мережі'
+_BANNER_TITLE = 'Обмін валют і криптовалюта'
+_BANNER_TEXT = 'Перекази, золото та оптовий курс'
+_TITLE_MODE = 'Готівковий обмін'
+_TEXT_MODE = 'Фіксуйте курс долара у відділенні'
+_RAW_INTRO = 'Сирий вступ про криптовалюту'
+
+
+def _assert_clean(test, html, label):
+    lowered = html.lower()
+    for token in _HOME_STOPS:
+        if token in _WORD_STOPS:
+            found = re.search(
+                r'(?<![0-9a-zа-яіїєґ])' + re.escape(token) + r'(?![0-9a-zа-яіїєґ])',
+                lowered,
+            )
+            test.assertIsNone(found, label)
+        else:
+            test.assertNotIn(token, lowered, label)
+
+
+class ExchangeOnlyServicesCityTemplateTests(TestCase):
+    def setUp(self):
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
+        cache.clear()
+        SiteSettings.load()
+        page = ServicesPage.load()
+        page.intro = _RAW_INTRO
+        page.intro_mode = _INTRO_MODE
+        page.seo_description = 'Курси готівки у відділеннях.'
+        page.save()
+        Service.objects.create(
+            title='Обмін валют',
+            slug='obmin-valiut',
+            short_desc='Готівковий обмін долара та євро у відділенні',
+            exchange_safe=True,
+            sort_order=1,
+        )
+        Service.objects.create(
+            title='Грошові перекази',
+            slug='groshovi-perekazy',
+            short_desc='Переказ готівки',
+            exchange_safe=False,
+            sort_order=2,
+        )
+        Service.objects.create(
+            title='Інвестиційне золото',
+            slug='investytsiine-zoloto',
+            short_desc='Зливки',
+            exchange_safe=False,
+            sort_order=3,
+        )
+        Service.objects.create(
+            title='Оптовий обмін',
+            slug='optovyi-obmin',
+            short_desc='Курс для великої суми',
+            exchange_safe=False,
+            sort_order=4,
+        )
+        Service.objects.create(
+            title='Заміна зношених купюр',
+            slug='zamina-znoshenykh-kupiur',
+            short_desc='Старі банкноти',
+            exchange_safe=False,
+            sort_order=5,
+        )
+        Service.objects.create(
+            title='Криптовалюта',
+            slug='krypto-kartka',
+            short_desc='Картка партнера',
+            exchange_safe=False,
+            sort_order=6,
+        )
+        FaqItem.objects.create(
+            question='Який курс долара у відділенні?',
+            answer='Курс фіксується на тридцять хвилин.',
+            exchange_safe=True,
+            sort_order=1,
+        )
+        FaqItem.objects.create(
+            question='Як надіслати переказ золота?',
+            answer='SWIFT для зливків.',
+            exchange_safe=False,
+            sort_order=2,
+        )
+        category = Category.objects.create(name='Курси', slug='kursy')
+        Post.objects.create(
+            category=category,
+            title='Курс долара у касі',
+            slug='kurs-u-kasi',
+            excerpt='Як зафіксувати курс долара.',
+            body='Фіксація курсу на тридцять хвилин.',
+            status=Post.Status.PUBLISHED,
+            exchange_safe=True,
+        )
+        Post.objects.create(
+            category=category,
+            title='Міжнародні перекази і золото',
+            slug='mizhnarodni-perekazy',
+            excerpt='Умови переказу та зливків.',
+            body='Текст про переказ.',
+            status=Post.Status.PUBLISHED,
+            exchange_safe=False,
+        )
+        self.city = City.objects.create(
+            name='Львів',
+            slug='lviv',
+            phone='+380671112233',
+            banner_title=_BANNER_TITLE,
+            banner_text=_BANNER_TEXT,
+            banner_title_mode=_TITLE_MODE,
+            banner_text_mode=_TEXT_MODE,
+            sort_order=0,
+        )
+        Branch.objects.create(
+            city=self.city,
+            address='пл. Ринок, 12, Львів',
+            hours='Пн–Нд, 09:00–18:00',
+            phone='+380671112233',
+        )
+
+    def tearDown(self):
+        for key, value in self._saved_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        cache.clear()
+
+    def _set_mode(self, enabled):
+        SiteSettings.objects.filter(pk=1).update(exchange_only=enabled)
+        cache.clear()
+
+    def _services(self):
+        return self.client.get(reverse('content:services'))
+
+    def _city(self):
+        return self.client.get(reverse('network:city_detail', kwargs={'slug': 'lviv'}))
+
+    def _hero(self, html):
+        start = html.index('class="hero"')
+        finish = html.index('class="calc-head"', start)
+        return html[start:finish]
+
+    def test_mode_off_keeps_services_page_and_city_banner(self):
+        self._set_mode(False)
+        services = self._services()
+        self.assertEqual(services.status_code, 200)
+        html = services.content.decode()
+        main = html[html.index('<main'):html.index('</main>')]
+        self.assertIn(_SERVICES_LEAD, main)
+        self.assertIn('криптовалюти', main)
+        self.assertIn('інвестиційне золото', main)
+        self.assertIn('Грошові перекази', main)
+        self.assertIn('Міжнародні перекази у 100+ країн', main)
+        self.assertIn('Оптовий обмін', main)
+        self.assertIn('Заміна зношених купюр', main)
+        self.assertIn('Криптовалюта', main)
+        self.assertIn('Обмін валют', main)
+        self.assertIn('Як надіслати переказ золота?', main)
+        self.assertIn('Який курс долара у відділенні?', main)
+        self.assertIn('Міжнародні перекази і золото', main)
+        self.assertIn('Курс долара у касі', main)
+        self.assertNotIn(_INTRO_MODE, html)
+        self.assertNotIn(_RAW_INTRO, html)
+        self.assertEqual(html.count('bitcoin.png'), 5)
+        city = self._city()
+        self.assertEqual(city.status_code, 200)
+        city_html = city.content.decode()
+        self.assertIn('Львів', city_html)
+        self.assertIn('пл. Ринок, 12, Львів', city_html)
+        self.assertIn('Пн–Нд, 09:00–18:00', city_html)
+        self.assertIn('Обрати це місто', city_html)
+        self.assertNotIn(_TITLE_MODE, city_html)
+        self.assertNotIn(_TEXT_MODE, city_html)
+        self.assertNotIn(_BANNER_TITLE, city_html)
+        self.assertNotIn('page-hero__lead', city_html)
+        home = self.client.get(reverse('core:home')).content.decode()
+        hero = self._hero(home)
+        self.assertIn(_BANNER_TITLE, hero)
+        self.assertIn(_BANNER_TEXT, hero)
+        self.assertNotIn(_TITLE_MODE, hero)
+        self.assertNotIn(_TEXT_MODE, hero)
+
+    def test_mode_on_services_and_city_use_mode_texts(self):
+        self._set_mode(True)
+        services = self._services()
+        self.assertEqual(services.status_code, 200)
+        html = services.content.decode()
+        main = html[html.index('<main'):html.index('</main>')]
+        self.assertIn(_INTRO_MODE, main)
+        self.assertIn('articles-section__lead', main)
+        self.assertIn('Обмін валют', main)
+        self.assertIn('Готівковий обмін долара та євро у відділенні', main)
+        self.assertIn('Який курс долара у відділенні?', main)
+        self.assertIn('Курс долара у касі', main)
+        self.assertNotIn(_SERVICES_LEAD, html)
+        self.assertNotIn(_RAW_INTRO, html)
+        self.assertNotIn('криптовалюти', html)
+        self.assertNotIn('Грошові перекази', html)
+        self.assertNotIn('Міжнародні перекази', html)
+        self.assertNotIn('Інвестиційне золото', html)
+        self.assertNotIn('Оптовий обмін', html)
+        self.assertNotIn('зношених', html)
+        self.assertNotIn('Як надіслати переказ золота?', html)
+        self.assertNotIn('Міжнародні перекази і золото', html)
+        self.assertNotIn('bitcoin.png', html)
+        self.assertNotIn('svc-hero__lead', main)
+        self.assertNotIn('display:none', ''.join(html.lower().split()))
+        _assert_clean(self, html, 'posluhy')
+        city = self._city()
+        self.assertEqual(city.status_code, 200)
+        city_html = city.content.decode()
+        self.assertIn(_TITLE_MODE, city_html)
+        self.assertIn(_TEXT_MODE, city_html)
+        self.assertIn('пл. Ринок, 12, Львів', city_html)
+        self.assertIn('Обрати це місто', city_html)
+        self.assertNotIn(_BANNER_TITLE, city_html)
+        self.assertNotIn(_BANNER_TEXT, city_html)
+        self.assertNotIn('bitcoin.png', city_html)
+        self.assertNotIn('display:none', ''.join(city_html.lower().split()))
+        _assert_clean(self, city_html, 'city')
+        home = self.client.get(reverse('core:home')).content.decode()
+        hero = self._hero(home)
+        self.assertIn(_TITLE_MODE, hero)
+        self.assertIn(_TEXT_MODE, hero)
+        self.assertNotIn(_BANNER_TITLE, hero)
+        self.assertNotIn(_BANNER_TEXT, hero)
+        self.assertNotIn('криптовалюта', hero.lower())
+        _assert_clean(self, hero, 'hero')
+
+    def test_mode_on_empty_mode_fields_omit_blocks(self):
+        page = ServicesPage.load()
+        page.intro_mode = ''
+        page.save()
+        self.city.banner_title_mode = ''
+        self.city.banner_text_mode = ''
+        self.city.save()
+        self._set_mode(True)
+        html = self._services().content.decode()
+        main = html[html.index('<main'):html.index('</main>')]
+        self.assertNotIn('articles-section__lead', main)
+        self.assertNotIn(_SERVICES_LEAD, html)
+        self.assertNotIn('svc-hero__lead', main)
+        self.assertNotIn('криптовалюти', html)
+        _assert_clean(self, html, 'posluhy-empty')
+        city_html = self._city().content.decode()
+        self.assertNotIn('page-hero__lead', city_html)
+        self.assertNotIn(_BANNER_TITLE, city_html)
+        self.assertIn('пл. Ринок, 12, Львів', city_html)
+        _assert_clean(self, city_html, 'city-empty')
+        hero = self._hero(self.client.get(reverse('core:home')).content.decode())
+        self.assertNotIn('data-hero-title', hero)
+        self.assertNotIn('data-hero-lead', hero)
+        self.assertNotIn(_BANNER_TITLE, hero)
+        self.assertNotIn(_BANNER_TEXT, hero)
+        self.assertIn('у Львові', hero)
+        _assert_clean(self, hero, 'hero-empty')
