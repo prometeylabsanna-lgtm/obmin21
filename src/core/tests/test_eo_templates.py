@@ -484,7 +484,11 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         self.assertEqual(services.status_code, 200)
         html = services.content.decode()
         main = html[html.index('<main'):html.index('</main>')]
-        self.assertIn(_SERVICES_LEAD, main)
+        self.assertIn(_RAW_INTRO, main)
+        self.assertIn('articles-section__lead', main)
+        self.assertNotIn(_SERVICES_LEAD, html)
+        self.assertIn('переказ', html.lower())
+        self.assertIn('swift', html.lower())
         self.assertIn('криптовалюти', main)
         self.assertIn('інвестиційне золото', main)
         self.assertIn('Грошові перекази', main)
@@ -498,7 +502,6 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         self.assertIn('Міжнародні перекази і золото', main)
         self.assertIn('Курс долара у касі', main)
         self.assertNotIn(_INTRO_MODE, html)
-        self.assertNotIn(_RAW_INTRO, html)
         self.assertEqual(html.count('bitcoin.png'), 5)
         city = self._city()
         self.assertEqual(city.status_code, 200)
@@ -517,6 +520,8 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         self.assertIn(_BANNER_TEXT, hero)
         self.assertNotIn(_TITLE_MODE, hero)
         self.assertNotIn(_TEXT_MODE, hero)
+        self.assertIn('переказ', home.lower())
+        self.assertIn('swift', home.lower())
 
     def test_mode_on_services_and_city_use_mode_texts(self):
         self._set_mode(True)
@@ -592,6 +597,27 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         self.assertNotIn(_BANNER_TEXT, hero)
         self.assertIn('у Львові', hero)
         _assert_clean(self, hero, 'hero-empty')
+
+    def test_mode_on_home_and_services_drop_transfer_words(self):
+        self._set_mode(True)
+        home = self.client.get(reverse('core:home')).content.decode()
+        services = self._services().content.decode()
+        for label, html in (('home', home), ('posluhy', services)):
+            lowered = html.lower()
+            self.assertNotIn('переказ', lowered, label)
+            self.assertNotIn('swift', lowered, label)
+            self.assertNotIn(_SERVICES_LEAD, html, label)
+            self.assertNotIn('постійних клієнтів', lowered, label)
+            self.assertNotIn('криптоактивів', lowered, label)
+            self.assertNotIn('швидкого та зручного обміну валют', lowered, label)
+            self.assertNotIn('display:none', ''.join(lowered.split()), label)
+        self.assertIn(_TITLE_MODE, home)
+        self.assertIn(_TEXT_MODE, home)
+        self.assertNotIn(_BANNER_TITLE, home)
+        self.assertNotIn(_BANNER_TEXT, home)
+        self.assertIn(_INTRO_MODE, services)
+        self.assertNotIn(_RAW_INTRO, services)
+        self.assertNotIn('svc-hero__lead', services)
 
 
 _SEO_HIDDEN_SERVICES = (
