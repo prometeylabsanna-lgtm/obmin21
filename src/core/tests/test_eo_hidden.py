@@ -1,15 +1,11 @@
 """Приховані в режимі «лише обмін» адреси: 503/404 і sitemap."""
 
-import os
-from unittest.mock import patch
-
-from django.core.cache import cache
-
 from src.core.tests.eo_realdb import (
     HIDDEN_POST_SLUGS,
     VISIBLE_POST_SLUGS,
     RealDataTestCase,
     copy_real_db,
+    forced_exchange_client,
     hidden_paths,
     prefixed_paths,
     restore_test_db,
@@ -24,13 +20,6 @@ def setUpModule():
 
 def tearDownModule():
     restore_test_db()
-
-
-def _mode(enabled, status=None):
-    env = {'EXCHANGE_ONLY_MODE': '1' if enabled else '0'}
-    if status is not None:
-        env['HIDDEN_PAGE_STATUS'] = str(status)
-    return patch.dict(os.environ, env)
 
 
 class HiddenExchangePagesTests(RealDataTestCase):
@@ -48,11 +37,10 @@ class HiddenExchangePagesTests(RealDataTestCase):
         self.assertNotIn('/blog/kategoriya/kurs-valyut/', paths)
 
     def test_hidden_pages_are_503_with_retry_after(self):
-        with _mode(True, 503):
-            cache.clear()
+        with forced_exchange_client(True, 503) as client:
             expected = str(retry_after_seconds())
             problems = _status_problems(
-                self.client,
+                client,
                 hidden_paths(),
                 503,
                 retry_after=expected,
@@ -60,24 +48,21 @@ class HiddenExchangePagesTests(RealDataTestCase):
         self.assertFalse(problems, '\n'.join(problems))
 
     def test_hidden_pages_are_404_when_configured(self):
-        with _mode(True, 404):
-            cache.clear()
-            problems = _status_problems(self.client, hidden_paths(), 404)
+        with forced_exchange_client(True, 404) as client:
+            problems = _status_problems(client, hidden_paths(), 404)
         self.assertFalse(problems, '\n'.join(problems))
 
     def test_hidden_pages_missing_from_sitemap_in_mode(self):
-        with _mode(True, 503):
-            cache.clear()
-            locs = set(sitemap_paths(self.client))
+        with forced_exchange_client(True, 503) as client:
+            locs = set(sitemap_paths(client))
             present = [url for url in prefixed_paths(hidden_paths()) if url in locs]
         self.assertFalse(present, 'Є у sitemap:\n' + '\n'.join(present))
 
     def test_hidden_pages_are_public_without_mode(self):
         paths = [path for path in hidden_paths() if path != '/btc-uah/']
-        with _mode(False):
-            cache.clear()
-            problems = _status_problems(self.client, paths, 200)
-            locs = set(sitemap_paths(self.client))
+        with forced_exchange_client(False) as client:
+            problems = _status_problems(client, paths, 200)
+            locs = set(sitemap_paths(client))
             for url in prefixed_paths(paths):
                 if '/blog/kategoriya/' in url:
                     continue

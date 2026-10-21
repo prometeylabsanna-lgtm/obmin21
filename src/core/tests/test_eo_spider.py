@@ -1,12 +1,9 @@
 """Обхід публічних сторінок у режимі «лише обмін»: стоп-слова не мають світитися."""
 
-import os
 import re
 from html.parser import HTMLParser
 from pathlib import Path
-from unittest.mock import patch
 
-from django.core.cache import cache
 from django.utils import translation
 
 from src.core.tests.eo_realdb import (
@@ -14,6 +11,7 @@ from src.core.tests.eo_realdb import (
     classify_eur_usd,
     copy_real_db,
     discover_public_paths,
+    forced_exchange_client,
     language_prefixes,
     prefix_path,
     restore_test_db,
@@ -229,17 +227,15 @@ class ExchangeOnlySpiderTests(RealDataTestCase):
         pattern = compile_stop_words(STOP_WORDS)
         report = []
         violations = []
-        env = {'EXCHANGE_ONLY_MODE': '1', 'HIDDEN_PAGE_STATUS': '503'}
         try:
-            with patch.dict(os.environ, env):
-                cache.clear()
-                self.client.raise_request_exception = False
+            with forced_exchange_client(True, 503) as client:
+                client.raise_request_exception = False
                 for code, prefix in language_prefixes():
                     report.append(f'[{code}]')
                     with translation.override(code):
-                        urls = _crawl_urls(self.client, prefix)
+                        urls = _crawl_urls(client, prefix)
                         for url in urls:
-                            response = self.client.get(url, follow=True)
+                            response = client.get(url, follow=True)
                             report.append(f'{response.status_code} {url}')
                             if response.status_code in (404, 503):
                                 continue

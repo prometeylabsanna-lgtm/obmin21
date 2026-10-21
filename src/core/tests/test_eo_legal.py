@@ -1,11 +1,8 @@
 """Юридичні сторінки без стоп-слів і з режимом «лише обмін», і без нього."""
 
-import os
 import re
-from unittest.mock import patch
 from urllib.parse import urlparse
 
-from django.core.cache import cache
 from django.db import DatabaseError
 from django.http import Http404
 from django.urls import NoReverseMatch, get_resolver, reverse
@@ -14,6 +11,7 @@ from django.urls.resolvers import LocalePrefixPattern, URLResolver
 from src.core.tests.eo_realdb import (
     RealDataTestCase,
     copy_real_db,
+    forced_exchange_client,
     normalize_path,
     prefixed_paths,
     restore_test_db,
@@ -92,16 +90,14 @@ class LegalPagesStopWordsTests(RealDataTestCase):
         urls = prefixed_paths(legal_paths())
         violations = []
         for enabled, label in _MODES:
-            violations.extend(_scan(self.client, urls, pattern, enabled, label))
+            violations.extend(_scan(urls, pattern, enabled, label))
         if violations:
             self.fail('\n'.join(violations))
 
 
-def _scan(client, urls, pattern, enabled, label):
-    env = {'EXCHANGE_ONLY_MODE': '1' if enabled else '0'}
+def _scan(urls, pattern, enabled, label):
     found = []
-    with patch.dict(os.environ, env):
-        cache.clear()
+    with forced_exchange_client(enabled) as client:
         client.raise_request_exception = False
         for url in urls:
             response = client.get(url, follow=True)

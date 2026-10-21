@@ -7,8 +7,11 @@
 import os
 import re
 import sqlite3
+import sys
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
+from unittest.mock import patch
 from urllib.parse import urljoin, urlparse
 from xml.etree import ElementTree
 
@@ -16,7 +19,7 @@ from django.conf import settings
 from django.conf.urls.i18n import is_language_prefix_patterns_used
 from django.core.cache import cache
 from django.db import connection, connections
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import get_resolver
 from django.urls.resolvers import LocalePrefixPattern, URLResolver
 
@@ -57,6 +60,17 @@ EXCHANGE_STATIC_PATHS = (
 _LITERAL_ROUTE = re.compile(r'^[A-Za-z0-9._~/-]*$')
 _SKIP_PREFIXES = ('admin/', 'static/', 'media/')
 _STATE = {}
+EXCHANGE_ONLY_ENV = 'EXCHANGE_ONLY_MODE'
+HIDDEN_STATUS_ENV = 'HIDDEN_PAGE_STATUS'
+_CACHE_PREFIXES = (
+    'src.core.',
+    'src.blog.',
+    'src.rates.',
+    'src.reviews.',
+    'src.network.',
+    'src.content.',
+    'django.contrib.sitemaps',
+)
 
 
 def real_db_path():
@@ -139,10 +153,81 @@ def _assert_copy_is_not_original(source):
         raise RuntimeError('Копія бази без опублікованої статті kurs-dolara-2027')
 
 
+def clear_exchange_caches():
+    """django cache і lru_cache модулів режиму, sitemap і хрома.
+
+    Атрибути запиту _exchange_only і _hidden_page_status жиють лише на request.
+    Їх знімає новий Client: middleware і context processor збираються заново.
+    """
+    cache.clear()
+    for name, module in list(sys.modules.items()):
+        if module is None or not name.startswith(_CACHE_PREFIXES):
+            continue
+        for obj in list(vars(module).values()):
+            owner = getattr(obj, '__module__', '') or ''
+            clear = getattr(obj, 'cache_clear', None)
+            info = getattr(obj, 'cache_info', None)
+            if owner.startswith(_CACHE_PREFIXES) and callable(clear) and callable(info):
+                clear()
+
+
+def _require_forced_mode(enabled, status):
+    from src.core.exchange_mode import hidden_page_status, is_exchange_only
+
+    actual = is_exchange_only()
+    if actual != enabled:
+        raise AssertionError(
+            f'{EXCHANGE_ONLY_ENV}={os.environ.get(EXCHANGE_ONLY_ENV)!r} '
+            f'але is_exchange_only()={actual}'
+        )
+    if status is None:
+        return
+    actual_status = hidden_page_status()
+    if actual_status != status:
+        raise AssertionError(
+            f'{HIDDEN_STATUS_ENV}={os.environ.get(HIDDEN_STATUS_ENV)!r} '
+            f'але hidden_page_status()={actual_status}'
+        )
+
+
+@contextmanager
+def forced_exchange_client(enabled, status=None):
+    """Примусовий режим через env. Новий Client після скидання кешів."""
+    env = {EXCHANGE_ONLY_ENV: '1' if enabled else '0'}
+    if status is not None:
+        status = int(status)
+        env[HIDDEN_STATUS_ENV] = str(status)
+    with patch.dict(os.environ, env):
+        clear_exchange_caches()
+        client = Client()
+        try:
+            _require_forced_mode(bool(enabled), status)
+            yield client
+        finally:
+            clear_exchange_caches()
+
+
+@contextmanager
+def default_exchange_client():
+    """Без EXCHANGE_ONLY_MODE і HIDDEN_PAGE_STATUS: лишається SiteSettings."""
+    kept = {
+        key: value
+        for key, value in os.environ.items()
+        if key not in (EXCHANGE_ONLY_ENV, HIDDEN_STATUS_ENV)
+    }
+    with patch.dict(os.environ, kept, clear=True):
+        clear_exchange_caches()
+        client = Client()
+        try:
+            yield client
+        finally:
+            clear_exchange_caches()
+
+
 class RealDataTestCase(TestCase):
     def setUp(self):
         super().setUp()
-        cache.clear()
+        clear_exchange_caches()
 
 
 def language_prefixes():

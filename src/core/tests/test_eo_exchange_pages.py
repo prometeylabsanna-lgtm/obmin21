@@ -1,16 +1,12 @@
 """Сторінки обміну лишаються 200 і з увімкненим режимом, і без нього."""
 
-import os
-from unittest.mock import patch
-
-from django.core.cache import cache
-
 from src.core.tests.eo_realdb import (
     VISIBLE_POST_SLUGS,
     RealDataTestCase,
     classify_eur_usd,
     copy_real_db,
     exchange_paths,
+    forced_exchange_client,
     inactive_pair_paths,
     prefixed_paths,
     restore_test_db,
@@ -69,14 +65,12 @@ class ExchangePagesStayTests(RealDataTestCase):
         self._assert_ok(False)
 
     def _assert_ok(self, enabled):
-        env = {'EXCHANGE_ONLY_MODE': '1' if enabled else '0'}
         inactive = set(inactive_pair_paths())
         paths = [path for path in exchange_paths() if path not in inactive]
-        with patch.dict(os.environ, env):
-            cache.clear()
+        with forced_exchange_client(enabled) as client:
             problems = []
             for url in prefixed_paths(paths):
-                response = self.client.get(url)
+                response = client.get(url)
                 if response.status_code != 200:
                     problems.append(f'{url} | status | {response.status_code}')
         self.assertFalse(problems, '\n'.join(problems))
