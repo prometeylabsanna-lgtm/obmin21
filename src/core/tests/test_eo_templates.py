@@ -532,7 +532,7 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         self.assertIn(_INTRO_MODE, main)
         self.assertIn('articles-section__lead', main)
         self.assertIn('Обмін валют', main)
-        self.assertIn('Готівковий обмін долара та євро у відділенні', main)
+        self.assertNotIn('Готівковий обмін долара та євро у відділенні', main)
         self.assertIn('Який курс долара у відділенні?', main)
         self.assertIn('Курс долара у касі', main)
         self.assertNotIn(_SERVICES_LEAD, html)
@@ -597,6 +597,26 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         self.assertNotIn(_BANNER_TEXT, hero)
         self.assertIn('у Львові', hero)
         _assert_clean(self, hero, 'hero-empty')
+
+    def test_mode_on_empty_block_text_mode_omits_regular_text(self):
+        self._set_mode(True)
+        html = self._services().content.decode()
+        self.assertIn('id="svc-obmin-valiut"', html)
+        self.assertNotIn('Готівковий обмін долара та євро у відділенні', html)
+        self.assertNotIn('svc-row__text', html)
+
+    def test_mode_off_empty_intro_shows_original_lead(self):
+        page = ServicesPage.load()
+        page.intro = ''
+        page.intro_mode = ''
+        page.save()
+        self._set_mode(False)
+        html = self._services().content.decode()
+        self.assertIn(_SERVICES_LEAD, html)
+        self.assertIn('articles-section__lead', html)
+        self.assertIn('<p class="svc-row__text">', html)
+        self.assertIn('svc-row__cta', html)
+        self.assertIn('svc-hero__lead', html)
 
     def test_mode_on_home_and_services_drop_transfer_words(self):
         self._set_mode(True)
@@ -794,4 +814,4 @@ class ExchangeOnlySeoLinksTests(TestCase):
         self.assertIn('bills.png', pages['home'])
         self.assertNotIn('svc-hero__lead', pages['services'])
         self.assertIn('Курси', pages['blog'])
-        self.assertIn('Купуйте та продавайте понад 15 валют', pages['services'])
+        self.assertNotIn('Купуйте та продавайте понад 15 валют', pages['services'])

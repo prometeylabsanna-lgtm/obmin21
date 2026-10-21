@@ -14,7 +14,7 @@
     </div>
     <div class="svc-hero__copy">
       <h1 class="svc-hero__title">{{ page.hero_title }}<br><span class="u-accent">{{ page.hero_title_accent }}</span></h1>
-      {% mode_field page 'hero_text' as ht %}{% if ht %}<p class="svc-hero__lead">{{ ht }}</p>{% endif %}
+      {% mode_field page 'hero_text' as ht %}{% if not eo or ht %}<p class="svc-hero__lead">{{ ht }}</p>{% endif %}
     </div>
     <div class="svc-hero__chips">
       {% for svc in services %}{% if not eo or svc.exchange_safe %}
@@ -31,7 +31,7 @@
   </div>
   <div class="svc-row__copy">
     <h2 class="svc-row__title">{{ svc.title }}</h2>
-    {% mode_field svc 'block_text' as bt %}{% if bt %}<p class="svc-row__text">{{ bt }}</p>{% elif svc.block_text %}<p class="svc-row__text">{{ svc.block_text }}</p>{% endif %}
+    {% mode_field svc 'block_text' as bt %}{% if not eo or bt %}<p class="svc-row__text">{{ bt }}</p>{% endif %}
     {% mode_field svc 'block_points' as pts %}{% if pts %}
     <div class="svc-row__points">
       {% for pt in pts %}
@@ -45,7 +45,7 @@
     </div>
     {% endif %}
     <div class="svc-row__btns">
-      {% mode_field svc 'block_cta' as cta %}{% if cta %}<button type="button" class="btn btn--accent svc-row__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ cta }}</button>{% endif %}
+      {% mode_field svc 'block_cta' as cta %}{% if not eo or cta %}<button type="button" class="btn btn--accent svc-row__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ cta }}</button>{% endif %}
       <a class="svc-row__consult" href="tel:+380444444444">Консультація</a>
     </div>
   </div>
@@ -82,7 +82,10 @@
   <div class="slider-head">
     <div>
       <h2 class="slider-head__title">Корисні <span class="u-accent">статті</span></h2>
-      {% if home_page %}{% mode_field home_page 'articles_lead' as al %}{% else %}{% mode_field page 'intro' as al %}{% endif %}{% if al %}<p class="articles-section__lead">{{ al }}</p>{% endif %}
+      {% if home_page %}{% mode_field home_page 'articles_lead' as al %}{% else %}{% mode_field page 'intro' as al %}{% endif %}{% if al %}<p class="articles-section__lead">{{ al }}</p>{% elif not eo %}
+      {# TODO CMS migration #}
+      <p class="articles-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
+      {% endif %}
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
