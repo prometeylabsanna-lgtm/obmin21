@@ -16,6 +16,7 @@ from src.content.models import (
 from src.core.exchange_mode import (
     exchange_only,
     hidden_page_status,
+    is_exchange_only,
     is_mode_forced_by_env,
 )
 from src.core.models import SiteSettings
@@ -172,3 +173,30 @@ class ExchangeModeTests(TestCase):
         self._set_mode(True)
         response = self.client.get(reverse('content:services'))
         self.assertContains(response, 'Готівковий обмін')
+
+    def test_is_exchange_only_is_alias_of_exchange_only(self):
+        self.assertIs(is_exchange_only, exchange_only)
+        self._set_mode(False)
+        request = RequestFactory().get('/')
+        self.assertFalse(is_exchange_only(request))
+        self._set_mode(True)
+        self.assertFalse(is_exchange_only(request))
+        self.assertTrue(is_exchange_only())
+        self.assertTrue(exchange_only(RequestFactory().get('/')))
+
+    def test_template_tag_is_exchange_only(self):
+        from django.template import Context, Template
+
+        template = Template(
+            '{% load exchange_mode %}'
+            '{% is_exchange_only as mode %}'
+            '{% if mode %}on{% else %}off{% endif %}',
+        )
+        self._set_mode(False)
+        off = template.render(Context({'request': RequestFactory().get('/')}))
+        self.assertEqual(off, 'off')
+        self._set_mode(True)
+        on = template.render(Context({'request': RequestFactory().get('/')}))
+        self.assertEqual(on, 'on')
+        bare = Template('{% load exchange_mode %}{% is_exchange_only %}').render(Context({}))
+        self.assertEqual(bare, 'True')

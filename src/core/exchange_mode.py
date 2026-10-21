@@ -24,7 +24,7 @@ def is_mode_forced_by_env():
     return _env_flag(_ENV_MODE, ('0', '1')) is not None
 
 
-def exchange_only(request=None):
+def is_exchange_only(request=None):
     if request is not None:
         cached = getattr(request, _REQUEST_MODE, None)
         if cached is not None:
@@ -42,6 +42,9 @@ def exchange_only(request=None):
     if request is not None:
         setattr(request, _REQUEST_MODE, value)
     return value
+
+
+exchange_only = is_exchange_only
 
 
 def hidden_page_status(request=None):
