@@ -11,12 +11,12 @@ from django.urls.resolvers import LocalePrefixPattern, URLResolver
 from src.core.tests.eo_realdb import (
     RealDataTestCase,
     copy_real_db,
-    forced_exchange_client,
     normalize_path,
     prefixed_paths,
     restore_test_db,
     static_public_paths,
 )
+from src.core.tests.test_eo_default_mode import forced_exchange_client
 from src.core.tests.test_eo_spider import compile_stop_words, stop_word_hits
 
 _KNOWN_LEGAL_PATHS = (

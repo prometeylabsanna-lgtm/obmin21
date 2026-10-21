@@ -11,12 +11,12 @@ from src.core.tests.eo_realdb import (
     classify_eur_usd,
     copy_real_db,
     discover_public_paths,
-    forced_exchange_client,
     language_prefixes,
     prefix_path,
     restore_test_db,
     spider_extra_paths,
 )
+from src.core.tests.test_eo_default_mode import forced_exchange_client
 
 SPIDER_URLS_FILE = Path('/tmp/obmin21_spider_urls.txt')
 _TEXT_TYPES = frozenset({
@@ -159,14 +159,20 @@ def _scan_kind(content_type):
     return ''
 
 
+def _stop_token(token):
+    escaped = re.escape(token)
+    if len(token) < 4:
+        return rf'(?<!\w){escaped}(?!\w)'
+    return rf'(?<!\w){escaped}\w*'
+
+
 def compile_stop_words(words):
     parts = []
     for raw in words:
-        phrase = str(raw).strip()
-        if not phrase:
+        tokens = str(raw).split()
+        if not tokens:
             continue
-        body = r'\s+'.join(re.escape(word) for word in phrase.split())
-        parts.append(rf'(?<!\w){body}\w*')
+        parts.append(r'\s+'.join(_stop_token(token) for token in tokens))
     if not parts:
         return re.compile(r'(?!)', re.IGNORECASE)
     return re.compile('|'.join(parts), re.IGNORECASE)

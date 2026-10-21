@@ -5,13 +5,13 @@ from src.core.tests.eo_realdb import (
     VISIBLE_POST_SLUGS,
     RealDataTestCase,
     copy_real_db,
-    forced_exchange_client,
     hidden_paths,
     prefixed_paths,
     restore_test_db,
     retry_after_seconds,
     sitemap_paths,
 )
+from src.core.tests.test_eo_default_mode import forced_exchange_client
 
 
 def setUpModule():

@@ -6,11 +6,11 @@ from src.core.tests.eo_realdb import (
     classify_eur_usd,
     copy_real_db,
     exchange_paths,
-    forced_exchange_client,
     inactive_pair_paths,
     prefixed_paths,
     restore_test_db,
 )
+from src.core.tests.test_eo_default_mode import forced_exchange_client
 
 
 def setUpModule():
