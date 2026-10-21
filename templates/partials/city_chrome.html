@@ -1,5 +1,3 @@
-{% load exchange_mode %}
-{% is_exchange_only as eo %}
 <div class="site-header__actions" id="city-chrome">
   <div class="city-select" data-city-select>
     <button type="button" class="city-select__btn" data-city-toggle data-qa="city-toggle" data-city-slug="{{ active_city.slug }}" aria-expanded="false" aria-haspopup="listbox">
@@ -15,7 +13,7 @@
             hx-swap="outerHTML">
         {% csrf_token %}
         <input type="hidden" name="city" value="{{ c.slug }}">
-        <button type="submit" class="city-select__option{% if active_city.slug == c.slug %} is-active{% endif %}" data-qa="city-option"{% if eo %} data-eo-banner data-city-slug="{{ c.slug }}" data-banner-title="{{ c.banner_title_mode }}" data-banner-text="{{ c.banner_text_mode }}"{% endif %}>
+        <button type="submit" class="city-select__option{% if active_city.slug == c.slug %} is-active{% endif %}" data-qa="city-option">
           <span>{{ c.name }}</span>
           <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.4"></path></svg>
         </button>

@@ -108,43 +108,6 @@
     }
   });
 
-  function applyExchangeBanner(slug) {
-    var safe = String(slug || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-    var source = document.querySelector('[data-eo-banner][data-city-slug="' + safe + '"]');
-    var title = source ? (source.getAttribute('data-banner-title') || '') : '';
-    var text = source ? (source.getAttribute('data-banner-text') || '') : '';
-    var titleEl = document.querySelector('[data-hero-title]');
-    if (title) {
-      if (!titleEl) {
-        var h1 = document.querySelector('.hero__title');
-        if (h1) {
-          titleEl = document.createElement('span');
-          titleEl.setAttribute('data-hero-title', '');
-          h1.insertBefore(titleEl, h1.firstChild);
-        }
-      }
-      if (titleEl) titleEl.textContent = title;
-    } else if (titleEl) {
-      titleEl.remove();
-    }
-    var lead = document.querySelector('[data-hero-lead]');
-    if (text) {
-      if (!lead) {
-        var content = document.querySelector('.hero__content');
-        var cta = content ? content.querySelector('.hero__cta') : null;
-        if (content) {
-          lead = document.createElement('p');
-          lead.className = 'hero__lead';
-          lead.setAttribute('data-hero-lead', '');
-          content.insertBefore(lead, cta);
-        }
-      }
-      if (lead) lead.textContent = text;
-    } else if (lead) {
-      lead.remove();
-    }
-  }
-
   document.body.addEventListener('cityChanged', function (evt) {
     var detail = evt.detail || {};
     var panel = document.getElementById('rates-panel');
@@ -184,24 +147,20 @@
         banner.src = next;
       }
     }
+    if (detail.bannerTitle) {
+      document.querySelectorAll('[data-hero-title]').forEach(function (el) {
+        el.textContent = detail.bannerTitle;
+      });
+    }
     if (detail.bannerSuffix) {
       document.querySelectorAll('[data-hero-suffix]').forEach(function (el) {
         el.textContent = detail.bannerSuffix;
       });
     }
-    if (document.body.classList.contains('is-exchange-only')) {
-      applyExchangeBanner(detail.slug);
-    } else {
-      if (detail.bannerTitle) {
-        document.querySelectorAll('[data-hero-title]').forEach(function (el) {
-          el.textContent = detail.bannerTitle;
-        });
-      }
-      if (detail.bannerText) {
-        document.querySelectorAll('[data-hero-lead]').forEach(function (el) {
-          el.textContent = detail.bannerText;
-        });
-      }
+    if (detail.bannerText) {
+      document.querySelectorAll('[data-hero-lead]').forEach(function (el) {
+        el.textContent = detail.bannerText;
+      });
     }
     if (detail.slug) {
       try {

@@ -1,5 +1,4 @@
-{% load static exchange_mode %}
-{% is_exchange_only as eo %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="uk">
 
@@ -54,7 +53,7 @@
 
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/utils.js' %}" defer></script>
-  <script src="{% static 'js/nav.js' %}?v=16" defer></script>
+  <script src="{% static 'js/nav.js' %}?v=15" defer></script>
   <script src="{% static 'js/modal.js' %}?v=12" defer></script>
   <script src="{% static 'js/calc.js' %}?v=15" defer></script>
   <script src="{% static 'js/booking-modal.js' %}?v=3" defer></script>
@@ -66,7 +65,7 @@
   {% block page_js %}{% endblock %}
 </head>
 
-<body class="page{% if eo %} is-exchange-only{% endif %}" data-qa="page" data-theme="{{ page_theme|default:'home' }}">
+<body class="page" data-qa="page" data-theme="{{ page_theme|default:'home' }}">
   <div class="page__shell">
     {% include 'partials/header.html' %}
     {% if breadcrumb_items %}
