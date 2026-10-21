@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 
@@ -172,3 +173,34 @@ class FooterSettings(SiteSettings):
         proxy = True
         verbose_name = 'Підвал сайту'
         verbose_name_plural = 'Підвал сайту'
+
+
+class ExchangeModeLog(models.Model):
+    class Source(models.TextChoices):
+        ADMIN = 'admin', 'Адмінка'
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='exchange_mode_logs',
+        verbose_name='Користувач',
+    )
+    created_at = models.DateTimeField('Коли', auto_now_add=True, db_index=True)
+    from_value = models.BooleanField('Було')
+    to_value = models.BooleanField('Стало')
+    source = models.CharField(
+        'Джерело',
+        max_length=16,
+        choices=Source.choices,
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Запис журналу режиму'
+        verbose_name_plural = 'Журнал режиму «Лише обмін»'
+
+    def __str__(self):
+        moment = self.created_at.strftime('%Y-%m-%d %H:%M') if self.created_at else ''
+        return f'{moment}: {self.from_value} → {self.to_value}'

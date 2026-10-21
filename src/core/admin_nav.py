@@ -19,6 +19,14 @@ def build_unfold_navigation():
                 _item('Шапка сайту', 'web_asset', 'admin:core_headersettings_changelist'),
                 _item('Підвал сайту', 'view_agenda', 'admin:core_footersettings_changelist'),
                 _item('Загальні налаштування', 'settings', 'admin:core_sitesettings_changelist'),
+                {
+                    'title': 'Журнал режиму «Лише обмін»',
+                    'icon': 'history',
+                    'link': reverse_lazy('admin:core_exchangemodelog_changelist'),
+                    'permission': lambda request: request.user.has_perm(
+                        'core.view_exchangemodelog',
+                    ),
+                },
             ],
         },
         {

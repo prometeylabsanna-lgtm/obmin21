@@ -156,6 +156,7 @@ UNFOLD = {
     'STYLES': [
         lambda request: static('css/admin/site_content.css') + '?v=10',
         lambda request: static('css/admin/cms_tabs.css') + '?v=1',
+        lambda request: static('css/admin/exchange_only.css') + '?v=1',
     ],
     'SCRIPTS': [
         lambda request: static('js/admin/cms_image_preview.js'),
