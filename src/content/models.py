@@ -3,6 +3,7 @@ from django.db import models
 from src.content.advantages_fields import AdvantagesSectionsMixin
 from src.content.faq_fields import FaqPageCopy
 from src.content.home_copy import HomeSectionCopy
+from src.content.service_blocks import ServiceBlockFields
 from src.core.exchange_fields import mode_char, mode_text
 from src.core.exchange_mode import ExchangeSafeMixin
 from src.core.colors import (
@@ -202,7 +203,7 @@ class ServicesPage(ThemeFieldsMixin, SingletonModel):
         return self.title
 
 
-class Service(ExchangeSafeMixin, models.Model):
+class Service(ServiceBlockFields, ExchangeSafeMixin, models.Model):
     title = models.CharField('Назва', max_length=120)
     slug = models.SlugField('Адреса сторінки', unique=True, max_length=80)
     image = models.ImageField('Фото картки', upload_to='services/', blank=True)

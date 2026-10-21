@@ -40,4 +40,8 @@ class PostAdmin(ListUnfoldAdmin):
         ('Пошук', {
             'fields': ('seo_title', 'seo_description', 'faq'),
         }),
+        ('Макет', {
+            'classes': ('collapse',),
+            'fields': ('layout', 'layout_mode'),
+        }),
     )

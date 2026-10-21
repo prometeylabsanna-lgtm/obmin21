@@ -114,6 +114,7 @@ _register_home(
         'services_title',
         'services_title_accent',
         'services_lead',
+        'services_lead_mode',
     ),
     extra={
         'content_fieldsets': ((
@@ -129,6 +130,7 @@ _register_home(
                     'services_title',
                     'services_title_accent',
                     'services_lead',
+                    'services_lead_mode',
                 ),
             },
         ),),

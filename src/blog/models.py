@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+from src.core.exchange_fields import mode_json
 from src.core.exchange_mode import ExchangeSafeMixin
 
 _UK_MONTHS = (
@@ -90,6 +91,13 @@ class Post(ExchangeSafeMixin, models.Model):
         related_name='related_from',
         verbose_name='Читати також',
     )
+    layout = models.JSONField(
+        'Макет статті',
+        blank=True,
+        null=True,
+        help_text='Порожнє — стандартний текст статті за цією адресою.',
+    )
+    layout_mode = mode_json('Макет статті для режиму «Лише обмін»')
 
     class Meta:
         ordering = ['-published_at', '-id']
@@ -117,10 +125,14 @@ class Post(ExchangeSafeMixin, models.Model):
         return f'{d.day} {_UK_MONTHS[d.month]} {d.year}'
 
     def reading_label(self):
-        from src.blog.article_data import BY_SLUG
-        data = BY_SLUG.get(self.slug)
+        from src.blog.article_data import layout_source
+        from src.core.exchange_mode import exchange_only
+
+        data = layout_source(self)
         if data and data.get('read'):
             return data['read']
+        if exchange_only():
+            return ''
         try:
             idx = _READ_ORDER.index(self.slug)
         except ValueError:
