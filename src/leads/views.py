@@ -13,8 +13,22 @@ from src.rates.models import CurrencyPair, RateBoard
 from src.rates.selectors import get_active_pairs, get_quote, get_quotes_for_city
 
 
+def _pair_symbol(pair):
+    mark = pair.flag_mark or ''
+    if mark and not mark.isascii():
+        return mark
+    return ''
+
+
 def _booking_currencies(city):
-    items = [{'code': 'UAH', 'name': 'Гривня', 'buy': '1', 'sell': '1', 'pair_id': ''}]
+    items = [{
+        'code': 'UAH',
+        'name': 'Гривня',
+        'buy': '1',
+        'sell': '1',
+        'pair_id': '',
+        'symbol': '₴',
+    }]
     rows, _ = get_quotes_for_city(city, RateBoard.RETAIL)
     for row in rows:
         code = (row['pair'].code or '').upper()
@@ -26,6 +40,7 @@ def _booking_currencies(city):
             'buy': str(row['quote'].buy),
             'sell': str(row['quote'].sell),
             'pair_id': row['pair'].pk,
+            'symbol': _pair_symbol(row['pair']),
         })
     return items
 
@@ -49,7 +64,7 @@ def _modal_context(request, form=None):
     initial_from = (source.get('from') or 'USD').upper()
     initial_to = (source.get('to') or 'UAH').upper()
     if pair_id and 'from' not in source and 'to' not in source:
-        pair = CurrencyPair.objects.filter(pk=pair_id).first()
+        pair = CurrencyPair.objects.visible().filter(pk=pair_id, is_active=True).first()
         if pair and pair.code and '/' not in pair.code:
             initial_from = pair.code.upper()
             initial_to = 'UAH'
@@ -67,11 +82,17 @@ def _modal_context(request, form=None):
     branch = get_city_branches(city).first() if city else None
     resolved_pair = None
     if pair_id:
-        resolved_pair = CurrencyPair.objects.filter(pk=pair_id).first()
+        resolved_pair = CurrencyPair.objects.visible().filter(
+            pk=pair_id,
+            is_active=True,
+        ).first()
     if resolved_pair is None:
         for item in currencies:
             if item['code'] == initial_from and item.get('pair_id'):
-                resolved_pair = CurrencyPair.objects.filter(pk=item['pair_id']).first()
+                resolved_pair = CurrencyPair.objects.visible().filter(
+                    pk=item['pair_id'],
+                    is_active=True,
+                ).first()
                 break
     places = []
     for item in getattr(request, 'cities', []):

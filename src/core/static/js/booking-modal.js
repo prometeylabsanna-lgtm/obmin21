@@ -3,7 +3,7 @@
 
   var SYM = {
     UAH: '₴', USD: '$', EUR: '€', PLN: 'zł', GBP: '£', CHF: 'CHF',
-    CNY: '¥', USDT: 'USDT', BTC: 'BTC', ETH: 'ETH'
+    CNY: '¥'
   };
 
   function parseNum(value) {
@@ -148,14 +148,20 @@
       }
     }
 
+    function currencyMark(code) {
+      var item = byCode(list, code);
+      if (item && item.symbol) return String(item.symbol);
+      return SYM[code] || code;
+    }
+
     function goStep2() {
       var n = parseNum(amountEl ? amountEl.value : '0');
       if (!n) return;
       var rate = rateOf();
       var to = byCode(list, toCode);
       var dTo = to && parseNum(to.sell) > 1000 ? 6 : 2;
-      var resultText = fmt(n * rate, dTo) + ' ' + (SYM[toCode] || toCode);
-      var forText = 'за ' + fmt(n, 6) + ' ' + (SYM[fromCode] || fromCode);
+      var resultText = fmt(n * rate, dTo) + ' ' + currencyMark(toCode);
+      var forText = 'за ' + fmt(n, 6) + ' ' + currencyMark(fromCode);
       if (fixTextEl) fixTextEl.textContent = resultText + ' ' + forText;
       var pairCode = fromCode === 'UAH' ? toCode : fromCode;
       var pairItem = byCode(list, pairCode);
