@@ -21,9 +21,11 @@ class BannerCityAdmin(CitySectionAdmin):
                 'banner_title',
                 'banner_title_mode',
                 'banner_suffix',
+                'banner_suffix_mode',
                 'banner_text',
                 'banner_text_mode',
                 'banner_button',
+                'banner_button_mode',
             ),
         }),
     )

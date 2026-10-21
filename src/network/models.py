@@ -32,6 +32,10 @@ class City(models.Model):
         max_length=80,
         default='за вигідним курсом',
     )
+    banner_suffix_mode = mode_char(
+        'Текст після назви міста для режиму «Лише обмін»',
+        80,
+    )
     banner_text = models.CharField(
         'Підпис на банері',
         max_length=240,
@@ -42,6 +46,10 @@ class City(models.Model):
         'Текст кнопки на банері',
         max_length=80,
         default='Зафіксувати курс',
+    )
+    banner_button_mode = mode_char(
+        'Текст кнопки на банері для режиму «Лише обмін»',
+        80,
     )
 
     class Meta:

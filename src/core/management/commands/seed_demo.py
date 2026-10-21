@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import quote_plus
 
+from django.apps import apps
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -26,7 +27,9 @@ from src.content.models import (
     Service,
     ServicesPage,
 )
+from src.content.stage3_fill import fill_articles_lead, fill_home_seo_mode
 from src.core.models import SiteSettings
+from src.network.city_mode_copy import fill_city_banner_seo_mode
 from src.network.models import Branch, City
 from src.rates.models import CurrencyPair, Quote, RateBoard
 from src.reviews.models import Review
@@ -272,6 +275,8 @@ class Command(BaseCommand):
         home.promo_title = 'Вигідний курс'
         home.promo_title_accent = 'USD та EUR'
         home.save()
+        fill_home_seo_mode(apps, None)
+        fill_articles_lead(apps, None)
 
         blog_page = BlogPage.load()
         blog_page.title = 'Блог'
@@ -296,10 +301,11 @@ class Command(BaseCommand):
         rates_page.save()
         services_page = ServicesPage.load()
         services_page.title = 'Послуги'
-        services_page.intro = (
-            'Обмін валют, криптовалюти, перекази та інвестиційне золото '
-            'з фіксацією курсу онлайн.'
-        )
+        if not (services_page.intro or '').strip():
+            services_page.intro = (
+                'Обмін валют, криптовалюти, перекази та інвестиційне золото '
+                'з фіксацією курсу онлайн.'
+            )
         services_page.seo_title = 'Послуги Обмін21'
         services_page.seo_description = 'Перекази по Україні, міжнародні перекази та обмін електронних валют'
         services_page.save()
@@ -356,6 +362,7 @@ class Command(BaseCommand):
             else:
                 branch = Branch.objects.create(city=city, **payload)
             city.branches.exclude(pk=branch.pk).update(is_active=False)
+        fill_city_banner_seo_mode(apps, None)
         City.objects.exclude(slug__in=keep_city_slugs).update(is_active=False)
 
         for i, (code, name, slug, buy, sell) in enumerate(PAIRS):

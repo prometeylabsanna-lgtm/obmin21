@@ -104,6 +104,35 @@ def _fill_blank_fields(model, row, mapping):
         model.objects.filter(pk=row.pk).update(**updates)
 
 
+HOME_SEO_MODE_COPY = {
+    'seo_block_title_mode': 'Обмін валют в Україні',
+    'seo_block_body_mode': (
+        'Обмін21 — мережа обмінних пунктів. На сайті ви бачите актуальний курс, '
+        'можете порахувати суму в калькуляторі та залишити заявку з фіксацією курсу. '
+        'Розрахунок відбувається у відділенні.'
+    ),
+}
+
+
+def fill_home_seo_mode(apps, schema_editor):
+    """Заповнює порожні тексти SEO-блоку режиму. Повтор не перезаписує правки."""
+    HomePage = apps.get_model('content', 'HomePage')
+    home = HomePage.objects.filter(pk=1).first()
+    if home is not None:
+        _fill_blank_fields(HomePage, home, HOME_SEO_MODE_COPY)
+
+
+def fill_articles_lead(apps, schema_editor):
+    """Ставить лід статей лише якщо поле порожнє. Вступ сторінки послуг не чіпає."""
+    from src.content.home_copy import SERVICES_MENTION_LEAD
+
+    HomePage = apps.get_model('content', 'HomePage')
+    home = HomePage.objects.filter(pk=1).first()
+    if home is None:
+        return
+    _fill_blank_fields(HomePage, home, {'articles_lead': SERVICES_MENTION_LEAD})
+
+
 def fill_cmp_and_home_lead_mode(apps, schema_editor):
     """Заповнює порожні тексти порівняння і лідів режиму. Повтор не перезаписує правки."""
     from src.content.advantages_fields import CMP_MODE_COPY
