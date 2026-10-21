@@ -20,10 +20,6 @@ _SPLIT_PUNCT_RE = re.compile(r'\s+(?:/|[-–—|])\s*|\s*(?:/|[-–—|])\s+')
 _SPACE_BEFORE_PUNCT_RE = re.compile(r'\s+([,.;:!?])')
 _MULTI_SPACE_RE = re.compile(r'\s{2,}')
 _EDGE_RE = re.compile(r'^[\s,.;:/|\-–—]+|[\s,.;:/|\-–—]+$')
-_WORD_RE = re.compile(r'\w+', re.UNICODE)
-_GLUE = {
-    'і', 'й', 'та', 'и', 'а', 'або', 'чи', 'или', 'and', 'or',
-}
 
 
 def contains_stop_word(text):
@@ -42,12 +38,4 @@ def strip_stop_words(text):
     cleaned = _SPACE_BEFORE_PUNCT_RE.sub(r'\1', cleaned)
     cleaned = _MULTI_SPACE_RE.sub(' ', cleaned)
     cleaned = _EDGE_RE.sub('', cleaned)
-    cleaned = _MULTI_SPACE_RE.sub(' ', cleaned).strip()
-    if not _has_meaning(cleaned):
-        return ''
-    return cleaned
-
-
-def _has_meaning(text):
-    words = _WORD_RE.findall(text)
-    return any(word.casefold() not in _GLUE for word in words)
+    return _MULTI_SPACE_RE.sub(' ', cleaned).strip()
