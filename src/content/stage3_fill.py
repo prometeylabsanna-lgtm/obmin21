@@ -93,5 +93,32 @@ def fill_services_page_mode(apps, schema_editor):
         ServicesPage.objects.filter(pk=page.pk).update(**updates)
 
 
+def _fill_blank_fields(model, row, mapping):
+    names = {field.name for field in model._meta.fields}
+    updates = {}
+    for name, text in mapping.items():
+        if name not in names or not _blank(getattr(row, name, '')):
+            continue
+        updates[name] = text
+    if updates:
+        model.objects.filter(pk=row.pk).update(**updates)
+
+
+def fill_cmp_and_home_lead_mode(apps, schema_editor):
+    """Заповнює порожні тексти порівняння і лідів режиму. Повтор не перезаписує правки."""
+    from src.content.advantages_fields import CMP_MODE_COPY
+    from src.content.home_copy import HOME_LEAD_MODE
+
+    AdvantagesPage = apps.get_model('content', 'AdvantagesPage')
+    page = AdvantagesPage.objects.filter(pk=1).first()
+    if page is not None:
+        _fill_blank_fields(AdvantagesPage, page, CMP_MODE_COPY)
+
+    HomePage = apps.get_model('content', 'HomePage')
+    home = HomePage.objects.filter(pk=1).first()
+    if home is not None:
+        _fill_blank_fields(HomePage, home, HOME_LEAD_MODE)
+
+
 def noop_reverse(apps, schema_editor):
     return None

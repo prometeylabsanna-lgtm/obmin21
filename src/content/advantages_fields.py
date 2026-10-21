@@ -29,6 +29,33 @@ CMP_THEM_HTML = (
     '</ul>'
 )
 
+CMP_US_HTML_MODE = (
+    '<ul>'
+    '<li><span class="k">Курс</span><strong>Кращий за банківський</strong></li>'
+    '<li><span class="k">Комісія</span><strong>0 ₴ за будь-яку суму</strong></li>'
+    '<li><span class="k">Фіксація курсу</span><strong>Онлайн на 30 хвилин</strong></li>'
+    '<li><span class="k">Купюри</span><strong>Приймаємо та обмінюємо</strong></li>'
+    '<li><span class="k">Готівка</span><strong>Долар, євро та фунт</strong></li>'
+    '<li><span class="k">Великі суми</span><strong>Індивідуальний курс</strong></li>'
+    '</ul>'
+)
+
+CMP_THEM_HTML_MODE = (
+    '<ul>'
+    '<li><span class="k">Курс</span><strong>Курс банку з націнкою</strong></li>'
+    '<li><span class="k">Комісія</span><strong>Від 1 до 3%</strong></li>'
+    '<li><span class="k">Фіксація курсу</span><strong>Лише у відділенні</strong></li>'
+    '<li><span class="k">Купюри</span><strong>Часто відмовляють</strong></li>'
+    '<li><span class="k">Готівка</span><strong>Менше валют у касі</strong></li>'
+    '<li><span class="k">Великі суми</span><strong>Стандартні умови</strong></li>'
+    '</ul>'
+)
+
+CMP_MODE_COPY = {
+    'cmp_us_html_mode': CMP_US_HTML_MODE,
+    'cmp_them_html_mode': CMP_THEM_HTML_MODE,
+}
+
 STAT_1_TEXT = (
     'Постійних клієнтів — нам довіряють тисячі людей, які обирають нас '
     'для швидкого та зручного обміну валют і криптоактивів'

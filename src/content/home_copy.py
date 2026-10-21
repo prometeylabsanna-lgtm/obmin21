@@ -11,6 +11,17 @@ HOME_COPY_DEFAULTS = {
     'services_lead': SERVICES_MENTION_LEAD,
     'articles_lead': SERVICES_MENTION_LEAD,
 }
+SERVICES_LEAD_MODE = (
+    'Обмін долара, євро та інших готівкових валют у відділеннях Обмін21. '
+    'Курс можна порахувати і зафіксувати онлайн перед візитом.'
+)
+ARTICLES_LEAD_MODE = (
+    'Поради про курс долара та євро, фіксацію онлайн і обмін готівки у відділенні.'
+)
+HOME_LEAD_MODE = {
+    'services_lead_mode': SERVICES_LEAD_MODE,
+    'articles_lead_mode': ARTICLES_LEAD_MODE,
+}
 
 
 class HomeSectionCopy(models.Model):

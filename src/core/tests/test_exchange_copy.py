@@ -188,7 +188,8 @@ class Stage3CopyTests(TestCase):
         page.save(update_fields=['stat_1_text', 'cmp_us_html'])
         home = HomePage.load()
         home.services_lead = ''
-        home.save(update_fields=['services_lead'])
+        home.services_lead_mode = ''
+        home.save(update_fields=['services_lead', 'services_lead_mode'])
         self.assertEqual(stat_text_for(page, 1), STAT_1_TEXT)
         self.assertEqual(cmp_us_html_for(page), CMP_US_HTML)
         self.assertIn('криптоактивів', page.iter_stats()[0]['text'])
