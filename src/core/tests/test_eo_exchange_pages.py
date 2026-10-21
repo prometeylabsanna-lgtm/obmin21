@@ -1,0 +1,73 @@
+"""Сторінки обміну лишаються 200 і з увімкненим режимом, і без нього."""
+
+import os
+from unittest.mock import patch
+
+from django.core.cache import cache
+
+from src.core.tests.eo_realdb import (
+    VISIBLE_POST_SLUGS,
+    RealDataTestCase,
+    copy_real_db,
+    exchange_paths,
+    prefixed_paths,
+    restore_test_db,
+)
+
+
+def setUpModule():
+    copy_real_db()
+
+
+def tearDownModule():
+    restore_test_db()
+
+
+class ExchangePagesStayTests(RealDataTestCase):
+    def test_known_exchange_targets_come_from_db(self):
+        paths = set(exchange_paths())
+        for path in (
+            '/',
+            '/kursy/',
+            '/posluhy/',
+            '/perevahy/',
+            '/faq/',
+            '/blog/',
+            '/vidhuky/',
+            '/kontakty/',
+            '/mista/',
+            '/mista/kyiv/',
+            '/polityka-konfidentsiynosti/',
+            '/publichna-oferta/',
+            '/polityka-cookie/',
+            '/sitemap.xml',
+            '/robots.txt',
+            '/usd-uah/',
+            '/eur-uah/',
+            '/pln-uah/',
+            '/blog/kategoriya/kurs-valyut/',
+            '/blog/kategoriya/zaoshchadzhennya/',
+            '/blog/kategoriya/porady/',
+        ):
+            self.assertIn(path, paths, path)
+        for slug in VISIBLE_POST_SLUGS:
+            self.assertIn(f'/blog/{slug}/', paths)
+        self.assertNotIn('/blog/kategoriya/zoloto/', paths)
+        self.assertNotIn('/btc-usdt/', paths)
+
+    def test_exchange_pages_ok_in_mode(self):
+        self._assert_ok(True)
+
+    def test_exchange_pages_ok_without_mode(self):
+        self._assert_ok(False)
+
+    def _assert_ok(self, enabled):
+        env = {'EXCHANGE_ONLY_MODE': '1' if enabled else '0'}
+        with patch.dict(os.environ, env):
+            cache.clear()
+            problems = []
+            for url in prefixed_paths(exchange_paths()):
+                response = self.client.get(url)
+                if response.status_code != 200:
+                    problems.append(f'{url} | status | {response.status_code}')
+        self.assertFalse(problems, '\n'.join(problems))
