@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from unfold.admin import ModelAdmin
 
-from src.core.admin_guidelines import with_field_limits
+from src.core.admin_guidelines import content_field_name, with_field_limits
 from src.core.admin_widgets import (
     CmsAdminColorWidget,
     CmsAdminImageWidget,
@@ -32,15 +32,24 @@ PLAIN_TEXTAREA_FIELDS = frozenset({
 
 
 def _is_rich_field(name, extra=()):
-    return name in extra or name in RICH_FIELD_NAMES or name.endswith('_html')
+    base = content_field_name(name)
+    return (
+        name in extra
+        or base in extra
+        or name in RICH_FIELD_NAMES
+        or base in RICH_FIELD_NAMES
+        or name.endswith('_html')
+        or base.endswith('_html')
+    )
 
 
 def _is_plain_textarea(name, extra=()):
     if _is_rich_field(name, extra):
         return False
-    if name in PLAIN_TEXTAREA_FIELDS:
+    base = content_field_name(name)
+    if name in PLAIN_TEXTAREA_FIELDS or base in PLAIN_TEXTAREA_FIELDS:
         return True
-    return name.endswith(('_lead', '_text'))
+    return name.endswith(('_lead', '_text')) or base.endswith(('_lead', '_text'))
 COLOR_PREFIXES = ('color_', 'header_color_', 'footer_color_')
 PLAIN_SKIP = frozenset({
     'color_bg',

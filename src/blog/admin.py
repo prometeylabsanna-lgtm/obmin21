@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from src.blog.models import Category, Post
 from src.core.admin_mixins import ListUnfoldAdmin
+from src.core.exchange_admin import ExchangeSafeListFilter
 
 
 @admin.register(Category)
@@ -13,8 +14,8 @@ class CategoryAdmin(ListUnfoldAdmin):
 
 @admin.register(Post)
 class PostAdmin(ListUnfoldAdmin):
-    list_display = ('title', 'category', 'status', 'published_at')
-    list_filter = ('status', 'category')
+    list_display = ('title', 'exchange_safe', 'category', 'status', 'published_at')
+    list_filter = (ExchangeSafeListFilter, 'status', 'category')
     ordering = ('-published_at', '-id')
     search_fields = ('title', 'body')
     search_help_text = 'Пошук за заголовком або текстом статті'
@@ -24,6 +25,7 @@ class PostAdmin(ListUnfoldAdmin):
     fieldsets = (
         ('Стаття', {
             'fields': (
+                'exchange_safe',
                 'title',
                 'category',
                 'status',

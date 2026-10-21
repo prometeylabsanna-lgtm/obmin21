@@ -111,10 +111,11 @@ def exchange_pairs():
 
 
 def pair_by_id(pair_id: int) -> CurrencyPair | None:
-    from src.core.crypto_visibility import crypto_enabled, pair_is_crypto
+    from src.core.crypto_visibility import pair_is_crypto
+    from src.core.exchange_mode import exchange_only
 
     pair = CurrencyPair.objects.filter(pk=pair_id, is_active=True).first()
-    if pair and not crypto_enabled() and pair_is_crypto(pair):
+    if pair and exchange_only() and pair_is_crypto(pair):
         return None
     return pair
 

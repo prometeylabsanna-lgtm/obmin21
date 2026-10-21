@@ -72,8 +72,14 @@ _COLOR_PREFIXES = ('color_', 'header_color_', 'footer_color_')
 _IMAGE_NOTE = ' Після збереження стиснемо, щоб сайт відкривався швидше.'
 
 
+def content_field_name(field_name: str) -> str:
+    if field_name.endswith('_mode'):
+        return field_name[:-5]
+    return field_name
+
+
 def image_limit(field_name: str) -> ImageLimit:
-    return _IMAGE_BY_NAME.get(field_name, _IMAGE_DEFAULT)
+    return _IMAGE_BY_NAME.get(content_field_name(field_name), _IMAGE_DEFAULT)
 
 
 def image_help(field_name: str, existing: str = '') -> str:
@@ -96,6 +102,7 @@ _TEXT_EXACT = {
 
 
 def text_limit_for(field_name: str, db_field, rich: bool = False) -> TextLimit | None:
+    field_name = content_field_name(field_name)
     if field_name in _SKIP or field_name.startswith(_COLOR_PREFIXES):
         return None
     if field_name in _TEXT_BY_NAME:

@@ -40,6 +40,11 @@ def build_unfold_navigation():
                     'admin:content_homewhysettings_changelist',
                 ),
                 _item(
+                    'Картки «Чому нас обирають»',
+                    'pin',
+                    'admin:content_homestat_changelist',
+                ),
+                _item(
                     'Наші послуги',
                     'handyman',
                     'admin:content_homeservicessettings_changelist',
@@ -63,6 +68,11 @@ def build_unfold_navigation():
                     'Оформлення',
                     'palette',
                     'admin:content_homesearchsettings_changelist',
+                ),
+                _item(
+                    'Пошук головної',
+                    'travel_explore',
+                    'admin:content_homeseosettings_changelist',
                 ),
             ],
         },

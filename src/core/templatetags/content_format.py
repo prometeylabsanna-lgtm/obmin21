@@ -116,9 +116,10 @@ def strip_crypto_items(value):
 
 @register.filter(name='hide_if_crypto')
 def hide_if_crypto(value):
-    from src.core.crypto_visibility import crypto_enabled, mentions_crypto
+    from src.core.crypto_visibility import mentions_crypto
+    from src.core.exchange_mode import exchange_only
 
-    if not crypto_enabled() and mentions_crypto(value):
+    if exchange_only() and mentions_crypto(value):
         return ''
     return value
 

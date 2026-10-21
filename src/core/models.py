@@ -34,9 +34,36 @@ class SiteSettings(models.Model):
         'Хвилин фіксації курсу',
         default=30,
     )
-    crypto_enabled = models.BooleanField(
-        'Показувати криптовалюту на сайті',
-        default=True,
+    exchange_only = models.BooleanField(
+        'Лише обмін валют',
+        default=False,
+        help_text=(
+            'Увімкнено — на сайті тимчасово лишається лише обмін валют. '
+            'Кнопка на цій сторінці вмикає і вимикає режим.'
+        ),
+    )
+    hidden_page_status = models.PositiveSmallIntegerField(
+        'Відповідь для прихованих сторінок',
+        choices=(
+            (503, '503 — тимчасово недоступно'),
+            (404, '404 — сторінку не знайдено'),
+        ),
+        default=503,
+        help_text=(
+            '503 каже Google, що сторінка на паузі і її треба тримати в пошуку. '
+            '404 — якщо режим триває довше ніж один-два тижні.'
+        ),
+    )
+    retry_after_seconds = models.PositiveIntegerField(
+        'Retry-After, секунд',
+        default=86400,
+        help_text='Скільки секунд зачекати перед повторним візитом. 86400 — одна доба.',
+    )
+    exchange_only_since = models.DateTimeField(
+        'Режим «Лише обмін» увімкнено з',
+        null=True,
+        blank=True,
+        help_text='Порожнє — режим вимкнено або час ще не зафіксовано.',
     )
     notify_email = models.EmailField('Email для сповіщень', blank=True)
     notify_telegram_chat_id = models.CharField(

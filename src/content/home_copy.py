@@ -1,5 +1,7 @@
 from django.db import models
 
+from src.core.exchange_fields import mode_char
+
 
 class HomeSectionCopy(models.Model):
     calc_kicker = models.CharField(
@@ -174,6 +176,10 @@ class HomeSectionCopy(models.Model):
             'по Україні, міжнародні перекази та обмін електронних валют — '
             'умови та підготовка до візиту нижче.'
         ),
+    )
+    articles_lead_mode = mode_char(
+        'Текст під заголовком для режиму «Лише обмін»',
+        400,
     )
     featured_posts = models.ManyToManyField(
         'blog.Post',

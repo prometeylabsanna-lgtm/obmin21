@@ -19,8 +19,10 @@ class BannerCityAdmin(CitySectionAdmin):
             'fields': (
                 'banner_image',
                 'banner_title',
+                'banner_title_mode',
                 'banner_suffix',
                 'banner_text',
+                'banner_text_mode',
                 'banner_button',
             ),
         }),
@@ -49,7 +51,16 @@ class CityAdmin(ListUnfoldAdmin):
     list_display = ('name', 'phone', 'is_active', 'sort_order')
     list_editable = ('is_active', 'sort_order')
     search_fields = ('name',)
-    fields = ('name', 'phone', 'is_active', 'sort_order')
+    fields = (
+        'name',
+        'phone',
+        'is_active',
+        'sort_order',
+        'seo_title',
+        'seo_title_mode',
+        'seo_description',
+        'seo_description_mode',
+    )
     slug_source = 'name'
 
 

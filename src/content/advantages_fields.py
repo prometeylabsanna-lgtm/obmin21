@@ -1,6 +1,8 @@
 from django.db import models
 from django.templatetags.static import static
 
+from src.core.exchange_fields import mode_image, mode_text
+
 from src.core.colors import COLOR_HELP, hex_color_validator
 
 NAVY = '#052145'
@@ -78,6 +80,9 @@ class AdvantagesSectionsMixin(models.Model):
             'для швидкого та зручного обміну валют і криптоактивів'
         ),
     )
+    stat_1_text_mode = mode_text(
+        'Перевага 1 — підзаголовок для режиму «Лише обмін»',
+    )
     stat_2_title = models.CharField('Перевага 2 — заголовок', max_length=40, default='20+')
     stat_2_text = models.TextField(
         'Перевага 2 — підзаголовок',
@@ -117,6 +122,10 @@ class AdvantagesSectionsMixin(models.Model):
     why_banner = models.ImageField('Банер блоку', upload_to='advantages/', blank=True)
     color_why_banner = _color('Фон банера')
     why_coins = models.ImageField('Картинка монет', upload_to='advantages/', blank=True)
+    why_coins_mode = mode_image(
+        'Картинка монет для режиму «Лише обмін»',
+        'advantages/',
+    )
     why_banner_title = models.CharField(
         'Заголовок на банері',
         max_length=120,
@@ -180,7 +189,9 @@ class AdvantagesSectionsMixin(models.Model):
         default='звичайний обмінник',
     )
     cmp_us_html = models.TextField('Список «Рекомендуємо»', default=CMP_US_HTML)
+    cmp_us_html_mode = mode_text('Список «Рекомендуємо» для режиму «Лише обмін»')
     cmp_them_html = models.TextField('Список «Інші обмінники»', default=CMP_THEM_HTML)
+    cmp_them_html_mode = mode_text('Список «Інші обмінники» для режиму «Лише обмін»')
     cmp_btn = models.CharField('Кнопка', max_length=80, default='Зафіксувати курс')
 
     class Meta:
@@ -208,26 +219,30 @@ class AdvantagesSectionsMixin(models.Model):
         return self._file_src('why_coins', 'images/coins.png')
 
     def iter_stats(self):
-        from src.core.crypto_visibility import crypto_enabled, mentions_crypto
+        from src.core.crypto_visibility import mentions_crypto
+        from src.core.exchange_mode import exchange_only
 
+        hide_crypto = exchange_only()
         rows = []
         for index in range(1, 5):
             title = (getattr(self, f'stat_{index}_title') or '').strip()
             text = (getattr(self, f'stat_{index}_text') or '').strip()
-            if not crypto_enabled() and mentions_crypto(f'{title} {text}'):
+            if hide_crypto and mentions_crypto(f'{title} {text}'):
                 continue
             if title or text:
                 rows.append({'title': title, 'text': text})
         return rows
 
     def iter_why(self):
-        from src.core.crypto_visibility import crypto_enabled, mentions_crypto
+        from src.core.crypto_visibility import mentions_crypto
+        from src.core.exchange_mode import exchange_only
 
+        hide_crypto = exchange_only()
         rows = []
         for index in range(1, 6):
             title = (getattr(self, f'why_{index}_title') or '').strip()
             text = (getattr(self, f'why_{index}_text') or '').strip()
-            if not crypto_enabled() and mentions_crypto(f'{title} {text}'):
+            if hide_crypto and mentions_crypto(f'{title} {text}'):
                 continue
             if title or text:
                 rows.append({'title': title, 'text': text})

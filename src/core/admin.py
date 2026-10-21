@@ -16,6 +16,9 @@ class SiteSettingsAdmin(SingletonUnfoldAdmin):
     content_fields = (
         'site_name',
         'rate_hold_minutes',
+        'hidden_page_status',
+        'retry_after_seconds',
+        'exchange_only_since',
         'telegram_url',
         'youtube_url',
         'instagram_url',
@@ -27,8 +30,8 @@ class SiteSettingsAdmin(SingletonUnfoldAdmin):
 
     def get_actions_detail(self, request, object_id):
         actions = super().get_actions_detail(request, object_id)
-        enabled = SiteSettings.load().crypto_enabled
-        label = 'Вимкнути Крипто' if enabled else 'Увімкнути Крипто'
+        shown = not SiteSettings.load().exchange_only
+        label = 'Вимкнути Крипто' if shown else 'Увімкнути Крипто'
         renamed = []
         for item in actions:
             if item.action_name.endswith('_toggle_crypto'):
@@ -40,9 +43,9 @@ class SiteSettingsAdmin(SingletonUnfoldAdmin):
     @action(description='Вимкнути Крипто', url_path='toggle-crypto', icon='block')
     def toggle_crypto(self, request, object_id):
         settings = SiteSettings.load()
-        settings.crypto_enabled = not settings.crypto_enabled
-        settings.save(update_fields=['crypto_enabled'])
-        if settings.crypto_enabled:
+        settings.exchange_only = not settings.exchange_only
+        settings.save(update_fields=['exchange_only'])
+        if not settings.exchange_only:
             messages.success(request, 'Крипто знову показується на сайті.')
         else:
             messages.success(

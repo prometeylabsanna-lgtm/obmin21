@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+from src.core.exchange_mode import ExchangeSafeMixin
 from src.network.models import City
 
 
@@ -9,7 +10,7 @@ class RateBoard(models.TextChoices):
     CRYPTO = 'crypto', 'Крипто'
 
 
-class CurrencyPair(models.Model):
+class CurrencyPair(ExchangeSafeMixin, models.Model):
     code = models.CharField('Код', max_length=16)
     name = models.CharField('Назва', max_length=80)
     slug = models.SlugField('Код у посиланні', unique=True, max_length=40)

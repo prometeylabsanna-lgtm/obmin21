@@ -112,7 +112,7 @@
         <a class="btn btn--accent promo-banner__cta" href="{% url 'rates:rates_page' %}">Обрати валюту</a>
       </div>
     </article>
-    {% if crypto_enabled %}
+    {% if not exchange_only %}
     <article class="promo-banner__slide" data-promo-slide data-href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" data-blank="1">
       <div class="promo-banner__media" aria-hidden="true">
         <img src="{% static 'images/coins.png' %}" alt="" width="900" height="520" loading="lazy">
@@ -147,7 +147,7 @@
   </div>
   <div class="promo-banner__dots" data-promo-dots>
     <button type="button" class="is-active" data-promo-dot aria-label="USD та EUR"></button>
-    {% if crypto_enabled %}<button type="button" data-promo-dot aria-label="Криптовалюта"></button>{% endif %}
+    {% if not exchange_only %}<button type="button" data-promo-dot aria-label="Криптовалюта"></button>{% endif %}
     <button type="button" data-promo-dot aria-label="Перекази"></button>
     <button type="button" data-promo-dot aria-label="SWIFT"></button>
   </div>

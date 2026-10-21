@@ -3,6 +3,7 @@ from django.forms.widgets import HiddenInput
 from django.utils.http import urlencode
 
 from src.core.admin_mixins import ListUnfoldAdmin
+from src.core.exchange_admin import ExchangeSafeListFilter
 from src.rates.models import CurrencyPair, Quote, RateBoard
 
 
@@ -15,10 +16,12 @@ def _quote_board(request):
 
 @admin.register(CurrencyPair)
 class CurrencyPairAdmin(ListUnfoldAdmin):
-    list_display = ('code', 'name', 'slug', 'is_active', 'sort_order')
+    list_display = ('code', 'name', 'exchange_safe', 'slug', 'is_active', 'sort_order')
+    list_filter = (ExchangeSafeListFilter,)
     list_editable = ('is_active', 'sort_order')
     search_fields = ('code', 'name')
     fields = (
+        'exchange_safe',
         'code',
         'name',
         'base_code',

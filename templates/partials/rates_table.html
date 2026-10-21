@@ -3,7 +3,7 @@
   <div class="rates-toolbar">
     <div class="rates-tabs" role="tablist">
       {% for value, label in boards %}
-      {% if value == 'crypto' and not crypto_enabled %}
+      {% if value == 'crypto' and exchange_only %}
       {% elif value == 'retail' or value == 'crypto' or not home_rates_compact and not hide_full_table_link %}
       <button type="button"
               class="rates-tabs__btn{% if active_board == value %} is-active{% endif %}"

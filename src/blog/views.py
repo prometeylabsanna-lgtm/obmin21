@@ -5,7 +5,8 @@ from src.blog.models import Category, Post
 from src.blog.selectors import get_published_posts
 from src.content.models import BlogPage
 from src.core.breadcrumbs import safe_reverse, trail
-from src.core.crypto_visibility import crypto_enabled, mentions_crypto
+from src.core.crypto_visibility import mentions_crypto
+from src.core.exchange_mode import exchange_only
 
 
 def post_list(request, category_slug=None):
@@ -17,7 +18,7 @@ def post_list(request, category_slug=None):
             slug=category_slug,
             show_in_filter=True,
         )
-        if not crypto_enabled() and mentions_crypto(f'{category.name} {category.slug}'):
+        if exchange_only() and mentions_crypto(f'{category.name} {category.slug}'):
             raise Http404
         qs = qs.filter(category=category)
     try:
@@ -43,7 +44,7 @@ def post_list(request, category_slug=None):
         'list_url': list_url,
         'categories': [
             item for item in Category.objects.filter(show_in_filter=True)
-            if crypto_enabled() or not mentions_crypto(f'{item.name} {item.slug}')
+            if not exchange_only() or not mentions_crypto(f'{item.name} {item.slug}')
         ],
         'active_category': category,
         'page_title': category.name if category else (page.seo_title or page.title),
@@ -65,13 +66,13 @@ def post_detail(request, slug):
         slug=slug,
         status=Post.Status.PUBLISHED,
     )
-    if not crypto_enabled() and mentions_crypto(
+    if exchange_only() and mentions_crypto(
         f'{post.title} {post.slug} {post.excerpt} {post.body} {post.faq}'
     ):
         raise Http404
     related = [
         item for item in post.related_posts.filter(status=Post.Status.PUBLISHED)[:12]
-        if crypto_enabled() or not mentions_crypto(
+        if not exchange_only() or not mentions_crypto(
             f'{item.title} {item.slug} {item.excerpt} {item.body}'
         )
     ][:6]

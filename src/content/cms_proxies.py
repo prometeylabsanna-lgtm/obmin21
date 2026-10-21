@@ -57,6 +57,13 @@ class HomeSearchSettings(HomePage):
         verbose_name_plural = 'Оформлення головної'
 
 
+class HomeSeoSettings(HomePage):
+    class Meta:
+        proxy = True
+        verbose_name = 'Пошук головної'
+        verbose_name_plural = 'Пошук головної'
+
+
 __all__ = (
     'HomeArticlesSettings',
     'HomeCalcSettings',
@@ -64,6 +71,7 @@ __all__ = (
     'HomePromoSettings',
     'HomeReviewsSettings',
     'HomeSearchSettings',
+    'HomeSeoSettings',
     'HomeServicesSettings',
     'HomeStat',
     'HomeWhySettings',

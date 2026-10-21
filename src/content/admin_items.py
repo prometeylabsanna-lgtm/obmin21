@@ -7,11 +7,13 @@ from src.content.models import (
     BlogPage,
     CookiePage,
     FaqItem,
+    HomeStat,
     OfferPage,
     PrivacyPage,
     Service,
 )
 from src.core.admin_mixins import ListUnfoldAdmin, SingletonUnfoldAdmin
+from src.core.exchange_admin import ExchangeSafeListFilter
 from src.core.admin_widgets import CmsAdminTextareaWidget
 from src.core.plain_text import html_to_plain_legal
 
@@ -57,7 +59,9 @@ class BlogPageAdmin(SingletonUnfoldAdmin):
         'title_accent',
         'intro',
         'seo_title',
+        'seo_title_mode',
         'seo_description',
+        'seo_description_mode',
     )
     rich_fields = frozenset()
 
@@ -70,12 +74,21 @@ class BlogPageAdmin(SingletonUnfoldAdmin):
 
 @admin.register(Service)
 class ServiceAdmin(ListUnfoldAdmin):
-    list_display = ('card_image', 'title', 'show_on_home', 'is_active', 'sort_order')
+    list_display = (
+        'card_image',
+        'title',
+        'exchange_safe',
+        'show_on_home',
+        'is_active',
+        'sort_order',
+    )
     list_display_links = ('card_image', 'title')
+    list_filter = (ExchangeSafeListFilter,)
     list_editable = ('show_on_home', 'is_active', 'sort_order')
     list_fullwidth = True
     rich_fields = frozenset({'body'})
     fields = (
+        'exchange_safe',
         'image',
         'title',
         'short_desc',
@@ -104,17 +117,41 @@ class ServiceAdmin(ListUnfoldAdmin):
 
 @admin.register(AdvantageItem)
 class AdvantageItemAdmin(ListUnfoldAdmin):
-    list_display = ('text', 'audience', 'sort_order', 'is_active')
-    list_filter = ('audience', 'is_active')
+    list_display = ('text', 'exchange_safe', 'audience', 'sort_order', 'is_active')
+    list_filter = (ExchangeSafeListFilter, 'audience', 'is_active')
     list_editable = ('sort_order', 'is_active')
     search_fields = ('text', 'description')
-    fields = ('audience', 'text', 'description', 'sort_order', 'is_active')
+    fields = (
+        'exchange_safe',
+        'audience',
+        'text',
+        'description',
+        'sort_order',
+        'is_active',
+    )
 
 
 @admin.register(FaqItem)
 class FaqItemAdmin(ListUnfoldAdmin):
-    list_display = ('question', 'sort_order', 'is_active')
+    list_display = ('question', 'exchange_safe', 'sort_order', 'is_active')
+    list_filter = (ExchangeSafeListFilter,)
     list_editable = ('sort_order', 'is_active')
     search_fields = ('question', 'answer')
-    fields = ('question', 'answer', 'sort_order', 'is_active')
+    fields = ('exchange_safe', 'question', 'answer', 'sort_order', 'is_active')
     rich_fields = frozenset({'answer'})
+
+
+@admin.register(HomeStat)
+class HomeStatAdmin(ListUnfoldAdmin):
+    list_display = ('number', 'exchange_safe', 'sort_order', 'is_active')
+    list_filter = (ExchangeSafeListFilter, 'is_active')
+    list_editable = ('sort_order', 'is_active')
+    search_fields = ('number', 'text')
+    fields = (
+        'exchange_safe',
+        'page',
+        'number',
+        'text',
+        'sort_order',
+        'is_active',
+    )

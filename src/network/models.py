@@ -1,5 +1,8 @@
-from django.db import models
 from urllib.parse import quote_plus
+
+from django.db import models
+
+from src.core.exchange_fields import mode_char
 
 
 class City(models.Model):
@@ -9,7 +12,9 @@ class City(models.Model):
     is_active = models.BooleanField('Активне', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
     banner_image = models.ImageField(
         'Фото банера на головній',
         upload_to='cities/',
@@ -21,6 +26,7 @@ class City(models.Model):
         max_length=80,
         default='Обмін валют',
     )
+    banner_title_mode = mode_char('Заголовок банера для режиму «Лише обмін»', 80)
     banner_suffix = models.CharField(
         'Текст після назви міста',
         max_length=80,
@@ -31,6 +37,7 @@ class City(models.Model):
         max_length=240,
         default='Фіксуйте курс онлайн та обмінюйте за вигідним курсом',
     )
+    banner_text_mode = mode_char('Підпис на банері для режиму «Лише обмін»', 240)
     banner_button = models.CharField(
         'Текст кнопки на банері',
         max_length=80,

@@ -55,6 +55,8 @@ def _ensure_crypto_flag(db_path):
         if 'core_sitesettings' not in tables:
             return
         columns = {row[1] for row in connection.execute('PRAGMA table_info(core_sitesettings)')}
+        if 'exchange_only' in columns:
+            return
         if 'crypto_enabled' not in columns:
             connection.execute(
                 'ALTER TABLE core_sitesettings ADD COLUMN crypto_enabled bool NOT NULL DEFAULT 1'

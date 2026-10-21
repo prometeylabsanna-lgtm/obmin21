@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+from src.core.exchange_mode import ExchangeSafeMixin
+
 _UK_MONTHS = (
     '',
     'січня',
@@ -49,7 +51,7 @@ class Category(models.Model):
         return self.name
 
 
-class Post(models.Model):
+class Post(ExchangeSafeMixin, models.Model):
     class Status(models.TextChoices):
         DRAFT = 'draft', 'Чернетка'
         PUBLISHED = 'published', 'Опубліковано'

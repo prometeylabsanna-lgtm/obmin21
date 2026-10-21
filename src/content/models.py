@@ -3,6 +3,8 @@ from django.db import models
 from src.content.advantages_fields import AdvantagesSectionsMixin
 from src.content.faq_fields import FaqPageCopy
 from src.content.home_copy import HomeSectionCopy
+from src.core.exchange_fields import mode_char, mode_text
+from src.core.exchange_mode import ExchangeSafeMixin
 from src.core.colors import (
     ACCENT_DEFAULT,
     ACCENT_HOVER_DEFAULT,
@@ -67,7 +69,9 @@ class ThemeFieldsMixin(models.Model):
 class HomePage(HomeSectionCopy, ThemeFieldsMixin, SingletonModel):
     theme_slug = 'home'
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
     promo_image = models.ImageField(
         'Фото',
         upload_to='home/',
@@ -104,7 +108,14 @@ class HomePage(HomeSectionCopy, ThemeFieldsMixin, SingletonModel):
         max_length=160,
         default='Обмін валют',
     )
+    seo_block_title_mode = mode_char(
+        'Заголовок інформаційного блоку для режиму «Лише обмін»',
+        160,
+    )
     seo_block_body = models.TextField('Текст інформаційного блоку', blank=True)
+    seo_block_body_mode = mode_text(
+        'Текст інформаційного блоку для режиму «Лише обмін»',
+    )
 
     class Meta:
         verbose_name = 'Головна сторінка'
@@ -114,7 +125,7 @@ class HomePage(HomeSectionCopy, ThemeFieldsMixin, SingletonModel):
         return 'Головна'
 
 
-class HomeStat(models.Model):
+class HomeStat(ExchangeSafeMixin, models.Model):
     page = models.ForeignKey(
         HomePage,
         on_delete=models.CASCADE,
@@ -140,7 +151,9 @@ class RatesPage(ThemeFieldsMixin, SingletonModel):
     title = models.CharField('Заголовок', max_length=120, default='Курси валют')
     intro = models.TextField('Вступний текст', blank=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
 
     class Meta:
         verbose_name = 'Сторінка курсів'
@@ -154,6 +167,7 @@ class ServicesPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'services'
     title = models.CharField('Заголовок сторінки', max_length=120, default='Послуги')
     intro = models.TextField('Вступний текст', blank=True)
+    intro_mode = mode_text('Вступ для режиму «Лише обмін»')
     hero_image = models.ImageField(
         'Фото',
         upload_to='services/',
@@ -176,7 +190,9 @@ class ServicesPage(ThemeFieldsMixin, SingletonModel):
         default='Обмін валют, криптовалюти, перекази та інвестиційне золото з фіксацією курсу онлайн.',
     )
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
 
     class Meta:
         verbose_name = 'Сторінка послуг'
@@ -186,7 +202,7 @@ class ServicesPage(ThemeFieldsMixin, SingletonModel):
         return self.title
 
 
-class Service(models.Model):
+class Service(ExchangeSafeMixin, models.Model):
     title = models.CharField('Назва', max_length=120)
     slug = models.SlugField('Адреса сторінки', unique=True, max_length=80)
     image = models.ImageField('Фото картки', upload_to='services/', blank=True)
@@ -241,7 +257,9 @@ class AdvantagesPage(ThemeFieldsMixin, AdvantagesSectionsMixin, SingletonModel):
     title = models.CharField('Заголовок', max_length=120, default='Переваги')
     intro = models.TextField('Вступний текст', blank=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
 
     class Meta:
         verbose_name = 'Сторінка переваг'
@@ -251,7 +269,7 @@ class AdvantagesPage(ThemeFieldsMixin, AdvantagesSectionsMixin, SingletonModel):
         return self.title
 
 
-class AdvantageItem(models.Model):
+class AdvantageItem(ExchangeSafeMixin, models.Model):
     class Audience(models.TextChoices):
         CITIZENS = 'citizens', 'Городянам'
         GUESTS = 'guests', 'Гостям міста'
@@ -399,7 +417,9 @@ class CitiesPage(ThemeFieldsMixin, SingletonModel):
     title = models.CharField('Заголовок', max_length=120, default='Міста мережі')
     intro = models.TextField('Вступний текст', blank=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
 
     class Meta:
         verbose_name = 'Сторінка міст'
@@ -414,7 +434,9 @@ class FaqPage(FaqPageCopy, ThemeFieldsMixin, SingletonModel):
     title = models.CharField('Заголовок', max_length=120, default='Відповіді на')
     intro = models.TextField('Вступний текст', blank=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
 
     class Meta:
         verbose_name = 'Сторінка питань і відповідей'
@@ -424,7 +446,7 @@ class FaqPage(FaqPageCopy, ThemeFieldsMixin, SingletonModel):
         return self.title
 
 
-class FaqItem(models.Model):
+class FaqItem(ExchangeSafeMixin, models.Model):
     home_page = models.ForeignKey(
         HomePage,
         on_delete=models.SET_NULL,
@@ -465,7 +487,9 @@ class BlogPage(ThemeFieldsMixin, SingletonModel):
         ),
     )
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
 
     class Meta:
         verbose_name = 'Сторінка Блог'
@@ -512,6 +536,7 @@ from src.content.cms_proxies import (  # noqa: E402,F401
     HomePromoSettings,
     HomeReviewsSettings,
     HomeSearchSettings,
+    HomeSeoSettings,
     HomeServicesSettings,
     HomeWhySettings,
 )

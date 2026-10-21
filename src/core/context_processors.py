@@ -1,6 +1,7 @@
 from src.content.models import Service
 from src.core.breadcrumbs import breadcrumbs_for_request
-from src.core.crypto_visibility import crypto_enabled, visible_queryset
+from src.core.crypto_visibility import visible_queryset
+from src.core.exchange_mode import exchange_only
 from src.core.models import SiteSettings
 from src.core.phones import phone_tel
 from src.core.theme import URL_THEME_MAP, theme_version
@@ -23,7 +24,7 @@ def site_chrome(request):
         'cities': getattr(request, 'cities', []),
         'city_branches': getattr(request, 'city_branches', []),
         'breadcrumb_items': breadcrumbs_for_request(request),
-        'crypto_enabled': crypto_enabled(),
+        'exchange_only': exchange_only(request),
         'footer_services': visible_queryset(
             Service.objects.filter(is_active=True),
             'title', 'slug', 'short_desc', 'body', 'seo_title', 'seo_description',

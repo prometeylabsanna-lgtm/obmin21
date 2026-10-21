@@ -1,7 +1,5 @@
 import re
 
-from src.core.models import SiteSettings
-
 _STEMS = (
     'крипт',
     'krypto',
@@ -26,8 +24,10 @@ _TICKER = re.compile(
 _LI = re.compile(r'<li\b[^>]*>.*?</li>', re.IGNORECASE | re.DOTALL)
 
 
-def crypto_enabled():
-    return bool(SiteSettings.load().crypto_enabled)
+def _show_crypto():
+    from src.core.exchange_mode import exchange_only
+
+    return not exchange_only()
 
 
 def mentions_crypto(text):
@@ -53,7 +53,7 @@ def pair_is_crypto(pair):
 
 
 def visible_queryset(qs, *fields):
-    if crypto_enabled():
+    if _show_crypto():
         return qs
     kept = []
     for obj in qs:
@@ -69,7 +69,7 @@ def visible_queryset(qs, *fields):
 
 
 def strip_crypto_items(html):
-    if crypto_enabled() or not html:
+    if _show_crypto() or not html:
         return html
 
     def _drop(match):

@@ -2,8 +2,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 
+from src.core.exchange_mode import ExchangeSafeMixin
 
-class Review(models.Model):
+
+class Review(ExchangeSafeMixin, models.Model):
     name = models.CharField("Ім'я", max_length=120)
     text = models.TextField('Текст')
     city_name = models.CharField('Місто (текст)', max_length=80, blank=True)

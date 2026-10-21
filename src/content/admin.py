@@ -7,6 +7,7 @@ from src.content.cms_proxies import (
     HomePromoSettings,
     HomeReviewsSettings,
     HomeSearchSettings,
+    HomeSeoSettings,
     HomeServicesSettings,
     HomeWhySettings,
 )
@@ -192,6 +193,7 @@ class HomeArticlesAdmin(HomeSectionAdmin):
         'articles_title',
         'articles_title_accent',
         'articles_lead',
+        'articles_lead_mode',
     )
     content_fieldsets = (
         ('Контент', {
@@ -205,6 +207,7 @@ class HomeArticlesAdmin(HomeSectionAdmin):
                 'articles_title',
                 'articles_title_accent',
                 'articles_lead',
+                'articles_lead_mode',
             ),
         }),
     )
@@ -231,6 +234,24 @@ class HomeLookAdmin(HomeSectionAdmin):
 admin.site.register(HomeSearchSettings, HomeLookAdmin)
 
 
+class HomeSeoAdmin(HomeSectionAdmin):
+    rich_fields = frozenset({'seo_block_body', 'seo_block_body_mode'})
+    content_fields = (
+        'seo_title',
+        'seo_title_mode',
+        'seo_description',
+        'seo_description_mode',
+        'seo_block_title',
+        'seo_block_title_mode',
+        'seo_block_body',
+        'seo_block_body_mode',
+    )
+    style_fields = ()
+
+
+admin.site.register(HomeSeoSettings, HomeSeoAdmin)
+
+
 class RatesPageAdmin(SingletonUnfoldAdmin):
     content_fieldsets = (
         ('Контент', {
@@ -239,7 +260,14 @@ class RatesPageAdmin(SingletonUnfoldAdmin):
                 'Тут лише заголовки й текст над таблицею. '
                 'Валютні пари та таблиця курсів — пункти нижче в цьому розділі.'
             ),
-            'fields': ('title', 'intro', 'seo_title', 'seo_description'),
+            'fields': (
+                'title',
+                'intro',
+                'seo_title',
+                'seo_title_mode',
+                'seo_description',
+                'seo_description_mode',
+            ),
         }),
     )
     rich_fields = frozenset()
@@ -261,7 +289,9 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
             'fields': (
                 'title',
                 'seo_title',
+                'seo_title_mode',
                 'seo_description',
+                'seo_description_mode',
                 'hero_kicker',
                 'hero_title',
                 'hero_title_accent',
@@ -280,6 +310,7 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
                 'stats_title_accent',
                 'stat_1_title',
                 'stat_1_text',
+                'stat_1_text_mode',
                 'stat_2_title',
                 'stat_2_text',
                 'stat_3_title',
@@ -297,6 +328,7 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
                 'why_banner',
                 'color_why_banner',
                 'why_coins',
+                'why_coins_mode',
                 'why_banner_title',
                 'why_banner_accent',
                 'why_banner_text',
@@ -318,7 +350,9 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
                 'cmp_title',
                 'cmp_title_accent',
                 'cmp_us_html',
+                'cmp_us_html_mode',
                 'cmp_them_html',
+                'cmp_them_html_mode',
                 'cmp_btn',
             ),
         }),
@@ -332,7 +366,13 @@ _register_page(
     (),
     (
         ('Пошук', {
-            'fields': ('title', 'seo_title', 'seo_description'),
+            'fields': (
+                'title',
+                'seo_title',
+                'seo_title_mode',
+                'seo_description',
+                'seo_description_mode',
+            ),
         }),
         ('Банер сторінки', {
             'fields': (
@@ -340,6 +380,7 @@ _register_page(
                 'hero_title',
                 'hero_title_accent',
                 'hero_text',
+                'intro_mode',
             ),
         }),
     ),
@@ -365,7 +406,14 @@ _register_page(
         'seo_description',
     ),
 )
-_register_page(CitiesPage, ('title', 'intro', 'seo_title', 'seo_description'))
+_register_page(CitiesPage, (
+    'title',
+    'intro',
+    'seo_title',
+    'seo_title_mode',
+    'seo_description',
+    'seo_description_mode',
+))
 _register_page(
     FaqPage,
     (
@@ -394,7 +442,9 @@ _register_page(
                     'title_accent',
                     'lead',
                     'seo_title',
+                    'seo_title_mode',
                     'seo_description',
+                    'seo_description_mode',
                 ),
             }),
             ('Підказка внизу', {
