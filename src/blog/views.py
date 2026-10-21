@@ -2,10 +2,10 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
 from src.blog.models import Category, Post
-from src.blog.selectors import get_published_posts, visible_categories
+from src.blog.selectors import category_is_public, get_published_posts, visible_categories
 from src.content.models import BlogPage
 from src.core.breadcrumbs import safe_reverse, trail
-from src.core.exchange_mode import raise_hidden
+from src.core.exchange_mode import exchange_only, raise_hidden
 
 
 def _related_posts(post):
@@ -44,8 +44,10 @@ def post_list(request, category_slug=None):
             slug=category_slug,
             show_in_filter=True,
         )
-        if not qs.filter(category=category).exists():
-            raise_hidden()
+        if not category_is_public(category, qs):
+            if exchange_only():
+                raise_hidden()
+            raise Http404
         qs = qs.filter(category=category)
     try:
         limit = int(request.GET.get('limit', 6))
@@ -84,11 +86,12 @@ def post_list(request, category_slug=None):
 
 
 def post_detail(request, slug):
-    post = Post.objects.filter(slug=slug, status=Post.Status.PUBLISHED).first()
+    published = Post.objects.filter(slug=slug, status=Post.Status.PUBLISHED)
+    post = published.visible().first()
     if post is None:
+        if exchange_only() and published.exists():
+            raise_hidden()
         raise Http404
-    if not Post.objects.visible().filter(pk=post.pk).exists():
-        raise_hidden()
     crumb = post.title
     layout = post.article_layout()
     if layout.get('h1b'):

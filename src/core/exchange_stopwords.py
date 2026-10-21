@@ -1,6 +1,7 @@
-"""Стоп-слова для майбутнього автотесту й попередження в адмінці.
+"""Стоп-слова режиму «Лише обмін».
 
-Публічний сайт їх не застосовує: видимість запису задає поле exchange_safe.
+Видимість запису задає поле exchange_safe. У рубрики блогу такого поля немає:
+у режимі її ховаємо, якщо назва або код містить одне з цих слів.
 """
 
 STOP_WORDS = (
@@ -34,3 +35,17 @@ STOP_WORDS = (
     'зношен',
     'електронн валют',
 )
+
+
+def matches_stop_words(*values):
+    parts = []
+    for value in values:
+        if value is None:
+            continue
+        text = str(value).strip()
+        if text:
+            parts.append(text.casefold())
+    if not parts:
+        return False
+    blob = '\n'.join(parts)
+    return any(word.casefold() in blob for word in STOP_WORDS)
