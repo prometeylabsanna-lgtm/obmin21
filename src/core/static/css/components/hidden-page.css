@@ -1,0 +1,67 @@
+.hidden-page {
+  padding: 28px 0 8px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hidden-page__title {
+  margin: 0;
+  max-width: 14em;
+  font-size: clamp(28px, 6vw, 48px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.4px;
+}
+
+.hidden-page__lead {
+  margin: 16px 0 0;
+  max-width: 36rem;
+  color: var(--color-text-muted);
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.hidden-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.hidden-page__link {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 767px) {
+  .hidden-page {
+    padding-top: 16px;
+  }
+
+  .hidden-page__lead {
+    font-size: 16px;
+  }
+
+  .hidden-page__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hidden-page__link {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hidden-page__title {
+    max-width: 16em;
+    font-size: 40px;
+  }
+
+  .hidden-page__actions {
+    gap: 16px;
+  }
+}

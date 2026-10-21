@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Цей матеріал тимчасово недоступний · {{ site_settings.site_name }}{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/components/hidden-page.css' %}">
+{% endblock %}
+{% block content %}
+<section class="hidden-page" data-qa="hidden-page">
+  <h1 class="hidden-page__title">Цей матеріал тимчасово недоступний</h1>
+  <p class="hidden-page__lead">Зараз цю сторінку приховано. Курси обміну та головна сторінка працюють.</p>
+  <div class="hidden-page__actions">
+    <a class="btn btn--accent hidden-page__link" href="{% url 'rates:rates_page' %}">Курси</a>
+    <a class="btn btn--ghost hidden-page__link" href="{% url 'core:home' %}">На головну</a>
+  </div>
+</section>
+{% endblock %}
