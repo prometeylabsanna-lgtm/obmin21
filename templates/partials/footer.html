@@ -1,4 +1,5 @@
-{% load static %}
+{% load static exchange_mode %}
+{% is_exchange_only as eo %}
 <footer class="site-footer" data-qa="footer" data-theme="footer">
   <div class="site-footer__inner">
     <div class="site-footer__top">
@@ -15,14 +16,9 @@
           <div class="site-footer__heading">Послуги</div>
           <div class="site-footer__links">
             {% for svc in footer_services %}
+            {% if not eo or svc.exchange_safe %}
             <a href="{% url 'content:services' %}#svc-{{ svc.slug }}">{{ svc.title|upper }}</a>
-            {% empty %}
-            <a href="{% url 'content:services' %}#svc-1">ОБМІН ВАЛЮТ</a>
-            <a href="{% url 'content:services' %}#svc-2">ГРОШОВІ ПЕРЕКАЗИ</a>
-            <a href="{% url 'content:services' %}#svc-3">КРИПТОВАЛЮТА</a>
-            <a href="{% url 'content:services' %}#svc-4">ІНВЕСТИЦІЙНЕ ЗОЛОТО</a>
-            <a href="{% url 'content:services' %}#svc-5">ОПТОВИЙ ОБМІН</a>
-            <a href="{% url 'content:services' %}#svc-6">ЗАМІНА ЗНОШЕНИХ КУПЮР</a>
+            {% endif %}
             {% endfor %}
           </div>
         </div>
