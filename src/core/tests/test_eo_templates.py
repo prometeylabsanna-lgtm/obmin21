@@ -119,3 +119,18 @@ class ExchangeOnlyChromeTemplateTests(TestCase):
         self.assertContains(response, '>Контакти')
         self.assertContains(response, 'ВІДГУКИ')
         self.assertContains(response, 'ПОЛІТИКА КОНФІДЕНЦІЙНОСТІ')
+
+    def test_mode_on_without_visible_services_has_no_fallback_links(self):
+        self._set_mode(True)
+        Service.objects.update(exchange_safe=False)
+        response = self._page()
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        for token in _FORBIDDEN:
+            self.assertNotIn(token, html)
+        lowered = html.lower()
+        for token in ('крипт', 'золот', 'переказ', 'оптов', 'зношен'):
+            self.assertNotIn(token, lowered)
+        footer = html[html.index('<footer'):html.index('</footer>')]
+        self.assertNotIn('#svc-', footer)
+        self.assertNotIn('display:none', ''.join(lowered.split()))
