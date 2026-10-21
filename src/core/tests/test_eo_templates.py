@@ -1,9 +1,11 @@
 import os
 import re
+from datetime import timedelta
 
 from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from src.blog.models import Category, Post
 from src.content.models import AdvantagesPage, FaqItem, HomePage, Service, ServicesPage
@@ -590,3 +592,180 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         self.assertNotIn(_BANNER_TEXT, hero)
         self.assertIn('у Львові', hero)
         _assert_clean(self, hero, 'hero-empty')
+
+
+_SEO_HIDDEN_SERVICES = (
+    ('Грошові перекази', 'groshovi-perekazy', 'Переказ SWIFT за кордон'),
+    ('Криптовалюта', 'kryptovalyuta', 'Картка партнера'),
+    ('Інвестиційне золото', 'investytsiine-zoloto', 'Зливки'),
+    ('Оптовий обмін', 'optovyi-obmin', 'Курс для великої суми'),
+    ('Заміна зношених купюр', 'zamina-znoshenykh-kupiur', 'Старі банкноти'),
+)
+_SAFE_POST_SLUG = 'kurs-u-kasi'
+_SAFE_POST_TITLE = 'Курс долара у касі'
+_HIDDEN_POST_SLUG = 'perekaz-swift'
+_HIDDEN_POST_TITLE = 'Міжнародні перекази SWIFT'
+_HERO_TRANSFER = 'перекази та інвестиційне золото'
+_BLOCK_TRANSFER = 'Міжнародні перекази у 100+ країн'
+
+
+def _assert_no_transfer_words(test, html, label):
+    lowered = html.lower()
+    test.assertNotIn('переказ', lowered, label)
+    found = re.search(
+        r'(?<![0-9a-zа-яіїєґ])swift(?![0-9a-zа-яіїєґ])',
+        lowered,
+    )
+    test.assertIsNone(found, label)
+
+
+class ExchangeOnlySeoLinksTests(TestCase):
+    def setUp(self):
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
+        cache.clear()
+        SiteSettings.load()
+        page = ServicesPage.load()
+        page.seo_title = 'Послуги обміну валют'
+        page.seo_description = 'Готівковий обмін долара та євро у відділеннях.'
+        page.save()
+        Service.objects.create(
+            title='Обмін валют',
+            slug='obmin-valyut',
+            short_desc='Готівковий обмін долара та євро у відділенні',
+            exchange_safe=True,
+            show_on_home=True,
+            sort_order=1,
+        )
+        for index, (title, slug, short_desc) in enumerate(_SEO_HIDDEN_SERVICES, start=2):
+            Service.objects.create(
+                title=title,
+                slug=slug,
+                short_desc=short_desc,
+                exchange_safe=False,
+                show_on_home=True,
+                sort_order=index,
+            )
+        rates = Category.objects.create(name='Курси', slug='kursy-gotivky', sort_order=1)
+        transfers = Category.objects.create(name='Перекази', slug='perekazy', sort_order=2)
+        now = timezone.now()
+        self.safe_post = Post.objects.create(
+            category=rates,
+            title=_SAFE_POST_TITLE,
+            slug=_SAFE_POST_SLUG,
+            excerpt='Як зафіксувати курс долара.',
+            body='Фіксація курсу на тридцять хвилин.',
+            status=Post.Status.PUBLISHED,
+            exchange_safe=True,
+            published_at=now - timedelta(days=1),
+        )
+        hidden = Post.objects.create(
+            category=transfers,
+            title=_HIDDEN_POST_TITLE,
+            slug=_HIDDEN_POST_SLUG,
+            excerpt='Умови переказу за кордон.',
+            body='Текст про переказ SWIFT.',
+            status=Post.Status.PUBLISHED,
+            exchange_safe=False,
+            published_at=now,
+        )
+        self.safe_post.related_posts.add(hidden)
+
+    def tearDown(self):
+        for key, value in self._saved_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        cache.clear()
+
+    def _set_mode(self, enabled):
+        SiteSettings.objects.filter(pk=1).update(exchange_only=enabled)
+        cache.clear()
+
+    def _pages(self):
+        pages = {
+            'home': self.client.get(reverse('core:home')),
+            'services': self.client.get(reverse('content:services')),
+            'blog': self.client.get(reverse('blog:post_list')),
+            'post': self.client.get(
+                reverse('blog:post_detail', kwargs={'slug': _SAFE_POST_SLUG}),
+            ),
+        }
+        html = {}
+        for label, response in pages.items():
+            self.assertEqual(response.status_code, 200, label)
+            html[label] = response.content.decode()
+        return html
+
+    def _hidden_post_url(self):
+        return reverse('blog:post_detail', kwargs={'slug': _HIDDEN_POST_SLUG})
+
+    def _category_url(self):
+        return reverse('blog:category', kwargs={'category_slug': 'perekazy'})
+
+    def _assert_service_hrefs(self, html, label, present):
+        for _title, slug, _desc in _SEO_HIDDEN_SERVICES:
+            needle = f'#svc-{slug}'
+            if present:
+                self.assertIn(needle, html, label)
+            else:
+                self.assertNotIn(needle, html, label)
+
+    def test_mode_off_keeps_hidden_service_links_and_transfer_copy(self):
+        self._set_mode(False)
+        pages = self._pages()
+        hidden_post = self._hidden_post_url()
+        for label, html in pages.items():
+            self._assert_service_hrefs(html, label, True)
+            self.assertIn(hidden_post, html, label)
+            self.assertIn('переказ', html.lower(), label)
+            self.assertIn('swift', html.lower(), label)
+        home = pages['home']
+        self.assertIn('SWIFT-перекази', home)
+        self.assertIn('Грошові перекази', home)
+        self.assertIn('promo-swift.png', home)
+        self.assertIn('aria-label="SWIFT"', home)
+        self.assertIn('aria-label="Перекази"', home)
+        self.assertIn('#svc-obmin-valyut', home)
+        services = pages['services']
+        self.assertIn(_HERO_TRANSFER, services)
+        self.assertIn('svc-hero__lead', services)
+        self.assertIn(_BLOCK_TRANSFER, services)
+        self.assertIn('#svc-obmin-valyut', services)
+        blog = pages['blog']
+        self.assertIn('Перекази', blog)
+        self.assertIn(self._category_url(), blog)
+        self.assertIn(_HIDDEN_POST_TITLE, blog)
+        self.assertIn(_SAFE_POST_TITLE, blog)
+        self.assertIn('Курси', blog)
+        post = pages['post']
+        self.assertIn(_HIDDEN_POST_TITLE, post)
+        self.assertIn(_SAFE_POST_TITLE, post)
+        self.assertIn('#svc-obmin-valyut', post)
+
+    def test_mode_on_omits_hidden_service_links_and_transfer_words(self):
+        self._set_mode(True)
+        pages = self._pages()
+        hidden_post = self._hidden_post_url()
+        category = self._category_url()
+        for label, html in pages.items():
+            self._assert_service_hrefs(html, label, False)
+            self.assertNotIn(hidden_post, html, label)
+            self.assertNotIn(category, html, label)
+            self.assertNotIn(_HIDDEN_POST_TITLE, html, label)
+            self.assertNotIn('Перекази', html, label)
+            self.assertNotIn('promo-swift.png', html, label)
+            self.assertNotIn('SWIFT-перекази', html, label)
+            self.assertNotIn(_BLOCK_TRANSFER, html, label)
+            self.assertNotIn(_HERO_TRANSFER, html, label)
+            self.assertIn('#svc-obmin-valyut', html, label)
+            self.assertIn(_SAFE_POST_TITLE, html, label)
+            _assert_no_transfer_words(self, html, label)
+            self.assertNotIn('display:none', ''.join(html.lower().split()), label)
+        self.assertIn('USD та EUR', pages['home'])
+        self.assertIn('bills.png', pages['home'])
+        self.assertNotIn('svc-hero__lead', pages['services'])
+        self.assertIn('Курси', pages['blog'])
+        self.assertIn('Купуйте та продавайте понад 15 валют', pages['services'])

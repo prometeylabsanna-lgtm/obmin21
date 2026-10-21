@@ -270,7 +270,7 @@
     </div>
   </div>
   <div class="articles-track" data-slider="articles">
-    {% for post in news_posts %}
+    {% for post in news_posts %}{% if not eo or post.exchange_safe %}
     <article class="article-slide">
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
         <img src="{{ post.image_url }}" alt="{{ post.title }}" width="330" height="194" decoding="async">
@@ -280,7 +280,7 @@
       <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати повністю
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </a>
-    </article>
+    </article>{% endif %}
     {% empty %}
     <p class="u-muted">Статті зʼявляться незабаром</p>
     {% endfor %}
