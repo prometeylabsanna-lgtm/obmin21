@@ -8,6 +8,7 @@ from django.core.cache import cache
 from src.core.tests.eo_realdb import (
     VISIBLE_POST_SLUGS,
     RealDataTestCase,
+    classify_eur_usd,
     copy_real_db,
     exchange_paths,
     prefixed_paths,
@@ -45,6 +46,7 @@ class ExchangePagesStayTests(RealDataTestCase):
             '/usd-uah/',
             '/eur-uah/',
             '/pln-uah/',
+            '/eur-usd/',
             '/blog/kategoriya/kurs-valyut/',
             '/blog/kategoriya/zaoshchadzhennya/',
             '/blog/kategoriya/porady/',
@@ -54,6 +56,10 @@ class ExchangePagesStayTests(RealDataTestCase):
             self.assertIn(f'/blog/{slug}/', paths)
         self.assertNotIn('/blog/kategoriya/zoloto/', paths)
         self.assertNotIn('/btc-usdt/', paths)
+        self.assertNotIn('/btc-uah/', paths)
+        _kind, why = classify_eur_usd()
+        print(why)
+        self.assertEqual(_kind, 'exchange', why)
 
     def test_exchange_pages_ok_in_mode(self):
         self._assert_ok(True)

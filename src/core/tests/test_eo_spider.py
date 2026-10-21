@@ -10,12 +10,14 @@ from django.core.cache import cache
 from django.utils import translation
 
 from src.core.tests.eo_realdb import (
-    STOP_WORDS,
     RealDataTestCase,
+    classify_eur_usd,
     copy_real_db,
     discover_public_paths,
     language_prefixes,
+    prefix_path,
     restore_test_db,
+    spider_extra_paths,
 )
 
 SPIDER_URLS_FILE = Path('/tmp/obmin21_spider_urls.txt')
@@ -159,7 +161,20 @@ def _scan_kind(content_type):
     return ''
 
 
-def stop_word_hits(url, response):
+def compile_stop_words(words):
+    parts = []
+    for raw in words:
+        phrase = str(raw).strip()
+        if not phrase:
+            continue
+        body = r'\s+'.join(re.escape(word) for word in phrase.split())
+        parts.append(rf'(?<!\w){body}\w*')
+    if not parts:
+        return re.compile(r'(?!)', re.IGNORECASE)
+    return re.compile('|'.join(parts), re.IGNORECASE)
+
+
+def stop_word_hits(url, response, pattern):
     if response.status_code != 200:
         return []
     kind = _scan_kind(response.get('Content-Type', ''))
@@ -179,7 +194,7 @@ def stop_word_hits(url, response):
         compact = re.sub(r'\s+', ' ', text or '').strip()
         if not compact:
             continue
-        for match in STOP_WORDS.finditer(compact):
+        for match in pattern.finditer(compact):
             word = match.group(0)
             key = (url, place, word.casefold())
             if key in seen:
@@ -189,8 +204,29 @@ def stop_word_hits(url, response):
     return found
 
 
+def _crawl_urls(client, prefix):
+    urls = list(discover_public_paths(client, prefix))
+    seen = set(urls)
+    for path in spider_extra_paths():
+        url = prefix_path(prefix, path)
+        if url in seen:
+            continue
+        seen.add(url)
+        urls.append(url)
+    return urls
+
+
 class ExchangeOnlySpiderTests(RealDataTestCase):
     def test_public_pages_hide_stop_words(self):
+        _kind, why = classify_eur_usd()
+        print(why)
+        try:
+            from src.core.exchange_stopwords import STOP_WORDS
+        except ImportError:
+            STOP_WORDS = None
+        if STOP_WORDS is None:
+            self.fail('src.core.exchange_stopwords відсутній (гілка eo/filter не злита)')
+        pattern = compile_stop_words(STOP_WORDS)
         report = []
         violations = []
         env = {'EXCHANGE_ONLY_MODE': '1', 'HIDDEN_PAGE_STATUS': '503'}
@@ -201,13 +237,13 @@ class ExchangeOnlySpiderTests(RealDataTestCase):
                 for code, prefix in language_prefixes():
                     report.append(f'[{code}]')
                     with translation.override(code):
-                        urls = discover_public_paths(self.client, prefix)
+                        urls = _crawl_urls(self.client, prefix)
                         for url in urls:
                             response = self.client.get(url, follow=True)
                             report.append(f'{response.status_code} {url}')
                             if response.status_code in (404, 503):
                                 continue
-                            violations.extend(stop_word_hits(url, response))
+                            violations.extend(stop_word_hits(url, response, pattern))
                     report.append('')
         finally:
             text = '\n'.join(report).rstrip() + '\n'

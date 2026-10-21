@@ -20,20 +20,6 @@ from django.test import TestCase
 from django.urls import get_resolver
 from django.urls.resolvers import LocalePrefixPattern, URLResolver
 
-STOP_WORDS = re.compile(
-    r'крипт\w*'
-    r'|\bBTC\b'
-    r'|\bETH\b'
-    r'|\bUSDT\b'
-    r'|біткоїн\w*'
-    r'|\bSWIFT\b'
-    r'|переказ\w*'
-    r'|золот\w*'
-    r'|оптов\w*'
-    r'|зношен\w*',
-    re.IGNORECASE,
-)
-
 HIDDEN_POST_SLUGS = (
     'kryptovalyuta-btc-usdt',
     'investytsiyne-zoloto',
@@ -50,6 +36,8 @@ VISIBLE_POST_SLUGS = (
 )
 FIAT_CODES = ('USD', 'EUR', 'PLN')
 CRYPTO_CODES = frozenset({'BTC', 'ETH', 'USDT'})
+EXPLICIT_HIDDEN_PAIR_SLUGS = ('btc-uah',)
+CLASSIFIED_PAIR_SLUG = 'eur-usd'
 EXCHANGE_STATIC_PATHS = (
     '/',
     '/kursy/',
@@ -334,8 +322,72 @@ def _code_tokens(code):
 
 
 def post_is_exchange_visible(post):
-    blob = ' '.join((post.title or '', post.slug or '', post.excerpt or ''))
-    return STOP_WORDS.search(blob) is None
+    return (post.slug or '') not in HIDDEN_POST_SLUGS
+
+
+def _unique(paths):
+    result = []
+    seen = set()
+    for path in paths:
+        if path in seen:
+            continue
+        seen.add(path)
+        result.append(path)
+    return result
+
+
+def _pair_by_slug(slug):
+    from src.rates.models import CurrencyPair
+
+    return CurrencyPair.objects.filter(slug=slug).first()
+
+
+def classify_eur_usd():
+    """Фіат (не pair_is_crypto) — обмінна; крипто — прихована."""
+    from src.core.crypto_visibility import pair_is_crypto
+
+    pair = _pair_by_slug(CLASSIFIED_PAIR_SLUG)
+    if pair is None:
+        return 'missing', 'eur-usd: немає CurrencyPair у базі'
+    crypto = pair_is_crypto(pair)
+    flag = (pair.flag_code or '').upper()
+    safe = bool(pair.exchange_safe)
+    active = bool(pair.is_active)
+    if crypto:
+        return 'hidden', (
+            'eur-usd: прихована. '
+            f'pair_is_crypto=True, flag_code={flag}, code={pair.code}, '
+            f'name={pair.name}, exchange_safe={safe}, is_active={active}'
+        )
+    return 'exchange', (
+        'eur-usd: обмінна (фіат). '
+        f'pair_is_crypto=False: flag_code={flag} не крипто-тикер; '
+        f'code={pair.code}, name={pair.name}, slug={pair.slug}; '
+        'intro і seo без крипто-стемів. '
+        f'exchange_safe={safe} клас не змінює: pair_detail і get_active_pairs '
+        'ховають пару лише через pair_is_crypto, не через ExchangeVisibleQuerySet. '
+        f'is_active={active}.'
+    )
+
+
+def explicit_hidden_pair_paths():
+    paths = [f'/{slug}/' for slug in EXPLICIT_HIDDEN_PAIR_SLUGS]
+    kind, _why = classify_eur_usd()
+    if kind == 'hidden':
+        paths.append(f'/{CLASSIFIED_PAIR_SLUG}/')
+    return paths
+
+
+def explicit_exchange_pair_paths():
+    kind, _why = classify_eur_usd()
+    if kind == 'exchange':
+        return [f'/{CLASSIFIED_PAIR_SLUG}/']
+    return []
+
+
+def spider_extra_paths():
+    """Фіатна пара поза sitemap: павук має зайти на неї сам."""
+    return explicit_exchange_pair_paths()
 
 
 def _published_posts():
@@ -405,13 +457,20 @@ def _rubric_groups():
 def hidden_paths():
     posts = [f'/blog/{slug}/' for slug in HIDDEN_POST_SLUGS]
     rubrics, _shown = _rubric_groups()
-    return posts + crypto_pair_paths() + rubrics
+    return _unique(posts + crypto_pair_paths() + rubrics + explicit_hidden_pair_paths())
 
 
 def exchange_paths():
     _hidden, rubrics = _rubric_groups()
     posts = [f'/blog/{slug}/' for slug in VISIBLE_POST_SLUGS]
-    return list(EXCHANGE_STATIC_PATHS) + city_paths() + fiat_pair_paths() + posts + rubrics
+    return _unique(
+        list(EXCHANGE_STATIC_PATHS)
+        + city_paths()
+        + fiat_pair_paths()
+        + explicit_exchange_pair_paths()
+        + posts
+        + rubrics
+    )
 
 
 def retry_after_seconds():

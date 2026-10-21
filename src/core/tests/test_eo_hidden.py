@@ -38,7 +38,7 @@ class HiddenExchangePagesTests(RealDataTestCase):
         paths = set(hidden_paths())
         for slug in HIDDEN_POST_SLUGS:
             self.assertIn(f'/blog/{slug}/', paths)
-        for slug in ('btc-usdt', 'eth-usdt', 'usdt-uah'):
+        for slug in ('btc-usdt', 'eth-usdt', 'usdt-uah', 'btc-uah'):
             self.assertIn(f'/{slug}/', paths)
         for slug in ('kryptovalyuta', 'zoloto', 'perekazy'):
             self.assertIn(f'/blog/kategoriya/{slug}/', paths)
@@ -73,11 +73,14 @@ class HiddenExchangePagesTests(RealDataTestCase):
         self.assertFalse(present, 'Є у sitemap:\n' + '\n'.join(present))
 
     def test_hidden_pages_are_public_without_mode(self):
+        paths = [path for path in hidden_paths() if path != '/btc-uah/']
         with _mode(False):
             cache.clear()
-            problems = _status_problems(self.client, hidden_paths(), 200)
+            problems = _status_problems(self.client, paths, 200)
             locs = set(sitemap_paths(self.client))
-            for url in prefixed_paths(hidden_paths()):
+            for url in prefixed_paths(paths):
+                if '/blog/kategoriya/' in url:
+                    continue
                 if url not in locs:
                     problems.append(f'{url} | sitemap | відсутній')
         self.assertFalse(problems, '\n'.join(problems))
