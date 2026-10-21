@@ -68,5 +68,30 @@ def fill_article_layouts(apps, schema_editor):
         Post.objects.filter(pk=row.pk).update(layout=copy.deepcopy(payload))
 
 
+SERVICES_PAGE_MODE_COPY = {
+    'hero_text_mode': (
+        'Обмін готівкової валюти за актуальним курсом із фіксацією онлайн.'
+    ),
+    'seo_description_mode': (
+        'Обмін долара, євро та інших готівкових валют у відділеннях Обмін21. '
+        'Курс можна зафіксувати онлайн.'
+    ),
+}
+
+
+def fill_services_page_mode(apps, schema_editor):
+    """Заповнює порожні тексти режиму сторінки послуг. Повтор не перезаписує правки."""
+    ServicesPage = apps.get_model('content', 'ServicesPage')
+    page = ServicesPage.objects.filter(pk=1).first()
+    if page is None:
+        return
+    updates = {}
+    for name, text in SERVICES_PAGE_MODE_COPY.items():
+        if _blank(getattr(page, name, '')):
+            updates[name] = text
+    if updates:
+        ServicesPage.objects.filter(pk=page.pk).update(**updates)
+
+
 def noop_reverse(apps, schema_editor):
     return None

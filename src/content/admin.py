@@ -382,6 +382,7 @@ _register_page(
                 'hero_title',
                 'hero_title_accent',
                 'hero_text',
+                'hero_text_mode',
                 'intro_mode',
             ),
         }),

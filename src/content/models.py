@@ -190,6 +190,7 @@ class ServicesPage(ThemeFieldsMixin, SingletonModel):
         max_length=320,
         default='Обмін валют, криптовалюти, перекази та інвестиційне золото з фіксацією курсу онлайн.',
     )
+    hero_text_mode = mode_char('Текст банера для режиму «Лише обмін»', 320)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
     seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
