@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.utils.html import strip_tags
 from django.views.decorators.http import require_GET
@@ -161,3 +161,7 @@ def theme_css(request):
 
 def page_not_found(request, exception):
     return render(request, 'core/404.html', status=404)
+
+
+def tinymce_disabled(request):
+    return HttpResponseNotFound()
