@@ -190,7 +190,8 @@
   });
 
   document.body.addEventListener('htmx:afterSwap', function (evt) {
-    if (evt.target && evt.target.id === 'city-chrome') {
+    if (!evt.target) return;
+    if (evt.target.id === 'city-chrome' || evt.target.id === 'home-branch') {
       initCitySelect(evt.target);
     }
   });

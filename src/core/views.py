@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.utils.html import strip_tags
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap as django_sitemap
@@ -124,6 +125,14 @@ def rates_partial(request):
         'boards': public_boards(),
         'hide_full_table_link': request.GET.get('hide_full') == '1',
         'home_rates_compact': home_compact,
+    })
+
+
+@require_GET
+@never_cache
+def home_branch(request):
+    return render(request, 'partials/home_branch.html', {
+        'page': HomePage.load(),
     })
 
 
