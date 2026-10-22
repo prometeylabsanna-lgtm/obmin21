@@ -1493,7 +1493,8 @@ class ExchangeOnlyAdvantagesTemplateTests(ExchangeTemplateCase):
     def test_mode_on_stat_text_comes_from_mode_field(self):
         page = AdvantagesPage.load()
         page.stat_1_text_mode = _STAT_MODE
-        page.save(update_fields=['stat_1_text_mode'])
+        page.why_lead_mode = 'Каса без комісії'
+        page.save(update_fields=['stat_1_text_mode', 'why_lead_mode'])
         self._set_mode(True)
         response = self._page()
         self.assertEqual(response.status_code, 200)
@@ -1507,7 +1508,8 @@ class ExchangeOnlyAdvantagesTemplateTests(ExchangeTemplateCase):
         self.assertNotIn('USDT', html)
         self.assertNotIn('Зношені', html)
         self.assertNotIn('coins.png', html)
-        self.assertIn(_WHY_LEAD, html)
+        self.assertIn('Каса без комісії', html)
+        self.assertNotIn(_WHY_LEAD, html)
 
     def test_mode_on_blank_stat_mode_omits_card(self):
         page = AdvantagesPage.load()
@@ -1519,7 +1521,7 @@ class ExchangeOnlyAdvantagesTemplateTests(ExchangeTemplateCase):
         self.assertNotIn('криптоактивів', html)
         self.assertNotIn(_STAT_1_TITLE, html)
         self.assertNotIn('Відділень в Україні', html)
-        self.assertIn(_WHY_LEAD, html)
+        self.assertNotIn(_WHY_LEAD, html)
 
     def test_mode_off_ignores_stat_and_coin_mode(self):
         page = AdvantagesPage.load()
