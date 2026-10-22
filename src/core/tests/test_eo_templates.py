@@ -1391,3 +1391,100 @@ class ExchangeOnlyServiceBlockModeTests(TestCase):
             self.assertNotIn('display:none', ''.join(on_html.lower().split()))
         finally:
             _clear_attrs(Service, modes)
+
+
+_STAT_MODE = 'Клієнти каси готівки'
+_WHY_LEAD = 'радять друзям'
+_COIN_MODE = 'advantages/safe-coins.jpg'
+
+
+class ExchangeOnlyAdvantagesTemplateTests(TestCase):
+    def setUp(self):
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
+        cache.clear()
+        SiteSettings.load()
+
+    def tearDown(self):
+        for key, value in self._saved_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        cache.clear()
+
+    def _set_mode(self, enabled):
+        SiteSettings.objects.filter(pk=1).update(exchange_only=enabled)
+        cache.clear()
+
+    def _page(self):
+        return self.client.get(reverse('content:advantages'))
+
+    def test_mode_off_keeps_stat_loop_cmp_and_coins(self):
+        self._set_mode(False)
+        response = self._page()
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        self.assertIn('криптоактивів', html)
+        self.assertIn('Відділень в Україні', html)
+        self.assertIn('Криптовалюта', html)
+        self.assertIn('USDT', html)
+        self.assertIn('coins.png', html)
+        self.assertIn(_WHY_LEAD, html)
+        self.assertIn('stats-section__num', html)
+
+    def test_mode_on_stat_text_comes_from_mode_field(self):
+        page = AdvantagesPage.load()
+        page.stat_1_text_mode = _STAT_MODE
+        page.save(update_fields=['stat_1_text_mode'])
+        self._set_mode(True)
+        response = self._page()
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        self.assertIn(_STAT_MODE, html)
+        self.assertIn('7K', html)
+        self.assertNotIn('криптоактивів', html)
+        self.assertNotIn('Постійних клієнтів', html)
+        self.assertNotIn('Відділень в Україні', html)
+        self.assertNotIn('Криптовалюта', html)
+        self.assertNotIn('USDT', html)
+        self.assertNotIn('Зношені', html)
+        self.assertNotIn('coins.png', html)
+        self.assertIn(_WHY_LEAD, html)
+        self.assertNotIn('display:none', ''.join(html.lower().split()))
+
+    def test_mode_on_blank_stat_mode_omits_card(self):
+        page = AdvantagesPage.load()
+        page.stat_1_text_mode = '   '
+        page.save(update_fields=['stat_1_text_mode'])
+        self._set_mode(True)
+        html = self._page().content.decode()
+        self.assertNotIn(_STAT_MODE, html)
+        self.assertNotIn('криптоактивів', html)
+        self.assertNotIn('7K', html)
+        self.assertNotIn('Відділень в Україні', html)
+        self.assertIn(_WHY_LEAD, html)
+
+    def test_mode_off_ignores_stat_and_coin_mode(self):
+        page = AdvantagesPage.load()
+        page.stat_1_text_mode = _STAT_MODE
+        page.why_coins_mode = _COIN_MODE
+        page.save(update_fields=['stat_1_text_mode', 'why_coins_mode'])
+        self._set_mode(False)
+        html = self._page().content.decode()
+        self.assertIn('криптоактивів', html)
+        self.assertIn('Відділень в Україні', html)
+        self.assertIn('coins.png', html)
+        self.assertNotIn(_STAT_MODE, html)
+        self.assertNotIn(_COIN_MODE, html)
+
+    def test_mode_on_why_coins_uses_mode_image(self):
+        page = AdvantagesPage.load()
+        page.why_coins_mode = _COIN_MODE
+        page.save(update_fields=['why_coins_mode'])
+        self._set_mode(True)
+        html = self._page().content.decode()
+        self.assertIn(_COIN_MODE, html)
+        self.assertIn('why-adv__coins', html)
+        self.assertNotIn('coins.png', html)

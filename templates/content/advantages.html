@@ -2,7 +2,7 @@
 {% load static content_format exchange_mode %}
 
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
-{% block content %}
+{% block content %}{% is_exchange_only as eo %}
 <section class="adv-hero">
   <div
     class="adv-hero__banner{% if page.hero_banner_src %} has-photo{% endif %}"
@@ -86,12 +86,43 @@
 <section class="stats-section stats-section--adv">
   <h2 class="stats-section__title">{{ page.stats_title }} <span class="u-accent">{{ page.stats_title_accent }}</span></h2>
   <div class="stats-section__grid">
+    {% if not eo %}
     {% for row in page.iter_stats %}
     <div class="stats-section__item">
       <div class="stats-section__num">{{ row.title }}</div>
       <p>{{ row.text }}</p>
     </div>
     {% endfor %}
+    {% else %}
+    {% mode_field page 'stat_1_text' as stat_text %}
+    {% if stat_text %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ page.stat_1_title }}</div>
+      <p>{{ stat_text }}</p>
+    </div>
+    {% endif %}
+    {% mode_field page 'stat_2_text' as stat_text %}
+    {% if stat_text %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ page.stat_2_title }}</div>
+      <p>{{ stat_text }}</p>
+    </div>
+    {% endif %}
+    {% mode_field page 'stat_3_text' as stat_text %}
+    {% if stat_text %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ page.stat_3_title }}</div>
+      <p>{{ stat_text }}</p>
+    </div>
+    {% endif %}
+    {% mode_field page 'stat_4_text' as stat_text %}
+    {% if stat_text %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ page.stat_4_title }}</div>
+      <p>{{ stat_text }}</p>
+    </div>
+    {% endif %}
+    {% endif %}
   </div>
 </section>
 
@@ -105,7 +136,7 @@
       class="why-adv__hero"
       style="background-color: {{ page.color_why_banner }};{% if page.why_banner_src %}background-image: url('{{ page.why_banner_src }}');background-size: cover;background-position: center;{% endif %}"
     >
-      <img class="why-adv__coins" src="{{ page.why_coins_src }}" alt="" decoding="async">
+      {% if eo %}{% if page.why_coins_mode %}<img class="why-adv__coins" src="{{ page.why_coins_mode.url }}" alt="" decoding="async">{% endif %}{% else %}<img class="why-adv__coins" src="{{ page.why_coins_src }}" alt="" decoding="async">{% endif %}
       <div class="why-adv__hero-copy">
         <h3 class="why-adv__hero-title">{{ page.why_banner_title }} <span class="u-accent">{{ page.why_banner_accent }}</span></h3>
         <p class="why-adv__hero-text">{{ page.why_banner_text }}</p>
