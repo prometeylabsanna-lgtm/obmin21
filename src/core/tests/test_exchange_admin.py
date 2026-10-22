@@ -11,7 +11,10 @@ from django.urls import reverse
 
 from src.blog.models import Category, Post
 from src.content.models import AdvantageItem, FaqItem, HomePage, HomeStat, Service
-from src.core.exchange_fields import EXCHANGE_SAFE_HELP
+from src.core.exchange_fields import (
+    EXCHANGE_SAFE_CURRENCY_HELP,
+    EXCHANGE_SAFE_HELP,
+)
 from src.core.exchange_mode import is_mode_forced_by_env
 from src.core.exchange_preview import (
     ENV_LOCK_NOTICE,
@@ -123,7 +126,20 @@ class ExchangeAdminTests(TestCase):
                 reverse(f'admin:{opts.app_label}_{opts.model_name}_change', args=[obj.pk]),
             )
             self.assertEqual(form.status_code, 200)
-            self.assertContains(form, EXCHANGE_SAFE_HELP)
+            currency_form = isinstance(obj, (Post, Review))
+            expected_help = (
+                EXCHANGE_SAFE_CURRENCY_HELP if currency_form else EXCHANGE_SAFE_HELP
+            )
+            self.assertContains(form, expected_help)
+            added = self.client.get(
+                reverse(f'admin:{opts.app_label}_{opts.model_name}_add'),
+            )
+            self.assertEqual(added.status_code, 200)
+            self.assertContains(added, 'name="exchange_safe"')
+            self.assertContains(added, expected_help)
+            if currency_form:
+                self.assertNotContains(form, EXCHANGE_SAFE_HELP)
+                self.assertNotContains(added, EXCHANGE_SAFE_HELP)
 
     def test_filter_limits_exchange_safe_rows(self):
         Service.objects.create(
