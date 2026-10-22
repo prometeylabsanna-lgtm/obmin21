@@ -183,6 +183,8 @@ UNFOLD = {
     },
 }
 
+TINYMCE_FILEBROWSER = False
+
 TINYMCE_DEFAULT_CONFIG = {
     'height': 360,
     'menubar': False,

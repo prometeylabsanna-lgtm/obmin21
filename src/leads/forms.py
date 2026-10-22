@@ -2,11 +2,14 @@ from decimal import Decimal
 
 from django import forms
 
+from src.core.exchange_mode import is_exchange_only
 from src.leads.models import ContactMessage, ExchangeRequest
 from src.leads.services import validate_phone
 from src.network.models import Branch
 from src.rates.models import CurrencyPair, RateBoard
 from src.rates.selectors import get_quote
+
+RETAIL_ONLY_BOARD_ERROR = 'У режимі «Лише обмін» доступна лише готівка'
 
 
 class ExchangeRequestForm(forms.ModelForm):
@@ -58,6 +61,22 @@ class ExchangeRequestForm(forms.ModelForm):
 
         self.fields['pair'].queryset = get_active_pairs()
         self.fields['board'].choices = RateBoard.choices
+        if is_exchange_only():
+            board_field = self.fields['board']
+            board_field.choices = [(RateBoard.RETAIL, 'Готівка')]
+
+            def validate_board(value):
+                if value in board_field.empty_values:
+                    if board_field.required:
+                        raise forms.ValidationError(
+                            board_field.error_messages['required'],
+                            code='required',
+                        )
+                    return
+                if str(value) != RateBoard.RETAIL:
+                    raise forms.ValidationError(RETAIL_ONLY_BOARD_ERROR)
+
+            board_field.validate = validate_board
         self.fields['rate_fixed'].required = False
         self.fields['amount_receive'].required = False
         self.fields['messenger'].required = False
@@ -83,6 +102,12 @@ class ExchangeRequestForm(forms.ModelForm):
         if value is None or value <= 0:
             raise forms.ValidationError('Вкажіть суму')
         return value
+
+    def clean_board(self):
+        board = self.cleaned_data.get('board') or RateBoard.RETAIL
+        if is_exchange_only() and board != RateBoard.RETAIL:
+            raise forms.ValidationError(RETAIL_ONLY_BOARD_ERROR)
+        return board
 
     def clean(self):
         cleaned = super().clean()

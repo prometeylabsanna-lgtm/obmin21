@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static content_format %}
+{% load static content_format exchange_mode %}
 
 {% block title %}{{ page.seo_title|default:site_settings.site_name }}{% endblock %}
 {% block content %}
@@ -228,7 +228,7 @@
 <section class="services-section" id="services" data-qa="section-services">
   <div class="services-section__head">
     <h2 class="services-section__title">{{ page.services_title }} <span class="u-accent">{{ page.services_title_accent }}</span></h2>
-    <p class="services-section__lead">{{ page.services_lead|hide_if_crypto }}</p>
+    {% mode_field page 'services_lead' as x %}{% if x %}<p class="services-section__lead">{{ x }}</p>{% endif %}
   </div>
   <div class="services-section__grid" data-slider="services">
     {% for svc in services %}
@@ -260,7 +260,7 @@
   <div class="slider-head">
     <div>
       <h2 class="slider-head__title">{{ page.articles_title }} <span class="u-accent">{{ page.articles_title_accent }}</span></h2>
-      <p class="articles-section__lead">{{ page.articles_lead|hide_if_crypto }}</p>
+      {% mode_field page 'articles_lead' as x %}{% if x %}<p class="articles-section__lead">{{ x }}</p>{% endif %}
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Попередній"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
