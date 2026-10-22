@@ -1,5 +1,5 @@
 .cmp-adv {
-  margin-top: 96px;
+  margin-top: calc(96px * var(--scale));
 }
 
 .cmp-adv__head {
@@ -7,41 +7,41 @@
 }
 
 .cmp-adv__title {
-  margin: 10px 0 0;
-  font-size: clamp(28px, 4vw, 55px);
+  margin: calc(10px * var(--scale)) 0 0;
+  font-size: clamp(calc(28px * var(--scale)), 4vw, calc(55px * var(--scale)));
   font-weight: 700;
   line-height: 1.1;
-  letter-spacing: -0.5px;
+  letter-spacing: calc(-0.5px * var(--scale));
   color: #052145;
 }
 
 .cmp-adv__grid {
-  margin-top: 40px;
+  margin-top: calc(40px * var(--scale));
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: calc(16px * var(--scale));
   align-items: stretch;
 }
 
 .cmp-adv__us {
   background: #052145;
-  border-radius: 12px;
-  padding: 24px 20px;
+  border-radius: calc(12px * var(--scale));
+  padding: calc(24px * var(--scale)) calc(20px * var(--scale));
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 50px rgba(5, 33, 69, 0.22);
+  box-shadow: 0 calc(20px * var(--scale)) calc(50px * var(--scale)) rgba(5, 33, 69, 0.22);
 }
 
 .cmp-adv__us-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding-bottom: 22px;
+  gap: calc(12px * var(--scale));
+  padding-bottom: calc(22px * var(--scale));
 }
 
 .cmp-adv__us-top img {
-  height: 40px;
+  height: calc(40px * var(--scale));
   width: auto;
   display: block;
 }
@@ -49,17 +49,17 @@
 .cmp-adv__badge {
   border: 1px solid var(--color-accent);
   color: var(--color-accent);
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 12px;
+  border-radius: calc(20px * var(--scale));
+  padding: calc(5px * var(--scale)) calc(12px * var(--scale));
+  font-size: calc(12px * var(--scale));
   white-space: nowrap;
 }
 
 .cmp-adv__them {
   background: #fff;
-  border-radius: 12px;
+  border-radius: calc(12px * var(--scale));
   border: 1px solid #eef0f3;
-  padding: 24px 20px;
+  padding: calc(24px * var(--scale)) calc(20px * var(--scale));
   display: flex;
   flex-direction: column;
 }
@@ -67,15 +67,15 @@
 .cmp-adv__them-top {
   display: flex;
   align-items: center;
-  min-height: 40px;
-  padding-bottom: 22px;
-  font-size: 20px;
+  min-height: calc(40px * var(--scale));
+  padding-bottom: calc(22px * var(--scale));
+  font-size: calc(20px * var(--scale));
   font-weight: 600;
   color: #8a909c;
 }
 
 .cmp-adv__list {
-  margin: 0 0 28px;
+  margin: 0 0 calc(28px * var(--scale));
   padding: 0;
   list-style: none;
 }
@@ -85,10 +85,10 @@
 }
 
 .cmp-adv__list li {
-  padding: 18px 0;
+  padding: calc(18px * var(--scale)) 0;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
-  gap: 14px;
+  gap: calc(14px * var(--scale));
   align-items: flex-start;
 }
 
@@ -100,8 +100,8 @@
 .cmp-adv__no {
   flex: none;
   margin-top: 2px;
-  width: 22px;
-  height: 22px;
+  width: calc(22px * var(--scale));
+  height: calc(22px * var(--scale));
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -118,7 +118,7 @@
 
 .cmp-adv__k {
   display: block;
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
   color: #c3cad2;
 }
 
@@ -128,8 +128,8 @@
 
 .cmp-adv__list strong {
   display: block;
-  margin-top: 4px;
-  font-size: 16px;
+  margin-top: calc(4px * var(--scale));
+  font-size: calc(16px * var(--scale));
   font-weight: 600;
   color: #fff;
   line-height: 1.35;
@@ -141,7 +141,7 @@
 }
 
 .cmp-adv__html {
-  margin: 0 0 28px;
+  margin: 0 0 calc(28px * var(--scale));
 }
 
 .cmp-adv__html ul {
@@ -151,11 +151,11 @@
 }
 
 .cmp-adv__html li {
-  padding: 18px 0;
+  padding: calc(18px * var(--scale)) 0;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
-  column-gap: 14px;
+  grid-template-columns: calc(22px * var(--scale)) minmax(0, 1fr);
+  column-gap: calc(14px * var(--scale));
   align-items: start;
   color: #fff;
 }
@@ -163,15 +163,15 @@
 .cmp-adv__html li::before {
   content: '';
   grid-row: 1 / span 8;
-  width: 22px;
-  height: 22px;
+  width: calc(22px * var(--scale));
+  height: calc(22px * var(--scale));
   margin-top: 2px;
   border-radius: 50%;
   background-color: var(--color-accent);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23fff' fill='none' stroke-width='1.6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 10px 8px;
+  background-size: calc(10px * var(--scale)) calc(8px * var(--scale));
 }
 
 .cmp-adv__html p {
@@ -181,19 +181,19 @@
 .cmp-adv__html p + p,
 .cmp-adv__html ul + p,
 .cmp-adv__html p + ul {
-  margin-top: 12px;
+  margin-top: calc(12px * var(--scale));
 }
 
 .cmp-adv__html span {
   display: block;
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
   color: #c3cad2;
 }
 
 .cmp-adv__html strong {
   display: block;
-  margin-top: 4px;
-  font-size: 16px;
+  margin-top: calc(4px * var(--scale));
+  font-size: calc(16px * var(--scale));
   font-weight: 600;
   color: #fff;
   line-height: 1.35;
@@ -211,7 +211,7 @@
   background-color: transparent;
   border: 1px solid #d5d9df;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M1 1l6 6M7 1L1 7' stroke='%23B3B4B6' stroke-width='1.4'/%3E%3C/svg%3E");
-  background-size: 8px 8px;
+  background-size: calc(8px * var(--scale)) calc(8px * var(--scale));
 }
 
 .cmp-adv__html--them span {
@@ -224,37 +224,37 @@
 }
   margin-top: auto;
   width: 100%;
-  font-size: 15px;
+  font-size: calc(15px * var(--scale));
   -webkit-appearance: none;
   appearance: none;
 }
 
 .svc-how--adv {
-  margin-top: 96px;
+  margin-top: calc(96px * var(--scale));
 }
 
 @media (min-width: 768px) {
   .cmp-adv {
-    margin-top: 160px;
+    margin-top: calc(160px * var(--scale));
   }
 
   .cmp-adv__grid {
-    margin-top: 72px;
+    margin-top: calc(72px * var(--scale));
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px;
+    gap: calc(24px * var(--scale));
   }
 
   .cmp-adv__us,
   .cmp-adv__them {
-    padding: 36px 40px;
+    padding: calc(36px * var(--scale)) calc(40px * var(--scale));
   }
 
   .cmp-adv__list strong,
   .cmp-adv__html strong {
-    font-size: 18px;
+    font-size: calc(18px * var(--scale));
   }
 
   .svc-how--adv {
-    margin-top: 160px;
+    margin-top: calc(160px * var(--scale));
   }
 }

@@ -1,28 +1,28 @@
 .legal-page {
-  padding: 32px 0 48px;
-  padding-bottom: max(48px, calc(32px + var(--safe-bottom)));
+  padding: calc(32px * var(--scale)) 0 calc(48px * var(--scale));
+  padding-bottom: max(calc(48px * var(--scale)), calc(calc(32px * var(--scale)) + var(--safe-bottom)));
   color: var(--color-navy);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
 .legal-page__head {
-  max-width: 760px;
+  max-width: calc(760px * var(--scale));
 }
 
 .legal-page__title {
-  margin: 16px 0 0;
-  font-size: clamp(34px, 5vw, 68px);
+  margin: calc(16px * var(--scale)) 0 0;
+  font-size: clamp(calc(34px * var(--scale)), 5vw, calc(68px * var(--scale)));
   font-weight: 700;
   line-height: 1.05;
-  letter-spacing: -0.5px;
+  letter-spacing: calc(-0.5px * var(--scale));
 }
 
 .legal-page__nav {
   display: flex;
   flex-wrap: nowrap;
-  gap: 8px;
-  margin-top: 24px;
+  gap: calc(8px * var(--scale));
+  margin-top: calc(24px * var(--scale));
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -39,13 +39,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 38px;
-  padding: 0 18px;
-  border-radius: 19px;
+  min-height: calc(38px * var(--scale));
+  padding: 0 calc(18px * var(--scale));
+  border-radius: calc(19px * var(--scale));
   border: 1px solid var(--color-border-soft);
   background: transparent;
   color: var(--color-navy);
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
   font-weight: 500;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
@@ -68,42 +68,42 @@
 }
 
 .legal-page__body {
-  max-width: 760px;
-  margin-top: 32px;
+  max-width: calc(760px * var(--scale));
+  margin-top: calc(32px * var(--scale));
 }
 
 .legal-page__body > p {
   margin: 0;
   color: var(--color-text-muted);
-  font-size: 17px;
+  font-size: calc(17px * var(--scale));
   line-height: 1.5;
 }
 
 .legal-page__body > p + p {
-  margin-top: 12px;
+  margin-top: calc(12px * var(--scale));
 }
 
 .legal-page__intro p {
   margin: 0;
   color: var(--color-text-muted);
-  font-size: 17px;
+  font-size: calc(17px * var(--scale));
   line-height: 1.5;
 }
 
 .legal-page__intro p + p {
-  margin-top: 12px;
+  margin-top: calc(12px * var(--scale));
 }
 
 .legal-stack {
-  margin-top: 28px;
+  margin-top: calc(28px * var(--scale));
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 24px rgba(5, 33, 69, 0.06);
-  padding: 4px 20px;
+  border-radius: calc(10px * var(--scale));
+  box-shadow: 0 calc(4px * var(--scale)) calc(24px * var(--scale)) rgba(5, 33, 69, 0.06);
+  padding: calc(4px * var(--scale)) calc(20px * var(--scale));
 }
 
 .legal-block {
-  padding: 24px 0;
+  padding: calc(24px * var(--scale)) 0;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -113,71 +113,71 @@
 
 .legal-block__title {
   margin: 0;
-  font-size: 20px;
+  font-size: calc(20px * var(--scale));
   font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.2px;
+  letter-spacing: calc(-0.2px * var(--scale));
   color: var(--color-navy);
 }
 
 .legal-block__text {
-  margin-top: 12px;
+  margin-top: calc(12px * var(--scale));
 }
 
 .legal-block__text p {
   margin: 0;
   color: var(--color-text-soft);
-  font-size: 16px;
+  font-size: calc(16px * var(--scale));
   line-height: 1.5;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
 .legal-block__text p + p {
-  margin-top: 10px;
+  margin-top: calc(10px * var(--scale));
 }
 
 @media (min-width: 768px) {
   .legal-page {
-    padding: 40px 0 72px;
+    padding: calc(40px * var(--scale)) 0 calc(72px * var(--scale));
   }
 
   .legal-page__nav {
-    margin-top: 28px;
+    margin-top: calc(28px * var(--scale));
     flex-wrap: wrap;
     overflow: visible;
   }
 
   .legal-page__body {
-    margin-top: 40px;
+    margin-top: calc(40px * var(--scale));
   }
 
   .legal-stack {
-    margin-top: 36px;
-    padding: 8px 32px;
+    margin-top: calc(36px * var(--scale));
+    padding: calc(8px * var(--scale)) calc(32px * var(--scale));
   }
 
   .legal-block {
-    padding: 32px 0;
+    padding: calc(32px * var(--scale)) 0;
   }
 
   .legal-block__title {
-    font-size: 24px;
+    font-size: calc(24px * var(--scale));
   }
 }
 
 @media (min-width: 1025px) {
   .legal-page {
-    padding-top: 48px;
+    padding-top: calc(48px * var(--scale));
   }
 
   .legal-stack {
-    padding: 8px 40px;
+    padding: calc(8px * var(--scale)) calc(40px * var(--scale));
   }
 }
 
 @supports (-webkit-touch-callout: none) {
   .legal-page__chip {
-    min-height: 44px;
+    min-height: calc(44px * var(--scale));
   }
 }

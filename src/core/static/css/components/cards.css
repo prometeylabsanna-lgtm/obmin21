@@ -1,6 +1,6 @@
 .card-grid {
   display: grid;
-  gap: 20px;
+  gap: calc(20px * var(--scale));
 }
 
 .card-grid--2 {
@@ -14,41 +14,41 @@
 .card {
   background: #fff;
   border-radius: var(--radius-lg);
-  padding: 24px 20px;
+  padding: calc(24px * var(--scale)) calc(20px * var(--scale));
   box-shadow: var(--shadow-card);
 }
 
 .card__title,
 .card__heading {
   margin: 0;
-  font-size: 22px;
+  font-size: calc(22px * var(--scale));
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-navy);
 }
 
 .card__text {
-  margin: 12px 0 0;
+  margin: calc(12px * var(--scale)) 0 0;
   color: var(--color-text-muted);
-  font-size: 15px;
+  font-size: calc(15px * var(--scale));
   line-height: 1.4;
 }
 
 .card__meta {
   color: var(--color-text-muted);
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
 }
 
 .service-card {
   display: grid;
-  gap: 20px;
-  padding: 28px 0;
+  gap: calc(20px * var(--scale));
+  padding: calc(28px * var(--scale)) 0;
   border-bottom: 1px solid var(--color-border);
 }
 
 .service-card__media img {
   width: 100%;
-  max-width: 280px;
+  max-width: calc(280px * var(--scale));
   height: auto;
   display: block;
   object-fit: contain;
@@ -56,32 +56,32 @@
 
 .service-card__title {
   margin: 0;
-  font-size: clamp(28px, 4vw, 42px);
+  font-size: clamp(calc(28px * var(--scale)), 4vw, calc(42px * var(--scale)));
   font-weight: 700;
   line-height: 1.15;
 }
 
 .service-card__points {
-  margin: 16px 0 0;
+  margin: calc(16px * var(--scale)) 0 0;
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 10px;
+  gap: calc(10px * var(--scale));
   color: var(--color-text-soft);
-  font-size: 15px;
+  font-size: calc(15px * var(--scale));
 }
 
 .service-card__points li {
   display: flex;
-  gap: 10px;
+  gap: calc(10px * var(--scale));
 }
 
 .service-card__points li::before {
   content: "";
   flex: none;
-  width: 8px;
-  height: 8px;
-  margin-top: 7px;
+  width: calc(8px * var(--scale));
+  height: calc(8px * var(--scale));
+  margin-top: calc(7px * var(--scale));
   border-radius: 50%;
   background: var(--color-accent);
 }
@@ -89,13 +89,13 @@
 .review-card__head {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: calc(12px * var(--scale));
+  margin-bottom: calc(12px * var(--scale));
 }
 
 .review-card__avatar {
-  width: 44px;
-  height: 44px;
+  width: calc(44px * var(--scale));
+  height: calc(44px * var(--scale));
   border-radius: 50%;
   background: var(--color-navy);
   color: #fff;
@@ -107,19 +107,19 @@
 
 .steps {
   display: grid;
-  gap: 18px;
+  gap: calc(18px * var(--scale));
 }
 
 .steps__item {
   display: grid;
-  grid-template-columns: 48px 1fr;
-  gap: 14px;
+  grid-template-columns: calc(48px * var(--scale)) 1fr;
+  gap: calc(14px * var(--scale));
   align-items: start;
 }
 
 .steps__n {
-  width: 48px;
-  height: 48px;
+  width: calc(48px * var(--scale));
+  height: calc(48px * var(--scale));
   border-radius: 50%;
   background: var(--color-surface);
   color: var(--color-accent);
@@ -132,7 +132,7 @@
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: calc(20px * var(--scale));
 }
 
 .stats-grid__item {
@@ -140,16 +140,16 @@
 }
 
 .stats-grid__value {
-  font-size: clamp(36px, 6vw, 64px);
+  font-size: clamp(calc(36px * var(--scale)), 6vw, calc(64px * var(--scale)));
   font-weight: 700;
   line-height: 1;
   color: var(--color-navy);
 }
 
 .stats-grid__label {
-  margin-top: 10px;
+  margin-top: calc(10px * var(--scale));
   color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: calc(14px * var(--scale));
 }
 
 @media (min-width: 768px) {
@@ -162,14 +162,14 @@
   }
 
   .service-card {
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: calc(220px * var(--scale)) 1fr;
     align-items: center;
-    gap: 40px;
+    gap: calc(40px * var(--scale));
   }
 
   .steps {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
+    gap: calc(28px * var(--scale));
   }
 
   .steps__item {

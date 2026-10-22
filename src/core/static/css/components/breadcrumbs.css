@@ -1,6 +1,6 @@
 .breadcrumbs {
-  padding: 8px 0 0;
-  font-size: 13px;
+  padding: calc(8px * var(--scale)) 0 0;
+  font-size: calc(13px * var(--scale));
   line-height: 1;
   color: #b3b4b6;
 }
@@ -10,7 +10,7 @@
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 8px;
+  gap: calc(8px * var(--scale));
   list-style: none;
   margin: 0;
   padding: 0;
@@ -21,7 +21,7 @@
   flex-direction: row;
   flex: none;
   align-items: center;
-  gap: 8px;
+  gap: calc(8px * var(--scale));
   white-space: nowrap;
 }
 

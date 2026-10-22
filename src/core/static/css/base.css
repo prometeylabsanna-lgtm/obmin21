@@ -60,7 +60,7 @@ button.rates-tabs__btn:focus-visible {
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--container-pad) 60px;
+  padding: 0 var(--container-pad) calc(60px * var(--scale));
   padding-left: max(var(--container-pad), var(--safe-left));
   padding-right: max(var(--container-pad), var(--safe-right));
   background: var(--color-bg);
@@ -90,12 +90,12 @@ button.rates-tabs__btn:focus-visible {
   font-weight: var(--font-weight-semibold);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: calc(10px * var(--scale));
   transition: color var(--dur-med) ease;
 }
 
 .link-accent svg {
-  transition: transform var(--dur-med) var(--ease-soft);
+  transition: transform var(--dur-med) var(--ease-soft), scale var(--dur-med) var(--ease-soft);
 }
 
 .link-accent:hover {
@@ -103,15 +103,16 @@ button.rates-tabs__btn:focus-visible {
 }
 
 .link-accent:hover svg {
-  transform: translateX(8px) scale(1.15);
+  transform: translateX(calc(8px * var(--scale)));
+  scale: 1.15;
 }
 
 .pill {
   display: inline-block;
   border: 1px solid var(--color-navy);
   border-radius: var(--radius-pill);
-  padding: 5px 11px;
-  font-size: 12px;
+  padding: calc(5px * var(--scale)) calc(11px * var(--scale));
+  font-size: calc(12px * var(--scale));
   line-height: 1.2;
   color: var(--color-navy);
 }
@@ -124,12 +125,7 @@ html.is-menu-open body {
 
 @media (min-width: 768px) {
   .page__shell {
-    padding-bottom: 80px;
+    padding-bottom: calc(80px * var(--scale));
   }
 }
 
-@media (min-width: 1200px) {
-  html {
-    zoom: 1.25;
-  }
-}

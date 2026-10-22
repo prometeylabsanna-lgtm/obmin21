@@ -1,16 +1,16 @@
 .detail-page {
-  padding: 12px 0 40px;
+  padding: calc(12px * var(--scale)) 0 calc(40px * var(--scale));
   color: var(--color-navy);
 }
 
 .detail-page h1 {
-  margin: 0 0 16px;
-  font-size: clamp(28px, 4vw, 42px);
+  margin: 0 0 calc(16px * var(--scale));
+  font-size: clamp(calc(28px * var(--scale)), 4vw, calc(42px * var(--scale)));
   font-weight: 700;
   line-height: 1.15;
 }
 
 .detail-page p {
-  margin: 0 0 14px;
+  margin: 0 0 calc(14px * var(--scale));
   line-height: 1.6;
 }

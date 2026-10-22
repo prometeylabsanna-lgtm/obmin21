@@ -1,21 +1,21 @@
 .site-footer {
   background: var(--color-bg);
   color: var(--color-text);
-  margin-top: 60px;
+  margin-top: calc(60px * var(--scale));
   width: 100%;
 }
 
 .site-footer__inner {
-  max-width: 1440px;
+  max-width: calc(1440px * var(--scale));
   margin: 0 auto;
-  padding: 40px max(16px, var(--safe-left)) 30px max(16px, var(--safe-right));
+  padding: calc(40px * var(--scale)) max(calc(16px * var(--scale)), var(--safe-left)) calc(30px * var(--scale)) max(calc(16px * var(--scale)), var(--safe-right));
 }
 
 .site-footer__top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 48px;
+  gap: calc(48px * var(--scale));
   flex-wrap: wrap;
 }
 
@@ -26,7 +26,7 @@
 }
 
 .site-footer__logo img {
-  height: 56px;
+  height: calc(56px * var(--scale));
   width: auto;
   display: block;
 }
@@ -34,23 +34,23 @@
 .site-footer__nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px 20px;
+  gap: calc(32px * var(--scale)) calc(20px * var(--scale));
   flex: 1 1 100%;
   min-width: 0;
 }
 
 .site-footer__heading {
   color: var(--color-text-muted);
-  font-size: 17px;
+  font-size: calc(17px * var(--scale));
   font-weight: 400;
-  margin-bottom: 16px;
+  margin-bottom: calc(16px * var(--scale));
 }
 
 .site-footer__links {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  font-size: 13px;
+  gap: calc(14px * var(--scale));
+  font-size: calc(13px * var(--scale));
   font-weight: 600;
 }
 
@@ -64,14 +64,14 @@
 }
 
 .site-footer__links--docs {
-  max-width: 220px;
+  max-width: calc(220px * var(--scale));
 }
 
 .site-footer__phone {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: calc(8px * var(--scale));
+  font-size: calc(14px * var(--scale));
   font-weight: 400;
   color: var(--color-accent);
   white-space: nowrap;
@@ -83,13 +83,13 @@
 
 .site-footer__social {
   display: flex;
-  gap: 12px;
-  margin-top: 20px;
+  gap: calc(12px * var(--scale));
+  margin-top: calc(20px * var(--scale));
 }
 
 .site-footer__social-btn {
-  width: 44px;
-  height: 44px;
+  width: calc(44px * var(--scale));
+  height: calc(44px * var(--scale));
   border-radius: 50%;
   border: 1px solid var(--color-accent);
   color: var(--color-accent);
@@ -109,12 +109,12 @@
   justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 8px 24px;
-  margin-top: 60px;
-  padding-top: 22px;
-  padding-right: calc(128px + env(safe-area-inset-right, 0px));
+  gap: calc(8px * var(--scale)) calc(24px * var(--scale));
+  margin-top: calc(60px * var(--scale));
+  padding-top: calc(22px * var(--scale));
+  padding-right: calc(calc(128px * var(--scale)) + env(safe-area-inset-right, 0px));
   border-top: 1px solid rgba(255, 255, 255, 0.35);
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
   color: var(--color-text-muted);
 }
 
@@ -135,37 +135,37 @@
 
 @media (min-width: 768px) {
   .site-footer__inner {
-    padding: 60px 30px 40px;
+    padding: calc(60px * var(--scale)) calc(30px * var(--scale)) calc(40px * var(--scale));
   }
 
   .site-footer__logo img {
-    height: 72px;
+    height: calc(72px * var(--scale));
   }
 
   .site-footer__nav {
     flex: 0 1 auto;
     width: auto;
     grid-template-columns: repeat(4, auto);
-    gap: 0 70px;
+    gap: 0 calc(70px * var(--scale));
   }
 
   .site-footer__heading {
-    margin-bottom: 32px;
+    margin-bottom: calc(32px * var(--scale));
   }
 }
 
 @supports (-webkit-touch-callout: none) {
   .site-footer__inner {
-    padding-bottom: max(30px, env(safe-area-inset-bottom));
+    padding-bottom: max(calc(30px * var(--scale)), env(safe-area-inset-bottom));
   }
 }
 
 @media (max-width: 767px) {
   .site-footer__bar {
-    margin-top: 40px;
-    padding-top: 16px;
-    padding-right: calc(112px + env(safe-area-inset-right, 0px));
-    gap: 6px 16px;
+    margin-top: calc(40px * var(--scale));
+    padding-top: calc(16px * var(--scale));
+    padding-right: calc(calc(112px * var(--scale)) + env(safe-area-inset-right, 0px));
+    gap: calc(6px * var(--scale)) calc(16px * var(--scale));
   }
 
   .site-footer__copy,

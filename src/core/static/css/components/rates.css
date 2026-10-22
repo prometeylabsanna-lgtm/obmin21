@@ -1,16 +1,16 @@
 .rates-card {
   background: #fff;
   border-radius: var(--radius-md);
-  padding: 20px;
+  padding: calc(20px * var(--scale));
   box-shadow: var(--shadow-card);
 }
 
 .rates-tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: 40px;
+  grid-auto-rows: calc(40px * var(--scale));
   align-items: stretch;
-  gap: 12px;
+  gap: calc(12px * var(--scale));
   flex: 1 1 100%;
 }
 
@@ -22,11 +22,11 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
+  height: calc(40px * var(--scale));
+  min-height: calc(40px * var(--scale));
+  max-height: calc(40px * var(--scale));
   margin: 0;
-  padding: 0 16px;
+  padding: 0 calc(16px * var(--scale));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -35,7 +35,7 @@
   appearance: none;
   border-radius: var(--radius-sm);
   font-family: inherit;
-  font-size: 14px;
+  font-size: calc(14px * var(--scale));
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--color-surface);
@@ -54,9 +54,9 @@
 
 .rates-tabs__btn.is-active,
 .rates-tabs__btn[aria-selected="true"] {
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
+  height: calc(40px * var(--scale));
+  min-height: calc(40px * var(--scale));
+  max-height: calc(40px * var(--scale));
   border: 1px solid var(--color-accent);
   background: #fff;
   background-clip: border-box;
@@ -66,7 +66,7 @@
 }
 
 .rates-table {
-  margin-top: 20px;
+  margin-top: calc(20px * var(--scale));
 }
 
 .rates-table__head,
@@ -74,13 +74,13 @@
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) 0.8fr 0.8fr auto;
   align-items: center;
-  gap: 8px;
+  gap: calc(8px * var(--scale));
 }
 
 .rates-table__head {
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
   color: var(--color-text-muted);
-  margin-bottom: 4px;
+  margin-bottom: calc(4px * var(--scale));
 }
 
 .rates-table__head > div:nth-child(2),
@@ -89,15 +89,15 @@
 }
 
 .rates-table__row {
-  min-height: 56px;
-  font-size: 15px;
+  min-height: calc(56px * var(--scale));
+  font-size: calc(15px * var(--scale));
   border-top: 1px solid var(--color-border);
 }
 
 .rates-table__pair {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: calc(12px * var(--scale));
   font-weight: 500;
   min-width: 0;
 }
@@ -110,7 +110,7 @@
 .rates-table__name {
   display: none;
   color: var(--color-text-muted);
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
   font-weight: 400;
 }
 
@@ -128,34 +128,34 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 14px;
+  gap: calc(10px * var(--scale));
+  margin-top: calc(14px * var(--scale));
 }
 
 .rates-updated {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: calc(6px * var(--scale));
   color: var(--color-text-muted);
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
 }
 
 .rates-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 14px;
+  gap: calc(14px * var(--scale));
   flex-wrap: wrap;
 }
 
 .rates-search {
-  height: 40px;
+  height: calc(40px * var(--scale));
   width: 100%;
   border: 1px solid #eef0f3;
-  border-radius: 6px;
-  padding: 0 14px;
+  border-radius: calc(6px * var(--scale));
+  padding: 0 calc(14px * var(--scale));
   font-family: inherit;
-  font-size: 14px;
+  font-size: calc(14px * var(--scale));
   color: #052145;
   outline: none;
   -webkit-appearance: none;
@@ -168,7 +168,7 @@
 
 @media (max-width: 767px) {
   .rates-search {
-    font-size: 16px;
+    font-size: calc(16px * var(--scale));
   }
 
   .page-hero__updated {
@@ -177,10 +177,10 @@
 }
 
 .rates-table__empty {
-  padding: 32px 0;
+  padding: calc(32px * var(--scale)) 0;
   text-align: center;
   color: #b3b4b6;
-  font-size: 15px;
+  font-size: calc(15px * var(--scale));
 }
 
 .rates-page-card .rates-card {
@@ -191,11 +191,11 @@
 }
 
 .rates-page-note {
-  margin: 20px 0 0;
+  margin: calc(20px * var(--scale)) 0 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
+  gap: calc(10px * var(--scale));
+  font-size: calc(13px * var(--scale));
   color: #b3b4b6;
 }
 
@@ -203,33 +203,33 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 20px;
+  gap: calc(20px * var(--scale));
   flex-wrap: wrap;
-  padding: 8px 0 0;
+  padding: calc(8px * var(--scale)) 0 0;
 }
 
 .page-hero--rates .page-hero__title {
-  margin: 10px 0 0;
+  margin: calc(10px * var(--scale)) 0 0;
 }
 
 .page-hero--rates .page-hero__lead {
-  max-width: 520px;
-  font-size: 16px;
+  max-width: calc(520px * var(--scale));
+  font-size: calc(16px * var(--scale));
   line-height: 1.3;
 }
 
 .page-hero__updated {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: calc(6px * var(--scale));
   color: #b3b4b6;
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
   flex: none;
 }
 
 .rates-table .flag {
-  width: 36px;
-  height: 26px;
+  width: calc(36px * var(--scale));
+  height: calc(26px * var(--scale));
 }
 
 .rates-table__empty[hidden] {
@@ -239,45 +239,45 @@
 @media (min-width: 768px) {
   .rates-card,
   .rates-page-card {
-    padding: 20px 20px 18px;
+    padding: calc(20px * var(--scale)) calc(20px * var(--scale)) calc(18px * var(--scale));
   }
 
   .rates-tabs {
     flex: 0 0 auto;
-    gap: 20px;
-    grid-template-columns: 190px 190px;
+    gap: calc(20px * var(--scale));
+    grid-template-columns: calc(190px * var(--scale)) calc(190px * var(--scale));
     justify-content: start;
     width: max-content;
     max-width: 100%;
   }
 
   .rates-tabs__btn {
-    width: 190px;
+    width: calc(190px * var(--scale));
   }
 
   .rates-search {
-    width: 260px;
+    width: calc(260px * var(--scale));
   }
 
   .rates-table__head,
   .rates-table__row {
-    grid-template-columns: minmax(0, 1.6fr) 1fr 1fr 140px;
+    grid-template-columns: minmax(0, 1.6fr) 1fr 1fr calc(140px * var(--scale));
   }
 
   .rates-table__name {
     display: block;
     margin-top: 2px;
-    font-size: 12px;
+    font-size: calc(12px * var(--scale));
   }
 
   .rates-table__row {
-    min-height: 56px;
-    font-size: 17px;
+    min-height: calc(56px * var(--scale));
+    font-size: calc(17px * var(--scale));
   }
 
   .rates-table .flag {
-    width: 52px;
-    height: 36px;
+    width: calc(52px * var(--scale));
+    height: calc(36px * var(--scale));
   }
 
   .rates-action-icon {
@@ -289,34 +289,34 @@
   }
 
   .rates-table__action .btn {
-    width: 140px;
-    height: 36px;
-    min-height: 36px;
-    padding: 0 12px;
-    border-radius: 6px;
+    width: calc(140px * var(--scale));
+    height: calc(36px * var(--scale));
+    min-height: calc(36px * var(--scale));
+    padding: 0 calc(12px * var(--scale));
+    border-radius: calc(6px * var(--scale));
   }
 
   .page-hero--rates {
-    padding: 24px 0 0;
+    padding: calc(24px * var(--scale)) 0 0;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .rates-search {
-    width: 200px;
+    width: calc(200px * var(--scale));
   }
 
   .rates-tabs {
-    grid-template-columns: 190px 190px;
+    grid-template-columns: calc(190px * var(--scale)) calc(190px * var(--scale));
   }
 
   .rates-tabs__btn {
-    width: 190px;
+    width: calc(190px * var(--scale));
   }
 
   .rates-table .flag {
-    width: 44px;
-    height: 30px;
+    width: calc(44px * var(--scale));
+    height: calc(30px * var(--scale));
   }
 }
 
@@ -333,17 +333,17 @@
 }
 
 .rates-crypto {
-  margin-top: 24px;
-  min-height: 150px;
+  margin-top: calc(24px * var(--scale));
+  min-height: calc(150px * var(--scale));
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 14px;
+  gap: calc(14px * var(--scale));
 }
 
 .rates-crypto__title {
-  font-size: 22px;
+  font-size: calc(22px * var(--scale));
   font-weight: 700;
   line-height: 1.2;
   color: #052145;
@@ -351,24 +351,24 @@
 
 .rates-crypto__text {
   margin: 0;
-  font-size: 15px;
+  font-size: calc(15px * var(--scale));
   line-height: 1.5;
   color: #8a909c;
-  max-width: 440px;
+  max-width: calc(440px * var(--scale));
 }
 
 .rates-crypto__cta {
-  margin-top: 6px;
+  margin-top: calc(6px * var(--scale));
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: calc(10px * var(--scale));
   background: #052145;
   color: #fff;
   font-weight: 600;
-  font-size: 15px;
-  padding: 14px 24px;
-  border-radius: 6px;
-  min-height: 48px;
+  font-size: calc(15px * var(--scale));
+  padding: calc(14px * var(--scale)) calc(24px * var(--scale));
+  border-radius: calc(6px * var(--scale));
+  min-height: calc(48px * var(--scale));
 }
 
 .rates-crypto__cta:hover {
@@ -377,9 +377,9 @@
 }
 
 .rates-table__action .btn {
-  width: 44px;
-  height: 44px;
-  min-height: 44px;
+  width: calc(44px * var(--scale));
+  height: calc(44px * var(--scale));
+  min-height: calc(44px * var(--scale));
   padding: 0;
   border-radius: var(--radius-md);
 }

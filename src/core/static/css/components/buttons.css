@@ -2,15 +2,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: 50px;
-  padding: 14px 28px;
+  gap: calc(10px * var(--scale));
+  min-height: calc(50px * var(--scale));
+  padding: calc(14px * var(--scale)) calc(28px * var(--scale));
   border: 0;
   border-radius: var(--radius-sm);
   background: var(--color-navy);
   color: #fff;
   font-family: inherit;
-  font-size: 16px;
+  font-size: calc(16px * var(--scale));
   font-weight: var(--font-weight-semibold);
   line-height: 1.2;
   cursor: pointer;
@@ -50,16 +50,16 @@
 }
 
 .btn--sm {
-  min-height: 36px;
-  padding: 8px 18px;
-  font-size: 13px;
+  min-height: calc(36px * var(--scale));
+  padding: calc(8px * var(--scale)) calc(18px * var(--scale));
+  font-size: calc(13px * var(--scale));
   border-radius: var(--radius-sm);
 }
 
 .btn--icon {
-  width: 44px;
-  height: 44px;
-  min-height: 44px;
+  width: calc(44px * var(--scale));
+  height: calc(44px * var(--scale));
+  min-height: calc(44px * var(--scale));
   padding: 0;
   border-radius: var(--radius-md);
 }

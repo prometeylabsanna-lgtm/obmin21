@@ -1,6 +1,6 @@
 .why-adv {
-  margin-top: 96px;
-  scroll-margin-top: 24px;
+  margin-top: calc(96px * var(--scale));
+  scroll-margin-top: calc(24px * var(--scale));
 }
 
 .why-adv__head {
@@ -8,28 +8,28 @@
 }
 
 .why-adv__title {
-  margin: 10px auto 0;
-  font-size: clamp(28px, 4vw, 55px);
+  margin: calc(10px * var(--scale)) auto 0;
+  font-size: clamp(calc(28px * var(--scale)), 4vw, calc(55px * var(--scale)));
   font-weight: 700;
   line-height: 1.05;
-  letter-spacing: -0.5px;
-  max-width: 900px;
+  letter-spacing: calc(-0.5px * var(--scale));
+  max-width: calc(900px * var(--scale));
   color: #052145;
 }
 
 .why-adv__lead {
-  margin: 16px auto 0;
+  margin: calc(16px * var(--scale)) auto 0;
   color: #b3b4b6;
-  font-size: 16px;
+  font-size: calc(16px * var(--scale));
   line-height: 1.4;
-  max-width: 560px;
+  max-width: calc(560px * var(--scale));
 }
 
 .why-adv__grid {
-  margin-top: 40px;
+  margin-top: calc(40px * var(--scale));
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: calc(16px * var(--scale));
 }
 
 .why-adv__hero {
@@ -37,13 +37,13 @@
   overflow: hidden;
   background-color: #052145;
   background-repeat: no-repeat;
-  border-radius: 10px;
-  padding: 24px 20px;
+  border-radius: calc(10px * var(--scale));
+  padding: calc(24px * var(--scale)) calc(20px * var(--scale));
   color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  min-height: 460px;
+  gap: calc(28px * var(--scale));
+  min-height: calc(460px * var(--scale));
 }
 
 .why-adv__coins {
@@ -53,7 +53,7 @@
   max-width: none;
   width: 125%;
   pointer-events: none;
-  filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 calc(24px * var(--scale)) calc(34px * var(--scale)) rgba(0, 0, 0, 0.4));
   animation: obFlA 11s ease-in-out infinite;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -68,27 +68,27 @@
 
 .why-adv__hero-title {
   margin: 0;
-  font-size: 30px;
+  font-size: calc(30px * var(--scale));
   font-weight: 700;
   line-height: 1.08;
-  letter-spacing: -0.4px;
+  letter-spacing: calc(-0.4px * var(--scale));
 }
 
 .why-adv__hero-text {
-  margin: 14px 0 0;
+  margin: calc(14px * var(--scale)) 0 0;
   color: rgba(255, 255, 255, 0.75);
-  font-size: 16px;
+  font-size: calc(16px * var(--scale));
   line-height: 1.4;
 }
 
 .why-adv__card {
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 24px rgba(5, 33, 69, 0.06);
-  padding: 24px 20px;
+  border-radius: calc(10px * var(--scale));
+  box-shadow: 0 calc(4px * var(--scale)) calc(24px * var(--scale)) rgba(5, 33, 69, 0.06);
+  padding: calc(24px * var(--scale)) calc(20px * var(--scale));
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: calc(32px * var(--scale));
 }
 
 .why-adv__icon {
@@ -102,19 +102,19 @@
 
 .why-adv__name {
   margin: 0;
-  font-size: 20px;
+  font-size: calc(20px * var(--scale));
   font-weight: 700;
   line-height: 1.15;
-  letter-spacing: -0.2px;
+  letter-spacing: calc(-0.2px * var(--scale));
   color: #052145;
 }
 
 .why-adv__text {
-  margin: 10px 0 0;
+  margin: calc(10px * var(--scale)) 0 0;
   color: #b3b4b6;
-  font-size: 15px;
+  font-size: calc(15px * var(--scale));
   line-height: 1.4;
-  max-width: 420px;
+  max-width: calc(420px * var(--scale));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -125,43 +125,43 @@
 
 @media (min-width: 768px) {
   .why-adv {
-    margin-top: 160px;
+    margin-top: calc(160px * var(--scale));
   }
 
   .why-adv__grid {
-    margin-top: 72px;
+    margin-top: calc(72px * var(--scale));
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 24px;
+    gap: calc(24px * var(--scale));
   }
 
   .why-adv__hero {
     grid-column: span 4;
     grid-row: span 2;
-    padding: 36px 36px 32px;
-    min-height: 520px;
+    padding: calc(36px * var(--scale)) calc(36px * var(--scale)) calc(32px * var(--scale));
+    min-height: calc(520px * var(--scale));
   }
 
   .why-adv__coins {
     left: 7%;
-    top: -44px;
+    top: calc(-44px * var(--scale));
     width: 86%;
   }
 
   .why-adv__hero-copy {
-    max-width: 560px;
+    max-width: calc(560px * var(--scale));
   }
 
   .why-adv__hero-title {
-    font-size: 44px;
+    font-size: calc(44px * var(--scale));
   }
 
   .why-adv__card {
     grid-column: span 2;
-    padding: 36px 32px;
-    min-height: 250px;
+    padding: calc(36px * var(--scale)) calc(32px * var(--scale));
+    min-height: calc(250px * var(--scale));
   }
 
   .why-adv__name {
-    font-size: 22px;
+    font-size: calc(22px * var(--scale));
   }
 }

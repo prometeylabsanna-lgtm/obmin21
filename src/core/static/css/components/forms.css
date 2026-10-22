@@ -1,13 +1,13 @@
 .form {
   display: grid;
-  gap: 12px;
+  gap: calc(12px * var(--scale));
 }
 
 .form__label {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 14px;
+  gap: calc(8px * var(--scale));
+  font-size: calc(14px * var(--scale));
   color: var(--color-text-soft);
 }
 
@@ -27,12 +27,12 @@
 .field,
 .field-input {
   width: 100%;
-  height: 50px;
+  height: calc(50px * var(--scale));
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  padding: 0 16px;
+  padding: 0 calc(16px * var(--scale));
   font-family: inherit;
-  font-size: 16px;
+  font-size: calc(16px * var(--scale));
   color: var(--color-navy);
   background: #fff;
   outline: none;
@@ -42,8 +42,8 @@
 
 .form textarea,
 .field-textarea {
-  height: 120px;
-  padding: 14px 16px;
+  height: calc(120px * var(--scale));
+  padding: calc(14px * var(--scale)) calc(16px * var(--scale));
   resize: none;
 }
 
@@ -58,19 +58,19 @@
 .form__check {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  font-size: 13px;
+  gap: calc(10px * var(--scale));
+  font-size: calc(13px * var(--scale));
   color: var(--color-text-soft);
 }
 
 .form__error {
   color: var(--color-down);
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
 }
 
 .field-row {
   display: flex;
-  height: 50px;
+  height: calc(50px * var(--scale));
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: #fff;
@@ -78,7 +78,7 @@
 }
 
 .field-row--lg {
-  height: 54px;
+  height: calc(54px * var(--scale));
   border-radius: var(--radius-md);
 }
 
@@ -88,8 +88,8 @@
   min-width: 0;
   border: 0;
   outline: none;
-  padding: 0 16px;
-  font-size: 19px;
+  padding: 0 calc(16px * var(--scale));
+  font-size: calc(19px * var(--scale));
   font-weight: 500;
   color: var(--color-navy);
   background: transparent;
@@ -105,14 +105,14 @@
 .field-currency {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: calc(10px * var(--scale));
   height: 100%;
-  padding: 0 16px;
+  padding: 0 calc(16px * var(--scale));
   border: 0;
   border-left: 1px solid var(--color-border);
   background: transparent;
   font-family: inherit;
-  font-size: 16px;
+  font-size: calc(16px * var(--scale));
   font-weight: 600;
   color: var(--color-navy);
   cursor: pointer;
@@ -120,9 +120,9 @@
 
 .flag {
   flex: none;
-  width: 28px;
-  height: 20px;
-  border-radius: 3px;
+  width: calc(28px * var(--scale));
+  height: calc(20px * var(--scale));
+  border-radius: calc(3px * var(--scale));
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
   background: #d9dee7;
   display: flex;
@@ -223,8 +223,8 @@
 }
 
 .flag:not(:empty) {
-  font-size: 9px;
-  letter-spacing: -0.2px;
+  font-size: calc(9px * var(--scale));
+  letter-spacing: calc(-0.2px * var(--scale));
 }
 
 .flag[data-code="DKK"] {
@@ -244,71 +244,71 @@
 
 .flag[data-code="USDC"] {
   background: #2775ca;
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
 }
 
 .flag[data-code="BNB"] {
   background: #f3ba2f;
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
 }
 
 .flag[data-code="SOL"] {
   background: #9945ff;
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
 }
 
 .flag[data-code="TRX"] {
   background: #ef0027;
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
 }
 
 .flag[data-code="TON"] {
   background: #0098ea;
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
 }
 
 .flag[data-code="USDT"] {
   background: #26a17b;
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
 }
 
 .flag[data-code="BTC"] {
   background: #f7931a;
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
 }
 
 .flag[data-code="ETH"] {
   background: #627eea;
-  font-size: 12px;
+  font-size: calc(12px * var(--scale));
 }
 
 .currency-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + calc(8px * var(--scale)));
   right: 0;
   z-index: 60;
-  width: min(260px, calc(100vw - 48px));
-  max-height: 260px;
+  width: min(calc(260px * var(--scale)), calc(100vw - calc(48px * var(--scale))));
+  max-height: calc(260px * var(--scale));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   background: #fff;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-dropdown);
-  padding: 6px;
+  padding: calc(6px * var(--scale));
 }
 
 .currency-menu button {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: calc(12px * var(--scale));
+  padding: calc(10px * var(--scale)) calc(12px * var(--scale));
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: inherit;
-  font-size: 15px;
+  font-size: calc(15px * var(--scale));
   color: var(--color-navy);
   text-align: left;
   cursor: pointer;
@@ -325,5 +325,5 @@
 
 .currency-menu .name {
   color: var(--color-text-soft);
-  font-size: 13px;
+  font-size: calc(13px * var(--scale));
 }

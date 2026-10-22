@@ -109,7 +109,7 @@ class ContactModalTests(TestCase):
             html.index('contact-card--telegram'),
         )
         base = (settings.BASE_DIR / 'templates/base.html').read_text(encoding='utf-8')
-        self.assertIn("{% static 'css/components/contact-modal.css' %}?v=2", base)
+        self.assertIn("{% static 'css/components/contact-modal.css' %}?v=3", base)
 
     def test_telegram_card_has_gold_border_modifier(self):
         self._settings(_PHONE, _TELEGRAM)
