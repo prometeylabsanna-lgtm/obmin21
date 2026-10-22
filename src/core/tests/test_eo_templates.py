@@ -1,9 +1,12 @@
 import os
 import re
 from datetime import timedelta
+from pathlib import Path
 
 from django.core.cache import cache
-from django.test import TestCase
+from django.core.exceptions import FieldDoesNotExist
+from django.template.loader import render_to_string
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -16,6 +19,7 @@ from src.content.models import (
     FaqItem,
     FaqPage,
     HomePage,
+    HomeStat,
     PrivacyPage,
     RatesPage,
     ReviewsPage,
@@ -1089,3 +1093,301 @@ class ExchangeOnlyDocumentTitleTests(TestCase):
         title = self._title_of(pair_url)
         self.assertEqual(title, _TITLE_SITE)
         self.assertNotIn('CHF', title)
+
+
+_ROOT = Path(__file__).resolve().parents[3]
+_LAYOUT_H1 = 'Криптовалюта для початківців:'
+_LAYOUT_H1B = 'BTC і USDT'
+_LAYOUT_LEAD = 'цифровим золотом'
+_LAYOUT_READ = '6 хв читання'
+_LAYOUT_SEC = 'Що таке біткоїн'
+_MODE_H1 = 'Готівковий заголовок'
+_MODE_LEAD = 'Фіксація курсу у касі'
+_BLOCK_TEXT_MODE = 'Готівковий опис каси'
+_BLOCK_POINT_MODE = 'Долар у відділенні'
+_BLOCK_CTA_MODE = 'Забронювати готівку'
+_ARTICLES_LEAD_MODE = 'Статті про готівковий курс у касі'
+_BARE_TITLE = 'ZZ-PAGE-ЗОЛОТО-ПЕРЕКАЗИ'
+_BARE_SITE = 'ZZ-BARE-SITE'
+
+
+def _class_attrs(model, **attrs):
+    for name in attrs:
+        try:
+            model._meta.get_field(name)
+        except FieldDoesNotExist:
+            continue
+        raise AssertionError(f'{model.__name__}.{name} is a real column')
+    for name, value in attrs.items():
+        setattr(model, name, value)
+
+
+def _clear_attrs(model, attrs):
+    for name in attrs:
+        if name in model.__dict__:
+            delattr(model, name)
+
+
+class ExchangeOnlyBareTitleTests(TestCase):
+    def setUp(self):
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
+        cache.clear()
+        settings = SiteSettings.load()
+        settings.site_name = _BARE_SITE
+        settings.exchange_only = False
+        settings.save()
+        cache.clear()
+
+    def tearDown(self):
+        for key, value in self._saved_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        cache.clear()
+
+    def _set_mode(self, enabled):
+        SiteSettings.objects.filter(pk=1).update(exchange_only=enabled)
+        cache.clear()
+
+    def _html(self):
+        request = RequestFactory().get('/bare-title/')
+        return render_to_string(
+            'base.html',
+            {'page_title': _BARE_TITLE},
+            request=request,
+        )
+
+    def _title(self, html):
+        match = re.search(r'<title>(.*?)</title>', html, re.DOTALL)
+        self.assertIsNotNone(match)
+        return match.group(1).strip()
+
+    def test_mode_without_page_title_is_only_site_name(self):
+        self._set_mode(False)
+        off = self._html()
+        self.assertEqual(self._title(off), f'{_BARE_TITLE} · {_BARE_SITE}')
+        self._set_mode(True)
+        on = self._html()
+        title = self._title(on)
+        self.assertEqual(title, _BARE_SITE)
+        self.assertNotIn(_BARE_TITLE, on)
+        self.assertNotIn('ЗОЛОТО', on)
+        self.assertNotIn('ПЕРЕКАЗИ', on)
+        self.assertNotIn(NEUTRAL_DESCRIPTION, title)
+
+
+class ExchangeOnlyArticleLayoutTests(TestCase):
+    def setUp(self):
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
+        cache.clear()
+        SiteSettings.load()
+        category = Category.objects.create(name='Каса', slug='kasa-layout')
+        self.post = Post.objects.create(
+            category=category,
+            title='Нотатка про касу',
+            slug='kryptovalyuta-btc-usdt',
+            excerpt='',
+            body='',
+            status=Post.Status.PUBLISHED,
+            exchange_safe=True,
+            published_at=timezone.now(),
+        )
+
+    def tearDown(self):
+        _clear_attrs(Post, ('h1a_mode', 'h1b_mode', 'lead_mode'))
+        for key, value in self._saved_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        cache.clear()
+
+    def _set_mode(self, enabled):
+        SiteSettings.objects.filter(pk=1).update(exchange_only=enabled)
+        cache.clear()
+
+    def _article(self, html):
+        start = html.index('data-qa="post-detail"')
+        finish = html.index('article-body__nav', start)
+        return html[start:finish]
+
+    def test_layout_mode_replaces_hardcoded_article(self):
+        url = reverse('blog:post_detail', kwargs={'slug': self.post.slug})
+        self._set_mode(False)
+        off = self.client.get(url)
+        self.assertEqual(off.status_code, 200)
+        off_html = off.content.decode()
+        article = self._article(off_html)
+        self.assertIn(_LAYOUT_H1, article)
+        self.assertIn(_LAYOUT_H1B, article)
+        self.assertIn(_LAYOUT_LEAD, article)
+        self.assertIn(_LAYOUT_READ, article)
+        self.assertIn(_LAYOUT_SEC, article)
+        self.assertIn(f'article-banner__title">{_LAYOUT_H1}', article)
+
+        self._set_mode(True)
+        on = self.client.get(url)
+        self.assertEqual(on.status_code, 200)
+        on_html = on.content.decode()
+        on_article = self._article(on_html)
+        for token in (_LAYOUT_H1, _LAYOUT_H1B, _LAYOUT_LEAD, _LAYOUT_READ, _LAYOUT_SEC, 'USDT', 'біткоїн'):
+            self.assertNotIn(token, on_html, token)
+        self.assertNotIn('article-sec', on_article)
+        self.assertNotIn('article-banner__title', on_article)
+
+        _class_attrs(
+            Post,
+            h1a_mode=_MODE_H1,
+            h1b_mode='долар',
+            lead_mode=_MODE_LEAD,
+        )
+        try:
+            filled = self.client.get(url).content.decode()
+            filled_article = self._article(filled)
+            self.assertIn(_MODE_H1, filled_article)
+            self.assertIn(_MODE_LEAD, filled_article)
+            self.assertNotIn(_LAYOUT_H1, filled)
+            self.assertNotIn(_LAYOUT_SEC, filled)
+            self._set_mode(False)
+            restored = self.client.get(url).content.decode()
+            self.assertIn(_LAYOUT_H1, self._article(restored))
+            self.assertNotIn(_MODE_H1, restored)
+            self.assertNotIn(_MODE_LEAD, restored)
+        finally:
+            _clear_attrs(Post, ('h1a_mode', 'h1b_mode', 'lead_mode'))
+
+
+class ExchangeOnlyNavBannerTests(TestCase):
+    def test_nav_hides_banner_from_event_without_inline_style(self):
+        script = (_ROOT / 'src/core/static/js/nav.js').read_text(encoding='utf-8')
+        base = (_ROOT / 'templates/base.html').read_text(encoding='utf-8')
+        self.assertIn('bannerHidden', script)
+        self.assertIn("setAttribute('hidden'", script)
+        self.assertIn('detail.bannerTitle', script)
+        self.assertIn('detail.bannerText', script)
+        self.assertNotIn('.style', script)
+        self.assertIn("{% static 'js/nav.js' %}?v=16", base)
+        self.assertNotIn("{% static 'js/nav.js' %}?v=15", base)
+
+
+class ExchangeOnlyEmptyStatsTests(TestCase):
+    def setUp(self):
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
+        cache.clear()
+        SiteSettings.load()
+        page = HomePage.load()
+        page.show_why = True
+        page.save()
+        HomeStat.objects.all().delete()
+
+    def tearDown(self):
+        for key, value in self._saved_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        cache.clear()
+
+    def _set_mode(self, enabled):
+        SiteSettings.objects.filter(pk=1).update(exchange_only=enabled)
+        cache.clear()
+
+    def test_empty_home_stats_fallback_hidden_in_mode(self):
+        self._set_mode(False)
+        off = self.client.get(reverse('core:home'))
+        self.assertEqual(off.status_code, 200)
+        off_html = off.content.decode()
+        self.assertEqual(off.context['home_stats'], [])
+        self.assertIn('7K', off_html)
+        self.assertIn('Постійних клієнтів', off_html)
+        self._set_mode(True)
+        on = self.client.get(reverse('core:home'))
+        self.assertEqual(on.status_code, 200)
+        on_html = on.content.decode()
+        self.assertEqual(on.context['home_stats'], [])
+        self.assertNotIn('7K', on_html)
+        self.assertNotIn('Постійних клієнтів', on_html)
+        self.assertNotIn('display:none', ''.join(on_html.lower().split()))
+
+
+class ExchangeOnlyServiceBlockModeTests(TestCase):
+    def setUp(self):
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
+        cache.clear()
+        SiteSettings.load()
+        page = ServicesPage.load()
+        page.intro = ''
+        page.intro_mode = ''
+        page.save()
+        home = HomePage.load()
+        home.articles_lead_mode = _ARTICLES_LEAD_MODE
+        home.save()
+        Service.objects.create(
+            title='Обмін валют',
+            slug='obmin-valyut',
+            short_desc='Короткий опис каси',
+            exchange_safe=True,
+            sort_order=1,
+        )
+
+    def tearDown(self):
+        _clear_attrs(Service, ('block_text_mode', 'block_points_mode', 'block_cta_mode'))
+        for key, value in self._saved_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        cache.clear()
+
+    def _set_mode(self, enabled):
+        SiteSettings.objects.filter(pk=1).update(exchange_only=enabled)
+        cache.clear()
+
+    def test_mode_fields_replace_service_blocks_and_articles_lead(self):
+        modes = {
+            'block_text_mode': _BLOCK_TEXT_MODE,
+            'block_points_mode': _BLOCK_POINT_MODE + '\nЄвро у касі',
+            'block_cta_mode': _BLOCK_CTA_MODE,
+        }
+        _class_attrs(Service, **modes)
+        try:
+            self._set_mode(False)
+            off = self.client.get(reverse('content:services'))
+            self.assertEqual(off.status_code, 200)
+            off_html = off.content.decode()
+            self.assertIn('Купуйте та продавайте понад 15 валют', off_html)
+            self.assertIn('Без прихованих комісій', off_html)
+            self.assertIn('Зафіксувати курс', off_html)
+            self.assertIn(_SERVICES_LEAD, off_html)
+            self.assertNotIn(_BLOCK_TEXT_MODE, off_html)
+            self.assertNotIn(_BLOCK_POINT_MODE, off_html)
+            self.assertNotIn(_BLOCK_CTA_MODE, off_html)
+            self.assertNotIn(_ARTICLES_LEAD_MODE, off_html)
+
+            self._set_mode(True)
+            on = self.client.get(reverse('content:services'))
+            self.assertEqual(on.status_code, 200)
+            on_html = on.content.decode()
+            self.assertIn(_BLOCK_TEXT_MODE, on_html)
+            self.assertIn(_BLOCK_POINT_MODE, on_html)
+            self.assertIn('Євро у касі', on_html)
+            self.assertIn(_BLOCK_CTA_MODE, on_html)
+            self.assertIn(_ARTICLES_LEAD_MODE, on_html)
+            self.assertNotIn('Купуйте та продавайте понад 15 валют', on_html)
+            self.assertNotIn('Без прихованих комісій', on_html)
+            self.assertNotIn('USD, EUR, PLN', on_html)
+            self.assertNotIn('Зафіксувати курс', on_html)
+            self.assertNotIn(_SERVICES_LEAD, on_html)
+            self.assertNotIn('Короткий опис каси', on_html)
+            self.assertNotIn('display:none', ''.join(on_html.lower().split()))
+        finally:
+            _clear_attrs(Service, modes)
