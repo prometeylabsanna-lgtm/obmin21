@@ -75,10 +75,7 @@
     var fixBtn = root.querySelector('[data-bk-fix]');
     var panel1 = root.querySelector('[data-bk-panel="1"]');
     var panel2 = root.querySelector('[data-bk-panel="2"]');
-    var timerEl = root.querySelector('[data-bk-timer]');
     var fixTextEl = root.querySelector('[data-bk-fix-text]');
-    var timerId = 0;
-    var expiresAt = 0;
 
     function rateOf() {
       var from = byCode(list, fromCode);
@@ -137,17 +134,6 @@
       if (panel2) panel2.hidden = n !== 2;
     }
 
-    function tick() {
-      var left = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
-      var mm = String(Math.floor(left / 60)).padStart(2, '0');
-      var ss = String(left % 60).padStart(2, '0');
-      if (timerEl) timerEl.textContent = mm + ':' + ss;
-      if (left <= 0 && timerId) {
-        clearInterval(timerId);
-        timerId = 0;
-      }
-    }
-
     function currencyMark(code) {
       var item = byCode(list, code);
       if (item && item.symbol) return String(item.symbol);
@@ -171,10 +157,6 @@
       if (pairInput && pairItem && pairItem.pair_id) pairInput.value = pairItem.pair_id;
       if (amountInput) amountInput.value = String(n).replace(',', '.');
       if (dirInput) dirInput.value = fromCode === 'UAH' ? 'buy' : 'sell';
-      expiresAt = Date.now() + 30 * 60 * 1000;
-      if (timerId) clearInterval(timerId);
-      tick();
-      timerId = setInterval(tick, 1000);
       showPanel(2);
     }
 

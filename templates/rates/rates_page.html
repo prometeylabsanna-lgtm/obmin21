@@ -8,10 +8,6 @@
     <h1 class="page-hero__title">Всі валюти{% if active_city %} <span class="u-accent" data-city-in>{{ active_city.name_in }}</span>{% endif %}</h1>
     {% mode_field page 'intro' as rates_intro %}{% if rates_intro %}<p class="page-hero__lead">{{ rates_intro|brand_mark }}</p>{% elif not eo %}<p class="page-hero__lead">Актуальні курси купівлі та продажу у відділеннях Обмін21. Зафіксуйте курс онлайн і приходьте без черги.</p>{% endif %}
   </div>
-  <div class="page-hero__updated">
-    <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" stroke="#B3B4B6" fill="none" stroke-width="1.2"></circle><path d="M7 3.5V7l2.3 1.4" stroke="#B3B4B6" fill="none" stroke-width="1.2"></path></svg>
-    {% if rate_updated_at %}Оновлено сьогодні о {{ rate_updated_at|date:"H:i" }}{% else %}Курси зʼявляться незабаром{% endif %}
-  </div>
 </section>
 
 <section class="rates-page-card">
