@@ -185,22 +185,28 @@
           </div>
         </div>
       </div>
+      {% if branch.address %}
       <div>
         <div class="map-section__label">{{ page.map_address_label }}</div>
-        <div>{% if branch.address %}{{ branch.address }}{% else %}вул. Хрещатик, 1, Київ{% endif %}</div>
+        <div>{{ branch.address }}</div>
       </div>
+      {% endif %}
     </div>
-    <a class="btn map-section__btn" href="https://maps.google.com/?q={% if branch.address %}{{ branch.address|urlencode }}{% else %}Київ{% endif %}" target="_blank" rel="noopener noreferrer">{{ page.map_button }}</a>
+    {% if branch.map_route_url %}
+    <a class="btn map-section__btn" href="{{ branch.map_route_url }}" target="_blank" rel="noopener noreferrer">{{ page.map_button }}</a>
+    {% endif %}
   </div>
+  {% if branch.map_embed_src %}
   <div class="map-section__frame">
     <iframe
-      src="https://maps.google.com/maps?q={% if branch.address %}{{ branch.address|urlencode }}{% else %}Київ{% endif %}&hl=uk&z=16&output=embed"
-      title="Карта: {% if branch.address %}{{ branch.address }}{% else %}Київ{% endif %}"
+      src="{{ branch.map_embed_src }}"
+      title="Карта: {{ branch.address }}"
       loading="lazy"
       referrerpolicy="no-referrer-when-downgrade"
       allowfullscreen
     ></iframe>
   </div>
+  {% endif %}
   {% endwith %}
 </section>
 {% endif %}
