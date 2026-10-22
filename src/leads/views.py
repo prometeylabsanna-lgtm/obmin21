@@ -3,6 +3,8 @@ import re
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
+from src.core.exchange_mode import is_exchange_only, mode_text
+from src.core.exchange_stopwords import matches_stop_words
 from src.core.models import SiteSettings
 from src.core.phones import phone_tel
 from src.leads.forms import ContactMessageForm, ExchangeRequestForm
@@ -53,6 +55,74 @@ def _telegram_handle(url):
         handle = match.group(1)
         return handle if handle.startswith('@') else f'@{handle}'
     return '@obmin21'
+
+
+_TME_TAIL = re.compile(r't\.me/([^?#]*)', re.IGNORECASE)
+
+
+def _plain(value):
+    return str(value or '').strip()
+
+
+def telegram_nick(url):
+    """Останній сегмент після t.me/. Порожній URL або без ніка — порожній рядок."""
+    raw = _plain(url)
+    if not raw:
+        return ''
+    match = _TME_TAIL.search(raw)
+    if not match:
+        return ''
+    tail = match.group(1).strip().strip('/')
+    if not tail:
+        return ''
+    segment = tail.split('/')[-1].strip().lstrip('@')
+    if not segment:
+        return ''
+    return f'@{segment}'
+
+
+def _contact_phone(request, site):
+    """Телефон відділення, інакше міста, інакше телефон із загальних налаштувань."""
+    city = getattr(request, 'city', None)
+    branches = getattr(request, 'city_branches', None)
+    if branches is None and city is not None:
+        branches = get_city_branches(city)
+    for branch in branches or []:
+        phone = _plain(getattr(branch, 'phone', ''))
+        if phone:
+            return phone
+    if city is not None:
+        phone = _plain(getattr(city, 'phone', ''))
+        if phone:
+            return phone
+    return _plain(site.default_phone)
+
+
+def _visible_copy(value, request):
+    text = _plain(value)
+    if not text:
+        return ''
+    if is_exchange_only(request) and matches_stop_words(text):
+        return ''
+    return text
+
+
+def _contact_modal_copy(request):
+    from src.content.models import ContactsPage, FaqPage
+
+    contacts = ContactsPage.load()
+    faq = FaqPage.load()
+    heading = _visible_copy(
+        mode_text(contacts, 'heading', request=request),
+        request,
+    )
+    accent = _visible_copy(contacts.title_accent, request) if heading else ''
+    return {
+        'modal_title': heading,
+        'modal_accent': accent,
+        'phone_label': _visible_copy(faq.cta_phone, request),
+        'telegram_label': _visible_copy(faq.cta_telegram, request),
+    }
 
 
 def _modal_context(request, form=None):
@@ -188,6 +258,21 @@ def calc_modal(request):
     return render(request, 'partials/modal_calc.html', {
         'calc_rows': rows,
     })
+
+
+@require_http_methods(['GET'])
+def contact_modal(request):
+    site = SiteSettings.load()
+    phone = _contact_phone(request, site)
+    telegram_url = _plain(site.telegram_url)
+    context = _contact_modal_copy(request)
+    context.update({
+        'phone_display': phone,
+        'phone_tel': phone_tel(phone),
+        'telegram_url': telegram_url,
+        'telegram_nick': telegram_nick(telegram_url),
+    })
+    return render(request, 'partials/modal_contact.html', context)
 
 
 @require_http_methods(['POST'])
