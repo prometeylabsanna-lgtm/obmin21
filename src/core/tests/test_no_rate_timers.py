@@ -97,8 +97,8 @@ class NoRateTimersTests(TestCase):
         pages = (
             ('home', reverse('core:home'), 'data-qa="home-calc"'),
             ('rates', reverse('rates:rates_page'), 'data-qa="rates-panel"'),
-            ('modal', reverse('leads:request_modal'), 'data-booking'),
-            ('calc', reverse('leads:calc_modal'), 'data-qa="calc"'),
+            ('modal', reverse('leads:request_modal'), 'contact-card'),
+            ('calc', reverse('leads:calc_modal'), 'contact-card'),
         )
         for enabled in (False, True):
             self._mode(enabled)

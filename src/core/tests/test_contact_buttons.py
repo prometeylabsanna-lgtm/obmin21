@@ -201,11 +201,13 @@ class ContactButtonsTests(TestCase):
                 % re.escape(self.contact),
             )
             calc = self._html(reverse('leads:calc_modal'))
-            self.assertIn('data-calc-amount', calc)
-            self.assertIn('data-calc-result', calc)
-            self.assertIn('data-qa="calc"', calc)
-            self._assert_marked(calc, 'data-calc-continue', '%s:calc' % prefix)
+            self.assertIn('contact-card', calc)
+            self.assertIn('data-qa="modal-contact"', calc)
+            self.assertNotIn('data-qa="calc"', calc)
+            self.assertNotIn('data-calc-amount', calc)
             self.assertNotIn(self.request_modal, calc)
+            self.assertNotIn('<form', calc.lower())
+            self.assertNotIn('<input', calc.lower())
 
     def test_calc_script_keeps_math_and_does_not_open_request(self):
         script = (

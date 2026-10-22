@@ -106,8 +106,8 @@ class BookingModalCityTests(TestCase):
         self.assertEqual(self._buy(override, 'USD'), Decimal('41.20'))
 
     def test_modal_city_select_exposes_quote_data(self):
-        response = self.client.get(reverse('leads:request_modal'))
-        self.assertEqual(response.status_code, 200)
+        response = self.client.post(reverse('leads:request_modal'), {})
+        self.assertEqual(response.status_code, 422)
         html = response.content.decode()
         quotes_url = reverse('core:quotes_json')
         self.assertIn('data-bk-city', html)
@@ -130,7 +130,8 @@ class BookingModalCityTests(TestCase):
         codes = [item['code'] for item in hidden.json()['quotes']]
         self.assertIn('USD', codes)
         self.assertNotIn('BTC', codes)
-        modal = self.client.get(reverse('leads:request_modal'))
+        modal = self.client.post(reverse('leads:request_modal'), {})
+        self.assertEqual(modal.status_code, 422)
         shown = [item['code'] for item in modal.context['currencies']]
         self.assertIn('USD', shown)
         self.assertNotIn('BTC', shown)

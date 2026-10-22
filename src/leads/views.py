@@ -12,7 +12,7 @@ from src.leads.services import create_contact_message, create_exchange_request
 from src.network.models import Branch
 from src.network.selectors import get_city_branches
 from src.rates.models import CurrencyPair, RateBoard
-from src.rates.selectors import get_active_pairs, get_quote, get_quotes_for_city
+from src.rates.selectors import get_quotes_for_city
 
 
 def _pair_symbol(pair):
@@ -216,52 +216,7 @@ def _modal_context(request, form=None):
     }
 
 
-@require_http_methods(['GET', 'POST'])
-def exchange_request_modal(request):
-    city = request.city
-    if request.method == 'POST':
-        form = ExchangeRequestForm(request.POST, city=city)
-        if form.is_valid() and city is not None:
-            branch = form.cleaned_data.get('branch')
-            lead_city = branch.city if branch is not None else city
-            obj = create_exchange_request(cleaned=form.cleaned_data, city=lead_city)
-            return render(request, 'partials/form_success.html', {
-                'title': 'Заявку прийнято',
-                'message': (
-                    f'Курс зафіксовано до {obj.expires_at:%H:%M %d.%m.%Y}. '
-                    f'Чекаємо вас у відділенні: {obj.branch.address}.'
-                ),
-            })
-        if city is None:
-            return render(request, 'partials/form_error.html', {
-                'title': 'Перевірте дані',
-                'message': 'Оберіть місто і спробуйте ще раз або зателефонуйте.',
-            }, status=422)
-        return render(
-            request,
-            'partials/modal_request.html',
-            _modal_context(request, form=form),
-            status=422,
-        )
-
-    return render(request, 'partials/modal_request.html', _modal_context(request))
-
-
-@require_http_methods(['GET'])
-def calc_modal(request):
-    city = request.city
-    rows = []
-    for pair in get_active_pairs():
-        quote = get_quote(pair, city, RateBoard.RETAIL)
-        if quote:
-            rows.append({'pair': pair, 'quote': quote})
-    return render(request, 'partials/modal_calc.html', {
-        'calc_rows': rows,
-    })
-
-
-@require_http_methods(['GET'])
-def contact_modal(request):
+def _render_contact_modal(request):
     site = SiteSettings.load()
     phone = _contact_phone(request, site)
     telegram_url = _plain(site.telegram_url)
@@ -273,6 +228,46 @@ def contact_modal(request):
         'telegram_nick': telegram_nick(telegram_url),
     })
     return render(request, 'partials/modal_contact.html', context)
+
+
+@require_http_methods(['GET', 'POST'])
+def exchange_request_modal(request):
+    if request.method != 'POST':
+        return _render_contact_modal(request)
+    city = request.city
+    form = ExchangeRequestForm(request.POST, city=city)
+    if form.is_valid() and city is not None:
+        branch = form.cleaned_data.get('branch')
+        lead_city = branch.city if branch is not None else city
+        obj = create_exchange_request(cleaned=form.cleaned_data, city=lead_city)
+        return render(request, 'partials/form_success.html', {
+            'title': 'Заявку прийнято',
+            'message': (
+                f'Курс зафіксовано до {obj.expires_at:%H:%M %d.%m.%Y}. '
+                f'Чекаємо вас у відділенні: {obj.branch.address}.'
+            ),
+        })
+    if city is None:
+        return render(request, 'partials/form_error.html', {
+            'title': 'Перевірте дані',
+            'message': 'Оберіть місто і спробуйте ще раз або зателефонуйте.',
+        }, status=422)
+    return render(
+        request,
+        'partials/modal_request.html',
+        _modal_context(request, form=form),
+        status=422,
+    )
+
+
+@require_http_methods(['GET'])
+def calc_modal(request):
+    return _render_contact_modal(request)
+
+
+@require_http_methods(['GET'])
+def contact_modal(request):
+    return _render_contact_modal(request)
 
 
 @require_http_methods(['POST'])
