@@ -223,8 +223,8 @@ class PublicFilterTests(_ModeCase):
             self.assertEqual(missing.status_code, 404)
             hook.assert_not_called()
             hidden = self.client.get(reverse('rates:pair_detail', kwargs={'slug': self.btc.slug}))
-            self.assertEqual(hidden.status_code, 404)
-            hook.assert_called_once()
+            self.assertEqual(hidden.status_code, 503)
+            hook.assert_not_called()
         shown = self.client.get(reverse('rates:pair_detail', kwargs={'slug': self.usd.slug}))
         self.assertEqual(shown.status_code, 200)
         self.assertContains(shown, 'Долар EO')
@@ -236,13 +236,13 @@ class PublicFilterTests(_ModeCase):
             hidden_post = self.client.get(
                 reverse('blog:post_detail', kwargs={'slug': self.post_shut.slug}),
             )
-            self.assertEqual(hidden_post.status_code, 404)
-            hook.assert_called_once()
+            self.assertEqual(hidden_post.status_code, 503)
+            hook.assert_not_called()
             hidden_cat = self.client.get(
                 reverse('blog:category', kwargs={'category_slug': self.cat_shut.slug}),
             )
-            self.assertEqual(hidden_cat.status_code, 404)
-            self.assertEqual(hook.call_count, 2)
+            self.assertEqual(hidden_cat.status_code, 503)
+            hook.assert_not_called()
 
         menu_off = self.client.get(
             reverse('blog:category', kwargs={'category_slug': self.cat_menu_off.slug}),

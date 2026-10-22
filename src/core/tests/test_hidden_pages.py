@@ -161,7 +161,7 @@ class HiddenPageTests(TestCase):
         response = self.client.get(reverse('blog:category', args=['nema-takoi']))
         self.assertEqual(response.status_code, 404)
 
-    def test_pairs_follow_exchange_safe_and_crypto(self):
+    def test_pairs_follow_visible(self):
         self._mode(True)
         safe = self.client.get(
             reverse('rates:pair_detail', args=[self.safe_pair.slug]),
@@ -169,7 +169,7 @@ class HiddenPageTests(TestCase):
         unsafe = self.client.get(
             reverse('rates:pair_detail', args=[self.unsafe_pair.slug]),
         )
-        crypto = self.client.get(
+        marked_safe = self.client.get(
             reverse('rates:pair_detail', args=[self.crypto_pair.slug]),
         )
         inactive = self.client.get(
@@ -177,7 +177,7 @@ class HiddenPageTests(TestCase):
         )
         self.assertEqual(safe.status_code, 200)
         self.assertEqual(unsafe.status_code, 503)
-        self.assertEqual(crypto.status_code, 503)
+        self.assertEqual(marked_safe.status_code, 200)
         self.assertEqual(inactive.status_code, 404)
 
     def test_status_404_omits_retry_after(self):
@@ -197,7 +197,7 @@ class HiddenPageTests(TestCase):
         self._mode(True)
         SiteSettings.objects.filter(pk=1).update(retry_after_seconds=3600)
         response = self.client.get(
-            reverse('rates:pair_detail', args=[self.crypto_pair.slug]),
+            reverse('rates:pair_detail', args=[self.unsafe_pair.slug]),
         )
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response['Retry-After'], '3600')

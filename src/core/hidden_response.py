@@ -147,17 +147,14 @@ def _category_is_hidden(slug):
 
 
 def _pair_is_hidden(slug):
-    from src.core.crypto_visibility import pair_is_crypto
     from src.rates.models import CurrencyPair
 
     if not slug:
         return False
-    pair = CurrencyPair.objects.filter(slug=slug, is_active=True).first()
-    if pair is None:
+    active = CurrencyPair.objects.filter(slug=slug, is_active=True)
+    if not active.exists():
         return False
-    if pair_is_crypto(pair):
-        return True
-    return not pair.exchange_safe
+    return not active.visible().exists()
 
 
 def _service_is_hidden(slug):

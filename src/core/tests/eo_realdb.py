@@ -343,30 +343,30 @@ def _pair_by_slug(slug):
 
 
 def classify_eur_usd():
-    """Фіат (не pair_is_crypto) — обмінна; крипто — прихована."""
-    from src.core.crypto_visibility import pair_is_crypto
+    """Активна пара поза CurrencyPair.objects.visible() — прихована, інакше обмінна."""
+    from src.rates.models import CurrencyPair
 
     pair = _pair_by_slug(CLASSIFIED_PAIR_SLUG)
     if pair is None:
         return 'missing', 'eur-usd: немає CurrencyPair у базі'
-    crypto = pair_is_crypto(pair)
     flag = (pair.flag_code or '').upper()
     safe = bool(pair.exchange_safe)
     active = bool(pair.is_active)
-    if crypto:
+    shown = CurrencyPair.objects.visible().filter(pk=pair.pk).exists()
+    if active and not shown:
         return 'hidden', (
             'eur-usd: прихована. '
-            f'pair_is_crypto=True, flag_code={flag}, code={pair.code}, '
-            f'name={pair.name}, exchange_safe={safe}, is_active={active}'
+            'активна, але не входить у CurrencyPair.objects.visible(). '
+            f'flag_code={flag}, code={pair.code}, name={pair.name}, '
+            f'exchange_safe={safe}, is_active={active}.'
         )
     return 'exchange', (
-        'eur-usd: обмінна (фіат). '
-        f'pair_is_crypto=False: flag_code={flag} не крипто-тикер; '
-        f'code={pair.code}, name={pair.name}, slug={pair.slug}; '
-        'intro і seo без крипто-стемів. '
-        f'exchange_safe={safe} клас не змінює: pair_detail і get_active_pairs '
-        'ховають пару лише через pair_is_crypto, не через ExchangeVisibleQuerySet. '
-        f'is_active={active}.'
+        'eur-usd: обмінна. '
+        f'visible={shown} (CurrencyPair.objects.visible()); '
+        f'flag_code={flag}, code={pair.code}, name={pair.name}, slug={pair.slug}; '
+        f'exchange_safe={safe}, is_active={active}. '
+        'pair_detail і get_active_pairs ховають активну пару через visible(); '
+        'неактивна лишається 404.'
     )
 
 
