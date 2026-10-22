@@ -20,7 +20,7 @@
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:12px">
     <button type="button" class="btn btn--accent"
-            data-open-modal="{% url 'leads:request_modal' %}?pair={{ pair.pk }}&rate_fixed={{ quote.buy }}&direction=sell">
+            data-open-modal="{% url 'leads:contact_modal' %}">
       Створити заявку
     </button>
     <a class="btn btn--ghost" href="{% url 'rates:rates_page' %}">Уся таблиця</a>

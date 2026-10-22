@@ -12,7 +12,7 @@
       <h1 class="adv-hero__title">{{ page.hero_title }}<br><span class="u-accent">{{ page.hero_title_accent }}</span></h1>
       {% mode_field page 'hero_lead' as hero_lead %}{% if hero_lead %}<p class="adv-hero__lead">{{ hero_lead }}</p>{% endif %}
       <div class="adv-hero__btns">
-        <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">{{ page.hero_btn_primary }}</button>
+        <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:contact_modal' %}">{{ page.hero_btn_primary }}</button>
         <a class="btn adv-hero__ghost" href="#adv">{{ page.hero_btn_secondary }}</a>
       </div>
     </div>
@@ -235,7 +235,7 @@
         <span class="cmp-adv__badge">Рекомендуємо</span>
       </div>
       {% mode_field page 'cmp_us_html' as x %}{% if x %}<div class="cmp-adv__html">{{ x|rich_html }}</div>{% endif %}
-      {% mode_field page 'cmp_btn' as cmp_btn %}{% if not eo or cmp_btn %}<button type="button" class="btn btn--accent cmp-adv__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ cmp_btn }}</button>{% endif %}
+      {% mode_field page 'cmp_btn' as cmp_btn %}{% if not eo or cmp_btn %}<button type="button" class="btn btn--accent cmp-adv__cta" data-open-modal="{% url 'leads:contact_modal' %}">{{ cmp_btn }}</button>{% endif %}
     </article>
     <article class="cmp-adv__them">
       <div class="cmp-adv__them-top">Інші обмінники</div>

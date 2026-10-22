@@ -52,7 +52,7 @@
     </div>
     {% endif %}
     <div class="svc-row__btns">
-      {% mode_field svc 'block_cta' as cta %}{% if not eo or cta %}<button type="button" class="btn btn--accent svc-row__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ cta }}</button>{% endif %}
+      {% mode_field svc 'block_cta' as cta %}{% if not eo or cta %}<button type="button" class="btn btn--accent svc-row__cta" data-open-modal="{% url 'leads:contact_modal' %}">{{ cta }}</button>{% endif %}
       <a class="svc-row__consult" href="tel:+380444444444">Консультація</a>
     </div>
   </div>

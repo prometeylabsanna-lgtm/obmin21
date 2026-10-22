@@ -52,7 +52,7 @@
         <div class="rates-table__value" data-rate-animate>{% if active_board == 'crypto' %}{{ row.quote.sell|format_rate:"compact" }}{% else %}{{ row.quote.sell|format_rate }}{% endif %}</div>
         <div class="rates-table__action">
           <button type="button" class="btn btn--sm"
-                  data-open-modal="{% url 'leads:request_modal' %}?pair={{ row.pair.pk }}&board={{ active_board }}&direction=sell&rate_fixed={{ row.quote.buy }}"
+                  data-open-modal="{% url 'leads:contact_modal' %}"
                   data-qa="rate-request">
             <span class="rates-action-text">Обміняти</span>
             <span class="rates-action-icon" aria-hidden="true">
@@ -79,7 +79,7 @@
         <div class="rates-table__value" data-rate-animate>{% if hide_full_table_link or active_board == 'crypto' %}{{ row.quote.sell|format_rate:"compact" }}{% else %}{{ row.quote.sell|format_rate }}{% endif %}</div>
         <div class="rates-table__action">
           <button type="button" class="btn btn--sm"
-                  data-open-modal="{% url 'leads:request_modal' %}?pair={{ row.pair.pk }}&board={{ active_board }}&direction=sell&rate_fixed={{ row.quote.buy }}"
+                  data-open-modal="{% url 'leads:contact_modal' %}"
                   data-qa="rate-request">
             <span class="rates-action-text">Обміняти</span>
             <span class="rates-action-icon" aria-hidden="true">

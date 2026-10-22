@@ -155,7 +155,7 @@ class ContactModalTests(TestCase):
         hits = _stop_hits(response.content.decode())
         self.assertEqual(hits, [])
 
-    def test_home_still_opens_request_modal(self):
+    def test_home_opens_contact_modal_not_request(self):
         html = self.client.get(reverse('core:home')).content.decode()
-        self.assertIn(reverse('leads:request_modal'), html)
-        self.assertNotIn(reverse('leads:contact_modal'), html)
+        self.assertIn(reverse('leads:contact_modal'), html)
+        self.assertNotIn(reverse('leads:request_modal'), html)

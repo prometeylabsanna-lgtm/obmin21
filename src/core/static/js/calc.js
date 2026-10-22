@@ -230,29 +230,6 @@
       });
     }
 
-    var cont = scope.querySelector('[data-calc-continue]');
-    if (cont) {
-      cont.addEventListener('click', function () {
-        if (!window.Obmin21) return;
-        var amount = amountInput ? amountInput.value : '1000';
-        var rate = rateOf();
-        var pairCode = fromCode === 'UAH' ? toCode : fromCode;
-        var pairItem = byCode(list, pairCode);
-        var pairId = pairItem && pairItem.pair_id ? pairItem.pair_id : '';
-        var receive = formatUa(parseNum(amount) * rate, 2);
-        var url =
-          '/htmx/zayavka/?pair=' + encodeURIComponent(pairId) +
-          '&from=' + encodeURIComponent(fromCode) +
-          '&to=' + encodeURIComponent(toCode) +
-          '&direction=' + (fromCode === 'UAH' ? 'buy' : 'sell') +
-          '&amount_give=' + encodeURIComponent(amount) +
-          '&amount_receive=' + encodeURIComponent(receive) +
-          '&rate_fixed=' + encodeURIComponent(String(rate)) +
-          '&step=1';
-        window.Obmin21.openModal(url);
-      });
-    }
-
     syncHeads();
     recalcCross();
   }
@@ -293,29 +270,6 @@
         recalc(scope);
       });
     });
-
-    var cont = scope.querySelector('[data-calc-continue]');
-    if (cont) {
-      cont.addEventListener('click', function () {
-        var btn = activeBtn(scope);
-        if (!btn || !window.Obmin21) return;
-        var amount = amountInput ? amountInput.value : '100';
-        var buy = btn.getAttribute('data-buy');
-        var pairId = btn.getAttribute('data-pair-id');
-        var receive = formatUa(parseNum(amount) * parseNum(buy), 2);
-        var url =
-          '/htmx/zayavka/?pair=' +
-          encodeURIComponent(pairId) +
-          '&direction=sell&amount_give=' +
-          encodeURIComponent(amount) +
-          '&amount_receive=' +
-          encodeURIComponent(receive) +
-          '&rate_fixed=' +
-          encodeURIComponent(buy) +
-          '&step=1';
-        window.Obmin21.openModal(url);
-      });
-    }
 
     scope._recalc = function () { recalc(scope); };
     recalc(scope);

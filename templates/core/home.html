@@ -24,7 +24,7 @@
       <h1 class="hero__title">{% if active_city %}{% mode_field active_city 'banner_title' as bt %}{% if not eo or bt %}<span data-hero-title>{{ bt }}</span>{% endif %}{% else %}<span data-hero-title>Обмін валют</span>{% endif %}<br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{% mode_field active_city 'banner_suffix' as hero_suffix %}{{ hero_suffix }}{% elif not eo %}за вигідним курсом{% endif %}</span></h1>
       {% if active_city %}{% mode_field active_city 'banner_text' as bl %}{% if not eo or bl %}<p class="hero__lead" data-hero-lead>{{ bl }}</p>{% endif %}{% else %}<p class="hero__lead" data-hero-lead>Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>{% endif %}
       <div class="hero__cta">
-        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">{% if active_city %}{% mode_field active_city 'banner_button' as hero_btn %}{% if not eo or hero_btn %}{{ hero_btn }}{% endif %}{% elif not eo %}Зафіксувати курс{% endif %}</button>
+        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:contact_modal' %}">{% if active_city %}{% mode_field active_city 'banner_button' as hero_btn %}{% if not eo or hero_btn %}{{ hero_btn }}{% endif %}{% elif not eo %}Зафіксувати курс{% endif %}</button>
       </div>
     </div>
   </div>
@@ -92,7 +92,7 @@
   </div>
 
   <div class="calc-box__action">
-    <button type="button" class="btn btn--block" data-calc-continue>{{ page.calc_button }}</button>
+    <button type="button" class="btn btn--block" data-calc-continue data-open-modal="{% url 'leads:contact_modal' %}">{{ page.calc_button }}</button>
   </div>
 </section>
 
@@ -136,7 +136,7 @@
       <div class="promo-banner__content">
         <h2 class="promo-banner__title">SWIFT-перекази<br><span class="u-accent">за кордон</span></h2>
         <p class="promo-banner__text">Міжнародні перекази на рахунки в банках понад 100 країн</p>
-        <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{% url 'leads:request_modal' %}?direct=1">Зробити заявку</button>
+        <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{% url 'leads:contact_modal' %}">Зробити заявку</button>
       </div>
     </article>
     {% endif %}

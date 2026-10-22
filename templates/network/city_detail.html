@@ -20,7 +20,7 @@
   </div>
   <div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:12px">
     <a class="btn btn--accent" href="{% url 'network:select_city' city.slug %}">Обрати це місто</a>
-    <button type="button" class="btn btn--ghost" data-open-modal="{% url 'leads:request_modal' %}?direct=1">Зробити заявку</button>
+    <button type="button" class="btn btn--ghost" data-open-modal="{% url 'leads:contact_modal' %}">Зробити заявку</button>
   </div>
 </section>
 {% endblock %}
