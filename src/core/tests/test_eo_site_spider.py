@@ -1,6 +1,5 @@
 import os
 import re
-import unittest
 from decimal import Decimal
 
 from django.core.cache import cache
@@ -21,6 +20,7 @@ from src.content.models import (
     HomePage,
     HomeStat,
     OfferPage,
+    PrivacyPage,
     RatesPage,
     Service,
     ServicesPage,
@@ -40,6 +40,63 @@ _BOUND = frozenset({
     'eth', 'btc', 'bnb', 'sol', 'trx', 'ton', 'gold', 'swift', 'usdt', 'usdc',
 })
 _EXTRA_STOPS = ('замін',)
+
+# стан після content 0023 (eo/cms), текст зі зведеної БД ~/Sites/Obmin21-wt-merge
+OFFER_BODY_AFTER_0023 = """Ця оферта визначає умови надання послуг мережі Обмін21 через сайт, телефон і відділення.
+
+Предмет
+
+Ми приймаємо заявки на обмін валют та супутні послуги, зазначені на сайті.
+
+Заявка та курс
+
+Заявка на сайті фіксує намір клієнта. Курс і сума підтверджуються менеджером або касиром перед розрахунком.
+
+Ідентифікація
+
+Для операцій у межах лімітів достатньо паспорта або ID-картки. Для більших сум можуть знадобитися додаткові документи згідно з вимогами фінмоніторингу.
+
+Відмова від операції
+
+Ми можемо відмовити в обслуговуванні, якщо є ознаки підробки, порушення законодавства або неповні дані клієнта.
+
+Відповідальність
+
+Фінальні умови операції підтверджуються у відділенні. Питання щодо оферти надсилайте на контактний email у налаштуваннях сайту."""
+PRIVACY_BODY_AFTER_0023 = """Ми обробляємо персональні дані (імʼя, телефон, повідомлення) виключно для обробки заявок і зворотного звʼязку.
+
+Які дані збираємо
+
+Контактні дані з форм на сайті, технічні журнали звернень і параметри заявки на обмін (валюта, сума, відділення).
+
+Навіщо
+
+Щоб підтвердити заявку, звʼязатися з вами та надати послугу в обраному відділенні.
+
+Зберігання та передача
+
+Дані не продаються третім особам. Передача можлива лише за законною підставою.
+
+Ваші права
+
+Ви можете запросити уточнення, виправлення або видалення даних, написавши на контактний email, зазначений у налаштуваннях сайту."""
+COOKIE_BODY_AFTER_0023 = """Ми використовуємо файли cookie, щоб сайт працював стабільно, запам’ятовував місто та зберігав технічні налаштування сесії.
+
+Які cookie застосовуємо
+
+Необхідні cookie для безпеки форм і вибору міста, а також технічні журнали, що допомагають усувати збої.
+
+Навіщо вони потрібні
+
+Щоб показати відділення вашого міста, захистити заявки від повторної відправки і коректно відкривати сторінки на різних пристроях, зокрема в iOS Safari.
+
+Термін зберігання
+
+Сесійні cookie видаляються після закриття браузера. Cookie міста можуть зберігатися довше, щоб не обирати локацію щоразу.
+
+Керування
+
+Ви можете вимкнути cookie в налаштуваннях браузера. Частина функцій сайту тоді може працювати обмежено."""
 
 
 def _clip(value, field):
@@ -109,13 +166,11 @@ class ExchangeOnlySiteSpiderTests(TestCase):
         ):
             _poison_mode_fields(model.load())
         OfferPage.load()
-        OfferPage.objects.filter(pk=1).update(
-            body=(
-                'Публічна оферта: перекази, операції з криптовалютою, '
-                'золото, swift, bitcoin, usdt.'
-            ),
-        )
+        OfferPage.objects.filter(pk=1).update(body=OFFER_BODY_AFTER_0023)
+        PrivacyPage.load()
+        PrivacyPage.objects.filter(pk=1).update(body=PRIVACY_BODY_AFTER_0023)
         CookiePage.load()
+        CookiePage.objects.filter(pk=1).update(body=COOKIE_BODY_AFTER_0023)
         city = City.objects.create(
             name='Львів',
             slug='lviv',
@@ -292,9 +347,6 @@ class ExchangeOnlySiteSpiderTests(TestCase):
     def test_mode_on_privacy(self):
         self._assert_mode_on('privacy')
 
-    # src/content/models.py:383 OfferPage.body без body_mode.
-    # templates/content/legal.html:19 друкує page.body зі стоп-словами.
-    @unittest.expectedFailure
     def test_mode_on_offer(self):
         self._assert_mode_on('offer')
 
