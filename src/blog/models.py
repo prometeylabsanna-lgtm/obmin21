@@ -1,7 +1,13 @@
 from django.db import models
 from django.utils import timezone
 
-from src.core.exchange_fields import mode_char, mode_json, mode_text
+from src.core.exchange_fields import (
+    EXCHANGE_SAFE_CURRENCY_HELP,
+    EXCHANGE_SAFE_VERBOSE,
+    mode_char,
+    mode_json,
+    mode_text,
+)
 from src.core.exchange_mode import ExchangeSafeMixin
 
 _UK_MONTHS = (
@@ -53,6 +59,12 @@ class Category(models.Model):
 
 
 class Post(ExchangeSafeMixin, models.Model):
+    exchange_safe = models.BooleanField(
+        EXCHANGE_SAFE_VERBOSE,
+        default=False,
+        help_text=EXCHANGE_SAFE_CURRENCY_HELP,
+    )
+
     class Status(models.TextChoices):
         DRAFT = 'draft', 'Чернетка'
         PUBLISHED = 'published', 'Опубліковано'

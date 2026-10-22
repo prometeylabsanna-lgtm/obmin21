@@ -19,14 +19,18 @@ class ReviewAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
     )
     list_filter = (ExchangeSafeListFilter, 'is_published', 'rating')
     search_fields = ('name', 'text')
-    fields = (
-        'exchange_safe',
-        'name',
-        'city_name',
-        'rating',
-        'text',
-        'is_published',
-        'published_at',
+    fieldsets = (
+        ('Відгук', {
+            'fields': (
+                'exchange_safe',
+                'name',
+                'city_name',
+                'rating',
+                'text',
+                'is_published',
+                'published_at',
+            ),
+        }),
     )
     rich_fields = frozenset({'text'})
 
