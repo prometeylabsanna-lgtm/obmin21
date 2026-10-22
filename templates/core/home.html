@@ -155,62 +155,15 @@
 
 {% if page.show_map %}
 <section class="map-section" id="contacts" data-qa="section-map">
-  {% with branch=city_branches.0 %}
-  <div class="map-section__info">
-    <h2 class="map-section__title">{{ page.map_title }}<br><span class="u-accent">{{ page.map_title_accent }}</span></h2>
-    <div class="map-section__details">
-      {% if branch.hours %}
-      <div>
-        <div class="map-section__label">{{ page.map_hours_label }}</div>
-        <div>{{ branch.hours }}</div>
-      </div>
-      {% endif %}
-      <div>
-        <div class="map-section__label">{{ page.map_phone_label }}</div>
-        <div>{% if branch.phone %}{{ branch.phone }}{% elif active_phone %}{{ active_phone }}{% endif %}</div>
-      </div>
-      <div>
-        <div class="map-section__label">Місто:</div>
-        <div class="map-city" data-city-select>
-          <button type="button" class="map-city__btn" data-city-toggle aria-expanded="false" aria-haspopup="listbox">
-            <span>{% if active_city %}{% mode_field active_city 'name' as map_city_name %}{% endif %}{% if map_city_name %}{{ map_city_name }}{% elif not eo %}Місто{% endif %}</span>
-            <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
-          </button>
-          <div class="map-city__menu" data-city-menu hidden role="listbox">
-            {% for c in cities %}
-            {% mode_field c 'name' as map_option_name %}
-            <form method="post" action="{% url 'network:set_city' %}">
-              {% csrf_token %}
-              <input type="hidden" name="city" value="{{ c.slug }}">
-              <button type="submit" class="map-city__option{% if active_city.slug == c.slug %} is-active{% endif %}">{{ map_option_name }}</button>
-            </form>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-      {% if branch.address %}
-      <div>
-        <div class="map-section__label">{{ page.map_address_label }}</div>
-        <div>{{ branch.address }}</div>
-      </div>
-      {% endif %}
-    </div>
-    {% if branch.map_route_url %}
-    <a class="btn map-section__btn" href="{{ branch.map_route_url }}" target="_blank" rel="noopener noreferrer">{{ page.map_button }}</a>
-    {% endif %}
+  <div
+    id="home-branch"
+    class="map-section__branch"
+    hx-get="{% url 'core:home_branch' %}"
+    hx-trigger="cityChanged from:body"
+    hx-swap="innerHTML"
+  >
+    {% include 'partials/home_branch.html' %}
   </div>
-  {% if branch.map_embed_src %}
-  <div class="map-section__frame">
-    <iframe
-      src="{{ branch.map_embed_src }}"
-      title="Карта: {{ branch.address }}"
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade"
-      allowfullscreen
-    ></iframe>
-  </div>
-  {% endif %}
-  {% endwith %}
 </section>
 {% endif %}
 

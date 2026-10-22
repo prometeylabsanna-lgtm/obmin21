@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.utils.html import strip_tags
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap as django_sitemap
@@ -124,6 +125,28 @@ def rates_partial(request):
         'boards': public_boards(),
         'hide_full_table_link': request.GET.get('hide_full') == '1',
         'home_rates_compact': home_compact,
+    })
+
+
+def _home_branch_phone(city):
+    if city and city.phone:
+        return city.phone
+    from src.core.models import SiteSettings
+
+    return SiteSettings.load().default_phone or ''
+
+
+@require_GET
+@never_cache
+def home_branch(request):
+    city = getattr(request, 'city', None)
+    return render(request, 'partials/home_branch.html', {
+        'eo': is_exchange_only(request),
+        'cities': getattr(request, 'cities', []),
+        'active_city': city,
+        'city_branches': getattr(request, 'city_branches', []),
+        'page': HomePage.load(),
+        'active_phone': _home_branch_phone(city),
     })
 
 

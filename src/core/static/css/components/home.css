@@ -560,9 +560,17 @@
 
 .map-section {
   margin-top: 64px;
+}
+
+.map-section__branch {
   display: grid;
   gap: 32px;
   align-items: center;
+  min-width: 0;
+}
+
+.map-section__info {
+  min-width: 0;
 }
 
 .map-section__title {
@@ -650,6 +658,7 @@
 
 .map-section__frame {
   height: 320px;
+  min-width: 0;
   border-radius: 10px;
   overflow: hidden;
   background: #e6efe9;
@@ -1301,7 +1310,10 @@
 
   .map-section {
     margin-top: 96px;
-    grid-template-columns: 1fr 1.1fr;
+  }
+
+  .map-section__branch {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
     gap: 40px 60px;
   }
 
