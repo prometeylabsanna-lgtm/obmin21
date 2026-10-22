@@ -27,11 +27,13 @@ from src.content.models import (
     Service,
     ServicesPage,
 )
+from src.content.page_meta_mode import fill_page_meta_mode
 from src.content.stage3_fill import fill_articles_lead, fill_home_seo_mode
 from src.core.models import SiteSettings
 from src.network.city_mode_copy import fill_city_banner_seo_mode
 from src.network.models import Branch, City
 from src.rates.models import CurrencyPair, Quote, RateBoard
+from src.rates.pair_mode_copy import fill_fiat_pair_mode
 from src.reviews.models import Review
 
 
@@ -639,5 +641,8 @@ class Command(BaseCommand):
                     'is_active': True,
                 },
             )
+
+        fill_page_meta_mode(apps, None)
+        fill_fiat_pair_mode(apps, None)
 
         self.stdout.write(self.style.SUCCESS('seed_demo OK'))

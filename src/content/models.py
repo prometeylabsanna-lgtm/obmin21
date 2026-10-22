@@ -150,7 +150,9 @@ class HomeStat(ExchangeSafeMixin, models.Model):
 class RatesPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'rates'
     title = models.CharField('Заголовок', max_length=120, default='Курси валют')
+    title_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
     intro = models.TextField('Вступний текст', blank=True)
+    intro_mode = mode_text('Вступ для режиму «Лише обмін»')
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
     seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
@@ -167,6 +169,7 @@ class RatesPage(ThemeFieldsMixin, SingletonModel):
 class ServicesPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'services'
     title = models.CharField('Заголовок сторінки', max_length=120, default='Послуги')
+    title_mode = mode_char('Заголовок сторінки для режиму «Лише обмін»', 120)
     intro = models.TextField('Вступний текст', blank=True)
     intro_mode = mode_text('Вступ для режиму «Лише обмін»')
     hero_image = models.ImageField(
@@ -209,6 +212,7 @@ class Service(ServiceBlockFields, ExchangeSafeMixin, models.Model):
     slug = models.SlugField('Адреса сторінки', unique=True, max_length=80)
     image = models.ImageField('Фото картки', upload_to='services/', blank=True)
     short_desc = models.CharField('Короткий опис', max_length=400)
+    short_desc_mode = mode_char('Короткий опис для режиму «Лише обмін»', 400)
     body = models.TextField('Повний опис', blank=True)
     show_on_home = models.BooleanField('Показувати на головній', default=True)
     home_page = models.ForeignKey(
@@ -257,6 +261,7 @@ class Service(ServiceBlockFields, ExchangeSafeMixin, models.Model):
 class AdvantagesPage(ThemeFieldsMixin, AdvantagesSectionsMixin, SingletonModel):
     theme_slug = 'advantages'
     title = models.CharField('Заголовок', max_length=120, default='Переваги')
+    title_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
     intro = models.TextField('Вступний текст', blank=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
     seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
@@ -295,7 +300,9 @@ class AdvantageItem(ExchangeSafeMixin, models.Model):
 class ContactsPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'contacts'
     title = models.CharField('Мітка', max_length=120, default='Контакти')
+    title_mode = mode_char('Мітка для режиму «Лише обмін»', 120)
     heading = models.CharField('Заголовок', max_length=120, default='Зв’яжіться')
+    heading_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
     title_accent = models.CharField(
         'Акцент у заголовку',
         max_length=80,
@@ -347,7 +354,9 @@ class ContactsPage(ThemeFieldsMixin, SingletonModel):
     )
     map_image = models.ImageField('Зображення карти', upload_to='contacts/', blank=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
 
     class Meta:
         verbose_name = 'Сторінка контактів'
@@ -434,6 +443,7 @@ class CitiesPage(ThemeFieldsMixin, SingletonModel):
 class FaqPage(FaqPageCopy, ThemeFieldsMixin, SingletonModel):
     theme_slug = 'faq'
     title = models.CharField('Заголовок', max_length=120, default='Відповіді на')
+    title_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
     intro = models.TextField('Вступний текст', blank=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
     seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
@@ -474,6 +484,7 @@ class FaqItem(ExchangeSafeMixin, models.Model):
 class BlogPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'blog'
     title = models.CharField('Мітка', max_length=120, default='Блог')
+    title_mode = mode_char('Мітка для режиму «Лише обмін»', 120)
     heading = models.CharField('Заголовок', max_length=120, default='Корисні')
     title_accent = models.CharField(
         'Акцент у заголовку',
@@ -488,6 +499,7 @@ class BlogPage(ThemeFieldsMixin, SingletonModel):
             'та безпечно обміняти гроші.'
         ),
     )
+    intro_mode = mode_text('Вступ для режиму «Лише обмін»')
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
     seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)

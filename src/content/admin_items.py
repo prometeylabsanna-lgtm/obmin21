@@ -55,9 +55,11 @@ _register_page(
 class BlogPageAdmin(SingletonUnfoldAdmin):
     content_fields = (
         'title',
+        'title_mode',
         'heading',
         'title_accent',
         'intro',
+        'intro_mode',
         'seo_title',
         'seo_title_mode',
         'seo_description',
@@ -66,7 +68,7 @@ class BlogPageAdmin(SingletonUnfoldAdmin):
     rich_fields = frozenset()
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'intro':
+        if db_field.name in ('intro', 'intro_mode'):
             kwargs['widget'] = CmsAdminTextareaWidget()
             return db_field.formfield(**kwargs)
         return super().formfield_for_dbfield(db_field, request, **kwargs)
@@ -92,6 +94,7 @@ class ServiceAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
         'image',
         'title',
         'short_desc',
+        'short_desc_mode',
         'body',
         'block_text',
         'block_text_mode',

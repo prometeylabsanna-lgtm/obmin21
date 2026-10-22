@@ -29,8 +29,11 @@ class CurrencyPairAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
         'is_active',
         'sort_order',
         'intro',
+        'intro_mode',
         'seo_title',
+        'seo_title_mode',
         'seo_description',
+        'seo_description_mode',
     )
     rich_fields = frozenset({'intro'})
 

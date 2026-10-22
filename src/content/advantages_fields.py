@@ -102,6 +102,7 @@ class AdvantagesSectionsMixin(models.Model):
             'Ось що цінують наші клієнти.'
         ),
     )
+    hero_lead_mode = mode_text('Підзаголовок банера для режиму «Лише обмін»')
     hero_btn_primary = models.CharField(
         'Кнопка 1',
         max_length=80,

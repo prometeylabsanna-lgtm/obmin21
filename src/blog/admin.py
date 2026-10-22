@@ -27,18 +27,26 @@ class PostAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
             'fields': (
                 'exchange_safe',
                 'title',
+                'title_mode',
                 'category',
                 'status',
                 'published_at',
                 'cover',
                 'excerpt',
+                'excerpt_mode',
                 'body',
                 'figure',
                 'related_posts',
             ),
         }),
         ('Пошук', {
-            'fields': ('seo_title', 'seo_description', 'faq'),
+            'fields': (
+                'seo_title',
+                'seo_title_mode',
+                'seo_description',
+                'seo_description_mode',
+                'faq',
+            ),
         }),
         ('Макет', {
             'classes': ('collapse',),

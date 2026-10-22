@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from src.core.exchange_fields import mode_json
+from src.core.exchange_fields import mode_char, mode_json, mode_text
 from src.core.exchange_mode import ExchangeSafeMixin
 
 _UK_MONTHS = (
@@ -64,8 +64,10 @@ class Post(ExchangeSafeMixin, models.Model):
         verbose_name='Категорія',
     )
     title = models.CharField('Заголовок', max_length=200)
+    title_mode = mode_char('Заголовок для режиму «Лише обмін»', 200)
     slug = models.SlugField('Код у посиланні', unique=True, max_length=200)
     excerpt = models.TextField('Анонс', blank=True)
+    excerpt_mode = mode_text('Анонс для режиму «Лише обмін»')
     body = models.TextField('Текст')
     cover = models.ImageField('Обкладинка', upload_to='blog/', blank=True)
     status = models.CharField(
@@ -77,7 +79,9 @@ class Post(ExchangeSafeMixin, models.Model):
     published_at = models.DateTimeField('Опубліковано', null=True, blank=True)
     updated_at = models.DateTimeField('Оновлено', auto_now=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
     faq = models.TextField('Питання та відповіді (необовʼязково)', blank=True)
     figure = models.ImageField(
         'Картинка в статті',
