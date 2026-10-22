@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% load content_format %}
+{% load content_format exchange_mode %}
 
-{% block title %}{{ pair.seo_title|default:pair.code }} · {{ site_settings.site_name }}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta pair 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ pair.seo_title|default:pair.code }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 <article class="simple-page" data-qa="pair-detail">
   <h1 class="simple-page__title">{{ pair.code }}/UAH</h1>
-  <p class="page-hero__lead">{{ pair.name }}{% if active_city %} · {{ active_city.name }}{% endif %}</p>
+  <p class="page-hero__lead">{{ pair.name }}{% if active_city %}{% mode_field active_city 'name' as pair_city %}{% if pair_city %} · {{ pair_city }}{% endif %}{% endif %}</p>
 
   {% if quote %}
   <div class="card-grid card-grid--2" style="margin:28px 0;max-width:480px">
@@ -27,9 +27,9 @@
   </div>
   {% endif %}
 
-  {% if pair.intro %}
+  {% mode_field pair 'intro' as pair_intro %}{% if pair_intro %}
   <div class="simple-page__body" style="margin-top:32px">
-    {{ pair.intro|format_body }}
+    {{ pair_intro|format_body }}
   </div>
   {% endif %}
 </article>

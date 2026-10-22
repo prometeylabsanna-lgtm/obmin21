@@ -1,32 +1,57 @@
 {% extends 'base.html' %}
-{% load static content_format %}
+{% load static content_format exchange_mode %}
 
-{% block title %}{{ post.seo_title|default:post.title }} · {{ site_settings.site_name }}{% endblock %}
-{% block content %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta post 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ post.seo_title|default:post.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block content %}{% is_exchange_only as eo %}
 <article class="article-page" data-qa="post-detail">
   <header class="article-banner">
-    <img class="article-banner__img" src="{{ post.image_url }}" alt="{{ post.title }}" decoding="async">
+    {% mode_field post 'title' as post_title %}<img class="article-banner__img" src="{{ post.image_url }}" alt="{{ post_title }}" decoding="async">
     <div class="article-banner__shade" aria-hidden="true"></div>
     <div class="article-banner__copy">
-      <h1 class="article-banner__title">{{ art.h1a }}{% if art.h1b %} <span class="u-accent">{{ art.h1b }}</span>{% endif %}</h1>
+      {% if eo %}{% if art.layout_mode.h1a or art.layout_mode.h1b %}<h1 class="article-banner__title">{{ art.layout_mode.h1a }}{% if art.layout_mode.h1b %} <span class="u-accent">{{ art.layout_mode.h1b }}</span>{% endif %}</h1>{% endif %}{% else %}<h1 class="article-banner__title">{{ art.h1a }}{% if art.h1b %} <span class="u-accent">{{ art.h1b }}</span>{% endif %}</h1>{% endif %}
       <div class="article-banner__meta">
         <span>Обмін21</span>
         <span class="article-banner__dot" aria-hidden="true"></span>
         <time datetime="{{ post.published_at|date:'Y-m-d' }}">{{ post.date_uk }}</time>
-        <span class="article-banner__dot" aria-hidden="true"></span>
-        <span>{{ art.read }}</span>
+        {% if eo %}{% if art.layout_mode.read %}<span class="article-banner__dot" aria-hidden="true"></span>
+        <span>{{ art.layout_mode.read }}</span>{% endif %}{% else %}<span class="article-banner__dot" aria-hidden="true"></span>
+        <span>{{ art.read }}</span>{% endif %}
       </div>
     </div>
   </header>
 
   <div class="article-body">
-    {% if post.excerpt %}<p class="article-body__lead">{{ post.excerpt }}</p>{% elif art.lead %}<p class="article-body__lead">{{ art.lead|brand_mark }}</p>{% endif %}
+    {% mode_field post 'excerpt' as excerpt %}{% if excerpt %}<p class="article-body__lead">{{ excerpt|brand_mark }}</p>{% elif eo %}{% if art.layout_mode.lead %}<p class="article-body__lead">{{ art.layout_mode.lead|brand_mark }}</p>{% endif %}{% elif art.lead %}<p class="article-body__lead">{{ art.lead|brand_mark }}</p>{% endif %}
     {% if post.body %}
       {{ post.body|rich_html }}
       {% if post.figure %}
       <figure class="article-fig">
         <img src="{{ post.figure.url }}" alt="" loading="lazy" decoding="async">
       </figure>
+      {% endif %}
+    {% elif eo %}
+      {% if art.layout_mode.plain %}
+      {{ post.body|format_body }}
+      {% else %}
+      {% for sec in art.layout_mode.sections %}
+      {% if sec.h or sec.p|join:"" or sec.list|join:"" or sec.fig and art.layout_mode.fig_url %}
+      <section class="article-sec">
+        {% if sec.h %}<h2 class="article-sec__title">{{ sec.h }}</h2>{% endif %}
+        {% for pp in sec.p %}{% if pp %}<p class="article-sec__p">{{ pp|brand_mark }}</p>{% endif %}{% endfor %}
+        {% if sec.list|join:"" %}
+        <ul class="article-sec__list">
+          {% for li in sec.list %}{% if li %}<li>{{ li|brand_mark }}</li>{% endif %}{% endfor %}
+        </ul>
+        {% endif %}
+        {% if sec.fig and art.layout_mode.fig_url %}
+        <figure class="article-fig">
+          <img src="{{ art.layout_mode.fig_url }}" alt="{{ art.layout_mode.fig_cap }}" loading="lazy" decoding="async">
+          {% if art.layout_mode.fig_cap %}<figcaption>{{ art.layout_mode.fig_cap }}</figcaption>{% endif %}
+        </figure>
+        {% endif %}
+      </section>
+      {% endif %}
+      {% endfor %}
       {% endif %}
     {% elif art.plain %}
       {{ post.body|format_body }}
@@ -63,14 +88,15 @@
 <section class="article-related">
   <h2 class="article-related__title">Читайте <span class="u-accent">також</span></h2>
   <div class="article-related__grid">
-    {% for item in related %}
+    {% for item in related %}{% if not eo or item.exchange_safe %}
     <a class="article-related__card" href="{% url 'blog:post_detail' item.slug %}">
+      {% mode_field item 'title' as related_title %}
       <div class="article-related__media">
-        <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy" decoding="async">
+        <img src="{{ item.image_url }}" alt="{{ related_title }}" loading="lazy" decoding="async">
       </div>
       <div class="article-related__cat">{{ item.category.name }}</div>
-      <div class="article-related__name">{{ item.title|brand_mark }}</div>
-    </a>
+      {% if related_title %}<div class="article-related__name">{{ related_title|brand_mark }}</div>{% endif %}
+    </a>{% endif %}
     {% endfor %}
   </div>
 </section>
@@ -80,7 +106,7 @@
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "{{ post.title|escapejs }}",
+  "headline": "{{ post_title|escapejs }}",
   "datePublished": "{{ post.published_at|date:'c' }}",
   "dateModified": "{{ post.updated_at|date:'c' }}"
 }

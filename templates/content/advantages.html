@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% load static content_format %}
+{% load static content_format exchange_mode %}
 
-{% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
-{% block content %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block content %}{% is_exchange_only as eo %}
 <section class="adv-hero">
   <div
     class="adv-hero__banner{% if page.hero_banner_src %} has-photo{% endif %}"
@@ -10,7 +10,7 @@
   >
     <div class="adv-hero__copy">
       <h1 class="adv-hero__title">{{ page.hero_title }}<br><span class="u-accent">{{ page.hero_title_accent }}</span></h1>
-      <p class="adv-hero__lead">{{ page.hero_lead }}</p>
+      {% mode_field page 'hero_lead' as hero_lead %}{% if hero_lead %}<p class="adv-hero__lead">{{ hero_lead }}</p>{% endif %}
       <div class="adv-hero__btns">
         <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:request_modal' %}">{{ page.hero_btn_primary }}</button>
         <a class="btn adv-hero__ghost" href="#adv">{{ page.hero_btn_secondary }}</a>
@@ -86,95 +86,160 @@
 <section class="stats-section stats-section--adv">
   <h2 class="stats-section__title">{{ page.stats_title }} <span class="u-accent">{{ page.stats_title_accent }}</span></h2>
   <div class="stats-section__grid">
+    {% if not eo %}
     {% for row in page.iter_stats %}
     <div class="stats-section__item">
       <div class="stats-section__num">{{ row.title }}</div>
       <p>{{ row.text }}</p>
     </div>
     {% endfor %}
+    {% else %}
+    {% mode_field page 'stat_1_text' as stat_text %}
+    {% if stat_text %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ page.stat_1_title }}</div>
+      <p>{{ stat_text }}</p>
+    </div>
+    {% endif %}
+    {% mode_field page 'stat_2_text' as stat_text %}
+    {% if stat_text %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ page.stat_2_title }}</div>
+      <p>{{ stat_text }}</p>
+    </div>
+    {% endif %}
+    {% mode_field page 'stat_3_text' as stat_text %}
+    {% if stat_text %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ page.stat_3_title }}</div>
+      <p>{{ stat_text }}</p>
+    </div>
+    {% endif %}
+    {% mode_field page 'stat_4_text' as stat_text %}
+    {% if stat_text %}
+    <div class="stats-section__item">
+      <div class="stats-section__num">{{ page.stat_4_title }}</div>
+      <p>{{ stat_text }}</p>
+    </div>
+    {% endif %}
+    {% endif %}
   </div>
 </section>
 
 <section class="why-adv" id="adv">
+  {% mode_field page 'why_title' as why_title %}
+  {% mode_field page 'why_title_accent' as why_title_accent %}
+  {% mode_field page 'why_lead' as why_lead %}
+  {% if not eo or why_title or why_title_accent or why_lead %}
   <div class="why-adv__head">
-    <h2 class="why-adv__title">{{ page.why_title }} <span class="u-accent">{{ page.why_title_accent }}</span></h2>
-    <p class="why-adv__lead">{{ page.why_lead }}</p>
+    {% if not eo or why_title or why_title_accent %}<h2 class="why-adv__title">{{ why_title }}{% if not eo or why_title_accent %} <span class="u-accent">{{ why_title_accent }}</span>{% endif %}</h2>{% endif %}
+    {% if not eo or why_lead %}<p class="why-adv__lead">{{ why_lead }}</p>{% endif %}
   </div>
+  {% endif %}
   <div class="why-adv__grid">
     <article
       class="why-adv__hero"
       style="background-color: {{ page.color_why_banner }};{% if page.why_banner_src %}background-image: url('{{ page.why_banner_src }}');background-size: cover;background-position: center;{% endif %}"
     >
-      <img class="why-adv__coins" src="{{ page.why_coins_src }}" alt="" decoding="async">
+      {% if eo %}{% if page.why_coins_mode %}<img class="why-adv__coins" src="{{ page.why_coins_mode.url }}" alt="" decoding="async">{% endif %}{% else %}<img class="why-adv__coins" src="{{ page.why_coins_src }}" alt="" decoding="async">{% endif %}
+      {% mode_field page 'why_banner_title' as why_banner_title %}
+      {% mode_field page 'why_banner_accent' as why_banner_accent %}
+      {% mode_field page 'why_banner_text' as why_banner_text %}
+      {% if not eo or why_banner_title or why_banner_accent or why_banner_text %}
       <div class="why-adv__hero-copy">
-        <h3 class="why-adv__hero-title">{{ page.why_banner_title }} <span class="u-accent">{{ page.why_banner_accent }}</span></h3>
-        <p class="why-adv__hero-text">{{ page.why_banner_text }}</p>
+        {% if not eo or why_banner_title or why_banner_accent %}<h3 class="why-adv__hero-title">{{ why_banner_title }}{% if not eo or why_banner_accent %} <span class="u-accent">{{ why_banner_accent }}</span>{% endif %}</h3>{% endif %}
+        {% if not eo or why_banner_text %}<p class="why-adv__hero-text">{{ why_banner_text }}</p>{% endif %}
       </div>
+      {% endif %}
     </article>
     <article class="why-adv__card">
       <span class="why-adv__icon" aria-hidden="true">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5L5 19"></path><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
       </span>
+      {% mode_field page 'why_1_title' as why_1_title %}
+      {% mode_field page 'why_1_text' as why_1_text %}
+      {% if not eo or why_1_title or why_1_text %}
       <div class="why-adv__card-copy">
-        <h3 class="why-adv__name">{{ page.why_1_title }}</h3>
-        <p class="why-adv__text">{{ page.why_1_text }}</p>
+        {% if not eo or why_1_title %}<h3 class="why-adv__name">{{ why_1_title }}</h3>{% endif %}
+        {% if not eo or why_1_text %}<p class="why-adv__text">{{ why_1_text }}</p>{% endif %}
       </div>
+      {% endif %}
     </article>
     <article class="why-adv__card">
       <span class="why-adv__icon" aria-hidden="true">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
       </span>
+      {% mode_field page 'why_2_title' as why_2_title %}
+      {% mode_field page 'why_2_text' as why_2_text %}
+      {% if not eo or why_2_title or why_2_text %}
       <div class="why-adv__card-copy">
-        <h3 class="why-adv__name">{{ page.why_2_title }}</h3>
-        <p class="why-adv__text">{{ page.why_2_text }}</p>
+        {% if not eo or why_2_title %}<h3 class="why-adv__name">{{ why_2_title }}</h3>{% endif %}
+        {% if not eo or why_2_text %}<p class="why-adv__text">{{ why_2_text }}</p>{% endif %}
       </div>
+      {% endif %}
     </article>
     <article class="why-adv__card">
       <span class="why-adv__icon" aria-hidden="true">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"></rect><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg>
       </span>
+      {% mode_field page 'why_3_title' as why_3_title %}
+      {% mode_field page 'why_3_text' as why_3_text %}
+      {% if not eo or why_3_title or why_3_text %}
       <div class="why-adv__card-copy">
-        <h3 class="why-adv__name">{{ page.why_3_title }}</h3>
-        <p class="why-adv__text">{{ page.why_3_text }}</p>
+        {% if not eo or why_3_title %}<h3 class="why-adv__name">{{ why_3_title }}</h3>{% endif %}
+        {% if not eo or why_3_text %}<p class="why-adv__text">{{ why_3_text }}</p>{% endif %}
       </div>
+      {% endif %}
     </article>
     <article class="why-adv__card">
       <span class="why-adv__icon" aria-hidden="true">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
       </span>
+      {% mode_field page 'why_4_title' as why_4_title %}
+      {% mode_field page 'why_4_text' as why_4_text %}
+      {% if not eo or why_4_title or why_4_text %}
       <div class="why-adv__card-copy">
-        <h3 class="why-adv__name">{{ page.why_4_title }}</h3>
-        <p class="why-adv__text">{{ page.why_4_text }}</p>
+        {% if not eo or why_4_title %}<h3 class="why-adv__name">{{ why_4_title }}</h3>{% endif %}
+        {% if not eo or why_4_text %}<p class="why-adv__text">{{ why_4_text }}</p>{% endif %}
       </div>
+      {% endif %}
     </article>
     <article class="why-adv__card">
       <span class="why-adv__icon" aria-hidden="true">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg>
       </span>
+      {% mode_field page 'why_5_title' as why_5_title %}
+      {% mode_field page 'why_5_text' as why_5_text %}
+      {% if not eo or why_5_title or why_5_text %}
       <div class="why-adv__card-copy">
-        <h3 class="why-adv__name">{{ page.why_5_title }}</h3>
-        <p class="why-adv__text">{{ page.why_5_text }}</p>
+        {% if not eo or why_5_title %}<h3 class="why-adv__name">{{ why_5_title }}</h3>{% endif %}
+        {% if not eo or why_5_text %}<p class="why-adv__text">{{ why_5_text }}</p>{% endif %}
       </div>
+      {% endif %}
     </article>
   </div>
 </section>
 
 <section class="cmp-adv">
+  {% mode_field page 'cmp_title' as cmp_title %}
+  {% mode_field page 'cmp_title_accent' as cmp_title_accent %}
+  {% if not eo or cmp_title or cmp_title_accent %}
   <div class="cmp-adv__head">
-    <h2 class="cmp-adv__title">{{ page.cmp_title }} <span class="u-accent">{{ page.cmp_title_accent }}</span></h2>
+    <h2 class="cmp-adv__title">{{ cmp_title }}{% if not eo or cmp_title_accent %} <span class="u-accent">{{ cmp_title_accent }}</span>{% endif %}</h2>
   </div>
+  {% endif %}
   <div class="cmp-adv__grid">
     <article class="cmp-adv__us">
       <div class="cmp-adv__us-top">
         <img src="{% static 'images/logo-footer.png' %}?v=13" alt="Obmin21" width="140" height="40">
         <span class="cmp-adv__badge">Рекомендуємо</span>
       </div>
-      <div class="cmp-adv__html">{{ page.cmp_us_html|strip_crypto_items|rich_html }}</div>
-      <button type="button" class="btn btn--accent cmp-adv__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ page.cmp_btn }}</button>
+      {% mode_field page 'cmp_us_html' as x %}{% if x %}<div class="cmp-adv__html">{{ x|rich_html }}</div>{% endif %}
+      {% mode_field page 'cmp_btn' as cmp_btn %}{% if not eo or cmp_btn %}<button type="button" class="btn btn--accent cmp-adv__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ cmp_btn }}</button>{% endif %}
     </article>
     <article class="cmp-adv__them">
       <div class="cmp-adv__them-top">Інші обмінники</div>
-      <div class="cmp-adv__html cmp-adv__html--them">{{ page.cmp_them_html|strip_crypto_items|rich_html }}</div>
+      {% mode_field page 'cmp_them_html' as x %}{% if x %}<div class="cmp-adv__html cmp-adv__html--them">{{ x|rich_html }}</div>{% endif %}
     </article>
   </div>
 </section>
@@ -199,8 +264,10 @@
   </div>
 </section>
 
-{% include 'partials/shared_faq_section.html' with extra_class='faq-section--svc' section_id='faq' faq_kicker=faq_page.kicker faq_title=faq_page.title faq_title_accent=faq_page.title_accent faq_lead=faq_page.lead faq_items=faq_items grid_class='faq-section__grid--svc' %}
+{% mode_field faq_page 'lead' as faq_lead_text %}{% mode_field faq_page 'title' as faq_title_text %}
+{% include 'partials/shared_faq_section.html' with extra_class='faq-section--svc' section_id='faq' faq_kicker=faq_page.kicker faq_title=faq_title_text faq_title_accent=faq_page.title_accent faq_lead=faq_lead_text faq_items=faq_items grid_class='faq-section__grid--svc' %}
 
-{% include 'partials/shared_reviews_section.html' with reviews_kicker=reviews_page.kicker reviews_title=reviews_page.title reviews_cta=reviews_page.cta_button home_reviews=home_reviews %}
+{% mode_field reviews_page 'title' as reviews_title_text %}
+{% include 'partials/shared_reviews_section.html' with reviews_kicker=reviews_page.kicker reviews_title=reviews_title_text reviews_cta=reviews_page.cta_button home_reviews=home_reviews %}
 
 {% endblock %}

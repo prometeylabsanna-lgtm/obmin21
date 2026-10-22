@@ -1,0 +1,8 @@
+{% if exchange_mode_forced %}
+<section class="exchange-mode-notice" role="status">
+    <p>{{ exchange_mode_lock_notice }}</p>
+    <button type="button" class="exchange-hide__confirm" disabled>
+        {{ exchange_mode_label }}
+    </button>
+</section>
+{% endif %}

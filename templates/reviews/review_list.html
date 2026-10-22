@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% load content_format %}
+{% load content_format exchange_mode %}
 
-{% block title %}{{ page_title }} · {{ site_settings.site_name }}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page_title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 <section class="page-hero">
   <div class="section__head">
-    <h1 class="page-hero__title">{{ page.title }} <span class="u-accent">{{ page.title_accent }}</span></h1>
+    {% mode_field page 'title' as review_title %}{% if review_title %}<h1 class="page-hero__title">{{ review_title }} <span class="u-accent">{{ page.title_accent }}</span></h1>{% endif %}
     <button type="button" class="btn btn--accent" data-open-modal="{% url 'reviews:review_submit' %}">{{ page.cta_button }}</button>
   </div>
 </section>

@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'src.network.middleware.CityMiddleware',
+    'src.core.hidden_response.HiddenPageMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -156,6 +157,7 @@ UNFOLD = {
     'STYLES': [
         lambda request: static('css/admin/site_content.css') + '?v=10',
         lambda request: static('css/admin/cms_tabs.css') + '?v=1',
+        lambda request: static('css/admin/exchange_only.css') + '?v=1',
     ],
     'SCRIPTS': [
         lambda request: static('js/admin/cms_image_preview.js'),
@@ -182,6 +184,8 @@ UNFOLD = {
         },
     },
 }
+
+TINYMCE_FILEBROWSER = False
 
 TINYMCE_DEFAULT_CONFIG = {
     'height': 360,

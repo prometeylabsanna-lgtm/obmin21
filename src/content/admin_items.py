@@ -13,7 +13,7 @@ from src.content.models import (
     Service,
 )
 from src.core.admin_mixins import ListUnfoldAdmin, SingletonUnfoldAdmin
-from src.core.exchange_admin import ExchangeSafeListFilter
+from src.core.exchange_admin import ExchangeSafeAdminMixin, ExchangeSafeListFilter
 from src.core.admin_widgets import CmsAdminTextareaWidget
 from src.core.plain_text import html_to_plain_legal
 
@@ -55,9 +55,11 @@ _register_page(
 class BlogPageAdmin(SingletonUnfoldAdmin):
     content_fields = (
         'title',
+        'title_mode',
         'heading',
         'title_accent',
         'intro',
+        'intro_mode',
         'seo_title',
         'seo_title_mode',
         'seo_description',
@@ -66,14 +68,14 @@ class BlogPageAdmin(SingletonUnfoldAdmin):
     rich_fields = frozenset()
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'intro':
+        if db_field.name in ('intro', 'intro_mode'):
             kwargs['widget'] = CmsAdminTextareaWidget()
             return db_field.formfield(**kwargs)
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(Service)
-class ServiceAdmin(ListUnfoldAdmin):
+class ServiceAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
     list_display = (
         'card_image',
         'title',
@@ -92,7 +94,14 @@ class ServiceAdmin(ListUnfoldAdmin):
         'image',
         'title',
         'short_desc',
+        'short_desc_mode',
         'body',
+        'block_text',
+        'block_text_mode',
+        'block_points',
+        'block_points_mode',
+        'block_cta',
+        'block_cta_mode',
         'show_on_home',
         'is_active',
         'sort_order',
@@ -116,7 +125,7 @@ class ServiceAdmin(ListUnfoldAdmin):
 
 
 @admin.register(AdvantageItem)
-class AdvantageItemAdmin(ListUnfoldAdmin):
+class AdvantageItemAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
     list_display = ('text', 'exchange_safe', 'audience', 'sort_order', 'is_active')
     list_filter = (ExchangeSafeListFilter, 'audience', 'is_active')
     list_editable = ('sort_order', 'is_active')
@@ -132,7 +141,7 @@ class AdvantageItemAdmin(ListUnfoldAdmin):
 
 
 @admin.register(FaqItem)
-class FaqItemAdmin(ListUnfoldAdmin):
+class FaqItemAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
     list_display = ('question', 'exchange_safe', 'sort_order', 'is_active')
     list_filter = (ExchangeSafeListFilter,)
     list_editable = ('sort_order', 'is_active')
@@ -142,7 +151,7 @@ class FaqItemAdmin(ListUnfoldAdmin):
 
 
 @admin.register(HomeStat)
-class HomeStatAdmin(ListUnfoldAdmin):
+class HomeStatAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
     list_display = ('number', 'exchange_safe', 'sort_order', 'is_active')
     list_filter = (ExchangeSafeListFilter, 'is_active')
     list_editable = ('sort_order', 'is_active')
@@ -151,7 +160,9 @@ class HomeStatAdmin(ListUnfoldAdmin):
         'exchange_safe',
         'page',
         'number',
+        'number_mode',
         'text',
+        'text_mode',
         'sort_order',
         'is_active',
     )

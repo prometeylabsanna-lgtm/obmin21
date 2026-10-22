@@ -266,6 +266,15 @@
 }
 
 @media (max-width: 767px) {
+  /* Довга назва не вміщається поруч із логотипом і переносить actions
+     на наступний рядок. space-between лишає цей рядок зліва, тож меню
+     (right: -60px, 190px) виходить за лівий край. auto-margin тримає
+     блок біля правого краю і в одному ряді, і після переносу. */
+  .site-header__actions {
+    margin-left: auto;
+    max-width: 100%;
+  }
+
   .city-select__menu {
     right: -60px;
   }

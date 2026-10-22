@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% load static content_format %}
+{% load static content_format exchange_mode %}
 
-{% block title %}{{ page.seo_title|default:site_settings.site_name }}{% endblock %}
-{% block content %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' %}{% else %}{{ page.seo_title|default:site_settings.site_name }}{% endif %}{% endblock %}
+{% block content %}{% is_exchange_only as eo %}
 
 <section class="hero" id="exchange" data-qa="section-exchange">
   <div class="hero__banner">
@@ -21,10 +21,10 @@
     </div>
     <div class="hero__overlay" aria-hidden="true"></div>
     <div class="hero__content">
-      <h1 class="hero__title"><span data-hero-title>{% if active_city %}{{ active_city.banner_title }}{% else %}Обмін валют{% endif %}</span><br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{{ active_city.banner_suffix }}{% else %}за вигідним курсом{% endif %}</span></h1>
-      <p class="hero__lead" data-hero-lead>{% if active_city %}{{ active_city.banner_text }}{% else %}Фіксуйте курс онлайн та обмінюйте за вигідним курсом{% endif %}</p>
+      <h1 class="hero__title">{% if active_city %}{% mode_field active_city 'banner_title' as bt %}{% if not eo or bt %}<span data-hero-title>{{ bt }}</span>{% endif %}{% else %}<span data-hero-title>Обмін валют</span>{% endif %}<br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{% mode_field active_city 'banner_suffix' as hero_suffix %}{{ hero_suffix }}{% elif not eo %}за вигідним курсом{% endif %}</span></h1>
+      {% if active_city %}{% mode_field active_city 'banner_text' as bl %}{% if not eo or bl %}<p class="hero__lead" data-hero-lead>{{ bl }}</p>{% endif %}{% else %}<p class="hero__lead" data-hero-lead>Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>{% endif %}
       <div class="hero__cta">
-        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">{% if active_city %}{{ active_city.banner_button }}{% else %}Зафіксувати курс{% endif %}</button>
+        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">{% if active_city %}{% mode_field active_city 'banner_button' as hero_btn %}{% if not eo or hero_btn %}{{ hero_btn }}{% endif %}{% elif not eo %}Зафіксувати курс{% endif %}</button>
       </div>
     </div>
   </div>
@@ -100,7 +100,7 @@
   </div>
 </section>
 
-<section class="promo-banner" data-promo data-qa="promo-banner">
+<section class="promo-banner" data-promo data-qa="promo-banner"{% if eo %} data-autoplay="0" data-slides="1"{% endif %}>
   <div class="promo-banner__stage">
     <article class="promo-banner__slide is-active" data-promo-slide data-href="{% url 'rates:rates_page' %}">
       <div class="promo-banner__media" aria-hidden="true">
@@ -112,7 +112,7 @@
         <a class="btn btn--accent promo-banner__cta" href="{% url 'rates:rates_page' %}">Обрати валюту</a>
       </div>
     </article>
-    {% if not exchange_only %}
+    {% if not eo %}
     <article class="promo-banner__slide" data-promo-slide data-href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" data-blank="1">
       <div class="promo-banner__media" aria-hidden="true">
         <img src="{% static 'images/coins.png' %}" alt="" width="900" height="520" loading="lazy">
@@ -123,7 +123,6 @@
         <a class="btn btn--accent promo-banner__cta" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">Написати менеджеру</a>
       </div>
     </article>
-    {% endif %}
     <article class="promo-banner__slide" data-promo-slide data-href="{% url 'content:services' %}">
       <div class="promo-banner__media" aria-hidden="true">
         <img src="{% static 'images/promo-transfers.png' %}" alt="" width="900" height="520" loading="lazy">
@@ -144,64 +143,27 @@
         <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{% url 'leads:request_modal' %}?direct=1">Зробити заявку</button>
       </div>
     </article>
+    {% endif %}
   </div>
-  <div class="promo-banner__dots" data-promo-dots>
+  {% if not eo %}<div class="promo-banner__dots" data-promo-dots>
     <button type="button" class="is-active" data-promo-dot aria-label="USD та EUR"></button>
-    {% if not exchange_only %}<button type="button" data-promo-dot aria-label="Криптовалюта"></button>{% endif %}
+    <button type="button" data-promo-dot aria-label="Криптовалюта"></button>
     <button type="button" data-promo-dot aria-label="Перекази"></button>
     <button type="button" data-promo-dot aria-label="SWIFT"></button>
-  </div>
+  </div>{% endif %}
 </section>
 
 {% if page.show_map %}
 <section class="map-section" id="contacts" data-qa="section-map">
-  {% with branch=city_branches.0 %}
-  <div class="map-section__info">
-    <h2 class="map-section__title">{{ page.map_title }}<br><span class="u-accent">{{ page.map_title_accent }}</span></h2>
-    <div class="map-section__details">
-      <div>
-        <div class="map-section__label">{{ page.map_hours_label }}</div>
-        <div>{% if branch.hours %}{{ branch.hours }}{% else %}Пн–Пт 09:00–19:00, Сб 10:00–16:00{% endif %}</div>
-      </div>
-      <div>
-        <div class="map-section__label">{{ page.map_phone_label }}</div>
-        <div>{% if branch.phone %}{{ branch.phone }}{% elif active_phone %}{{ active_phone }}{% endif %}</div>
-      </div>
-      <div>
-        <div class="map-section__label">Місто:</div>
-        <div class="map-city" data-city-select>
-          <button type="button" class="map-city__btn" data-city-toggle aria-expanded="false" aria-haspopup="listbox">
-            <span>{{ active_city.name|default:"Місто" }}</span>
-            <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
-          </button>
-          <div class="map-city__menu" data-city-menu hidden role="listbox">
-            {% for c in cities %}
-            <form method="post" action="{% url 'network:set_city' %}">
-              {% csrf_token %}
-              <input type="hidden" name="city" value="{{ c.slug }}">
-              <button type="submit" class="map-city__option{% if active_city.slug == c.slug %} is-active{% endif %}">{{ c.name }}</button>
-            </form>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="map-section__label">{{ page.map_address_label }}</div>
-        <div>{% if branch.address %}{{ branch.address }}{% else %}вул. Хрещатик, 1, Київ{% endif %}</div>
-      </div>
-    </div>
-    <a class="btn map-section__btn" href="https://maps.google.com/?q={% if branch.address %}{{ branch.address|urlencode }}{% else %}Київ{% endif %}" target="_blank" rel="noopener noreferrer">{{ page.map_button }}</a>
+  <div
+    id="home-branch"
+    class="map-section__branch"
+    hx-get="{% url 'core:home_branch' %}"
+    hx-trigger="cityChanged from:body"
+    hx-swap="innerHTML"
+  >
+    {% include 'partials/home_branch.html' %}
   </div>
-  <div class="map-section__frame">
-    <iframe
-      src="https://maps.google.com/maps?q={% if branch.address %}{{ branch.address|urlencode }}{% else %}Київ{% endif %}&hl=uk&z=16&output=embed"
-      title="Карта: {% if branch.address %}{{ branch.address }}{% else %}Київ{% endif %}"
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade"
-      allowfullscreen
-    ></iframe>
-  </div>
-  {% endwith %}
 </section>
 {% endif %}
 
@@ -215,10 +177,12 @@
       <div>{{ item.text }}</div>
     </div>
     {% empty %}
+    {% if not eo %}
     <div class="stats-section__item">
       <div class="stats-section__num">7K</div>
       <p><b>Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для швидкого та зручного обміну валют</p>
     </div>
+    {% endif %}
     {% endfor %}
   </div>
 </section>
@@ -228,20 +192,20 @@
 <section class="services-section" id="services" data-qa="section-services">
   <div class="services-section__head">
     <h2 class="services-section__title">{{ page.services_title }} <span class="u-accent">{{ page.services_title_accent }}</span></h2>
-    <p class="services-section__lead">{{ page.services_lead|hide_if_crypto }}</p>
+    {% mode_field page 'services_lead' as x %}{% if x %}<p class="services-section__lead">{{ x }}</p>{% endif %}
   </div>
   <div class="services-section__grid" data-slider="services">
-    {% for svc in services %}
+    {% for svc in services %}{% if not eo or svc.exchange_safe %}
     <a class="svc-card" href="{% url 'content:services' %}#svc-{{ svc.slug }}">
       <div class="svc-card__media">
         <img src="{{ svc.image_src }}" alt="" loading="lazy">
       </div>
       <h3 class="svc-card__title">{{ svc.title }}</h3>
-      <div class="svc-card__text">{{ svc.short_desc }}</div>
+      {% mode_field svc 'short_desc' as short_desc %}{% if short_desc %}<div class="svc-card__text">{{ short_desc }}</div>{% endif %}
       <span class="link-accent">Детальніше
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="currentColor" fill="none" stroke-width="1.5"></path></svg>
       </span>
-    </a>
+    </a>{% endif %}
     {% endfor %}
   </div>
 </section>
@@ -260,7 +224,7 @@
   <div class="slider-head">
     <div>
       <h2 class="slider-head__title">{{ page.articles_title }} <span class="u-accent">{{ page.articles_title_accent }}</span></h2>
-      <p class="articles-section__lead">{{ page.articles_lead|hide_if_crypto }}</p>
+      {% mode_field page 'articles_lead' as x %}{% if x %}<p class="articles-section__lead">{{ x }}</p>{% endif %}
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Попередній"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
@@ -268,17 +232,18 @@
     </div>
   </div>
   <div class="articles-track" data-slider="articles">
-    {% for post in news_posts %}
+    {% for post in news_posts %}{% if not eo or post.exchange_safe %}
     <article class="article-slide">
+      {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
-        <img src="{{ post.image_url }}" alt="{{ post.title }}" width="330" height="194" decoding="async">
+        <img src="{{ post.image_url }}" alt="{{ post_title }}" width="330" height="194" decoding="async">
       </a>
-      <a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
-      {% if post.excerpt %}<p class="article-slide__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
+      {% if post_title %}<a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post_title|brand_mark }}</a>{% endif %}
+      {% if post_excerpt %}<p class="article-slide__text">{{ post_excerpt|brand_mark }}</p>{% endif %}
       <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати повністю
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </a>
-    </article>
+    </article>{% endif %}
     {% empty %}
     <p class="u-muted">Статті зʼявляться незабаром</p>
     {% endfor %}

@@ -107,23 +107,6 @@ def looks_like_html(value: str) -> bool:
     return bool(re.search(r'<[a-zA-Z][^>]*>', value or ''))
 
 
-@register.filter(name='strip_crypto_items')
-def strip_crypto_items(value):
-    from src.core.crypto_visibility import strip_crypto_items as _strip
-
-    return _strip(value)
-
-
-@register.filter(name='hide_if_crypto')
-def hide_if_crypto(value):
-    from src.core.crypto_visibility import mentions_crypto
-    from src.core.exchange_mode import exchange_only
-
-    if exchange_only() and mentions_crypto(value):
-        return ''
-    return value
-
-
 @register.filter(name='rich_html')
 def rich_html(value):
     """TinyMCE HTML as HTML; plain text as paragraphs. Never show raw tags."""

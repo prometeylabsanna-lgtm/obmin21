@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+from src.core.exchange_fields import mode_char, mode_text
 from src.core.exchange_mode import ExchangeSafeMixin
 from src.network.models import City
 
@@ -18,8 +19,11 @@ class CurrencyPair(ExchangeSafeMixin, models.Model):
     is_active = models.BooleanField('Активна', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     intro = models.TextField('Опис для сторінки пари', blank=True)
+    intro_mode = mode_text('Опис для сторінки пари для режиму «Лише обмін»')
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
     flag_image = models.ImageField(
         'Іконка прапора',
         upload_to='flags/',

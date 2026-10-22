@@ -1,5 +1,7 @@
 from django.db import models
 
+from src.core.exchange_fields import mode_char
+
 
 class FaqPageCopy(models.Model):
     kicker = models.CharField('Підпис над заголовком', max_length=80, default='Відповіді')
@@ -15,6 +17,7 @@ class FaqPageCopy(models.Model):
         blank=True,
         default='Короткі відповіді на те, що найчастіше запитують перед обміном.',
     )
+    lead_mode = mode_char('Підзаголовок для режиму «Лише обмін»', 400)
     cta_title = models.CharField(
         'Заголовок підказки',
         max_length=120,

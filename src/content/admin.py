@@ -114,6 +114,7 @@ _register_home(
         'services_title',
         'services_title_accent',
         'services_lead',
+        'services_lead_mode',
     ),
     extra={
         'content_fieldsets': ((
@@ -129,6 +130,7 @@ _register_home(
                     'services_title',
                     'services_title_accent',
                     'services_lead',
+                    'services_lead_mode',
                 ),
             },
         ),),
@@ -262,7 +264,9 @@ class RatesPageAdmin(SingletonUnfoldAdmin):
             ),
             'fields': (
                 'title',
+                'title_mode',
                 'intro',
+                'intro_mode',
                 'seo_title',
                 'seo_title_mode',
                 'seo_description',
@@ -273,7 +277,7 @@ class RatesPageAdmin(SingletonUnfoldAdmin):
     rich_fields = frozenset()
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'intro':
+        if db_field.name in ('intro', 'intro_mode'):
             kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 4})
             return db_field.formfield(**kwargs)
         return super().formfield_for_dbfield(db_field, request, **kwargs)
@@ -288,6 +292,7 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
         ('Чому обирають Обмін21', {
             'fields': (
                 'title',
+                'title_mode',
                 'seo_title',
                 'seo_title_mode',
                 'seo_description',
@@ -296,6 +301,7 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
                 'hero_title',
                 'hero_title_accent',
                 'hero_lead',
+                'hero_lead_mode',
                 'hero_btn_primary',
                 'hero_btn_secondary',
                 'hero_banner',
@@ -313,47 +319,72 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
                 'stat_1_text_mode',
                 'stat_2_title',
                 'stat_2_text',
+                'stat_2_text_mode',
                 'stat_3_title',
                 'stat_3_text',
+                'stat_3_text_mode',
                 'stat_4_title',
                 'stat_4_text',
+                'stat_4_text_mode',
             ),
         }),
         ('Чому люди обирають обмінювати в Обмін21', {
             'fields': (
                 'why_kicker',
+                'why_kicker_mode',
                 'why_title',
+                'why_title_mode',
                 'why_title_accent',
+                'why_title_accent_mode',
                 'why_lead',
+                'why_lead_mode',
                 'why_banner',
+                'why_banner_mode',
                 'color_why_banner',
                 'why_coins',
                 'why_coins_mode',
                 'why_banner_title',
+                'why_banner_title_mode',
                 'why_banner_accent',
+                'why_banner_accent_mode',
                 'why_banner_text',
+                'why_banner_text_mode',
                 'why_1_title',
+                'why_1_title_mode',
                 'why_1_text',
+                'why_1_text_mode',
                 'why_2_title',
+                'why_2_title_mode',
                 'why_2_text',
+                'why_2_text_mode',
                 'why_3_title',
+                'why_3_title_mode',
                 'why_3_text',
+                'why_3_text_mode',
                 'why_4_title',
+                'why_4_title_mode',
                 'why_4_text',
+                'why_4_text_mode',
                 'why_5_title',
+                'why_5_title_mode',
                 'why_5_text',
+                'why_5_text_mode',
             ),
         }),
         ('Обмін21 чи звичайний обмінник', {
             'fields': (
                 'cmp_kicker',
+                'cmp_kicker_mode',
                 'cmp_title',
+                'cmp_title_mode',
                 'cmp_title_accent',
+                'cmp_title_accent_mode',
                 'cmp_us_html',
                 'cmp_us_html_mode',
                 'cmp_them_html',
                 'cmp_them_html_mode',
                 'cmp_btn',
+                'cmp_btn_mode',
             ),
         }),
     )
@@ -368,6 +399,7 @@ _register_page(
         ('Пошук', {
             'fields': (
                 'title',
+                'title_mode',
                 'seo_title',
                 'seo_title_mode',
                 'seo_description',
@@ -380,6 +412,7 @@ _register_page(
                 'hero_title',
                 'hero_title_accent',
                 'hero_text',
+                'hero_text_mode',
                 'intro_mode',
             ),
         }),
@@ -389,7 +422,9 @@ _register_page(
     ContactsPage,
     (
         'title',
+        'title_mode',
         'heading',
+        'heading_mode',
         'title_accent',
         'phone',
         'phone_hint',
@@ -403,12 +438,16 @@ _register_page(
         'branches_title',
         'branches_title_accent',
         'seo_title',
+        'seo_title_mode',
         'seo_description',
+        'seo_description_mode',
     ),
 )
 _register_page(CitiesPage, (
     'title',
+    'title_mode',
     'intro',
+    'intro_mode',
     'seo_title',
     'seo_title_mode',
     'seo_description',
@@ -439,8 +478,10 @@ _register_page(
                 'fields': (
                     'kicker',
                     'title',
+                    'title_mode',
                     'title_accent',
                     'lead',
+                    'lead_mode',
                     'seo_title',
                     'seo_title_mode',
                     'seo_description',
@@ -464,10 +505,13 @@ _register_page(
     (
         'kicker',
         'title',
+        'title_mode',
         'title_accent',
         'cta_button',
         'seo_title',
+        'seo_title_mode',
         'seo_description',
+        'seo_description_mode',
     ),
     extra={
         'content_fieldsets': (
@@ -479,10 +523,13 @@ _register_page(
                 'fields': (
                     'kicker',
                     'title',
+                    'title_mode',
                     'title_accent',
                     'cta_button',
                     'seo_title',
+                    'seo_title_mode',
                     'seo_description',
+                    'seo_description_mode',
                 ),
             }),
         ),

@@ -163,16 +163,24 @@ class ExchangeModeTests(TestCase):
         self.settings_row.refresh_from_db()
         self.assertFalse(self.settings_row.exchange_only)
 
-    def test_public_services_ignore_checkbox_for_now(self):
+    def test_public_services_follow_exchange_safe_in_mode(self):
         Service.objects.create(
             title='Готівковий обмін',
             slug='hotivkovyi-mode',
             short_desc='Обмін долара у відділенні',
             is_active=True,
         )
+        Service.objects.create(
+            title='Безпечний обмін',
+            slug='bezpechnyi-mode',
+            short_desc='Обмін євро у відділенні',
+            is_active=True,
+            exchange_safe=True,
+        )
         self._set_mode(True)
         response = self.client.get(reverse('content:services'))
-        self.assertContains(response, 'Готівковий обмін')
+        self.assertNotContains(response, 'Готівковий обмін')
+        self.assertContains(response, 'Безпечний обмін')
 
     def test_is_exchange_only_is_alias_of_exchange_only(self):
         self.assertIs(is_exchange_only, exchange_only)

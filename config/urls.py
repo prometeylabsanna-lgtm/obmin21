@@ -3,9 +3,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
-from src.core.views import page_not_found
+from src.core.views import page_not_found, tinymce_disabled
 
 urlpatterns = [
+    path('tinymce/filebrowser/', tinymce_disabled),
+    path('tinymce/flatpages_link_list/', tinymce_disabled),
     path('tinymce/', include('tinymce.urls')),
     path('admin/', admin.site.urls),
     path('', include('src.core.urls')),

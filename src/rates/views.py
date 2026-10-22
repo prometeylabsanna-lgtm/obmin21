@@ -1,11 +1,10 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 
 from src.content.models import RatesPage
 from src.core.breadcrumbs import safe_reverse, trail
+from src.core.exchange_mode import exchange_only, mode_meta, raise_hidden
 from src.rates.models import CurrencyPair, RateBoard
-from src.core.crypto_visibility import pair_is_crypto
-from src.core.exchange_mode import exchange_only
 from src.rates.selectors import get_quote, get_quotes_for_city, public_board, public_boards
 
 
@@ -21,21 +20,30 @@ def rates_page(request):
         'rate_updated_at': updated_at,
         'active_board': board,
         'boards': public_boards(),
-        'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or (page.intro[:160] if page.intro else ''),
+        'page_title': mode_meta(page, 'seo_title', 'title', limit=None, request=request),
+        'page_description': mode_meta(page, 'seo_description', 'intro', request=request),
     })
 
 
 def pair_detail(request, slug):
-    pair = get_object_or_404(CurrencyPair, slug=slug, is_active=True)
-    if exchange_only() and pair_is_crypto(pair):
+    active = CurrencyPair.objects.filter(slug=slug, is_active=True)
+    pair = active.visible().first()
+    if pair is None:
+        if exchange_only() and active.exists():
+            raise_hidden()
         raise Http404
     quote = get_quote(pair, request.city, RateBoard.RETAIL)
     return render(request, 'rates/pair_detail.html', {
         'pair': pair,
         'quote': quote,
-        'page_title': pair.seo_title or f'{pair.code} — курс обміну',
-        'page_description': pair.seo_description or (pair.intro[:160] if pair.intro else ''),
+        'page_title': mode_meta(
+            pair,
+            'seo_title',
+            limit=None,
+            request=request,
+            outside_default=f'{pair.code} — курс обміну',
+        ),
+        'page_description': mode_meta(pair, 'seo_description', 'intro', request=request),
         'breadcrumb_items': trail(
             ('Курси', safe_reverse('rates:rates_page')),
             (pair.code, None),

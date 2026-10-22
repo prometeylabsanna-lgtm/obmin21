@@ -1,9 +1,11 @@
-{% load static content_format %}
+{% load static content_format exchange_mode %}
+{% is_exchange_only as eo %}
 <div id="blog-list" data-qa="blog-list">
-  {% if featured %}
+  {% if featured %}{% if not eo or featured.exchange_safe %}
   <a class="blog-feature" href="{% url 'blog:post_detail' featured.slug %}">
+    {% mode_field featured 'title' as feature_title %}{% mode_field featured 'excerpt' as feature_excerpt %}
     <div class="blog-feature__media">
-      <img src="{{ featured.image_url }}" alt="{{ featured.title }}" decoding="async">
+      <img src="{{ featured.image_url }}" alt="{{ feature_title }}" decoding="async">
     </div>
     <div class="blog-feature__copy">
       <div class="blog-feature__meta">
@@ -12,30 +14,31 @@
         <span class="blog-feature__dot" aria-hidden="true"></span>
         <span>{{ featured.reading_label }}</span>
       </div>
-      <h2 class="blog-feature__title">{{ featured.title|brand_mark }}</h2>
-      {% if featured.excerpt %}<p class="blog-feature__text">{{ featured.excerpt|brand_mark }}</p>{% endif %}
+      {% if feature_title %}<h2 class="blog-feature__title">{{ feature_title|brand_mark }}</h2>{% endif %}
+      {% if feature_excerpt %}<p class="blog-feature__text">{{ feature_excerpt|brand_mark }}</p>{% endif %}
       <span class="blog-feature__more">Читати повністю
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </span>
     </div>
   </a>
-  {% endif %}
+  {% endif %}{% endif %}
 
   {% if posts %}
   <div class="blog-grid">
-    {% for post in posts %}
+    {% for post in posts %}{% if not eo or post.exchange_safe %}
     <a class="blog-card" href="{% url 'blog:post_detail' post.slug %}">
+      {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
       <div class="blog-card__media">
-        <img src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+        <img src="{{ post.image_url }}" alt="{{ post_title }}" loading="lazy" decoding="async">
       </div>
       <div class="blog-card__meta">
         <span class="blog-card__cat">{{ post.category.name }}</span>
         <span class="blog-card__dot" aria-hidden="true"></span>
         <span>{{ post.date_uk }}</span>
       </div>
-      <h3 class="blog-card__title">{{ post.title|brand_mark }}</h3>
-      {% if post.excerpt %}<p class="blog-card__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
-    </a>
+      {% if post_title %}<h3 class="blog-card__title">{{ post_title|brand_mark }}</h3>{% endif %}
+      {% if post_excerpt %}<p class="blog-card__text">{{ post_excerpt|brand_mark }}</p>{% endif %}
+    </a>{% endif %}
     {% endfor %}
   </div>
   {% elif not featured %}

@@ -2,10 +2,19 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 
+from src.core.exchange_fields import (
+    EXCHANGE_SAFE_CURRENCY_HELP,
+    EXCHANGE_SAFE_VERBOSE,
+)
 from src.core.exchange_mode import ExchangeSafeMixin
 
 
 class Review(ExchangeSafeMixin, models.Model):
+    exchange_safe = models.BooleanField(
+        EXCHANGE_SAFE_VERBOSE,
+        default=False,
+        help_text=EXCHANGE_SAFE_CURRENCY_HELP,
+    )
     name = models.CharField("Ім'я", max_length=120)
     text = models.TextField('Текст')
     city_name = models.CharField('Місто (текст)', max_length=80, blank=True)
