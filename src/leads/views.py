@@ -101,7 +101,12 @@ def _modal_context(request, form=None):
             for b in get_city_branches(item)
         ]
         if branch_rows:
-            places.append({'id': item.pk, 'name': item.name, 'branches': branch_rows})
+            places.append({
+                'id': item.pk,
+                'name': item.name,
+                'slug': item.slug,
+                'branches': branch_rows,
+            })
     selected_city = city
     raw_branch = form['branch'].value() if form is not None else None
     if raw_branch:

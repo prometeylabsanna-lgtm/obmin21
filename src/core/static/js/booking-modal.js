@@ -231,6 +231,43 @@
     var citySel = root.querySelector('[data-bk-city]');
     var branchSel = root.querySelector('[data-bk-branch]');
     var placesEl = root.querySelector('#bk-places');
+    var quoteSeq = 0;
+
+    function applyCityQuotes(quotes) {
+      var i;
+      var j;
+      var code;
+      for (i = 0; i < quotes.length; i += 1) {
+        code = String(quotes[i].code || '').toUpperCase();
+        for (j = 0; j < list.length; j += 1) {
+          if (String(list[j].pair_id) === String(quotes[i].id) || list[j].code === code) {
+            list[j].buy = String(quotes[i].buy);
+            list[j].sell = String(quotes[i].sell);
+          }
+        }
+      }
+      recalc();
+    }
+
+    function loadCityQuotes() {
+      if (!citySel) return;
+      var option = citySel.options[citySel.selectedIndex];
+      var slug = option ? (option.getAttribute('data-city') || '') : '';
+      if (!slug) return;
+      var base = citySel.getAttribute('data-quotes-url') || '/partials/quotes.json';
+      var glue = base.indexOf('?') === -1 ? '?' : '&';
+      var url = base + glue + 'board=retail&city=' + encodeURIComponent(slug);
+      quoteSeq += 1;
+      var seq = quoteSeq;
+      fetch(url, { credentials: 'same-origin' })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (seq !== quoteSeq || !data || !data.quotes) return;
+          applyCityQuotes(data.quotes);
+        })
+        .catch(function () {});
+    }
+
     if (citySel && branchSel && placesEl) {
       var places = [];
       try {
@@ -247,17 +284,21 @@
             break;
           }
         }
-        if (!place) return;
-        var previous = branchSel.value;
-        branchSel.replaceChildren();
-        place.branches.forEach(function (item) {
-          var option = document.createElement('option');
-          option.value = String(item.id);
-          option.textContent = item.address;
-          branchSel.appendChild(option);
-        });
-        if (previous) branchSel.value = previous;
+        if (place) {
+          var previous = branchSel.value;
+          branchSel.replaceChildren();
+          place.branches.forEach(function (item) {
+            var option = document.createElement('option');
+            option.value = String(item.id);
+            option.textContent = item.address;
+            branchSel.appendChild(option);
+          });
+          if (previous) branchSel.value = previous;
+        }
+        loadCityQuotes();
       });
+    } else if (citySel) {
+      citySel.addEventListener('change', loadCityQuotes);
     }
 
     if (fixBtn) fixBtn.addEventListener('click', goStep2);

@@ -13,6 +13,7 @@ from src.core.theme import theme_css_cached
 
 from src.blog.selectors import get_published_posts
 from src.content.models import FaqItem, HomePage, HomeStat, Service
+from src.network.selectors import get_city_by_slug
 from src.rates.models import RateBoard
 from src.rates.selectors import get_quotes_for_city, public_board, public_boards
 from src.reviews.selectors import get_published_reviews
@@ -150,11 +151,20 @@ def home_branch(request):
     })
 
 
+def _quotes_city(request):
+    slug = (request.GET.get('city') or '').strip()
+    if slug:
+        city = get_city_by_slug(slug)
+        if city is not None:
+            return city
+    return request.city
+
+
 def quotes_json(request):
     board = public_board(request.GET.get('board', RateBoard.RETAIL))
     if board not in RateBoard.values:
         board = RateBoard.RETAIL
-    rows, _updated = get_quotes_for_city(request.city, board)
+    rows, _updated = get_quotes_for_city(_quotes_city(request), board)
     if board == RateBoard.CRYPTO:
         rows = _ordered_rows(rows, _CRYPTO_ORDER)
     payload = []
