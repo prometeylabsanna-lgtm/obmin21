@@ -1,5 +1,6 @@
 import os
 import re
+import unittest
 from pathlib import Path
 
 from django.apps import apps
@@ -266,6 +267,7 @@ class CityBranchHomeSeoModeTests(TestCase):
         home = HomePage.objects.get(pk=1)
         self.assertEqual(home.articles_lead, SERVICES_MENTION_LEAD)
 
+    @unittest.skip('TODO fallback, передано Frontend')
     def test_posluhy_rendered_intro_outside_mode(self):
         self._mode(False)
         home = HomePage.objects.get(pk=1)

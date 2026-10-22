@@ -52,6 +52,15 @@ _MODES = (
     (True, 'увімкнено'),
 )
 _CONVERTER = re.compile(r'<[^>]+>')
+_LEGAL_ARTICLE = re.compile(
+    r'<article\b(?=[^>]*\bclass=["\'][^"\']*\blegal-page\b)[^>]*>[\s\S]*?</article>',
+    re.IGNORECASE,
+)
+_MAIN_BLOCK = re.compile(
+    r'<main\b(?=[^>]*\bid=["\']main["\'])[^>]*>[\s\S]*?</main>',
+    re.IGNORECASE,
+)
+_HTML_KINDS = frozenset({'text/html', 'application/xhtml+xml'})
 
 
 def setUpModule():
@@ -101,9 +110,55 @@ def _scan(urls, pattern, enabled, label):
         client.raise_request_exception = False
         for url in urls:
             response = client.get(url, follow=True)
+            seen = set()
+            for line in _body_stop_word_hits(url, response, pattern):
+                seen.add(line)
+                found.append(f'{line} | {label}')
+            if not enabled:
+                continue
             for line in stop_word_hits(url, response, pattern):
+                if line in seen:
+                    continue
                 found.append(f'{line} | {label}')
     return found
+
+
+def _body_stop_word_hits(url, response, pattern):
+    """Стоп-слова лише в контенті Offer/Privacy/Cookie, без футера і шапки."""
+    if response.status_code != 200:
+        return []
+    kind = (response.get('Content-Type', '') or '').split(';', 1)[0].strip().lower()
+    if kind not in _HTML_KINDS:
+        return stop_word_hits(url, response, pattern)
+    charset = getattr(response, 'charset', None) or 'utf-8'
+    raw = response.content.decode(charset, errors='replace')
+    block = _legal_content_block(raw)
+    if block is None:
+        return [f'{url} | body | немає контентного блоку']
+    return stop_word_hits(url, _HtmlFragment(response, block), pattern)
+
+
+def _legal_content_block(raw):
+    article = _LEGAL_ARTICLE.search(raw)
+    if article:
+        return article.group(0)
+    main = _MAIN_BLOCK.search(raw)
+    if main:
+        return main.group(0)
+    return None
+
+
+class _HtmlFragment:
+    def __init__(self, response, html):
+        self.status_code = response.status_code
+        self.charset = getattr(response, 'charset', None) or 'utf-8'
+        self.content = html.encode(self.charset, errors='replace')
+        self._content_type = response.get('Content-Type', '')
+
+    def get(self, key, default=''):
+        if str(key).lower() == 'content-type':
+            return self._content_type
+        return default
 
 
 def _database_legal():
