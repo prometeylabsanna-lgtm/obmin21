@@ -1,7 +1,7 @@
 from django.db import models
 from django.templatetags.static import static
 
-from src.core.exchange_fields import mode_image, mode_text
+from src.core.exchange_fields import mode_char, mode_image, mode_text
 
 from src.core.colors import COLOR_HELP, hex_color_validator
 
@@ -137,29 +137,37 @@ class AdvantagesSectionsMixin(models.Model):
         'Перевага 2 — підзаголовок',
         default=STAT_2_TEXT,
     )
+    stat_2_text_mode = mode_text('Перевага 2 — підзаголовок для режиму «Лише обмін»')
     stat_3_title = models.CharField('Перевага 3 — заголовок', max_length=40, default='100%')
     stat_3_text = models.TextField(
         'Перевага 3 — підзаголовок',
         default=STAT_3_TEXT,
     )
+    stat_3_text_mode = mode_text('Перевага 3 — підзаголовок для режиму «Лише обмін»')
     stat_4_title = models.CharField('Перевага 4 — заголовок', max_length=40, default='10+')
     stat_4_text = models.TextField(
         'Перевага 4 — підзаголовок',
         default=STAT_4_TEXT,
     )
+    stat_4_text_mode = mode_text('Перевага 4 — підзаголовок для режиму «Лише обмін»')
 
     why_kicker = models.CharField('Підпис блоку', max_length=80, default='Чому ми')
+    why_kicker_mode = mode_char('Підпис блоку для режиму «Лише обмін»', 80)
     why_title = models.CharField(
         'Заголовок',
         max_length=160,
         default='Чому люди обирають обмінювати',
     )
+    why_title_mode = mode_char('Заголовок для режиму «Лише обмін»', 160)
     why_title_accent = models.CharField('Акцент у заголовку', max_length=80, default='в Обмін21')
+    why_title_accent_mode = mode_char('Акцент у заголовку для режиму «Лише обмін»', 80)
     why_lead = models.TextField(
         'Підзаголовок',
         default='П’ять причин, через які клієнти повертаються до нас знову і радять друзям',
     )
+    why_lead_mode = mode_text('Підзаголовок для режиму «Лише обмін»')
     why_banner = models.ImageField('Банер блоку', upload_to='advantages/', blank=True)
+    why_banner_mode = mode_image('Банер блоку для режиму «Лише обмін»', 'advantages/')
     color_why_banner = _color('Фон банера')
     why_coins = models.ImageField('Картинка монет', upload_to='advantages/', blank=True)
     why_coins_mode = mode_image(
@@ -171,11 +179,13 @@ class AdvantagesSectionsMixin(models.Model):
         max_length=120,
         default='Курс кращий,',
     )
+    why_banner_title_mode = mode_char('Заголовок на банері для режиму «Лише обмін»', 120)
     why_banner_accent = models.CharField(
         'Акцент на банері',
         max_length=80,
         default='ніж у банку',
     )
+    why_banner_accent_mode = mode_char('Акцент на банері для режиму «Лише обмін»', 80)
     why_banner_text = models.TextField(
         'Текст на банері',
         default=(
@@ -183,56 +193,71 @@ class AdvantagesSectionsMixin(models.Model):
             'та продажем мінімальною.'
         ),
     )
+    why_banner_text_mode = mode_text('Текст на банері для режиму «Лише обмін»')
     why_1_title = models.CharField('Перевага 1 — заголовок', max_length=120, default='Жодних комісій')
+    why_1_title_mode = mode_char('Перевага 1 — заголовок для режиму «Лише обмін»', 120)
     why_1_text = models.TextField(
         'Перевага 1 — підзаголовок',
         default='Сума в калькуляторі дорівнює сумі, яку ви отримаєте на руки',
     )
+    why_1_text_mode = mode_text('Перевага 1 — підзаголовок для режиму «Лише обмін»')
     why_2_title = models.CharField(
         'Перевага 2 — заголовок',
         max_length=120,
         default='Фіксація курсу на 30 хвилин',
     )
+    why_2_title_mode = mode_char('Перевага 2 — заголовок для режиму «Лише обмін»', 120)
     why_2_text = models.TextField(
         'Перевага 2 — підзаголовок',
         default='Забронюйте курс онлайн і приходьте без ризику, що він зміниться дорогою',
     )
+    why_2_text_mode = mode_text('Перевага 2 — підзаголовок для режиму «Лише обмін»')
     why_3_title = models.CharField(
         'Перевага 3 — заголовок',
         max_length=120,
         default='Перевірка кожної купюри',
     )
+    why_3_title_mode = mode_char('Перевага 3 — заголовок для режиму «Лише обмін»', 120)
     why_3_text = models.TextField(
         'Перевага 3 — підзаголовок',
         default='Детектори валют у кожному відділенні: видаємо лише справні банкноти',
     )
+    why_3_text_mode = mode_text('Перевага 3 — підзаголовок для режиму «Лише обмін»')
     why_4_title = models.CharField(
         'Перевага 4 — заголовок',
         max_length=120,
         default='Конфіденційно і безпечно',
     )
+    why_4_title_mode = mode_char('Перевага 4 — заголовок для режиму «Лише обмін»', 120)
     why_4_text = models.TextField(
         'Перевага 4 — підзаголовок',
         default='Окрема зона для великих сум, дані клієнтів під захистом',
     )
+    why_4_text_mode = mode_text('Перевага 4 — підзаголовок для режиму «Лише обмін»')
     why_5_title = models.CharField('Перевага 5 — заголовок', max_length=120, default='Поруч з вами')
+    why_5_title_mode = mode_char('Перевага 5 — заголовок для режиму «Лише обмін»', 120)
     why_5_text = models.TextField(
         'Перевага 5 — підзаголовок',
         default='Відділення в 11 містах України з розширеним графіком роботи',
     )
+    why_5_text_mode = mode_text('Перевага 5 — підзаголовок для режиму «Лише обмін»')
 
     cmp_kicker = models.CharField('Підпис блоку', max_length=80, default='Порівняння')
+    cmp_kicker_mode = mode_char('Підпис блоку для режиму «Лише обмін»', 80)
     cmp_title = models.CharField('Заголовок', max_length=120, default='Обмін21 чи')
+    cmp_title_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
     cmp_title_accent = models.CharField(
         'Акцент у заголовку',
         max_length=80,
         default='звичайний обмінник',
     )
+    cmp_title_accent_mode = mode_char('Акцент у заголовку для режиму «Лише обмін»', 80)
     cmp_us_html = models.TextField('Список «Рекомендуємо»', default=CMP_US_HTML)
     cmp_us_html_mode = mode_text('Список «Рекомендуємо» для режиму «Лише обмін»')
     cmp_them_html = models.TextField('Список «Інші обмінники»', default=CMP_THEM_HTML)
     cmp_them_html_mode = mode_text('Список «Інші обмінники» для режиму «Лише обмін»')
     cmp_btn = models.CharField('Кнопка', max_length=80, default='Зафіксувати курс')
+    cmp_btn_mode = mode_char('Кнопка для режиму «Лише обмін»', 80)
 
     class Meta:
         abstract = True
@@ -253,6 +278,10 @@ class AdvantagesSectionsMixin(models.Model):
         return self._file_src('hero_cards_image')
 
     def why_banner_src(self):
+        from src.core.exchange_mode import exchange_only
+
+        if exchange_only():
+            return self._file_src('why_banner_mode')
         return self._file_src('why_banner')
 
     def why_coins_src(self):
@@ -274,11 +303,27 @@ class AdvantagesSectionsMixin(models.Model):
     def iter_why(self):
         rows = []
         for index in range(1, 6):
-            title = (getattr(self, f'why_{index}_title') or '').strip()
-            text = (getattr(self, f'why_{index}_text') or '').strip()
+            title = advantage_text(self, f'why_{index}_title').strip()
+            text = advantage_text(self, f'why_{index}_text').strip()
             if title or text:
                 rows.append({'title': title, 'text': text})
         return rows
+
+
+def advantage_default(name):
+    from django.db.models.fields import NOT_PROVIDED
+
+    field = AdvantagesSectionsMixin._meta.get_field(name)
+    default = field.default
+    if default is None or default is NOT_PROVIDED or callable(default):
+        return ''
+    return str(default)
+
+
+def advantage_text(page, name):
+    from src.core.exchange_fields import resolved_text
+
+    return resolved_text(page, name, advantage_default(name))
 
 
 def stat_text_for(page, index):
