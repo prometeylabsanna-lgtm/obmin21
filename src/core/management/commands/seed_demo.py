@@ -24,13 +24,15 @@ from src.content.models import (
     OfferPage,
     PrivacyPage,
     RatesPage,
+    ReviewsPage,
     Service,
     ServicesPage,
 )
 from src.content.page_meta_mode import fill_page_meta_mode
+from src.content.reader_mode_copy import fill_reader_mode_fields
 from src.content.stage3_fill import fill_articles_lead, fill_home_seo_mode
 from src.core.models import SiteSettings
-from src.network.city_mode_copy import fill_city_banner_seo_mode
+from src.network.city_mode_copy import fill_city_banner_seo_mode, fill_city_name_mode
 from src.network.models import Branch, City
 from src.rates.models import CurrencyPair, Quote, RateBoard
 from src.rates.pair_mode_copy import fill_fiat_pair_mode
@@ -322,6 +324,7 @@ class Command(BaseCommand):
         contacts_page.branches_title_accent = 'по Україні'
         contacts_page.save()
         CitiesPage.load()
+        ReviewsPage.load()
         privacy = PrivacyPage.load()
         privacy.body = PRIVACY_BODY
         privacy.save()
@@ -365,6 +368,7 @@ class Command(BaseCommand):
                 branch = Branch.objects.create(city=city, **payload)
             city.branches.exclude(pk=branch.pk).update(is_active=False)
         fill_city_banner_seo_mode(apps, None)
+        fill_city_name_mode(apps, None)
         City.objects.exclude(slug__in=keep_city_slugs).update(is_active=False)
 
         for i, (code, name, slug, buy, sell) in enumerate(PAIRS):
@@ -644,5 +648,6 @@ class Command(BaseCommand):
 
         fill_page_meta_mode(apps, None)
         fill_fiat_pair_mode(apps, None)
+        fill_reader_mode_fields(apps, None)
 
         self.stdout.write(self.style.SUCCESS('seed_demo OK'))

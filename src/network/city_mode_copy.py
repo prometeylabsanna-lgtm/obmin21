@@ -27,3 +27,18 @@ def fill_city_banner_seo_mode(apps, schema_editor):
             updates[name] = text
         if updates:
             City.objects.filter(pk=row.pk).update(**updates)
+
+
+def fill_city_name_mode(apps, schema_editor):
+    """Порожнє name_mode стає назвою міста. Повтор не перезаписує правки."""
+    City = apps.get_model('network', 'City')
+    if not any(field.name == 'name_mode' for field in City._meta.fields):
+        return
+    limit = City._meta.get_field('name_mode').max_length
+    for row in City.objects.all().order_by('pk'):
+        if not _blank(getattr(row, 'name_mode', '')):
+            continue
+        name = str(getattr(row, 'name', '') or '').strip()
+        if not name or (limit and len(name) > limit):
+            continue
+        City.objects.filter(pk=row.pk).update(name_mode=name)

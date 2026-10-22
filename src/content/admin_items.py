@@ -160,7 +160,9 @@ class HomeStatAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
         'exchange_safe',
         'page',
         'number',
+        'number_mode',
         'text',
+        'text_mode',
         'sort_order',
         'is_active',
     )

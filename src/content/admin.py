@@ -420,7 +420,9 @@ _register_page(
 )
 _register_page(CitiesPage, (
     'title',
+    'title_mode',
     'intro',
+    'intro_mode',
     'seo_title',
     'seo_title_mode',
     'seo_description',
@@ -478,10 +480,13 @@ _register_page(
     (
         'kicker',
         'title',
+        'title_mode',
         'title_accent',
         'cta_button',
         'seo_title',
+        'seo_title_mode',
         'seo_description',
+        'seo_description_mode',
     ),
     extra={
         'content_fieldsets': (
@@ -493,10 +498,13 @@ _register_page(
                 'fields': (
                     'kicker',
                     'title',
+                    'title_mode',
                     'title_accent',
                     'cta_button',
                     'seo_title',
+                    'seo_title_mode',
                     'seo_description',
+                    'seo_description_mode',
                 ),
             }),
         ),

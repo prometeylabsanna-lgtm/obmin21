@@ -134,7 +134,9 @@ class HomeStat(ExchangeSafeMixin, models.Model):
         verbose_name='Головна',
     )
     number = models.CharField('Цифра', max_length=16)
+    number_mode = mode_char('Цифра для режиму «Лише обмін»', 16)
     text = models.TextField('Текст картки')
+    text_mode = mode_text('Текст картки для режиму «Лише обмін»')
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     is_active = models.BooleanField('Показувати', default=True)
 
@@ -426,7 +428,9 @@ class CookiePage(ThemeFieldsMixin, SingletonModel):
 class CitiesPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'cities'
     title = models.CharField('Заголовок', max_length=120, default='Міста мережі')
+    title_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
     intro = models.TextField('Вступний текст', blank=True)
+    intro_mode = mode_text('Вступ для режиму «Лише обмін»')
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
     seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
@@ -517,6 +521,7 @@ class ReviewsPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'reviews'
     kicker = models.CharField('Підпис над заголовком', max_length=80, default='Відгуки')
     title = models.CharField('Заголовок', max_length=120, default='Відгуки')
+    title_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
     title_accent = models.CharField(
         'Акцент у заголовку',
         max_length=80,
@@ -533,7 +538,9 @@ class ReviewsPage(ThemeFieldsMixin, SingletonModel):
         default='Залишити відгук',
     )
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
 
     class Meta:
         verbose_name = 'Сторінка відгуків'
