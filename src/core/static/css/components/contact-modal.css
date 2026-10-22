@@ -46,11 +46,11 @@
   touch-action: manipulation;
 }
 
-.contact-card--phone {
+.contact-modal .contact-card--phone {
   border-color: var(--color-border);
 }
 
-.contact-card--telegram {
+.contact-modal .contact-card--telegram {
   border-color: var(--color-accent);
 }
 
