@@ -89,7 +89,7 @@
     {% if not eo %}
     {% for row in page.iter_stats %}
     <div class="stats-section__item">
-      <div class="stats-section__num">{{ row.title }}</div>
+      <div class="stats-section__num" data-count-up>{{ row.title }}</div>
       <p>{{ row.text }}</p>
     </div>
     {% endfor %}
@@ -97,28 +97,28 @@
     {% mode_field page 'stat_1_text' as stat_text %}
     {% if stat_text %}
     <div class="stats-section__item">
-      <div class="stats-section__num">{{ page.stat_1_title }}</div>
+      <div class="stats-section__num" data-count-up>{{ page.stat_1_title }}</div>
       <p>{{ stat_text }}</p>
     </div>
     {% endif %}
     {% mode_field page 'stat_2_text' as stat_text %}
     {% if stat_text %}
     <div class="stats-section__item">
-      <div class="stats-section__num">{{ page.stat_2_title }}</div>
+      <div class="stats-section__num" data-count-up>{{ page.stat_2_title }}</div>
       <p>{{ stat_text }}</p>
     </div>
     {% endif %}
     {% mode_field page 'stat_3_text' as stat_text %}
     {% if stat_text %}
     <div class="stats-section__item">
-      <div class="stats-section__num">{{ page.stat_3_title }}</div>
+      <div class="stats-section__num" data-count-up>{{ page.stat_3_title }}</div>
       <p>{{ stat_text }}</p>
     </div>
     {% endif %}
     {% mode_field page 'stat_4_text' as stat_text %}
     {% if stat_text %}
     <div class="stats-section__item">
-      <div class="stats-section__num">{{ page.stat_4_title }}</div>
+      <div class="stats-section__num" data-count-up>{{ page.stat_4_title }}</div>
       <p>{{ stat_text }}</p>
     </div>
     {% endif %}

@@ -173,13 +173,13 @@
   <div class="stats-section__grid">
     {% for item in home_stats %}
     <div class="stats-section__item">
-      <div class="stats-section__num">{{ item.title }}</div>
+      <div class="stats-section__num" data-count-up>{{ item.title }}</div>
       <div>{{ item.text }}</div>
     </div>
     {% empty %}
     {% if not eo %}
     <div class="stats-section__item">
-      <div class="stats-section__num">7K</div>
+      <div class="stats-section__num" data-count-up>7K</div>
       <p><b>Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для швидкого та зручного обміну валют</p>
     </div>
     {% endif %}
