@@ -10,6 +10,7 @@ from django.db.models import ImageField
 from src.content.advantages_fields import (
     CMP_THEM_HTML_MODE,
     CMP_US_HTML_MODE,
+    STAT_1_TEXT_MODE,
     advantage_default,
 )
 from src.core.exchange_stopwords import matches_stop_words
@@ -106,12 +107,28 @@ def _file_name(value):
     return str(getattr(value, 'name', '') or '').strip()
 
 
-def fill_advantages_page_mode(apps, schema_editor):
-    """Заповнює порожні поля режиму. Повтор не перезаписує правки."""
+def fill_stat_1_text_mode(apps, schema_editor):
+    """Ставить текст цифри 7K лише в порожнє поле. Повтор не перезаписує правки."""
+    if not _fits(STAT_1_TEXT_MODE, None):
+        return {}
     page_model = apps.get_model('content', 'AdvantagesPage')
     page = page_model.objects.filter(pk=1).first()
     if page is None:
         return {}
+    names = {field.name for field in page_model._meta.fields}
+    if 'stat_1_text_mode' not in names or not _blank(getattr(page, 'stat_1_text_mode', '')):
+        return {}
+    page_model.objects.filter(pk=page.pk).update(stat_1_text_mode=STAT_1_TEXT_MODE)
+    return {'stat_1_text_mode': STAT_1_TEXT_MODE}
+
+
+def fill_advantages_page_mode(apps, schema_editor):
+    """Заповнює порожні поля режиму. Повтор не перезаписує правки."""
+    stat_updates = fill_stat_1_text_mode(apps, schema_editor)
+    page_model = apps.get_model('content', 'AdvantagesPage')
+    page = page_model.objects.filter(pk=1).first()
+    if page is None:
+        return stat_updates
     names = {field.name for field in page_model._meta.fields}
     updates = {}
     for base, kind in iter_mode_targets(page_model):
@@ -134,4 +151,6 @@ def fill_advantages_page_mode(apps, schema_editor):
         updates[mode_name] = text
     if updates:
         page_model.objects.filter(pk=page.pk).update(**updates)
+    if stat_updates:
+        updates.update(stat_updates)
     return updates

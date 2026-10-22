@@ -12,6 +12,8 @@ import src.content.admin  # noqa: F401
 from src.content.advantages_fields import (
     CMP_THEM_HTML_MODE,
     CMP_US_HTML_MODE,
+    STAT_1_TEXT,
+    STAT_1_TEXT_MODE,
     advantage_default,
     advantage_text,
     stat_text_for,
@@ -19,13 +21,14 @@ from src.content.advantages_fields import (
 from src.content.advantages_mode_copy import (
     choose_mode_text,
     fill_advantages_page_mode,
+    fill_stat_1_text_mode,
     image_is_neutral,
     iter_mode_targets,
 )
 from src.content.models import AdvantagesPage, CookiePage, OfferPage, PrivacyPage
 from src.core.exchange_fields import MODE_FIELD_HELP, resolved_text
 from src.core.exchange_mode import mode_text
-from src.core.exchange_stopwords import matches_stop_words
+from src.core.exchange_stopwords import STOP_WORDS, matches_stop_words
 from src.core.models import SiteSettings
 from src.core.tests.test_services_page_mode import load_filter_stopwords
 
@@ -117,7 +120,8 @@ class AdvantagesPageModeTests(TestCase):
         again = fill_advantages_page_mode(apps, None)
         self.page.refresh_from_db()
         self.assertEqual(again, {})
-        self.assertEqual(set(written), set(text_modes))
+        self.assertEqual(set(written) - {'stat_1_text_mode'}, set(text_modes))
+        self.assertEqual(written['stat_1_text_mode'], STAT_1_TEXT_MODE)
         self.assertFalse(self.page.why_banner_mode)
         self.assertFalse(self.page.why_coins_mode)
         self.assertFalse(getattr(self.page, 'exchange_safe', False))
@@ -125,6 +129,9 @@ class AdvantagesPageModeTests(TestCase):
             self.assertEqual(getattr(self.page, mode_name), text)
             self.assertFalse(matches_stop_words(text), text)
             self.assertFalse(filter_matches(text), text)
+            if mode_name == 'stat_1_text_mode':
+                self.assertEqual(text, STAT_1_TEXT_MODE)
+                continue
             base = mode_name[:-5]
             self.assertEqual(
                 text,
@@ -267,6 +274,68 @@ class AdvantagesPageModeTests(TestCase):
         self._mode(False)
         self.assertEqual(mode_text(self.page, 'stat_2_text'), 'База відділень')
         self.assertEqual(advantage_text(self.page, 'why_lead'), 'База з криптовалютою')
+
+    def test_stat_1_text_mode_fills_only_when_empty(self):
+        _words, filter_matches = load_filter_stopwords()
+        folded = STAT_1_TEXT_MODE.casefold()
+        hits = [word for word in STOP_WORDS if word.casefold() in folded]
+        self.assertEqual(hits, [])
+        self.assertFalse(matches_stop_words(STAT_1_TEXT_MODE))
+        self.assertFalse(filter_matches(STAT_1_TEXT_MODE))
+        self.assertEqual(advantage_default('stat_1_title'), '7K')
+        self.assertIn('криптоактив', STAT_1_TEXT.casefold())
+        self.assertTrue(STAT_1_TEXT_MODE.startswith('Постійних клієнтів —'))
+
+        self.page.stat_1_text = STAT_1_TEXT
+        self.page.stat_1_text_mode = ''
+        self.page.stat_2_text_mode = ''
+        self.page.why_lead_mode = ''
+        self.page.save(update_fields=[
+            'stat_1_text',
+            'stat_1_text_mode',
+            'stat_2_text_mode',
+            'why_lead_mode',
+        ])
+        written = fill_stat_1_text_mode(apps, None)
+        self.page.refresh_from_db()
+        self.assertEqual(written, {'stat_1_text_mode': STAT_1_TEXT_MODE})
+        self.assertEqual(self.page.stat_1_text_mode, STAT_1_TEXT_MODE)
+        self.assertEqual(self.page.stat_1_text, STAT_1_TEXT)
+        self.assertEqual(self.page.stat_1_title, '7K')
+        self.assertEqual(self.page.stat_2_text_mode, '')
+        self.assertEqual(self.page.why_lead_mode, '')
+        self.assertFalse(getattr(self.page, 'exchange_safe', False))
+        self.assertEqual(fill_stat_1_text_mode(apps, None), {})
+
+        self.page.stat_1_text_mode = 'Свій текст про готівкових клієнтів'
+        self.page.save(update_fields=['stat_1_text_mode'])
+        self.assertEqual(fill_stat_1_text_mode(apps, None), {})
+        self.page.refresh_from_db()
+        self.assertEqual(self.page.stat_1_text_mode, 'Свій текст про готівкових клієнтів')
+
+        self.page.stat_1_text_mode = '   '
+        self.page.save(update_fields=['stat_1_text_mode'])
+        written = fill_stat_1_text_mode(apps, None)
+        self.page.refresh_from_db()
+        self.assertEqual(written['stat_1_text_mode'], STAT_1_TEXT_MODE)
+        self.assertEqual(self.page.stat_1_text_mode, STAT_1_TEXT_MODE)
+
+        AdvantagesPage.objects.filter(pk=1).delete()
+        self.assertEqual(fill_stat_1_text_mode(apps, None), {})
+
+        migration = next((
+            _ROOT / 'src/content/migrations'
+        ).glob('*_advantages_stat_1_text_mode.py'))
+        content = migration.read_text(encoding='utf-8')
+        seed = (
+            _ROOT / 'src/core/management/commands/seed_demo.py'
+        ).read_text(encoding='utf-8')
+        self.assertIn("('content', '0028_advantages_page_mode_fields')", content)
+        self.assertIn('fill_stat_1_text_mode', content)
+        self.assertIn('noop_reverse', content)
+        self.assertIn('fill_stat_1_text_mode(apps, None)', seed)
+        self.assertNotIn('exchange_safe', content)
+        self.assertNotIn('exchange_safe', seed)
 
     def test_migration_and_seed_call_fill_without_exchange_safe(self):
         migration = next((

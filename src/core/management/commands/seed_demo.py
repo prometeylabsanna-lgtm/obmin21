@@ -28,7 +28,10 @@ from src.content.models import (
     Service,
     ServicesPage,
 )
-from src.content.advantages_mode_copy import fill_advantages_page_mode
+from src.content.advantages_mode_copy import (
+    fill_advantages_page_mode,
+    fill_stat_1_text_mode,
+)
 from src.content.page_meta_mode import fill_page_meta_mode
 from src.content.reader_mode_copy import fill_reader_mode_fields
 from src.content.stage3_fill import fill_articles_lead, fill_home_seo_mode
@@ -651,5 +654,6 @@ class Command(BaseCommand):
         fill_fiat_pair_mode(apps, None)
         fill_reader_mode_fields(apps, None)
         fill_advantages_page_mode(apps, None)
+        fill_stat_1_text_mode(apps, None)
 
         self.stdout.write(self.style.SUCCESS('seed_demo OK'))
