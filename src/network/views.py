@@ -59,11 +59,11 @@ def set_city(request):
         response['HX-Trigger'] = json.dumps({
             'cityChanged': {
                 'slug': city.slug,
-                'name': city.name,
+                'name': mode_text(city, 'name', request),
                 'nameIn': city.name_in,
                 'bannerUrl': city.banner_src(),
                 'bannerTitle': banner_title,
-                'bannerSuffix': city.banner_suffix,
+                'bannerSuffix': mode_text(city, 'banner_suffix', request),
                 'bannerText': banner_text,
                 'bannerHidden': bool(
                     is_exchange_only(request) and not banner_title and not banner_text

@@ -21,10 +21,10 @@
     </div>
     <div class="hero__overlay" aria-hidden="true"></div>
     <div class="hero__content">
-      <h1 class="hero__title">{% if active_city %}{% mode_field active_city 'banner_title' as bt %}{% if not eo or bt %}<span data-hero-title>{{ bt }}</span>{% endif %}{% else %}<span data-hero-title>Обмін валют</span>{% endif %}<br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{{ active_city.banner_suffix }}{% else %}за вигідним курсом{% endif %}</span></h1>
+      <h1 class="hero__title">{% if active_city %}{% mode_field active_city 'banner_title' as bt %}{% if not eo or bt %}<span data-hero-title>{{ bt }}</span>{% endif %}{% else %}<span data-hero-title>Обмін валют</span>{% endif %}<br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{% mode_field active_city 'banner_suffix' as hero_suffix %}{{ hero_suffix }}{% elif not eo %}за вигідним курсом{% endif %}</span></h1>
       {% if active_city %}{% mode_field active_city 'banner_text' as bl %}{% if not eo or bl %}<p class="hero__lead" data-hero-lead>{{ bl }}</p>{% endif %}{% else %}<p class="hero__lead" data-hero-lead>Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>{% endif %}
       <div class="hero__cta">
-        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">{% if active_city %}{{ active_city.banner_button }}{% else %}Зафіксувати курс{% endif %}</button>
+        <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">{% if active_city %}{% mode_field active_city 'banner_button' as hero_btn %}{% if not eo or hero_btn %}{{ hero_btn }}{% endif %}{% elif not eo %}Зафіксувати курс{% endif %}</button>
       </div>
     </div>
   </div>
@@ -171,15 +171,16 @@
         <div class="map-section__label">Місто:</div>
         <div class="map-city" data-city-select>
           <button type="button" class="map-city__btn" data-city-toggle aria-expanded="false" aria-haspopup="listbox">
-            <span>{{ active_city.name|default:"Місто" }}</span>
+            <span>{% if active_city %}{% mode_field active_city 'name' as map_city_name %}{% endif %}{% if map_city_name %}{{ map_city_name }}{% elif not eo %}Місто{% endif %}</span>
             <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
           </button>
           <div class="map-city__menu" data-city-menu hidden role="listbox">
             {% for c in cities %}
+            {% mode_field c 'name' as map_option_name %}
             <form method="post" action="{% url 'network:set_city' %}">
               {% csrf_token %}
               <input type="hidden" name="city" value="{{ c.slug }}">
-              <button type="submit" class="map-city__option{% if active_city.slug == c.slug %} is-active{% endif %}">{{ c.name }}</button>
+              <button type="submit" class="map-city__option{% if active_city.slug == c.slug %} is-active{% endif %}">{{ map_option_name }}</button>
             </form>
             {% endfor %}
           </div>

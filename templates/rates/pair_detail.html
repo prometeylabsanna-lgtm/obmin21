@@ -5,7 +5,7 @@
 {% block content %}
 <article class="simple-page" data-qa="pair-detail">
   <h1 class="simple-page__title">{{ pair.code }}/UAH</h1>
-  <p class="page-hero__lead">{{ pair.name }}{% if active_city %} · {{ active_city.name }}{% endif %}</p>
+  <p class="page-hero__lead">{{ pair.name }}{% if active_city %}{% mode_field active_city 'name' as pair_city %}{% if pair_city %} · {{ pair_city }}{% endif %}{% endif %}</p>
 
   {% if quote %}
   <div class="card-grid card-grid--2" style="margin:28px 0;max-width:480px">
