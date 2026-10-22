@@ -427,7 +427,7 @@ class AdminPanelTests(TestCase):
         city = City.objects.filter(is_active=True).first()
         if city is None:
             city = City.objects.create(name='Київ', slug='kyiv-test')
-        Branch.objects.get_or_create(
+        branch, _created = Branch.objects.get_or_create(
             city=city,
             address='вул. Хрещатик, 1',
             defaults={'hours': '09:00–18:00', 'phone': '+380'},
@@ -443,10 +443,14 @@ class AdminPanelTests(TestCase):
         self.assertContains(contacts, 'name="branches-0-address"')
         self.assertContains(contacts, 'Графік')
         self.assertContains(contacts, 'Адреса')
-        from django.urls import NoReverseMatch
-
-        with self.assertRaises(NoReverseMatch):
-            reverse('admin:network_branch_changelist')
+        branch_admin = self.client.get(
+            reverse('admin:network_branch_change', args=[branch.pk]),
+        )
+        self.assertEqual(branch_admin.status_code, 200)
+        self.assertContains(branch_admin, 'name="map_embed_url"')
+        self.assertContains(branch_admin, 'name="map_url"')
+        self.assertContains(branch_admin, 'name="lat"')
+        self.assertContains(branch_admin, 'name="lng"')
         index = self.client.get(reverse('admin:index'))
         self.assertContains(index, 'Картки послуг')
         self.assertContains(index, reverse('admin:content_service_changelist'))

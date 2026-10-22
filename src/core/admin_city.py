@@ -12,7 +12,17 @@ from src.rates.services import ensure_city_quotes
 class BranchInline(StackedInline):
     model = Branch
     extra = 0
-    fields = ('address', 'hours', 'phone', 'is_active', 'sort_order')
+    fields = (
+        'address',
+        'hours',
+        'phone',
+        'map_embed_url',
+        'map_url',
+        'lat',
+        'lng',
+        'is_active',
+        'sort_order',
+    )
     tab = True
     verbose_name = 'Відділення'
     verbose_name_plural = 'Відділення цього міста'

@@ -48,6 +48,25 @@ class ContactCityAdmin(CitySectionAdmin):
     )
 
 
+@admin.register(Branch)
+class BranchAdmin(ListUnfoldAdmin):
+    list_display = ('city', 'address', 'is_active', 'sort_order')
+    list_filter = ('city', 'is_active')
+    search_fields = ('address', 'city__name')
+    fields = (
+        'city',
+        'address',
+        'hours',
+        'phone',
+        'map_embed_url',
+        'map_url',
+        'lat',
+        'lng',
+        'is_active',
+        'sort_order',
+    )
+
+
 @admin.register(City)
 class CityAdmin(ListUnfoldAdmin):
     list_display = ('name', 'phone', 'is_active', 'sort_order')
@@ -65,9 +84,3 @@ class CityAdmin(ListUnfoldAdmin):
         'seo_description_mode',
     )
     slug_source = 'name'
-
-
-try:
-    admin.site.unregister(Branch)
-except admin.sites.NotRegistered:
-    pass
