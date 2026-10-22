@@ -5,7 +5,7 @@ from src.blog.models import Category, Post
 from src.blog.selectors import category_is_public, get_published_posts, visible_categories
 from src.content.models import BlogPage
 from src.core.breadcrumbs import safe_reverse, trail
-from src.core.exchange_mode import exchange_only, mode_meta, raise_hidden
+from src.core.exchange_mode import exchange_only, mode_meta, mode_text, raise_hidden
 
 
 def _related_posts(post):
@@ -89,6 +89,36 @@ def post_list(request, category_slug=None):
     return render(request, 'blog/post_list.html', context)
 
 
+def _layout_mode(post, layout, request):
+    if not exchange_only(request):
+        return layout
+    return _mode_value(post, layout, request, None)
+
+
+def _mode_value(post, value, request, key):
+    if isinstance(value, dict):
+        return {
+            name: _mode_value(post, item, request, name)
+            for name, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_mode_value(post, item, request, None) for item in value]
+    if key and hasattr(post, f'{key}_mode'):
+        return mode_text(post, key, request)
+    if isinstance(value, str):
+        return ''
+    return None
+
+
+def _article_art(post, request):
+    layout = post.article_layout()
+    return {
+        **layout,
+        'layout': layout,
+        'layout_mode': _layout_mode(post, layout, request),
+    }
+
+
 def post_detail(request, slug):
     published = Post.objects.filter(slug=slug, status=Post.Status.PUBLISHED)
     post = published.visible().first()
@@ -96,13 +126,15 @@ def post_detail(request, slug):
         if exchange_only() and published.exists():
             raise_hidden()
         raise Http404
-    crumb = post.title
-    layout = post.article_layout()
-    if layout.get('h1b'):
-        crumb = f"{layout['h1a']} {layout['h1b']}"
+    art = _article_art(post, request)
+    shown = art['layout_mode']
+    if shown.get('h1b'):
+        crumb = f"{shown['h1a']} {shown['h1b']}"
+    else:
+        crumb = mode_text(post, 'title', request)
     return render(request, 'blog/post_detail.html', {
         'post': post,
-        'art': layout,
+        'art': art,
         'related': _related_posts(post),
         'page_title': mode_meta(post, 'seo_title', 'title', limit=None, request=request),
         'page_description': mode_meta(post, 'seo_description', 'excerpt', request=request),

@@ -298,7 +298,10 @@ class PublicFilterTests(_ModeCase):
         self.assertNotContains(reviews, 'EO-REVIEW-HIDDEN')
 
         home = self.client.get(reverse('core:home'))
-        self.assertContains(home, 'EO-STAT-SAFE')
+        stat_texts = [item.get('text', '') for item in home.context['home_stats']]
+        self.assertNotIn('EO-STAT-SAFE', stat_texts)
+        self.assertNotIn('EO-STAT-HIDDEN', stat_texts)
+        self.assertNotContains(home, 'EO-STAT-SAFE')
         self.assertNotContains(home, 'EO-STAT-HIDDEN')
         self.assertNotContains(home, 'EO-STAT-OFF')
         self.assertContains(home, 'EO-SAFE-SVC')

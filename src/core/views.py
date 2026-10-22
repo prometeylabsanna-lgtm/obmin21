@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap as django_sitemap
 import logging
 
+from src.core.exchange_mode import is_exchange_only, mode_text
 from src.core.sitemaps import sitemaps
 from src.core.theme import theme_css_cached
 
@@ -30,11 +31,20 @@ def _home_retail_rows(city):
     return _ordered_rows(rows, _RETAIL_ORDER), updated_at
 
 
-def _home_stat_cards(page):
+def _home_stat_cards(page, request):
     cards = []
+    in_mode = is_exchange_only(request)
     for item in HomeStat.objects.filter(page=page, is_active=True).visible():
-        title = strip_tags(item.number or '').strip()
-        text = strip_tags(item.text or '').strip()
+        title = strip_tags(mode_text(item, 'number', request) or '').strip()
+        text = strip_tags(mode_text(item, 'text', request) or '').strip()
+        if in_mode:
+            if not text:
+                continue
+            card = {'text': text}
+            if title:
+                card['title'] = title
+            cards.append(card)
+            continue
         if title or text:
             cards.append({'title': title, 'text': text})
     return cards
@@ -89,7 +99,7 @@ class HomeView(TemplateView):
             'faq_items': FaqItem.objects.filter(is_active=True).visible()[:8],
             'news_posts': list(get_published_posts()[:10]),
             'home_reviews': get_published_reviews(8),
-            'home_stats': _home_stat_cards(page),
+            'home_stats': _home_stat_cards(page, self.request),
         })
         return ctx
 

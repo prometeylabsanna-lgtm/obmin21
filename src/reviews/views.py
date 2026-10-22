@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from src.content.models import ReviewsPage
+from src.core.exchange_mode import mode_meta
 from src.reviews.forms import ReviewForm
 from src.reviews.selectors import get_published_reviews
 
@@ -13,8 +14,10 @@ def review_list(request):
         'reviews': get_published_reviews(),
         'form': form,
         'page': page,
-        'page_title': page.seo_title or page.title,
-        'page_description': page.seo_description or page.title,
+        'page_title': mode_meta(page, 'seo_title', 'title', limit=None, request=request),
+        'page_description': mode_meta(
+            page, 'seo_description', 'title', limit=None, request=request,
+        ),
     })
 
 

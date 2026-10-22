@@ -10,6 +10,7 @@ from src.content.models import (
     CookiePage,
     FaqItem,
     FaqPage,
+    HomePage,
     OfferPage,
     PrivacyPage,
     ReviewsPage,
@@ -65,10 +66,13 @@ def services_list(request):
         svc.block_text = _service_block_text(svc, block, request)
         svc.block_points = list(block.get('points', ()))
         svc.block_cta = block.get('cta', 'Забронювати заявку')
+        for name in ('block_text_mode', 'block_points_mode', 'block_cta_mode'):
+            setattr(svc, name, getattr(svc, name, ''))
         services.append(svc)
     ctx = {
         'page': page,
         'services': services,
+        'home_page': HomePage.load(),
         'news_posts': list(get_published_posts()[:10]),
         'page_title': mode_meta(page, 'seo_title', 'title', limit=None, request=request),
         'page_description': mode_meta(page, 'seo_description', 'hero_text', request=request),
