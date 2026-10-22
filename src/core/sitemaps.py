@@ -4,9 +4,7 @@ from src.blog.models import Category
 from src.blog.selectors import get_published_posts
 from src.content.models import Service
 from src.core.breadcrumbs import safe_reverse
-from src.core.exchange_mode import exchange_only
 from src.core.hidden_response import service_public_path
-from src.core.seo_words import contains_stop_word
 from src.network.models import City
 
 
@@ -15,28 +13,12 @@ def published_visible_posts():
 
 
 def public_services():
-    services = (
+    return (
         Service.objects.filter(is_active=True)
         .visible()
         .exclude(slug='')
         .order_by('sort_order', 'id')
     )
-    if not exchange_only():
-        return services
-    kept = []
-    for service in services:
-        blob = ' '.join(
-            part for part in (
-                service.title,
-                service.slug,
-                service.seo_title,
-                service.seo_description,
-            ) if part
-        )
-        if contains_stop_word(blob):
-            continue
-        kept.append(service.pk)
-    return services.filter(pk__in=kept)
 
 
 def public_categories():

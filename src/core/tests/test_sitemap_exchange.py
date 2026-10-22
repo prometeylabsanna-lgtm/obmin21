@@ -89,7 +89,7 @@ class SitemapExchangeTests(TestCase):
             slug='swift-perekaz',
             short_desc='За кордон',
             is_active=True,
-            exchange_safe=True,
+            exchange_safe=False,
         )
 
     def tearDown(self):
