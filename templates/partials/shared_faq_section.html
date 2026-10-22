@@ -1,4 +1,4 @@
-{% load content_format %}
+{% load content_format exchange_mode %}{% is_exchange_only as eo %}
 <section class="faq-section {{ extra_class }}"{% if section_id %} id="{{ section_id }}"{% endif %} data-qa="{{ qa|default:'section-faq' }}">
   <div class="faq-section__head">
     <h2 class="faq-section__title">
@@ -7,14 +7,14 @@
     {% if faq_lead %}<p class="faq-section__lead">{{ faq_lead }}</p>{% endif %}
   </div>
   <div class="faq-section__grid {{ grid_class }}" data-faq>
-    {% for item in faq_items %}
+    {% for item in faq_items %}{% if not eo or item.exchange_safe %}
     <div class="faq-card">
       <button type="button" class="faq-card__q" aria-expanded="false">
         <span>{{ item.question }}</span>
         <svg class="faq-card__chev" width="12" height="7" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="var(--color-accent)" fill="none" stroke-width="1.3"></path></svg>
       </button>
       <div class="faq-card__a">{{ item.answer|rich_html }}</div>
-    </div>
+    </div>{% endif %}
     {% empty %}
     <p class="u-muted">Питання зʼявляться незабаром</p>
     {% endfor %}

@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% load static content_format %}
+{% load static content_format exchange_mode %}
 
-{% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
-{% block content %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block content %}{% is_exchange_only as eo %}
 <section class="svc-hero">
   <div class="svc-hero__banner">
     <div class="svc-hero__coins" aria-hidden="true">
@@ -14,42 +14,49 @@
     </div>
     <div class="svc-hero__copy">
       <h1 class="svc-hero__title">{{ page.hero_title }}<br><span class="u-accent">{{ page.hero_title_accent }}</span></h1>
-      <p class="svc-hero__lead">{{ page.hero_text }}</p>
+      {% mode_field page 'hero_text' as ht %}{% if not eo or ht %}<p class="svc-hero__lead">{{ ht }}</p>{% endif %}
     </div>
     <div class="svc-hero__chips">
-      {% for svc in services %}
+      {% for svc in services %}{% if not eo or svc.exchange_safe %}
       <a href="#svc-{{ svc.slug }}">{{ svc.title }}</a>
-      {% endfor %}
+      {% endif %}{% endfor %}
     </div>
   </div>
 </section>
 
-{% for svc in services %}
+{% for svc in services %}{% if not eo or svc.exchange_safe %}
 <article class="svc-row{% if forloop.counter|divisibleby:2 %} svc-row--rev{% endif %}" id="svc-{{ svc.slug }}">
   <div class="svc-row__media">
     <img src="{{ svc.image_src }}" alt="{{ svc.title }}" width="800" height="420" decoding="async">
   </div>
   <div class="svc-row__copy">
     <h2 class="svc-row__title">{{ svc.title }}</h2>
-    <p class="svc-row__text">{{ svc.block_text }}</p>
-    {% if svc.block_points %}
+    {% mode_field svc 'block_text' as bt %}{% if not eo or bt %}<p class="svc-row__text">{{ bt }}</p>{% endif %}
+    {% mode_field svc 'block_points' as pts %}{% if pts %}
     <div class="svc-row__points">
-      {% for pt in svc.block_points %}
+      {% if eo %}{% for pt in pts.splitlines %}{% if pt %}
       <div class="svc-row__point">
         <span class="svc-row__check" aria-hidden="true">
           <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" fill="none" stroke-width="1.6"></path></svg>
         </span>
         {{ pt }}
       </div>
-      {% endfor %}
+      {% endif %}{% endfor %}{% else %}{% for pt in pts %}
+      <div class="svc-row__point">
+        <span class="svc-row__check" aria-hidden="true">
+          <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" fill="none" stroke-width="1.6"></path></svg>
+        </span>
+        {{ pt }}
+      </div>
+      {% endfor %}{% endif %}
     </div>
     {% endif %}
     <div class="svc-row__btns">
-      <button type="button" class="btn btn--accent svc-row__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ svc.block_cta }}</button>
+      {% mode_field svc 'block_cta' as cta %}{% if not eo or cta %}<button type="button" class="btn btn--accent svc-row__cta" data-open-modal="{% url 'leads:request_modal' %}">{{ cta }}</button>{% endif %}
       <a class="svc-row__consult" href="tel:+380444444444">Консультація</a>
     </div>
   </div>
-</article>
+</article>{% endif %}
 {% empty %}
 <p class="u-muted">Послуги зʼявляться незабаром</p>
 {% endfor %}
@@ -82,7 +89,10 @@
   <div class="slider-head">
     <div>
       <h2 class="slider-head__title">Корисні <span class="u-accent">статті</span></h2>
+      {% if eo and home_page %}{% mode_field home_page 'articles_lead' as al %}{% endif %}{% if not al %}{% mode_field page 'intro' as al %}{% endif %}{% if al %}<p class="articles-section__lead">{{ al }}</p>{% elif not eo %}
+      {# TODO CMS migration #}
       <p class="articles-section__lead">Окрім обміну валют у мережі Обмін21 доступні грошові перекази по Україні, міжнародні перекази та обмін електронних валют — умови та підготовка до візиту нижче.</p>
+      {% endif %}
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="articles">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
@@ -90,7 +100,7 @@
     </div>
   </div>
   <div class="articles-track" data-slider="articles">
-    {% for post in news_posts %}
+    {% for post in news_posts %}{% if not eo or post.exchange_safe %}
     <article class="article-slide">
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
         <img src="{{ post.image_url }}" alt="{{ post.title }}" width="330" height="194" decoding="async">
@@ -100,7 +110,7 @@
       <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати повністю
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </a>
-    </article>
+    </article>{% endif %}
     {% empty %}
     <p class="u-muted">Статті зʼявляться незабаром</p>
     {% endfor %}

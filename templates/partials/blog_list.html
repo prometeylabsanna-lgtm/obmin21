@@ -1,6 +1,7 @@
-{% load static content_format %}
+{% load static content_format exchange_mode %}
+{% is_exchange_only as eo %}
 <div id="blog-list" data-qa="blog-list">
-  {% if featured %}
+  {% if featured %}{% if not eo or featured.exchange_safe %}
   <a class="blog-feature" href="{% url 'blog:post_detail' featured.slug %}">
     <div class="blog-feature__media">
       <img src="{{ featured.image_url }}" alt="{{ featured.title }}" decoding="async">
@@ -19,11 +20,11 @@
       </span>
     </div>
   </a>
-  {% endif %}
+  {% endif %}{% endif %}
 
   {% if posts %}
   <div class="blog-grid">
-    {% for post in posts %}
+    {% for post in posts %}{% if not eo or post.exchange_safe %}
     <a class="blog-card" href="{% url 'blog:post_detail' post.slug %}">
       <div class="blog-card__media">
         <img src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
@@ -35,7 +36,7 @@
       </div>
       <h3 class="blog-card__title">{{ post.title|brand_mark }}</h3>
       {% if post.excerpt %}<p class="blog-card__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
-    </a>
+    </a>{% endif %}
     {% endfor %}
   </div>
   {% elif not featured %}

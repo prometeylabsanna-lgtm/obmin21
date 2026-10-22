@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load content_format %}
+{% load content_format exchange_mode %}
 
-{% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 <section class="page-hero">
   <h1 class="page-hero__title">{{ page.title }}</h1>

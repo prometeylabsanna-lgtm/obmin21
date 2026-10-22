@@ -147,21 +147,23 @@
         banner.src = next;
       }
     }
-    if (detail.bannerTitle) {
-      document.querySelectorAll('[data-hero-title]').forEach(function (el) {
-        el.textContent = detail.bannerTitle;
+    var hideBanner = !!detail.bannerHidden;
+    function paintBanner(selector, text, hide) {
+      document.querySelectorAll(selector).forEach(function (el) {
+        if (hide) {
+          el.textContent = '';
+          el.setAttribute('hidden', '');
+          return;
+        }
+        el.removeAttribute('hidden');
+        el.textContent = text || '';
       });
     }
-    if (detail.bannerSuffix) {
-      document.querySelectorAll('[data-hero-suffix]').forEach(function (el) {
-        el.textContent = detail.bannerSuffix;
-      });
-    }
-    if (detail.bannerText) {
-      document.querySelectorAll('[data-hero-lead]').forEach(function (el) {
-        el.textContent = detail.bannerText;
-      });
-    }
+    paintBanner('[data-hero-title]', detail.bannerTitle, hideBanner);
+    paintBanner('[data-hero-lead]', detail.bannerText, hideBanner);
+    document.querySelectorAll('[data-hero-suffix]').forEach(function (el) {
+      el.textContent = detail.bannerSuffix || '';
+    });
     if (detail.slug) {
       try {
         var ch = new BroadcastChannel('obmin21-city');

@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static content_format exchange_mode %}
 
-{% block title %}{{ page.seo_title|default:site_settings.site_name }}{% endblock %}
-{% block content %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' %}{% else %}{{ page.seo_title|default:site_settings.site_name }}{% endif %}{% endblock %}
+{% block content %}{% is_exchange_only as eo %}
 
 <section class="hero" id="exchange" data-qa="section-exchange">
   <div class="hero__banner">
@@ -21,8 +21,8 @@
     </div>
     <div class="hero__overlay" aria-hidden="true"></div>
     <div class="hero__content">
-      <h1 class="hero__title"><span data-hero-title>{% if active_city %}{{ active_city.banner_title }}{% else %}Обмін валют{% endif %}</span><br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{{ active_city.banner_suffix }}{% else %}за вигідним курсом{% endif %}</span></h1>
-      <p class="hero__lead" data-hero-lead>{% if active_city %}{{ active_city.banner_text }}{% else %}Фіксуйте курс онлайн та обмінюйте за вигідним курсом{% endif %}</p>
+      <h1 class="hero__title">{% if active_city %}{% mode_field active_city 'banner_title' as bt %}{% if not eo or bt %}<span data-hero-title>{{ bt }}</span>{% endif %}{% else %}<span data-hero-title>Обмін валют</span>{% endif %}<br><span data-city-in>{% if active_city %}{{ active_city.name_in }}{% endif %}</span> <span data-hero-suffix>{% if active_city %}{{ active_city.banner_suffix }}{% else %}за вигідним курсом{% endif %}</span></h1>
+      {% if active_city %}{% mode_field active_city 'banner_text' as bl %}{% if not eo or bl %}<p class="hero__lead" data-hero-lead>{{ bl }}</p>{% endif %}{% else %}<p class="hero__lead" data-hero-lead>Фіксуйте курс онлайн та обмінюйте за вигідним курсом</p>{% endif %}
       <div class="hero__cta">
         <button type="button" class="btn btn--accent hero__fix-btn" data-open-modal="{% url 'leads:request_modal' %}">{% if active_city %}{{ active_city.banner_button }}{% else %}Зафіксувати курс{% endif %}</button>
       </div>
@@ -100,7 +100,7 @@
   </div>
 </section>
 
-<section class="promo-banner" data-promo data-qa="promo-banner">
+<section class="promo-banner" data-promo data-qa="promo-banner"{% if eo %} data-autoplay="0" data-slides="1"{% endif %}>
   <div class="promo-banner__stage">
     <article class="promo-banner__slide is-active" data-promo-slide data-href="{% url 'rates:rates_page' %}">
       <div class="promo-banner__media" aria-hidden="true">
@@ -112,7 +112,7 @@
         <a class="btn btn--accent promo-banner__cta" href="{% url 'rates:rates_page' %}">Обрати валюту</a>
       </div>
     </article>
-    {% if not exchange_only %}
+    {% if not eo %}
     <article class="promo-banner__slide" data-promo-slide data-href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" data-blank="1">
       <div class="promo-banner__media" aria-hidden="true">
         <img src="{% static 'images/coins.png' %}" alt="" width="900" height="520" loading="lazy">
@@ -123,7 +123,6 @@
         <a class="btn btn--accent promo-banner__cta" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">Написати менеджеру</a>
       </div>
     </article>
-    {% endif %}
     <article class="promo-banner__slide" data-promo-slide data-href="{% url 'content:services' %}">
       <div class="promo-banner__media" aria-hidden="true">
         <img src="{% static 'images/promo-transfers.png' %}" alt="" width="900" height="520" loading="lazy">
@@ -144,13 +143,14 @@
         <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{% url 'leads:request_modal' %}?direct=1">Зробити заявку</button>
       </div>
     </article>
+    {% endif %}
   </div>
-  <div class="promo-banner__dots" data-promo-dots>
+  {% if not eo %}<div class="promo-banner__dots" data-promo-dots>
     <button type="button" class="is-active" data-promo-dot aria-label="USD та EUR"></button>
-    {% if not exchange_only %}<button type="button" data-promo-dot aria-label="Криптовалюта"></button>{% endif %}
+    <button type="button" data-promo-dot aria-label="Криптовалюта"></button>
     <button type="button" data-promo-dot aria-label="Перекази"></button>
     <button type="button" data-promo-dot aria-label="SWIFT"></button>
-  </div>
+  </div>{% endif %}
 </section>
 
 {% if page.show_map %}
@@ -215,10 +215,12 @@
       <div>{{ item.text }}</div>
     </div>
     {% empty %}
+    {% if not eo %}
     <div class="stats-section__item">
       <div class="stats-section__num">7K</div>
       <p><b>Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для швидкого та зручного обміну валют</p>
     </div>
+    {% endif %}
     {% endfor %}
   </div>
 </section>
@@ -231,7 +233,7 @@
     {% mode_field page 'services_lead' as x %}{% if x %}<p class="services-section__lead">{{ x }}</p>{% endif %}
   </div>
   <div class="services-section__grid" data-slider="services">
-    {% for svc in services %}
+    {% for svc in services %}{% if not eo or svc.exchange_safe %}
     <a class="svc-card" href="{% url 'content:services' %}#svc-{{ svc.slug }}">
       <div class="svc-card__media">
         <img src="{{ svc.image_src }}" alt="" loading="lazy">
@@ -241,7 +243,7 @@
       <span class="link-accent">Детальніше
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="currentColor" fill="none" stroke-width="1.5"></path></svg>
       </span>
-    </a>
+    </a>{% endif %}
     {% endfor %}
   </div>
 </section>
@@ -268,7 +270,7 @@
     </div>
   </div>
   <div class="articles-track" data-slider="articles">
-    {% for post in news_posts %}
+    {% for post in news_posts %}{% if not eo or post.exchange_safe %}
     <article class="article-slide">
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
         <img src="{{ post.image_url }}" alt="{{ post.title }}" width="330" height="194" decoding="async">
@@ -278,7 +280,7 @@
       <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати повністю
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </a>
-    </article>
+    </article>{% endif %}
     {% empty %}
     <p class="u-muted">Статті зʼявляться незабаром</p>
     {% endfor %}
