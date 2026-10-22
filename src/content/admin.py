@@ -114,6 +114,7 @@ _register_home(
         'services_title',
         'services_title_accent',
         'services_lead',
+        'services_lead_mode',
     ),
     extra={
         'content_fieldsets': ((
@@ -129,6 +130,7 @@ _register_home(
                     'services_title',
                     'services_title_accent',
                     'services_lead',
+                    'services_lead_mode',
                 ),
             },
         ),),
@@ -262,7 +264,9 @@ class RatesPageAdmin(SingletonUnfoldAdmin):
             ),
             'fields': (
                 'title',
+                'title_mode',
                 'intro',
+                'intro_mode',
                 'seo_title',
                 'seo_title_mode',
                 'seo_description',
@@ -273,7 +277,7 @@ class RatesPageAdmin(SingletonUnfoldAdmin):
     rich_fields = frozenset()
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'intro':
+        if db_field.name in ('intro', 'intro_mode'):
             kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 4})
             return db_field.formfield(**kwargs)
         return super().formfield_for_dbfield(db_field, request, **kwargs)
@@ -288,6 +292,7 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
         ('Чому обирають Обмін21', {
             'fields': (
                 'title',
+                'title_mode',
                 'seo_title',
                 'seo_title_mode',
                 'seo_description',
@@ -296,6 +301,7 @@ class AdvantagesPageAdmin(SingletonUnfoldAdmin):
                 'hero_title',
                 'hero_title_accent',
                 'hero_lead',
+                'hero_lead_mode',
                 'hero_btn_primary',
                 'hero_btn_secondary',
                 'hero_banner',
@@ -368,6 +374,7 @@ _register_page(
         ('Пошук', {
             'fields': (
                 'title',
+                'title_mode',
                 'seo_title',
                 'seo_title_mode',
                 'seo_description',
@@ -380,6 +387,7 @@ _register_page(
                 'hero_title',
                 'hero_title_accent',
                 'hero_text',
+                'hero_text_mode',
                 'intro_mode',
             ),
         }),
@@ -389,7 +397,9 @@ _register_page(
     ContactsPage,
     (
         'title',
+        'title_mode',
         'heading',
+        'heading_mode',
         'title_accent',
         'phone',
         'phone_hint',
@@ -403,12 +413,16 @@ _register_page(
         'branches_title',
         'branches_title_accent',
         'seo_title',
+        'seo_title_mode',
         'seo_description',
+        'seo_description_mode',
     ),
 )
 _register_page(CitiesPage, (
     'title',
+    'title_mode',
     'intro',
+    'intro_mode',
     'seo_title',
     'seo_title_mode',
     'seo_description',
@@ -439,8 +453,10 @@ _register_page(
                 'fields': (
                     'kicker',
                     'title',
+                    'title_mode',
                     'title_accent',
                     'lead',
+                    'lead_mode',
                     'seo_title',
                     'seo_title_mode',
                     'seo_description',
@@ -464,10 +480,13 @@ _register_page(
     (
         'kicker',
         'title',
+        'title_mode',
         'title_accent',
         'cta_button',
         'seo_title',
+        'seo_title_mode',
         'seo_description',
+        'seo_description_mode',
     ),
     extra={
         'content_fieldsets': (
@@ -479,10 +498,13 @@ _register_page(
                 'fields': (
                     'kicker',
                     'title',
+                    'title_mode',
                     'title_accent',
                     'cta_button',
                     'seo_title',
+                    'seo_title_mode',
                     'seo_description',
+                    'seo_description_mode',
                 ),
             }),
         ),

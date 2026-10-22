@@ -1,0 +1,106 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="exchange-hide">
+    <h1>Що буде сховано</h1>
+    {% if exchange_mode_forced %}
+        <section class="exchange-mode-notice" role="status">
+            <p>{{ exchange_mode_lock_notice }}</p>
+        </section>
+    {% endif %}
+    {% if exchange_mode_enabled %}
+        <p>Зараз режим увімкнено. Після підтвердження приховане знову з’явиться на сайті.</p>
+    {% else %}
+        <p>Зараз режим вимкнено. Після підтвердження на сайті лишиться лише обмін валют.</p>
+    {% endif %}
+
+    <section class="exchange-hide__card">
+        <h2>Сховані записи</h2>
+        {% for group in report.groups %}
+            <h3>{{ group.title }}</h3>
+            {% if group.records %}
+                <ul class="exchange-hide__list">
+                    {% for row in group.records %}
+                        <li>
+                            {% if row.admin_url %}
+                                <a href="{{ row.admin_url }}">{{ row.label }}</a>
+                            {% else %}
+                                {{ row.label }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Немає</p>
+            {% endif %}
+        {% endfor %}
+    </section>
+
+    <section class="exchange-hide__card">
+        <h2>Адреси, які стануть недоступними</h2>
+        <p>Ці адреси зараз відкриваються, а в режимі стануть тимчасово недоступними.</p>
+        {% if report.urls %}
+            <ul class="exchange-hide__list">
+                {% for row in report.urls %}
+                    <li>{{ row.label }} — {{ row.url }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Немає</p>
+        {% endif %}
+    </section>
+
+    <section class="exchange-hide__card">
+        <h2>Блоки, які зникнуть</h2>
+        <p>Порожнє поле для режиму: блок не показується.</p>
+        {% if report.blocks %}
+            <ul class="exchange-hide__list">
+                {% for row in report.blocks %}
+                    <li>
+                        {{ row.model_title }} — {{ row.object_label }} — {{ row.field_label }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Немає</p>
+        {% endif %}
+    </section>
+
+    <section class="exchange-hide__card">
+        <h2>Попередження: стоп-слова в полях для режиму</h2>
+        {% include "admin/core/exchange_warning_list.html" with rows=report.mode_warnings %}
+    </section>
+    <section class="exchange-hide__card">
+        <h2>Попередження: стоп-слова в налаштуваннях</h2>
+        {% include "admin/core/exchange_warning_list.html" with rows=report.settings_warnings %}
+    </section>
+    <section class="exchange-hide__card">
+        <h2>Попередження: стоп-слова в містах</h2>
+        {% include "admin/core/exchange_warning_list.html" with rows=report.city_warnings %}
+    </section>
+    <section class="exchange-hide__card">
+        <h2>Попередження: стоп-слова у видимих статтях</h2>
+        {% include "admin/core/exchange_warning_list.html" with rows=report.post_warnings %}
+    </section>
+    <section class="exchange-hide__card">
+        <h2>Попередження: посилання з видимих статей на приховані</h2>
+        {% if report.links %}
+            <ul class="exchange-hide__list">
+                {% for row in report.links %}
+                    <li>{{ row.source }} → {{ row.target }}{% if row.url %} — {{ row.url }}{% endif %}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Немає</p>
+        {% endif %}
+    </section>
+
+    {% if not exchange_mode_forced %}
+        <form method="post" action="">
+            {% csrf_token %}
+            <button type="submit" class="exchange-hide__confirm">{{ confirm_label }}</button>
+        </form>
+    {% endif %}
+    <p><a href="{% url 'admin:core_sitesettings_change' 1 %}">До налаштувань</a></p>
+</div>
+{% endblock %}

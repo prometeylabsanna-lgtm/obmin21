@@ -1,0 +1,16 @@
+{% if rows %}
+<ul class="exchange-hide__list">
+    {% for row in rows %}
+        <li>
+            {% if row.admin_url %}
+                <a href="{{ row.admin_url }}">{{ row.place }}</a>
+            {% else %}
+                {{ row.place }}
+            {% endif %}
+            — {{ row.words }}
+        </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Немає</p>
+{% endif %}

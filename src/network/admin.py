@@ -21,9 +21,11 @@ class BannerCityAdmin(CitySectionAdmin):
                 'banner_title',
                 'banner_title_mode',
                 'banner_suffix',
+                'banner_suffix_mode',
                 'banner_text',
                 'banner_text_mode',
                 'banner_button',
+                'banner_button_mode',
             ),
         }),
     )
@@ -33,7 +35,7 @@ class BannerCityAdmin(CitySectionAdmin):
 class MapCityAdmin(CitySectionAdmin):
     fieldsets = (
         ('Обрати місто', {'fields': ('city_switch',)}),
-        ('Місто', {'fields': ('name', 'phone')}),
+        ('Місто', {'fields': ('name', 'name_mode', 'phone')}),
     )
 
 
@@ -42,7 +44,7 @@ class ContactCityAdmin(CitySectionAdmin):
     inlines = [BranchInline]
     fieldsets = (
         ('Обрати місто', {'fields': ('city_switch',)}),
-        ('Контакти міста', {'fields': ('name', 'phone')}),
+        ('Контакти міста', {'fields': ('name', 'name_mode', 'phone')}),
     )
 
 
@@ -53,6 +55,7 @@ class CityAdmin(ListUnfoldAdmin):
     search_fields = ('name',)
     fields = (
         'name',
+        'name_mode',
         'phone',
         'is_active',
         'sort_order',

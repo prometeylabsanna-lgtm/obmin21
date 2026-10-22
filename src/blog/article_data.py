@@ -180,12 +180,51 @@ def body_text(item):
     return '\n\n'.join(chunks)
 
 
+def _parse_layout(raw):
+    if isinstance(raw, dict):
+        return raw or None
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    import json
+
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+    if isinstance(parsed, dict) and parsed:
+        return parsed
+    return None
+
+
+def layout_source(post):
+    from src.core.exchange_mode import exchange_only
+
+    if exchange_only():
+        return _parse_layout(getattr(post, 'layout_mode', '') or '')
+    stored = _parse_layout(getattr(post, 'layout', None))
+    if stored:
+        return stored
+    return BY_SLUG.get(getattr(post, 'slug', '') or '')
+
+
 def layout_for(post):
     from django.contrib.staticfiles import finders
     from django.templatetags.static import static
+    from src.core.exchange_mode import exchange_only
 
-    data = BY_SLUG.get(post.slug)
+    data = layout_source(post)
     if not data:
+        if exchange_only():
+            return {
+                'h1a': '',
+                'h1b': '',
+                'lead': '',
+                'read': '',
+                'sections': [],
+                'fig_cap': '',
+                'fig_url': '',
+                'plain': True,
+            }
         words = post.title.split()
         h1a = ' '.join(words[:-2]) if len(words) > 2 else post.title
         h1b = ' '.join(words[-2:]) if len(words) > 2 else ''
@@ -202,20 +241,20 @@ def layout_for(post):
     fig_name = f"images/articles/{data.get('fig_slug') or post.slug}.jpg"
     fig_url = static(fig_name) if finders.find(fig_name) else post.image_url()
     sections = []
-    for i, sec in enumerate(data['sections']):
+    for i, sec in enumerate(data.get('sections') or []):
         sections.append({
-            'h': sec['h'],
+            'h': sec.get('h') or '',
             'p': sec.get('p') or [],
             'list': sec.get('list') or [],
             'fig': i == 0,
         })
     return {
-        'h1a': data['h1a'],
-        'h1b': data['h1b'],
-        'lead': data['lead'],
-        'read': data['read'],
+        'h1a': data.get('h1a') or '',
+        'h1b': data.get('h1b') or '',
+        'lead': data.get('lead') or '',
+        'read': data.get('read') or '',
         'sections': sections,
-        'fig_cap': data['fig_cap'],
+        'fig_cap': data.get('fig_cap') or '',
         'fig_url': fig_url,
         'plain': False,
     }

@@ -29,6 +29,57 @@ CMP_THEM_HTML = (
     '</ul>'
 )
 
+CMP_US_HTML_MODE = (
+    '<ul>'
+    '<li><span class="k">Курс</span><strong>Кращий за банківський</strong></li>'
+    '<li><span class="k">Комісія</span><strong>0 ₴ за будь-яку суму</strong></li>'
+    '<li><span class="k">Фіксація курсу</span><strong>Онлайн на 30 хвилин</strong></li>'
+    '<li><span class="k">Купюри</span><strong>Приймаємо та обмінюємо</strong></li>'
+    '<li><span class="k">Готівка</span><strong>Долар, євро та фунт</strong></li>'
+    '<li><span class="k">Великі суми</span><strong>Індивідуальний курс</strong></li>'
+    '</ul>'
+)
+
+CMP_THEM_HTML_MODE = (
+    '<ul>'
+    '<li><span class="k">Курс</span><strong>Курс банку з націнкою</strong></li>'
+    '<li><span class="k">Комісія</span><strong>Від 1 до 3%</strong></li>'
+    '<li><span class="k">Фіксація курсу</span><strong>Лише у відділенні</strong></li>'
+    '<li><span class="k">Купюри</span><strong>Часто відмовляють</strong></li>'
+    '<li><span class="k">Готівка</span><strong>Менше валют у касі</strong></li>'
+    '<li><span class="k">Великі суми</span><strong>Стандартні умови</strong></li>'
+    '</ul>'
+)
+
+CMP_MODE_COPY = {
+    'cmp_us_html_mode': CMP_US_HTML_MODE,
+    'cmp_them_html_mode': CMP_THEM_HTML_MODE,
+}
+
+STAT_1_TEXT = (
+    'Постійних клієнтів — нам довіряють тисячі людей, які обирають нас '
+    'для швидкого та зручного обміну валют і криптоактивів'
+)
+STAT_2_TEXT = (
+    'Відділень в Україні — обмінюйте валюту у зручному для вас відділенні '
+    'та отримуйте якісний сервіс'
+)
+STAT_3_TEXT = (
+    'Прозорість обміну — жодних прихованих платежів: ви заздалегідь бачите '
+    'актуальний курс та умови операції'
+)
+STAT_4_TEXT = (
+    'Років досвіду — понад 10 років ми працюємо у сфері обміну, забезпечуючи '
+    'стабільність, професійність та прозорі умови'
+)
+STAT_TEXTS = {
+    1: STAT_1_TEXT,
+    2: STAT_2_TEXT,
+    3: STAT_3_TEXT,
+    4: STAT_4_TEXT,
+}
+WHY_COINS_FALLBACK = 'images/coins.png'
+
 
 def _color(label, default=NAVY):
     return models.CharField(
@@ -51,6 +102,7 @@ class AdvantagesSectionsMixin(models.Model):
             'Ось що цінують наші клієнти.'
         ),
     )
+    hero_lead_mode = mode_text('Підзаголовок банера для режиму «Лише обмін»')
     hero_btn_primary = models.CharField(
         'Кнопка 1',
         max_length=80,
@@ -75,10 +127,7 @@ class AdvantagesSectionsMixin(models.Model):
     stat_1_title = models.CharField('Перевага 1 — заголовок', max_length=40, default='7K')
     stat_1_text = models.TextField(
         'Перевага 1 — підзаголовок',
-        default=(
-            'Постійних клієнтів — нам довіряють тисячі людей, які обирають нас '
-            'для швидкого та зручного обміну валют і криптоактивів'
-        ),
+        default=STAT_1_TEXT,
     )
     stat_1_text_mode = mode_text(
         'Перевага 1 — підзаголовок для режиму «Лише обмін»',
@@ -86,26 +135,17 @@ class AdvantagesSectionsMixin(models.Model):
     stat_2_title = models.CharField('Перевага 2 — заголовок', max_length=40, default='20+')
     stat_2_text = models.TextField(
         'Перевага 2 — підзаголовок',
-        default=(
-            'Відділень в Україні — обмінюйте валюту у зручному для вас відділенні '
-            'та отримуйте якісний сервіс'
-        ),
+        default=STAT_2_TEXT,
     )
     stat_3_title = models.CharField('Перевага 3 — заголовок', max_length=40, default='100%')
     stat_3_text = models.TextField(
         'Перевага 3 — підзаголовок',
-        default=(
-            'Прозорість обміну — жодних прихованих платежів: ви заздалегідь бачите '
-            'актуальний курс та умови операції'
-        ),
+        default=STAT_3_TEXT,
     )
     stat_4_title = models.CharField('Перевага 4 — заголовок', max_length=40, default='10+')
     stat_4_text = models.TextField(
         'Перевага 4 — підзаголовок',
-        default=(
-            'Років досвіду — понад 10 років ми працюємо у сфері обміну, забезпечуючи '
-            'стабільність, професійність та прозорі умови'
-        ),
+        default=STAT_4_TEXT,
     )
 
     why_kicker = models.CharField('Підпис блоку', max_length=80, default='Чому ми')
@@ -216,13 +256,17 @@ class AdvantagesSectionsMixin(models.Model):
         return self._file_src('why_banner')
 
     def why_coins_src(self):
-        return self._file_src('why_coins', 'images/coins.png')
+        from src.core.exchange_mode import exchange_only
+
+        if exchange_only():
+            return self._file_src('why_coins_mode')
+        return self._file_src('why_coins', WHY_COINS_FALLBACK)
 
     def iter_stats(self):
         rows = []
         for index in range(1, 5):
             title = (getattr(self, f'stat_{index}_title') or '').strip()
-            text = (getattr(self, f'stat_{index}_text') or '').strip()
+            text = stat_text_for(self, index).strip()
             if title or text:
                 rows.append({'title': title, 'text': text})
         return rows
@@ -235,3 +279,21 @@ class AdvantagesSectionsMixin(models.Model):
             if title or text:
                 rows.append({'title': title, 'text': text})
         return rows
+
+
+def stat_text_for(page, index):
+    from src.core.exchange_fields import resolved_text
+
+    return resolved_text(page, f'stat_{index}_text', STAT_TEXTS.get(index, ''))
+
+
+def cmp_us_html_for(page):
+    from src.core.exchange_fields import resolved_text
+
+    return resolved_text(page, 'cmp_us_html', CMP_US_HTML)
+
+
+def cmp_them_html_for(page):
+    from src.core.exchange_fields import resolved_text
+
+    return resolved_text(page, 'cmp_them_html', CMP_THEM_HTML)

@@ -2,12 +2,12 @@ from django.contrib import admin
 from django.utils import timezone
 
 from src.core.admin_mixins import ListUnfoldAdmin
-from src.core.exchange_admin import ExchangeSafeListFilter
+from src.core.exchange_admin import ExchangeSafeAdminMixin, ExchangeSafeListFilter
 from src.reviews.models import Review
 
 
 @admin.register(Review)
-class ReviewAdmin(ListUnfoldAdmin):
+class ReviewAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
     list_display = (
         'name',
         'exchange_safe',

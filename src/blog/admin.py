@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from src.blog.models import Category, Post
 from src.core.admin_mixins import ListUnfoldAdmin
-from src.core.exchange_admin import ExchangeSafeListFilter
+from src.core.exchange_admin import ExchangeSafeAdminMixin, ExchangeSafeListFilter
 
 
 @admin.register(Category)
@@ -13,7 +13,7 @@ class CategoryAdmin(ListUnfoldAdmin):
 
 
 @admin.register(Post)
-class PostAdmin(ListUnfoldAdmin):
+class PostAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
     list_display = ('title', 'exchange_safe', 'category', 'status', 'published_at')
     list_filter = (ExchangeSafeListFilter, 'status', 'category')
     ordering = ('-published_at', '-id')
@@ -27,17 +27,29 @@ class PostAdmin(ListUnfoldAdmin):
             'fields': (
                 'exchange_safe',
                 'title',
+                'title_mode',
                 'category',
                 'status',
                 'published_at',
                 'cover',
                 'excerpt',
+                'excerpt_mode',
                 'body',
                 'figure',
                 'related_posts',
             ),
         }),
         ('Пошук', {
-            'fields': ('seo_title', 'seo_description', 'faq'),
+            'fields': (
+                'seo_title',
+                'seo_title_mode',
+                'seo_description',
+                'seo_description_mode',
+                'faq',
+            ),
+        }),
+        ('Макет', {
+            'classes': ('collapse',),
+            'fields': ('layout', 'layout_mode'),
         }),
     )

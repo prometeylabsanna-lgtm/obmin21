@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+from src.core.exchange_fields import mode_char, mode_json, mode_text
 from src.core.exchange_mode import ExchangeSafeMixin
 
 _UK_MONTHS = (
@@ -63,8 +64,10 @@ class Post(ExchangeSafeMixin, models.Model):
         verbose_name='Категорія',
     )
     title = models.CharField('Заголовок', max_length=200)
+    title_mode = mode_char('Заголовок для режиму «Лише обмін»', 200)
     slug = models.SlugField('Код у посиланні', unique=True, max_length=200)
     excerpt = models.TextField('Анонс', blank=True)
+    excerpt_mode = mode_text('Анонс для режиму «Лише обмін»')
     body = models.TextField('Текст')
     cover = models.ImageField('Обкладинка', upload_to='blog/', blank=True)
     status = models.CharField(
@@ -76,7 +79,9 @@ class Post(ExchangeSafeMixin, models.Model):
     published_at = models.DateTimeField('Опубліковано', null=True, blank=True)
     updated_at = models.DateTimeField('Оновлено', auto_now=True)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
+    seo_title_mode = mode_char('Назва для SEO в режимі «Лише обмін»', 160)
     seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    seo_description_mode = mode_char('Опис для SEO в режимі «Лише обмін»', 320)
     faq = models.TextField('Питання та відповіді (необовʼязково)', blank=True)
     figure = models.ImageField(
         'Картинка в статті',
@@ -90,6 +95,13 @@ class Post(ExchangeSafeMixin, models.Model):
         related_name='related_from',
         verbose_name='Читати також',
     )
+    layout = models.JSONField(
+        'Макет статті',
+        blank=True,
+        null=True,
+        help_text='Порожнє — стандартний текст статті за цією адресою.',
+    )
+    layout_mode = mode_json('Макет статті для режиму «Лише обмін»')
 
     class Meta:
         ordering = ['-published_at', '-id']
@@ -117,10 +129,14 @@ class Post(ExchangeSafeMixin, models.Model):
         return f'{d.day} {_UK_MONTHS[d.month]} {d.year}'
 
     def reading_label(self):
-        from src.blog.article_data import BY_SLUG
-        data = BY_SLUG.get(self.slug)
+        from src.blog.article_data import layout_source
+        from src.core.exchange_mode import exchange_only
+
+        data = layout_source(self)
         if data and data.get('read'):
             return data['read']
+        if exchange_only():
+            return ''
         try:
             idx = _READ_ORDER.index(self.slug)
         except ValueError:

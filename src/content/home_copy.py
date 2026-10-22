@@ -2,6 +2,27 @@ from django.db import models
 
 from src.core.exchange_fields import mode_char
 
+SERVICES_MENTION_LEAD = (
+    'Окрім обміну валют у мережі Обмін21 доступні грошові перекази '
+    'по Україні, міжнародні перекази та обмін електронних валют — '
+    'умови та підготовка до візиту нижче.'
+)
+HOME_COPY_DEFAULTS = {
+    'services_lead': SERVICES_MENTION_LEAD,
+    'articles_lead': SERVICES_MENTION_LEAD,
+}
+SERVICES_LEAD_MODE = (
+    'Обмін долара, євро та інших готівкових валют у відділеннях Обмін21. '
+    'Курс можна порахувати і зафіксувати онлайн перед візитом.'
+)
+ARTICLES_LEAD_MODE = (
+    'Поради про курс долара та євро, фіксацію онлайн і обмін готівки у відділенні.'
+)
+HOME_LEAD_MODE = {
+    'services_lead_mode': SERVICES_LEAD_MODE,
+    'articles_lead_mode': ARTICLES_LEAD_MODE,
+}
+
 
 class HomeSectionCopy(models.Model):
     calc_kicker = models.CharField(
@@ -122,11 +143,11 @@ class HomeSectionCopy(models.Model):
     services_lead = models.CharField(
         'Текст під заголовком',
         max_length=400,
-        default=(
-            'Окрім обміну валют у мережі Обмін21 доступні грошові перекази '
-            'по Україні, міжнародні перекази та обмін електронних валют — '
-            'умови та підготовка до візиту нижче.'
-        ),
+        default=SERVICES_MENTION_LEAD,
+    )
+    services_lead_mode = mode_char(
+        'Текст під заголовком для режиму «Лише обмін»',
+        400,
     )
     faq_kicker = models.CharField(
         'Підпис над заголовком',
@@ -171,11 +192,7 @@ class HomeSectionCopy(models.Model):
     articles_lead = models.CharField(
         'Текст під заголовком',
         max_length=400,
-        default=(
-            'Окрім обміну валют у мережі Обмін21 доступні грошові перекази '
-            'по Україні, міжнародні перекази та обмін електронних валют — '
-            'умови та підготовка до візиту нижче.'
-        ),
+        default=SERVICES_MENTION_LEAD,
     )
     articles_lead_mode = mode_char(
         'Текст під заголовком для режиму «Лише обмін»',
@@ -223,3 +240,10 @@ class HomeSectionCopy(models.Model):
 
     class Meta:
         abstract = True
+
+
+def home_copy_text(page, name):
+    from src.core.exchange_fields import resolved_text
+
+    return resolved_text(page, name, HOME_COPY_DEFAULTS.get(name, ''))
+

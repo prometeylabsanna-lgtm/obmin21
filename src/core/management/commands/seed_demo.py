@@ -3,12 +3,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import quote_plus
 
+from django.apps import apps
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from src.blog.models import Category, Post
 from src.blog.article_data import BY_SLUG, body_text
+from src.content.legal_copy import COOKIE_BODY, OFFER_BODY, PRIVACY_BODY
 from src.content.models import (
     AdvantageItem,
     AdvantagesPage,
@@ -22,12 +24,18 @@ from src.content.models import (
     OfferPage,
     PrivacyPage,
     RatesPage,
+    ReviewsPage,
     Service,
     ServicesPage,
 )
+from src.content.page_meta_mode import fill_page_meta_mode
+from src.content.reader_mode_copy import fill_reader_mode_fields
+from src.content.stage3_fill import fill_articles_lead, fill_home_seo_mode
 from src.core.models import SiteSettings
+from src.network.city_mode_copy import fill_city_banner_seo_mode, fill_city_name_mode
 from src.network.models import Branch, City
 from src.rates.models import CurrencyPair, Quote, RateBoard
+from src.rates.pair_mode_copy import fill_fiat_pair_mode
 from src.reviews.models import Review
 
 
@@ -271,6 +279,8 @@ class Command(BaseCommand):
         home.promo_title = 'Вигідний курс'
         home.promo_title_accent = 'USD та EUR'
         home.save()
+        fill_home_seo_mode(apps, None)
+        fill_articles_lead(apps, None)
 
         blog_page = BlogPage.load()
         blog_page.title = 'Блог'
@@ -295,10 +305,11 @@ class Command(BaseCommand):
         rates_page.save()
         services_page = ServicesPage.load()
         services_page.title = 'Послуги'
-        services_page.intro = (
-            'Обмін валют, криптовалюти, перекази та інвестиційне золото '
-            'з фіксацією курсу онлайн.'
-        )
+        if not (services_page.intro or '').strip():
+            services_page.intro = (
+                'Обмін валют, криптовалюти, перекази та інвестиційне золото '
+                'з фіксацією курсу онлайн.'
+            )
         services_page.seo_title = 'Послуги Обмін21'
         services_page.seo_description = 'Перекази по Україні, міжнародні перекази та обмін електронних валют'
         services_page.save()
@@ -313,65 +324,19 @@ class Command(BaseCommand):
         contacts_page.branches_title_accent = 'по Україні'
         contacts_page.save()
         CitiesPage.load()
+        ReviewsPage.load()
         privacy = PrivacyPage.load()
-        privacy.body = (
-            'Ми обробляємо персональні дані (імʼя, телефон, повідомлення) виключно '
-            'для обробки заявок і зворотного звʼязку.\n\n'
-            'Які дані збираємо\n\n'
-            'Контактні дані з форм на сайті, технічні журнали звернень і параметри заявки '
-            'на обмін (валюта, сума, відділення).\n\n'
-            'Навіщо\n\n'
-            'Щоб підтвердити заявку, звʼязатися з вами та надати послугу в обраному відділенні.\n\n'
-            'Зберігання та передача\n\n'
-            'Дані не продаються третім особам. Передача можлива лише за законною підставою '
-            'або для виконання платіжних / партнерських процедур переказу.\n\n'
-            'Ваші права\n\n'
-            'Ви можете запросити уточнення, виправлення або видалення даних, написавши на '
-            'контактний email, зазначений у налаштуваннях сайту.'
-        )
+        privacy.body = PRIVACY_BODY
         privacy.save()
 
         offer = OfferPage.load()
         offer.title = 'Публічна оферта'
-        offer.body = (
-            'Ця оферта визначає умови надання послуг мережі Обмін21 '
-            'через сайт, телефон і відділення.\n\n'
-            'Предмет\n\n'
-            'Ми приймаємо заявки на обмін валют, перекази, операції з криптовалютою '
-            'та супутні послуги, зазначені на сайті.\n\n'
-            'Заявка та курс\n\n'
-            'Заявка на сайті фіксує намір клієнта. Курс і сума підтверджуються менеджером '
-            'або касиром перед розрахунком.\n\n'
-            'Ідентифікація\n\n'
-            'Для операцій у межах лімітів достатньо паспорта або ID-картки. '
-            'Для більших сум можуть знадобитися додаткові документи згідно з вимогами фінмоніторингу.\n\n'
-            'Відмова від операції\n\n'
-            'Ми можемо відмовити в обслуговуванні, якщо є ознаки підробки, '
-            'порушення законодавства або неповні дані клієнта.\n\n'
-            'Відповідальність\n\n'
-            'Фінальні умови операції підтверджуються у відділенні. '
-            'Питання щодо оферти надсилайте на контактний email у налаштуваннях сайту.'
-        )
+        offer.body = OFFER_BODY
         offer.save()
 
         cookies = CookiePage.load()
         cookies.title = 'Політика використання файлів Cookie'
-        cookies.body = (
-            'Ми використовуємо файли cookie, щоб сайт працював стабільно, '
-            'запам’ятовував місто та зберігав технічні налаштування сесії.\n\n'
-            'Які cookie застосовуємо\n\n'
-            'Необхідні cookie для безпеки форм і вибору міста, а також технічні журнали, '
-            'що допомагають усувати збої.\n\n'
-            'Навіщо вони потрібні\n\n'
-            'Щоб показати відділення вашого міста, захистити заявки від повторної відправки '
-            'і коректно відкривати сторінки на різних пристроях, зокрема в iOS Safari.\n\n'
-            'Термін зберігання\n\n'
-            'Сесійні cookie видаляються після закриття браузера. '
-            'Cookie міста можуть зберігатися довше, щоб не обирати локацію щоразу.\n\n'
-            'Керування\n\n'
-            'Ви можете вимкнути cookie в налаштуваннях браузера. '
-            'Частина функцій сайту тоді може працювати обмежено.'
-        )
+        cookies.body = COOKIE_BODY
         cookies.save()
 
         keep_city_slugs = []
@@ -402,6 +367,8 @@ class Command(BaseCommand):
             else:
                 branch = Branch.objects.create(city=city, **payload)
             city.branches.exclude(pk=branch.pk).update(is_active=False)
+        fill_city_banner_seo_mode(apps, None)
+        fill_city_name_mode(apps, None)
         City.objects.exclude(slug__in=keep_city_slugs).update(is_active=False)
 
         for i, (code, name, slug, buy, sell) in enumerate(PAIRS):
@@ -678,5 +645,9 @@ class Command(BaseCommand):
                     'is_active': True,
                 },
             )
+
+        fill_page_meta_mode(apps, None)
+        fill_fiat_pair_mode(apps, None)
+        fill_reader_mode_fields(apps, None)
 
         self.stdout.write(self.style.SUCCESS('seed_demo OK'))

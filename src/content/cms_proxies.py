@@ -1,3 +1,4 @@
+from src.content.home_copy import home_copy_text
 from src.content.models import HomePage
 
 
@@ -28,6 +29,9 @@ class HomeServicesSettings(HomePage):
         verbose_name = 'Наші послуги'
         verbose_name_plural = 'Наші послуги'
 
+    def resolved_services_lead(self):
+        return home_copy_text(self, 'services_lead')
+
 
 class HomeFaqSettings(HomePage):
     class Meta:
@@ -48,6 +52,9 @@ class HomeArticlesSettings(HomePage):
         proxy = True
         verbose_name = 'Корисні статті'
         verbose_name_plural = 'Корисні статті'
+
+    def resolved_articles_lead(self):
+        return home_copy_text(self, 'articles_lead')
 
 
 class HomeSearchSettings(HomePage):

@@ -7,6 +7,7 @@ from src.core.exchange_fields import mode_char
 
 class City(models.Model):
     name = models.CharField('Назва', max_length=80)
+    name_mode = mode_char('Назва для режиму «Лише обмін»', 80)
     slug = models.SlugField('Код у посиланні', unique=True, max_length=80)
     phone = models.CharField('Телефон', max_length=32, blank=True)
     is_active = models.BooleanField('Активне', default=True)
@@ -32,6 +33,10 @@ class City(models.Model):
         max_length=80,
         default='за вигідним курсом',
     )
+    banner_suffix_mode = mode_char(
+        'Текст після назви міста для режиму «Лише обмін»',
+        80,
+    )
     banner_text = models.CharField(
         'Підпис на банері',
         max_length=240,
@@ -42,6 +47,10 @@ class City(models.Model):
         'Текст кнопки на банері',
         max_length=80,
         default='Зафіксувати курс',
+    )
+    banner_button_mode = mode_char(
+        'Текст кнопки на банері для режиму «Лише обмін»',
+        80,
     )
 
     class Meta:
