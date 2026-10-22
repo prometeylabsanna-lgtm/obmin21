@@ -38,7 +38,7 @@ _TITLE_MODE = 'ZZ-TITLE-MODE'
 _PAGES = (
     ('services', '/posluhy/', ServicesPage, 'hero_text', 160, True),
     ('advantages', '/perevahy/', AdvantagesPage, 'hero_lead', 160, True),
-    ('contacts', '/kontakty/', ContactsPage, 'heading', None, False),
+    ('contacts', '/kontakty/', ContactsPage, 'heading', None, True),
     ('faq', '/faq/', FaqPage, 'lead', None, True),
     ('blog', '/blog/', BlogPage, 'intro', 160, True),
     ('rates', '/kursy/', RatesPage, 'intro', 160, True),
@@ -50,25 +50,21 @@ _LEGAL = (
     (CookiePage, '/polityka-cookie/'),
 )
 
-_PRESENT = {
-    ServicesPage: ('seo_description_mode', 'seo_title_mode', 'intro_mode'),
-    AdvantagesPage: ('seo_description_mode', 'seo_title_mode'),
-    FaqPage: ('seo_description_mode', 'seo_title_mode'),
-    BlogPage: ('seo_description_mode', 'seo_title_mode'),
-    RatesPage: ('seo_description_mode', 'seo_title_mode'),
-}
-_ABSENT = {
-    ServicesPage: ('title_mode', 'hero_text_mode'),
-    Service: ('short_desc_mode',),
-    AdvantagesPage: ('title_mode', 'hero_lead_mode'),
-    ContactsPage: ('seo_title_mode', 'title_mode', 'seo_description_mode', 'heading_mode'),
-    PrivacyPage: ('seo_title_mode', 'title_mode', 'seo_description_mode', 'body_mode'),
-    OfferPage: ('seo_title_mode', 'seo_description_mode', 'body_mode'),
-    CookiePage: ('seo_title_mode', 'seo_description_mode', 'body_mode'),
-    FaqPage: ('title_mode', 'lead_mode'),
-    BlogPage: ('title_mode', 'intro_mode'),
+_MODE_COLUMNS = {
+    ServicesPage: (
+        'seo_description_mode', 'seo_title_mode', 'intro_mode', 'title_mode', 'hero_text_mode',
+    ),
+    Service: ('short_desc_mode', 'block_text_mode', 'block_points_mode', 'block_cta_mode'),
+    AdvantagesPage: (
+        'seo_description_mode', 'seo_title_mode', 'title_mode', 'hero_lead_mode',
+    ),
+    ContactsPage: (
+        'seo_title_mode', 'title_mode', 'seo_description_mode', 'heading_mode',
+    ),
+    FaqPage: ('seo_description_mode', 'seo_title_mode', 'title_mode', 'lead_mode'),
+    BlogPage: ('seo_description_mode', 'seo_title_mode', 'title_mode', 'intro_mode'),
     Post: ('seo_title_mode', 'title_mode', 'seo_description_mode', 'excerpt_mode'),
-    RatesPage: ('title_mode', 'intro_mode'),
+    RatesPage: ('seo_description_mode', 'seo_title_mode', 'title_mode', 'intro_mode'),
     CurrencyPair: ('seo_title_mode', 'seo_description_mode', 'intro_mode'),
 }
 
@@ -142,13 +138,9 @@ class ModeMetaTests(TestCase):
         self.assertFalse(matches_stop_words(NEUTRAL_DESCRIPTION))
 
     def test_fallback_columns(self):
-        for model, names in _PRESENT.items():
+        for model, names in _MODE_COLUMNS.items():
             for name in names:
                 model._meta.get_field(name)
-        for model, names in _ABSENT.items():
-            for name in names:
-                with self.assertRaises(FieldDoesNotExist):
-                    model._meta.get_field(name)
 
     def test_mode_meta_helper(self):
         hero = _pad('H-')
@@ -203,8 +195,17 @@ class ModeMetaTests(TestCase):
         self.assertEqual(mode_meta(obj, 'seo_description', request=request), 'ORIG')
         self.assertEqual(mode_meta(obj, 'seo_description'), 'MODE')
 
+    def _clear_text_modes(self, page):
+        for field in page._meta.fields:
+            if not field.name.endswith('_mode'):
+                continue
+            if field.get_internal_type() not in ('CharField', 'TextField'):
+                continue
+            setattr(page, field.name, '')
+
     def _run_page(self, url, model, fallback_name, limit, has_modes):
         page = model.load()
+        self._clear_text_modes(page)
         fallback = _pad('ZZF-')
         page.seo_description = _SEO
         page.seo_title = ''
@@ -299,39 +300,39 @@ class ModeMetaTests(TestCase):
         self.assertNotContains(response, 'ZZ-SHORT-ORIG')
         self.assertNotContains(response, 'Підтвердження транзакції')
 
-        with _attrs(Service, short_desc_mode='ZZ-SHORT-MODE'):
-            self._mode(False)
-            response = self.client.get('/posluhy/')
-            blocks = {item.slug: item.block_text for item in response.context['services']}
-            self.assertEqual(blocks['kryptovalyuta'], block)
-            self._mode(True)
-            response = self.client.get('/posluhy/')
-            blocks = {item.slug: item.block_text for item in response.context['services']}
-            self.assertEqual(blocks['meta-plain'], 'ZZ-SHORT-MODE')
-            self.assertEqual(blocks['kryptovalyuta'], 'ZZ-SHORT-MODE')
-            self.assertNotIn('ZZ-SHORT-ORIG', blocks['meta-plain'])
-            self.assertNotIn(block, blocks['kryptovalyuta'])
+        Service.objects.update(short_desc_mode='ZZ-SHORT-MODE')
+        self._mode(False)
+        response = self.client.get('/posluhy/')
+        blocks = {item.slug: item.block_text for item in response.context['services']}
+        self.assertEqual(blocks['kryptovalyuta'], block)
+        self._mode(True)
+        response = self.client.get('/posluhy/')
+        blocks = {item.slug: item.block_text for item in response.context['services']}
+        self.assertEqual(blocks['meta-plain'], 'ZZ-SHORT-MODE')
+        self.assertEqual(blocks['kryptovalyuta'], 'ZZ-SHORT-MODE')
+        self.assertNotIn('ZZ-SHORT-ORIG', blocks['meta-plain'])
+        self.assertNotIn(block, blocks['kryptovalyuta'])
 
     def test_advantages_hero_mode_is_sliced(self):
         page = AdvantagesPage.load()
+        self._clear_text_modes(page)
         page.seo_description = _SEO
-        page.seo_description_mode = ''
         page.hero_lead = _pad('ZZ-HERO-ORIG-')
         page.seo_title = ''
-        page.seo_title_mode = ''
         page.title = _TITLE
-        page.save()
         hero_mode = _pad('ZZ-HERO-MODE-')
-        with _attrs(AdvantagesPage, hero_lead_mode=hero_mode):
-            self._mode(True)
-            self._expect(
-                '/perevahy/',
-                hero_mode[:160],
-                NEUTRAL_DESCRIPTION,
-                [_SEO, 'ZZ-HERO-ORIG'],
-            )
-            self._mode(False)
-            self._expect('/perevahy/', _SEO, _TITLE, ['ZZ-HERO-MODE'])
+        page.hero_lead_mode = hero_mode
+        page.save()
+        self._mode(True)
+        self._expect(
+            '/perevahy/',
+            hero_mode[:160],
+            NEUTRAL_DESCRIPTION,
+            [_SEO, 'ZZ-HERO-ORIG'],
+        )
+        self.assertNotContains(self.client.get('/perevahy/'), 'ZZ-HERO-ORIG')
+        self._mode(False)
+        self._expect('/perevahy/', _SEO, _TITLE, ['ZZ-HERO-MODE'])
 
     def test_faq_uses_title_only_as_last_fallback(self):
         page = FaqPage.load()
@@ -456,10 +457,12 @@ class ModeMetaTests(TestCase):
             NEUTRAL_DESCRIPTION,
             ['ZZ-EXCERPT-', _SEO, 'ZZ-POST-TITLE'],
         )
-        with _attrs(Post, seo_description_mode=_SEO_MODE, seo_title_mode=_TITLE_MODE):
-            self._expect(url, _SEO_MODE, _TITLE_MODE, ['ZZ-EXCERPT-', 'ZZ-POST-TITLE'])
-            self._mode(False)
-            self._expect(url, excerpt[:160], 'ZZ-POST-TITLE', [_SEO_MODE, _TITLE_MODE])
+        post.seo_description_mode = _SEO_MODE
+        post.seo_title_mode = _TITLE_MODE
+        post.save(update_fields=['seo_description_mode', 'seo_title_mode'])
+        self._expect(url, _SEO_MODE, _TITLE_MODE, ['ZZ-EXCERPT-', 'ZZ-POST-TITLE'])
+        self._mode(False)
+        self._expect(url, excerpt[:160], 'ZZ-POST-TITLE', [_SEO_MODE, _TITLE_MODE])
 
     def test_pair_detail(self):
         intro = _pad('ZZ-PAIR-')
@@ -486,11 +489,9 @@ class ModeMetaTests(TestCase):
             NEUTRAL_DESCRIPTION,
             ['ZZ-PAIR-', _SEO, 'CHF'],
         )
-        with _attrs(
-            CurrencyPair,
-            seo_description_mode=_SEO_MODE,
-            seo_title_mode=_TITLE_MODE,
-        ):
-            self._expect(url, _SEO_MODE, _TITLE_MODE, ['ZZ-PAIR-', 'CHF'])
-            self._mode(False)
-            self._expect(url, intro[:160], outside_title, [_SEO_MODE, _TITLE_MODE])
+        pair.seo_description_mode = _SEO_MODE
+        pair.seo_title_mode = _TITLE_MODE
+        pair.save(update_fields=['seo_description_mode', 'seo_title_mode'])
+        self._expect(url, _SEO_MODE, _TITLE_MODE, ['ZZ-PAIR-', 'CHF'])
+        self._mode(False)
+        self._expect(url, intro[:160], outside_title, [_SEO_MODE, _TITLE_MODE])

@@ -4,7 +4,7 @@
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 <section class="contacts-hero">
-  <h1 class="contacts-hero__title">{{ page.heading }} <span class="u-accent">{{ page.title_accent }}</span></h1>
+  {% mode_field page 'heading' as heading %}{% if heading %}<h1 class="contacts-hero__title">{{ heading }} <span class="u-accent">{{ page.title_accent }}</span></h1>{% endif %}
   <div class="contacts-cards">
     {% with contact_phone=active_phone|default:page.phone %}
     <a class="contacts-card" href="tel:{{ contact_phone|phone_tel }}">

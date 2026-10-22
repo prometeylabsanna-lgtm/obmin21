@@ -90,6 +90,7 @@ def restore_test_db():
     if not _STATE.get('active'):
         return
     dest = _STATE.get('dest')
+    holder = _STATE.get('keepalive')
     conn = connections['default']
     conn.close()
     previous = _STATE.get('conn_name')
@@ -99,6 +100,12 @@ def restore_test_db():
     if settings_name is not None:
         settings.DATABASES['default']['NAME'] = settings_name
     _STATE.clear()
+    try:
+        if previous and 'mode=memory' in str(previous):
+            conn.ensure_connection()
+    finally:
+        if holder is not None:
+            holder.close()
     if dest is not None:
         dest.unlink(missing_ok=True)
 
@@ -113,6 +120,13 @@ def _backup_readonly(source, dest):
         src.close()
 
 
+def _hold_memory(name):
+    text = str(name or '')
+    if 'mode=memory' not in text:
+        return None
+    return sqlite3.connect(text, uri=True)
+
+
 def _swap_default(source, dest):
     conn = connections['default']
     _STATE['conn_name'] = conn.settings_dict['NAME']
@@ -120,6 +134,7 @@ def _swap_default(source, dest):
     _STATE['dest'] = dest
     _STATE['source'] = source
     _STATE['active'] = True
+    _STATE['keepalive'] = _hold_memory(_STATE['conn_name'])
     uri = f'file:{dest.resolve().as_posix()}?mode=rwc'
     conn.settings_dict['NAME'] = uri
     settings.DATABASES['default']['NAME'] = uri

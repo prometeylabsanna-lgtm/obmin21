@@ -78,7 +78,7 @@ class RubricVisibilityTests(_ModeCase):
         category = self._category('gotivka', 'Готівка')
         self.assertFalse(matches_stop_words(category.slug, category.name))
         _published(category, 'rubric-gotivka-unsafe', exchange_safe=False)
-        self.assertEqual(self._category_status('gotivka'), 404)
+        self.assertEqual(self._category_status('gotivka'), 503)
         self.assertNotIn('gotivka', self._slugs())
 
     def test_neutral_rubric_with_safe_post_is_public(self):
@@ -100,7 +100,7 @@ class RubricVisibilityTests(_ModeCase):
         self.assertFalse(matches_stop_words(category.slug, category.name))
         post = _published(category, 'rubric-unsafe-detail', exchange_safe=False)
         url = reverse('blog:post_detail', kwargs={'slug': post.slug})
-        self.assertEqual(self.client.get(url).status_code, 404)
+        self.assertEqual(self.client.get(url).status_code, 503)
         self._mode(False)
         self.assertEqual(self.client.get(url).status_code, 200)
 

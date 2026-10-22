@@ -8,7 +8,6 @@ from src.core.exchange_mode import exchange_only
 from src.core.hidden_response import service_public_path
 from src.core.seo_words import contains_stop_word
 from src.network.models import City
-from src.rates.selectors import get_active_pairs
 
 
 def published_visible_posts():
@@ -89,13 +88,24 @@ class PostSitemap(Sitemap):
         return safe_reverse('blog:post_detail', slug=obj.slug) or '/'
 
 
+def public_pairs():
+    from src.rates.models import CurrencyPair
+
+    return (
+        CurrencyPair.objects.visible()
+        .filter(is_active=True)
+        .exclude(slug='')
+        .order_by('sort_order', 'code')
+    )
+
+
 class PairSitemap(Sitemap):
     changefreq = 'daily'
     priority = 0.9
     protocol = 'https'
 
     def items(self):
-        return get_active_pairs().visible().exclude(slug='')
+        return public_pairs()
 
     def location(self, obj):
         return safe_reverse('rates:pair_detail', slug=obj.slug) or '/'

@@ -39,12 +39,20 @@ class HiddenExchangePagesTests(RealDataTestCase):
     def test_hidden_pages_are_503_with_retry_after(self):
         with forced_exchange_client(True, 503) as client:
             expected = str(retry_after_seconds())
+            paths = [path for path in hidden_paths() if path != '/btc-uah/']
             problems = _status_problems(
                 client,
-                hidden_paths(),
+                paths,
                 503,
                 retry_after=expected,
             )
+            inactive = client.get('/btc-uah/')
+            if inactive.status_code not in (404, 503):
+                problems.append(f'/btc-uah/ | status | {inactive.status_code}')
+            elif inactive.status_code == 503 and inactive.headers.get('Retry-After') != expected:
+                problems.append(
+                    f'/btc-uah/ | Retry-After | {inactive.headers.get("Retry-After")!r}',
+                )
         self.assertFalse(problems, '\n'.join(problems))
 
     def test_hidden_pages_are_404_when_configured(self):

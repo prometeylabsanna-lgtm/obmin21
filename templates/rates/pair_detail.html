@@ -27,9 +27,9 @@
   </div>
   {% endif %}
 
-  {% if pair.intro %}
+  {% mode_field pair 'intro' as pair_intro %}{% if pair_intro %}
   <div class="simple-page__body" style="margin-top:32px">
-    {{ pair.intro|format_body }}
+    {{ pair_intro|format_body }}
   </div>
   {% endif %}
 </article>

@@ -239,7 +239,7 @@
         <img src="{{ svc.image_src }}" alt="" loading="lazy">
       </div>
       <h3 class="svc-card__title">{{ svc.title }}</h3>
-      <div class="svc-card__text">{{ svc.short_desc }}</div>
+      {% mode_field svc 'short_desc' as short_desc %}{% if short_desc %}<div class="svc-card__text">{{ short_desc }}</div>{% endif %}
       <span class="link-accent">Детальніше
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="currentColor" fill="none" stroke-width="1.5"></path></svg>
       </span>
@@ -272,11 +272,12 @@
   <div class="articles-track" data-slider="articles">
     {% for post in news_posts %}{% if not eo or post.exchange_safe %}
     <article class="article-slide">
+      {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
-        <img src="{{ post.image_url }}" alt="{{ post.title }}" width="330" height="194" decoding="async">
+        <img src="{{ post.image_url }}" alt="{{ post_title }}" width="330" height="194" decoding="async">
       </a>
-      <a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post.title|brand_mark }}</a>
-      {% if post.excerpt %}<p class="article-slide__text">{{ post.excerpt|brand_mark }}</p>{% endif %}
+      {% if post_title %}<a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post_title|brand_mark }}</a>{% endif %}
+      {% if post_excerpt %}<p class="article-slide__text">{{ post_excerpt|brand_mark }}</p>{% endif %}
       <a class="link-accent" href="{% url 'blog:post_detail' post.slug %}">Читати повністю
         <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </a>

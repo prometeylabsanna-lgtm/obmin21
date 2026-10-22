@@ -2,7 +2,6 @@ import os
 from types import SimpleNamespace
 
 from django.core.cache import cache
-from django.core.exceptions import FieldDoesNotExist
 from django.template import Context, Template
 from django.test import RequestFactory, TestCase
 
@@ -17,6 +16,7 @@ _THEM_ORIG = '<ul><li>ZZ-CMP-THEM-ORIG</li></ul>'
 _US_MODE = '<ul><li>ZZ-CMP-US-MODE</li></ul>'
 _THEM_MODE = '<ul><li>ZZ-CMP-THEM-MODE</li></ul>'
 _SVC_ORIG = 'ZZ-SVC-LEAD-ORIG'
+_SVC_MODE = 'ZZ-SVC-LEAD-MODE'
 _ART_ORIG = 'ZZ-ART-LEAD-ORIG'
 _ART_MODE = 'ZZ-ART-LEAD-MODE'
 
@@ -68,8 +68,9 @@ class ModeTextTests(_ModeCase):
         self.assertEqual(mode_text(plain, 'services_lead'), '')
         page = HomePage.load()
         page.services_lead = _SVC_ORIG
-        with self.assertRaises(FieldDoesNotExist):
-            HomePage._meta.get_field('services_lead_mode')
+        page.services_lead_mode = '   '
+        page.save(update_fields=['services_lead', 'services_lead_mode'])
+        HomePage._meta.get_field('services_lead_mode')
         self.assertEqual(mode_text(page, 'services_lead'), '')
 
     def test_request_selects_cached_mode(self):
@@ -123,6 +124,7 @@ class ModeFieldPageTests(_ModeCase):
         self.adv.save()
         self.home = HomePage.load()
         self.home.services_lead = _SVC_ORIG
+        self.home.services_lead_mode = ''
         self.home.articles_lead = _ART_ORIG
         self.home.articles_lead_mode = ''
         self.home.reviews_lead = ''
@@ -130,19 +132,19 @@ class ModeFieldPageTests(_ModeCase):
         self.home.show_articles = True
         self.home.save()
 
-    def test_mode_fields_present_except_services_lead(self):
+    def test_mode_columns_exist(self):
         HomePage._meta.get_field('articles_lead_mode')
+        HomePage._meta.get_field('services_lead_mode')
         AdvantagesPage._meta.get_field('cmp_us_html_mode')
         AdvantagesPage._meta.get_field('cmp_them_html_mode')
-        with self.assertRaises(FieldDoesNotExist):
-            HomePage._meta.get_field('services_lead_mode')
 
     def test_blank_mode_hides_original_blocks(self):
         self.adv.cmp_us_html_mode = '   '
         self.adv.cmp_them_html_mode = '\n\t'
         self.adv.save(update_fields=['cmp_us_html_mode', 'cmp_them_html_mode'])
         self.home.articles_lead_mode = '  '
-        self.home.save(update_fields=['articles_lead_mode'])
+        self.home.services_lead_mode = '\n\t'
+        self.home.save(update_fields=['articles_lead_mode', 'services_lead_mode'])
         self._set_mode(True)
 
         advantages = self.client.get('/perevahy/')
@@ -161,7 +163,8 @@ class ModeFieldPageTests(_ModeCase):
         self.adv.cmp_them_html_mode = _THEM_MODE
         self.adv.save(update_fields=['cmp_us_html_mode', 'cmp_them_html_mode'])
         self.home.articles_lead_mode = _ART_MODE
-        self.home.save(update_fields=['articles_lead_mode'])
+        self.home.services_lead_mode = _SVC_MODE
+        self.home.save(update_fields=['articles_lead_mode', 'services_lead_mode'])
         self._set_mode(True)
 
         advantages = self.client.get('/perevahy/')
@@ -181,9 +184,12 @@ class ModeFieldPageTests(_ModeCase):
             home,
             '<p class="articles-section__lead">' + _ART_MODE + '</p>',
         )
+        self.assertContains(
+            home,
+            '<p class="services-section__lead">' + _SVC_MODE + '</p>',
+        )
         self.assertNotContains(home, _ART_ORIG)
         self.assertNotContains(home, _SVC_ORIG)
-        self.assertNotContains(home, 'services-section__lead')
 
     def test_outside_mode_pages_show_original(self):
         self.adv.cmp_us_html_mode = _US_MODE

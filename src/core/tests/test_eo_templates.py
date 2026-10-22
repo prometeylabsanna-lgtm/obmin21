@@ -29,6 +29,28 @@ from src.content.models import (
 from src.core.exchange_mode import NEUTRAL_DESCRIPTION
 from src.core.models import SiteSettings
 from src.network.models import Branch, City
+
+def setUpModule():
+    from django.core.management import call_command
+    from django.db import connection
+
+    if 'core_sitesettings' not in connection.introspection.table_names():
+        call_command('migrate', verbosity=0, interactive=False)
+
+
+def _blank_text_modes(page):
+    for field in page._meta.fields:
+        if not field.name.endswith('_mode'):
+            continue
+        if field.get_internal_type() not in ('CharField', 'TextField'):
+            continue
+        setattr(page, field.name, '')
+
+
+class ExchangeTemplateCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        SiteSettings.load()
 from src.rates.models import CurrencyPair
 
 _ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS')
@@ -60,7 +82,7 @@ _FOOTER_SERVICES = (
 )
 
 
-class ExchangeOnlyChromeTemplateTests(TestCase):
+class ExchangeOnlyChromeTemplateTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
@@ -186,13 +208,17 @@ _PROMO_IMAGES = (
 )
 
 
-class ExchangeOnlyHomeTemplateTests(TestCase):
+class ExchangeOnlyHomeTemplateTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
             os.environ.pop(key, None)
         cache.clear()
         SiteSettings.load()
+        home = HomePage.load()
+        home.services_lead_mode = ''
+        home.articles_lead_mode = ''
+        home.save(update_fields=['services_lead_mode', 'articles_lead_mode'])
         Service.objects.create(
             title='Обмін валют',
             slug='obmin-valiut',
@@ -372,7 +398,7 @@ def _assert_clean(test, html, label):
             test.assertNotIn(token, lowered, label)
 
 
-class ExchangeOnlyServicesCityTemplateTests(TestCase):
+class ExchangeOnlyServicesCityTemplateTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
@@ -382,8 +408,13 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         page = ServicesPage.load()
         page.intro = _RAW_INTRO
         page.intro_mode = _INTRO_MODE
+        page.hero_text_mode = ''
         page.seo_description = 'Курси готівки у відділеннях.'
         page.save()
+        home = HomePage.load()
+        home.articles_lead_mode = ''
+        home.services_lead_mode = ''
+        home.save(update_fields=['articles_lead_mode', 'services_lead_mode'])
         Service.objects.create(
             title='Обмін валют',
             slug='obmin-valiut',
@@ -442,6 +473,7 @@ class ExchangeOnlyServicesCityTemplateTests(TestCase):
         Post.objects.create(
             category=category,
             title='Курс долара у касі',
+            title_mode='Курс долара у касі',
             slug='kurs-u-kasi',
             excerpt='Як зафіксувати курс долара.',
             body='Фіксація курсу на тридцять хвилин.',
@@ -684,7 +716,7 @@ def _assert_no_transfer_words(test, html, label):
     test.assertIsNone(found, label)
 
 
-class ExchangeOnlySeoLinksTests(TestCase):
+class ExchangeOnlySeoLinksTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
@@ -694,7 +726,12 @@ class ExchangeOnlySeoLinksTests(TestCase):
         page = ServicesPage.load()
         page.seo_title = 'Послуги обміну валют'
         page.seo_description = 'Готівковий обмін долара та євро у відділеннях.'
+        page.hero_text_mode = ''
         page.save()
+        home = HomePage.load()
+        home.articles_lead_mode = ''
+        home.services_lead_mode = ''
+        home.save(update_fields=['articles_lead_mode', 'services_lead_mode'])
         Service.objects.create(
             title='Обмін валют',
             slug='obmin-valyut',
@@ -718,6 +755,7 @@ class ExchangeOnlySeoLinksTests(TestCase):
         self.safe_post = Post.objects.create(
             category=rates,
             title=_SAFE_POST_TITLE,
+            title_mode=_SAFE_POST_TITLE,
             slug=_SAFE_POST_SLUG,
             excerpt='Як зафіксувати курс долара.',
             body='Фіксація курсу на тридцять хвилин.',
@@ -858,7 +896,7 @@ _PLAIN_TITLES = (
 )
 
 
-class ExchangeOnlyDocumentTitleTests(TestCase):
+class ExchangeOnlyDocumentTitleTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
@@ -871,8 +909,6 @@ class ExchangeOnlyDocumentTitleTests(TestCase):
         cache.clear()
 
     def tearDown(self):
-        if 'title_mode' in FaqPage.__dict__:
-            delattr(FaqPage, 'title_mode')
         for key, value in self._saved_env.items():
             if value is None:
                 os.environ.pop(key, None)
@@ -893,6 +929,7 @@ class ExchangeOnlyDocumentTitleTests(TestCase):
 
     def _fill(self, model, seo=_TITLE_SEO, mode=''):
         page = model.load()
+        _blank_text_modes(page)
         page.seo_title = seo
         page.seo_title_mode = mode
         page.title = _TITLE_PAGE
@@ -912,8 +949,8 @@ class ExchangeOnlyDocumentTitleTests(TestCase):
 
     def test_home_title(self):
         page = HomePage.load()
+        _blank_text_modes(page)
         page.seo_title = _TITLE_SEO
-        page.seo_title_mode = ''
         page.save()
         url = reverse('core:home')
         self._set_mode(False)
@@ -930,8 +967,8 @@ class ExchangeOnlyDocumentTitleTests(TestCase):
 
     def test_home_empty_seo_stays_site_name(self):
         page = HomePage.load()
+        _blank_text_modes(page)
         page.seo_title = ''
-        page.seo_title_mode = ''
         page.save()
         url = reverse('core:home')
         self._set_mode(False)
@@ -962,8 +999,8 @@ class ExchangeOnlyDocumentTitleTests(TestCase):
 
     def test_empty_seo_title_off_uses_page_title(self):
         page = ServicesPage.load()
+        _blank_text_modes(page)
         page.seo_title = ''
-        page.seo_title_mode = ''
         page.title = _TITLE_PAGE
         page.save()
         url = reverse('content:services')
@@ -973,23 +1010,20 @@ class ExchangeOnlyDocumentTitleTests(TestCase):
         self._assert_closed(url, _TITLE_SITE)
 
     def test_title_mode_when_seo_mode_empty(self):
-        self._fill(FaqPage, mode='')
+        page = self._fill(FaqPage, mode='')
+        page.title_mode = _TITLE_ONLY
+        page.save(update_fields=['title_mode'])
         url = reverse('content:faq')
-        FaqPage.title_mode = _TITLE_ONLY
-        try:
-            self._set_mode(True)
-            title = self._title_of(url)
-            self.assertEqual(title, f'{_TITLE_ONLY} · {_TITLE_SITE}')
-            self.assertNotIn(_TITLE_SEO, title)
-            self.assertNotIn(_TITLE_PAGE, title)
-            page = FaqPage.load()
-            page.seo_title_mode = _DOC_MODE
-            page.save()
-            title = self._title_of(url)
-            self.assertEqual(title, f'{_DOC_MODE} · {_TITLE_SITE}')
-            self.assertNotIn(_TITLE_ONLY, title)
-        finally:
-            delattr(FaqPage, 'title_mode')
+        self._set_mode(True)
+        title = self._title_of(url)
+        self.assertEqual(title, f'{_TITLE_ONLY} · {_TITLE_SITE}')
+        self.assertNotIn(_TITLE_SEO, title)
+        self.assertNotIn(_TITLE_PAGE, title)
+        page.seo_title_mode = _DOC_MODE
+        page.save(update_fields=['seo_title_mode'])
+        title = self._title_of(url)
+        self.assertEqual(title, f'{_DOC_MODE} · {_TITLE_SITE}')
+        self.assertNotIn(_TITLE_ONLY, title)
 
     def test_city_detail(self):
         city = City.objects.create(
@@ -1026,6 +1060,7 @@ class ExchangeOnlyDocumentTitleTests(TestCase):
         for url_name, model in _PLAIN_TITLES:
             with self.subTest(url=url_name):
                 page = model.load()
+                _blank_text_modes(page)
                 page.seo_title = _TITLE_SEO
                 page.title = _TITLE_PAGE
                 page.save()
@@ -1128,7 +1163,7 @@ def _clear_attrs(model, attrs):
             delattr(model, name)
 
 
-class ExchangeOnlyBareTitleTests(TestCase):
+class ExchangeOnlyBareTitleTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
@@ -1179,7 +1214,7 @@ class ExchangeOnlyBareTitleTests(TestCase):
         self.assertNotIn(NEUTRAL_DESCRIPTION, title)
 
 
-class ExchangeOnlyArticleLayoutTests(TestCase):
+class ExchangeOnlyArticleLayoutTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
@@ -1275,7 +1310,7 @@ class ExchangeOnlyNavBannerTests(TestCase):
         self.assertNotIn("{% static 'js/nav.js' %}?v=15", base)
 
 
-class ExchangeOnlyEmptyStatsTests(TestCase):
+class ExchangeOnlyEmptyStatsTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
@@ -1317,7 +1352,7 @@ class ExchangeOnlyEmptyStatsTests(TestCase):
         self.assertNotIn('display:none', ''.join(on_html.lower().split()))
 
 
-class ExchangeOnlyServiceBlockModeTests(TestCase):
+class ExchangeOnlyServiceBlockModeTests(ExchangeTemplateCase):
     def setUp(self):
         self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
         for key in _ENV_KEYS:
@@ -1340,7 +1375,6 @@ class ExchangeOnlyServiceBlockModeTests(TestCase):
         )
 
     def tearDown(self):
-        _clear_attrs(Service, ('block_text_mode', 'block_points_mode', 'block_cta_mode'))
         for key, value in self._saved_env.items():
             if value is None:
                 os.environ.pop(key, None)
@@ -1353,41 +1387,37 @@ class ExchangeOnlyServiceBlockModeTests(TestCase):
         cache.clear()
 
     def test_mode_fields_replace_service_blocks_and_articles_lead(self):
-        modes = {
-            'block_text_mode': _BLOCK_TEXT_MODE,
-            'block_points_mode': _BLOCK_POINT_MODE + '\nЄвро у касі',
-            'block_cta_mode': _BLOCK_CTA_MODE,
-        }
-        _class_attrs(Service, **modes)
-        try:
-            self._set_mode(False)
-            off = self.client.get(reverse('content:services'))
-            self.assertEqual(off.status_code, 200)
-            off_html = off.content.decode()
-            self.assertIn('Купуйте та продавайте понад 15 валют', off_html)
-            self.assertIn('Без прихованих комісій', off_html)
-            self.assertIn('Зафіксувати курс', off_html)
-            self.assertIn(_SERVICES_LEAD, off_html)
-            self.assertNotIn(_BLOCK_TEXT_MODE, off_html)
-            self.assertNotIn(_BLOCK_POINT_MODE, off_html)
-            self.assertNotIn(_BLOCK_CTA_MODE, off_html)
-            self.assertNotIn(_ARTICLES_LEAD_MODE, off_html)
+        Service.objects.filter(slug='obmin-valyut').update(
+            block_text_mode=_BLOCK_TEXT_MODE,
+            block_points_mode=_BLOCK_POINT_MODE + '\nЄвро у касі',
+            block_cta_mode=_BLOCK_CTA_MODE,
+        )
+        self._set_mode(False)
+        off = self.client.get(reverse('content:services'))
+        self.assertEqual(off.status_code, 200)
+        off_html = off.content.decode()
+        self.assertIn('Купуйте та продавайте понад 15 валют', off_html)
+        self.assertIn('Без прихованих комісій', off_html)
+        self.assertIn('Зафіксувати курс', off_html)
+        self.assertIn(_SERVICES_LEAD, off_html)
+        self.assertNotIn(_BLOCK_TEXT_MODE, off_html)
+        self.assertNotIn(_BLOCK_POINT_MODE, off_html)
+        self.assertNotIn(_BLOCK_CTA_MODE, off_html)
+        self.assertNotIn(_ARTICLES_LEAD_MODE, off_html)
 
-            self._set_mode(True)
-            on = self.client.get(reverse('content:services'))
-            self.assertEqual(on.status_code, 200)
-            on_html = on.content.decode()
-            self.assertIn(_BLOCK_TEXT_MODE, on_html)
-            self.assertIn(_BLOCK_POINT_MODE, on_html)
-            self.assertIn('Євро у касі', on_html)
-            self.assertIn(_BLOCK_CTA_MODE, on_html)
-            self.assertIn(_ARTICLES_LEAD_MODE, on_html)
-            self.assertNotIn('Купуйте та продавайте понад 15 валют', on_html)
-            self.assertNotIn('Без прихованих комісій', on_html)
-            self.assertNotIn('USD, EUR, PLN', on_html)
-            self.assertNotIn('Зафіксувати курс', on_html)
-            self.assertNotIn(_SERVICES_LEAD, on_html)
-            self.assertNotIn('Короткий опис каси', on_html)
-            self.assertNotIn('display:none', ''.join(on_html.lower().split()))
-        finally:
-            _clear_attrs(Service, modes)
+        self._set_mode(True)
+        on = self.client.get(reverse('content:services'))
+        self.assertEqual(on.status_code, 200)
+        on_html = on.content.decode()
+        self.assertIn(_BLOCK_TEXT_MODE, on_html)
+        self.assertIn(_BLOCK_POINT_MODE, on_html)
+        self.assertIn('Євро у касі', on_html)
+        self.assertIn(_BLOCK_CTA_MODE, on_html)
+        self.assertIn(_ARTICLES_LEAD_MODE, on_html)
+        self.assertNotIn('Купуйте та продавайте понад 15 валют', on_html)
+        self.assertNotIn('Без прихованих комісій', on_html)
+        self.assertNotIn('USD, EUR, PLN', on_html)
+        self.assertNotIn('Зафіксувати курс', on_html)
+        self.assertNotIn(_SERVICES_LEAD, on_html)
+        self.assertNotIn('Короткий опис каси', on_html)
+        self.assertNotIn('display:none', ''.join(on_html.lower().split()))

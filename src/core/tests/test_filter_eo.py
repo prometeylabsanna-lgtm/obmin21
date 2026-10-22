@@ -250,14 +250,17 @@ class PublicFilterTests(_ModeCase):
         self.assertEqual(menu_off.status_code, 404)
 
         detail = self.client.get(reverse('blog:post_detail', kwargs={'slug': self.post_open.slug}))
-        self.assertContains(detail, 'EO-POST-ALSO')
+        self.assertContains(detail, self.post_also.slug)
+        self.assertNotContains(detail, self.post_shut.slug)
+        self.assertNotContains(detail, 'EO-POST-ALSO')
         self.assertNotContains(detail, 'EO-POST-SHUT')
 
         blog = self.client.get(reverse('blog:post_list'))
         self.assertContains(blog, 'EO-CAT-OPEN')
-        self.assertContains(blog, 'EO-POST-OPEN')
+        self.assertContains(blog, self.post_open.slug)
+        self.assertNotContains(blog, 'EO-POST-OPEN')
         self.assertNotContains(blog, 'EO-CAT-SHUT')
-        self.assertNotContains(blog, 'EO-POST-SHUT')
+        self.assertNotContains(blog, self.post_shut.slug)
 
         self._mode(False)
         self.assertEqual(
@@ -306,8 +309,9 @@ class PublicFilterTests(_ModeCase):
         self.assertNotContains(home, 'EO-STAT-OFF')
         self.assertContains(home, 'EO-SAFE-SVC')
         self.assertNotContains(home, 'EO-HIDDEN-SVC')
-        self.assertContains(home, 'EO-POST-OPEN')
-        self.assertNotContains(home, 'EO-POST-SHUT')
+        self.assertContains(home, self.post_open.slug)
+        self.assertNotContains(home, 'EO-POST-OPEN')
+        self.assertNotContains(home, self.post_shut.slug)
 
     def test_sitemap_uses_visible_posts_and_pairs(self):
         self._mode(True)

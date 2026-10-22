@@ -68,7 +68,7 @@ class SitemapExchangeTests(TestCase):
             code='BTC/USDT',
             name='Bitcoin',
             slug='btc-usdt',
-            exchange_safe=True,
+            exchange_safe=False,
         )
         Service.objects.create(
             title='Обмін валют',

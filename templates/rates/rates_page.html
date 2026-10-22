@@ -2,11 +2,11 @@
 {% load static content_format exchange_mode %}
 
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
-{% block content %}
+{% block content %}{% is_exchange_only as eo %}
 <section class="page-hero page-hero--rates">
   <div>
     <h1 class="page-hero__title">Всі валюти{% if active_city %} <span class="u-accent" data-city-in>{{ active_city.name_in }}</span>{% endif %}</h1>
-    <p class="page-hero__lead">{% if page.intro %}{{ page.intro|brand_mark }}{% else %}Актуальні курси купівлі та продажу у відділеннях Обмін21. Зафіксуйте курс онлайн і приходьте без черги.{% endif %}</p>
+    {% mode_field page 'intro' as rates_intro %}{% if rates_intro %}<p class="page-hero__lead">{{ rates_intro|brand_mark }}</p>{% elif not eo %}<p class="page-hero__lead">Актуальні курси купівлі та продажу у відділеннях Обмін21. Зафіксуйте курс онлайн і приходьте без черги.</p>{% endif %}
   </div>
   <div class="page-hero__updated">
     <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" stroke="#B3B4B6" fill="none" stroke-width="1.2"></circle><path d="M7 3.5V7l2.3 1.4" stroke="#B3B4B6" fill="none" stroke-width="1.2"></path></svg>

@@ -198,20 +198,32 @@ class FrontendModeTests(TestCase):
         self.assertNotContains(home, 'FE-STAT-NUM')
         self.assertNotContains(home, 'FE-STAT-HIDDEN')
 
-        with _attrs(HomeStat, number_mode='FE-STAT-MODE-NUM', text_mode='   '):
-            self.assertEqual(cards(), [])
-            self.assertNotContains(self.client.get(reverse('core:home')), 'FE-STAT-MODE-NUM')
+        stat = HomeStat.objects.get(number='FE-STAT-NUM')
+        stat.number_mode = 'FE-STAT-MODE-NUM'
+        stat.text_mode = '   '
+        stat.save(update_fields=['number_mode', 'text_mode'])
+        self.assertEqual(cards(), [])
+        self.assertNotContains(self.client.get(reverse('core:home')), 'FE-STAT-MODE-NUM')
+        self.assertNotContains(self.client.get(reverse('core:home')), 'FE-STAT-TEXT')
 
-        with _attrs(HomeStat, text_mode='  FE-STAT-MODE  ', number_mode='  '):
-            self.assertEqual(cards(), [{'text': 'FE-STAT-MODE'}])
+        stat.text_mode = '  FE-STAT-MODE  '
+        stat.number_mode = '  '
+        stat.save(update_fields=['number_mode', 'text_mode'])
+        self.assertEqual(cards(), [{'text': 'FE-STAT-MODE'}])
 
-        with _attrs(HomeStat, text_mode=' FE-STAT-MODE ', number_mode=' FE-NUM '):
-            self.assertEqual(cards(), [{'text': 'FE-STAT-MODE', 'title': 'FE-NUM'}])
-            self._mode(False)
-            self.assertEqual(
-                [(item['title'], item['text']) for item in cards()],
-                [('FE-STAT-NUM', 'FE-STAT-TEXT'), ('FE-STAT-HIDDEN-NUM', 'FE-STAT-HIDDEN')],
-            )
+        stat.text_mode = ' FE-STAT-MODE '
+        stat.number_mode = ' FE-NUM '
+        stat.save(update_fields=['number_mode', 'text_mode'])
+        self.assertEqual(cards(), [{'text': 'FE-STAT-MODE', 'title': 'FE-NUM'}])
+        home = self.client.get(reverse('core:home'))
+        self.assertContains(home, 'FE-STAT-MODE')
+        self.assertContains(home, 'FE-NUM')
+        self.assertNotContains(home, 'FE-STAT-TEXT')
+        self._mode(False)
+        self.assertEqual(
+            [(item['title'], item['text']) for item in cards()],
+            [('FE-STAT-NUM', 'FE-STAT-TEXT'), ('FE-STAT-HIDDEN-NUM', 'FE-STAT-HIDDEN')],
+        )
 
     def test_set_city_banner_payload(self):
         self._mode(False)
@@ -265,6 +277,8 @@ class FrontendModeTests(TestCase):
         page.seo_description = ''
         page.seo_title_mode = ''
         page.seo_description_mode = ''
+        page.title_mode = ''
+        page.intro_mode = ''
         page.save()
 
         self._mode(False)
@@ -295,26 +309,33 @@ class FrontendModeTests(TestCase):
         self.city.seo_title_mode = 'FE-CITY-TITLE-MODE'
         self.city.seo_description_mode = 'FE-CITY-DESC-MODE'
         self.city.save(update_fields=['seo_title_mode', 'seo_description_mode'])
-        with _attrs(CitiesPage, title_mode='FE-CITIES-TITLE-MODE', intro_mode='FE-CITIES-INTRO-MODE-' + ('Y' * 180)):
-            page.seo_title_mode = 'FE-CITIES-SEO-MODE'
-            page.seo_description_mode = ''
-            page.save(update_fields=['seo_title_mode', 'seo_description_mode'])
-            listed = self.client.get(reverse('network:city_list'))
-            self.assertEqual(listed.context['page_title'], 'FE-CITIES-SEO-MODE')
-            intro_mode = 'FE-CITIES-INTRO-MODE-' + ('Y' * 180)
-            self.assertEqual(listed.context['page_description'], intro_mode[:160])
-            self.assertNotIn('FE-CITIES-INTRO-X', listed.context['page_description'])
+        intro_mode = 'FE-CITIES-INTRO-MODE-' + ('Y' * 180)
+        page.title_mode = ''
+        page.intro_mode = intro_mode
+        page.seo_title_mode = 'FE-CITIES-SEO-MODE'
+        page.seo_description_mode = ''
+        page.save(update_fields=[
+            'title_mode', 'intro_mode', 'seo_title_mode', 'seo_description_mode',
+        ])
+        listed = self.client.get(reverse('network:city_list'))
+        self.assertEqual(listed.context['page_title'], 'FE-CITIES-SEO-MODE')
+        self.assertEqual(listed.context['page_description'], intro_mode[:160])
+        self.assertNotIn('FE-CITIES-INTRO-X', listed.context['page_description'])
+        self.assertNotContains(listed, 'FE-CITIES-TITLE')
+        self.assertContains(listed, 'FE-CITIES-SEO-MODE')
 
-            with _attrs(City, name_mode='FE-NAME-MODE'):
-                self.city.seo_title_mode = ''
-                self.city.save(update_fields=['seo_title_mode'])
-                detail = self.client.get(
-                    reverse('network:city_detail', kwargs={'slug': self.city.slug}),
-                )
-                self.assertEqual(detail.context['page_title'], 'FE-NAME-MODE')
-                self.assertEqual(detail.context['page_description'], 'FE-CITY-DESC-MODE')
-                self.assertEqual(detail.context['breadcrumb_items'][-1]['title'], 'FE-NAME-MODE')
-                self.assertNotIn('FE-CITY-SEO', detail.context['page_title'])
+        self.city.name_mode = 'FE-NAME-MODE'
+        self.city.seo_title_mode = ''
+        self.city.save(update_fields=['name_mode', 'seo_title_mode'])
+        detail = self.client.get(
+            reverse('network:city_detail', kwargs={'slug': self.city.slug}),
+        )
+        self.assertEqual(detail.context['page_title'], 'FE-NAME-MODE')
+        self.assertEqual(detail.context['page_description'], 'FE-CITY-DESC-MODE')
+        self.assertEqual(detail.context['breadcrumb_items'][-1]['title'], 'FE-NAME-MODE')
+        self.assertNotIn('FE-CITY-SEO', detail.context['page_title'])
+        self.assertContains(detail, '<h1 class="page-hero__title">FE-NAME-MODE</h1>')
+        self.assertNotContains(detail, '<h1 class="page-hero__title">FE-CITY</h1>')
 
         self._mode(False)
         detail = self.client.get(reverse('network:city_detail', kwargs={'slug': self.city.slug}))
@@ -327,6 +348,9 @@ class FrontendModeTests(TestCase):
         page.seo_title = 'FE-REV-SEO'
         page.seo_description = ''
         page.title = 'FE-REV-TITLE'
+        page.seo_title_mode = ''
+        page.seo_description_mode = ''
+        page.title_mode = ''
         page.save()
         self._mode(False)
         response = self.client.get(reverse('reviews:review_list'))
@@ -340,14 +364,18 @@ class FrontendModeTests(TestCase):
         self.assertNotIn('FE-REV-SEO', response.context['page_title'])
         self.assertNotIn('FE-REV-TITLE', response.context['page_description'])
 
-        with _attrs(ReviewsPage, seo_title_mode='FE-REV-TITLE-MODE', seo_description_mode='FE-REV-DESC-MODE'):
-            response = self.client.get(reverse('reviews:review_list'))
-            self.assertEqual(response.context['page_title'], 'FE-REV-TITLE-MODE')
-            self.assertEqual(response.context['page_description'], 'FE-REV-DESC-MODE')
-            self._mode(False)
-            response = self.client.get(reverse('reviews:review_list'))
-            self.assertEqual(response.context['page_title'], 'FE-REV-SEO')
-            self.assertEqual(response.context['page_description'], 'FE-REV-TITLE')
+        page.seo_title_mode = 'FE-REV-TITLE-MODE'
+        page.seo_description_mode = 'FE-REV-DESC-MODE'
+        page.save(update_fields=['seo_title_mode', 'seo_description_mode'])
+        response = self.client.get(reverse('reviews:review_list'))
+        self.assertEqual(response.context['page_title'], 'FE-REV-TITLE-MODE')
+        self.assertEqual(response.context['page_description'], 'FE-REV-DESC-MODE')
+        self.assertContains(response, 'FE-REV-TITLE-MODE')
+        self.assertNotContains(response, '>FE-REV-TITLE<')
+        self._mode(False)
+        response = self.client.get(reverse('reviews:review_list'))
+        self.assertEqual(response.context['page_title'], 'FE-REV-SEO')
+        self.assertEqual(response.context['page_description'], 'FE-REV-TITLE')
 
     def test_article_art_layout_mode(self):
         category = Category.objects.create(name='FE-CAT', slug='fe-cat')
@@ -431,17 +459,31 @@ class FrontendModeTests(TestCase):
                     'FE-H1A-MODE FE-H1B-MODE',
                 )
 
-            with _attrs(Post, seo_title_mode='FE-POST-SEO-MODE', excerpt_mode='FE-EXCERPT-MODE'):
-                response = art_of()
-                self.assertEqual(response.context['page_title'], 'FE-POST-SEO-MODE')
-                self.assertEqual(response.context['page_description'], 'FE-EXCERPT-MODE')
-                self._mode(False)
-                response = art_of()
-                self.assertEqual(response.context['art']['layout_mode']['h1a'], 'FE-H1A')
-                self.assertEqual(response.context['page_title'], 'FE-POST-SEO')
-                self.assertEqual(response.context['page_description'], 'FE-POST-SEOD')
+            post.seo_title_mode = 'FE-POST-SEO-MODE'
+            post.excerpt_mode = 'FE-EXCERPT-MODE'
+            post.seo_description_mode = ''
+            post.title_mode = ''
+            post.save(update_fields=[
+                'seo_title_mode', 'excerpt_mode', 'seo_description_mode', 'title_mode',
+            ])
+            response = art_of()
+            self.assertEqual(response.context['page_title'], 'FE-POST-SEO-MODE')
+            self.assertEqual(response.context['page_description'], 'FE-EXCERPT-MODE')
+            self.assertContains(response, 'FE-EXCERPT-MODE')
+            self.assertNotContains(response, 'FE-POST-EXCERPT')
+            self._mode(False)
+            response = art_of()
+            self.assertEqual(response.context['art']['layout_mode']['h1a'], 'FE-H1A')
+            self.assertEqual(response.context['page_title'], 'FE-POST-SEO')
+            self.assertEqual(response.context['page_description'], 'FE-POST-SEOD')
 
     def test_services_list_home_page_and_block_mode_keys(self):
+        Service.objects.update(
+            block_text_mode='',
+            block_points_mode='',
+            block_cta_mode='',
+            short_desc_mode='',
+        )
         Service.objects.create(
             title='FE-SVC',
             slug='fe-svc',
@@ -459,11 +501,20 @@ class FrontendModeTests(TestCase):
                 self.assertEqual(svc.block_points_mode, '')
                 self.assertEqual(svc.block_cta_mode, '')
 
-        with _attrs(Service, block_text_mode='FE-BLOCK', block_points_mode='', block_cta_mode='FE-CTA'):
-            response = self.client.get(reverse('content:services'))
-            found = {item.slug: item for item in response.context['services']}
-            svc = found['fe-svc']
-            self.assertEqual(svc.block_text_mode, 'FE-BLOCK')
-            self.assertEqual(svc.block_points_mode, '')
-            self.assertEqual(svc.block_cta_mode, 'FE-CTA')
-            self.assertNotEqual(svc.block_text_mode, svc.block_text)
+        row = Service.objects.get(slug='fe-svc')
+        row.block_text_mode = 'FE-BLOCK'
+        row.block_points_mode = ''
+        row.block_cta_mode = 'FE-CTA'
+        row.save(update_fields=['block_text_mode', 'block_points_mode', 'block_cta_mode'])
+        self._mode(True)
+        empty = self.client.get(reverse('content:services'))
+        self.assertNotContains(empty, 'FE-SHORT')
+        response = empty
+        found = {item.slug: item for item in response.context['services']}
+        svc = found['fe-svc']
+        self.assertEqual(svc.block_text_mode, 'FE-BLOCK')
+        self.assertEqual(svc.block_points_mode, '')
+        self.assertEqual(svc.block_cta_mode, 'FE-CTA')
+        self.assertContains(response, 'FE-BLOCK')
+        self.assertContains(response, 'FE-CTA')
+        self.assertNotContains(response, 'FE-SHORT')
