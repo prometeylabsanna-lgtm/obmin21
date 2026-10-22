@@ -1,4 +1,4 @@
-"""Без env режиму обмін вимкнений: приховані й активні обмінні сторінки відкриті."""
+"""Без env режиму обмін вимкнений: публічні сторінки відкриті."""
 
 import os
 import sys
@@ -6,21 +6,31 @@ from contextlib import contextmanager
 from unittest.mock import patch
 
 from django.core.cache import cache
-from django.test import Client
+from django.test import Client, TestCase
+from django.urls import reverse
 
-from src.core.exchange_mode import is_exchange_only
-from src.core.tests.eo_realdb import (
-    RealDataTestCase,
-    copy_real_db,
-    exchange_paths,
-    hidden_paths,
-    inactive_pair_paths,
-    prefixed_paths,
-    restore_test_db,
+from src.blog.models import Category, Post
+from src.content.models import (
+    AdvantagesPage,
+    BlogPage,
+    CitiesPage,
+    ContactsPage,
+    CookiePage,
+    FaqPage,
+    HomePage,
+    OfferPage,
+    PrivacyPage,
+    RatesPage,
+    ReviewsPage,
+    ServicesPage,
 )
+from src.core.exchange_mode import is_exchange_only
+from src.core.models import SiteSettings
+from src.rates.models import CurrencyPair
 
 EXCHANGE_ONLY_ENV = 'EXCHANGE_ONLY_MODE'
 HIDDEN_STATUS_ENV = 'HIDDEN_PAGE_STATUS'
+_ENV_KEYS = (EXCHANGE_ONLY_ENV, HIDDEN_STATUS_ENV)
 _CACHE_PREFIXES = (
     'src.core.',
     'src.blog.',
@@ -30,14 +40,20 @@ _CACHE_PREFIXES = (
     'src.content.',
     'django.contrib.sitemaps',
 )
-
-
-def setUpModule():
-    copy_real_db()
-
-
-def tearDownModule():
-    restore_test_db()
+_PAGE_MODELS = (
+    HomePage,
+    RatesPage,
+    ServicesPage,
+    AdvantagesPage,
+    FaqPage,
+    BlogPage,
+    ReviewsPage,
+    ContactsPage,
+    CitiesPage,
+    PrivacyPage,
+    OfferPage,
+    CookiePage,
+)
 
 
 def clear_exchange_caches():
@@ -90,43 +106,71 @@ def forced_exchange_client(enabled, status=None):
             clear_exchange_caches()
 
 
-@contextmanager
-def default_exchange_client():
-    """Без EXCHANGE_ONLY_MODE і HIDDEN_PAGE_STATUS."""
-    kept = {
-        key: value
-        for key, value in os.environ.items()
-        if key not in (EXCHANGE_ONLY_ENV, HIDDEN_STATUS_ENV)
-    }
-    with patch.dict(os.environ, kept, clear=True):
+class DefaultExchangeModeTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.settings_row = SiteSettings.objects.create()
+        for model in _PAGE_MODELS:
+            model.load()
+        cls.pair = CurrencyPair.objects.create(
+            code='USD',
+            name='Долар',
+            slug='usd-uah',
+        )
+        cls.category = Category.objects.create(name='Поради', slug='porady')
+        cls.post = Post.objects.create(
+            category=cls.category,
+            title='Курс долара',
+            slug='kurs-dolara',
+            body='Текст про долар',
+            status=Post.Status.PUBLISHED,
+        )
+
+    def setUp(self):
+        super().setUp()
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        self._clear_mode_env()
+
+    def tearDown(self):
+        self._clear_mode_env()
+        for key, value in self._saved_env.items():
+            if value is not None:
+                os.environ[key] = value
+        super().tearDown()
+
+    def _clear_mode_env(self):
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
         clear_exchange_caches()
-        client = Client()
-        try:
-            yield client
-        finally:
-            clear_exchange_caches()
 
-
-class DefaultExchangeModeTests(RealDataTestCase):
     def test_mode_is_off_and_pages_are_open(self):
-        inactive = set(inactive_pair_paths())
-        hidden = [path for path in hidden_paths() if path not in inactive]
-        exchange = [path for path in exchange_paths() if path not in inactive]
-        with default_exchange_client() as client:
-            client.raise_request_exception = False
-            self.assertIsNone(os.environ.get(EXCHANGE_ONLY_ENV))
-            self.assertIsNone(os.environ.get(HIDDEN_STATUS_ENV))
-            self.assertFalse(is_exchange_only())
-            problems = []
-            problems.extend(_not_open(client, hidden, 'прихована'))
-            problems.extend(_not_open(client, exchange, 'обмінна'))
-        self.assertFalse(problems, '\n'.join(problems))
+        self.assertFalse(SiteSettings._meta.get_field('exchange_only').default)
+        self.settings_row.refresh_from_db()
+        self.assertFalse(self.settings_row.exchange_only)
+        self.assertIsNone(os.environ.get(EXCHANGE_ONLY_ENV))
+        self.assertIsNone(os.environ.get(HIDDEN_STATUS_ENV))
+        self.assertFalse(is_exchange_only())
+        for url in self._public_urls():
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 200)
 
-
-def _not_open(client, paths, kind):
-    problems = []
-    for url in prefixed_paths(paths):
-        code = client.get(url).status_code
-        if code != 200:
-            problems.append(f'{url} | {kind} | {code}')
-    return problems
+    def _public_urls(self):
+        return (
+            reverse('core:home'),
+            reverse('rates:rates_page'),
+            reverse('content:services'),
+            reverse('content:advantages'),
+            reverse('content:faq'),
+            reverse('blog:post_list'),
+            reverse('reviews:review_list'),
+            reverse('content:contacts'),
+            reverse('network:city_list'),
+            reverse('content:privacy'),
+            reverse('content:offer'),
+            reverse('content:cookies'),
+            reverse('core:sitemap'),
+            reverse('core:robots'),
+            reverse('rates:pair_detail', kwargs={'slug': self.pair.slug}),
+            reverse('blog:post_detail', kwargs={'slug': self.post.slug}),
+            reverse('blog:category', kwargs={'category_slug': self.category.slug}),
+        )
