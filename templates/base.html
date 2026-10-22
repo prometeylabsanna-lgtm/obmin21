@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="csrf-token" content="{{ csrf_token }}">
-  <title>{% block title %}{% is_exchange_only as eo %}{% if eo and page %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{% if page_title %}{{ page_title }} · {% endif %}{{ site_settings.site_name }}{% endif %}{% endblock %}
+  <title>{% block title %}{% is_exchange_only as eo %}{% if eo %}{% if page %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{% endif %}{{ site_settings.site_name }}{% else %}{% if page_title %}{{ page_title }} · {% endif %}{{ site_settings.site_name }}{% endif %}{% endblock %}
   </title>
   {% if page_description %}
   <meta name="description" content="{{ page_description }}">{% endif %}
@@ -53,7 +53,7 @@
 
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/utils.js' %}" defer></script>
-  <script src="{% static 'js/nav.js' %}?v=15" defer></script>
+  <script src="{% static 'js/nav.js' %}?v=16" defer></script>
   <script src="{% static 'js/modal.js' %}?v=12" defer></script>
   <script src="{% static 'js/calc.js' %}?v=15" defer></script>
   <script src="{% static 'js/booking-modal.js' %}?v=3" defer></script>
