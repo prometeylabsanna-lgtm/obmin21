@@ -530,6 +530,9 @@ class ExchangeOnlyServicesCityTemplateTests(ExchangeTemplateCase):
         return html[start:finish]
 
     def test_mode_off_keeps_services_page_and_city_banner(self):
+        home = HomePage.load()
+        home.articles_lead = ''
+        home.save(update_fields=['articles_lead'])
         self._set_mode(False)
         services = self._services()
         self.assertEqual(services.status_code, 200)
