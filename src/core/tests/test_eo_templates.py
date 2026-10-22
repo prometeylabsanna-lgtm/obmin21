@@ -8,9 +8,24 @@ from django.urls import reverse
 from django.utils import timezone
 
 from src.blog.models import Category, Post
-from src.content.models import AdvantagesPage, FaqItem, HomePage, Service, ServicesPage
+from src.content.models import (
+    AdvantagesPage,
+    BlogPage,
+    CitiesPage,
+    ContactsPage,
+    FaqItem,
+    FaqPage,
+    HomePage,
+    PrivacyPage,
+    RatesPage,
+    ReviewsPage,
+    Service,
+    ServicesPage,
+)
+from src.core.exchange_mode import NEUTRAL_DESCRIPTION
 from src.core.models import SiteSettings
 from src.network.models import Branch, City
+from src.rates.models import CurrencyPair
 
 _ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS')
 
@@ -815,3 +830,262 @@ class ExchangeOnlySeoLinksTests(TestCase):
         self.assertNotIn('svc-hero__lead', pages['services'])
         self.assertIn('Курси', pages['blog'])
         self.assertNotIn('Купуйте та продавайте понад 15 валют', pages['services'])
+
+
+_TITLE_SEO = 'ZZ-SEO-КРИПТОВАЛЮТА'
+_TITLE_PAGE = 'ZZ-PAGE-ЗОЛОТО-ПЕРЕКАЗИ'
+_DOC_MODE = 'ZZ-SEO-MODE'
+_TITLE_SITE = 'ZZ-SITE'
+_TITLE_ONLY = 'ZZ-ONLY-TITLE-MODE'
+
+_BRANDED_TITLES = (
+    ('content:services', ServicesPage),
+    ('content:advantages', AdvantagesPage),
+    ('content:faq', FaqPage),
+    ('network:city_list', CitiesPage),
+    ('blog:post_list', BlogPage),
+    ('rates:rates_page', RatesPage),
+)
+
+_PLAIN_TITLES = (
+    ('content:contacts', ContactsPage),
+    ('content:privacy', PrivacyPage),
+    ('reviews:review_list', ReviewsPage),
+)
+
+
+class ExchangeOnlyDocumentTitleTests(TestCase):
+    def setUp(self):
+        self._saved_env = {key: os.environ.get(key) for key in _ENV_KEYS}
+        for key in _ENV_KEYS:
+            os.environ.pop(key, None)
+        cache.clear()
+        settings = SiteSettings.load()
+        settings.site_name = _TITLE_SITE
+        settings.exchange_only = False
+        settings.save()
+        cache.clear()
+
+    def tearDown(self):
+        if 'title_mode' in FaqPage.__dict__:
+            delattr(FaqPage, 'title_mode')
+        for key, value in self._saved_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        cache.clear()
+
+    def _set_mode(self, enabled):
+        SiteSettings.objects.filter(pk=1).update(exchange_only=enabled)
+        cache.clear()
+
+    def _title_of(self, url):
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, url)
+        match = re.search(r'<title>(.*?)</title>', response.content.decode(), re.DOTALL)
+        self.assertIsNotNone(match, url)
+        return match.group(1).strip()
+
+    def _fill(self, model, seo=_TITLE_SEO, mode=''):
+        page = model.load()
+        page.seo_title = seo
+        page.seo_title_mode = mode
+        page.title = _TITLE_PAGE
+        page.save()
+        return page
+
+    def _assert_closed(self, url, expected):
+        title = self._title_of(url)
+        self.assertEqual(title, expected)
+        self.assertIn(_TITLE_SITE, title)
+        self.assertNotIn(_TITLE_SEO, title)
+        self.assertNotIn(_TITLE_PAGE, title)
+        self.assertNotIn(NEUTRAL_DESCRIPTION, title)
+        for token in ('КРИПТОВАЛЮТА', 'ЗОЛОТО', 'ПЕРЕКАЗИ'):
+            self.assertNotIn(token, title)
+        return title
+
+    def test_home_title(self):
+        page = HomePage.load()
+        page.seo_title = _TITLE_SEO
+        page.seo_title_mode = ''
+        page.save()
+        url = reverse('core:home')
+        self._set_mode(False)
+        self.assertEqual(self._title_of(url), _TITLE_SEO)
+        self._set_mode(True)
+        self._assert_closed(url, _TITLE_SITE)
+        page.seo_title_mode = _DOC_MODE
+        page.save()
+        self._set_mode(True)
+        title = self._title_of(url)
+        self.assertEqual(title, _DOC_MODE)
+        self.assertNotIn(_TITLE_SEO, title)
+        self.assertNotIn(NEUTRAL_DESCRIPTION, title)
+
+    def test_home_empty_seo_stays_site_name(self):
+        page = HomePage.load()
+        page.seo_title = ''
+        page.seo_title_mode = ''
+        page.save()
+        url = reverse('core:home')
+        self._set_mode(False)
+        self.assertEqual(self._title_of(url), _TITLE_SITE)
+        self._set_mode(True)
+        self._assert_closed(url, _TITLE_SITE)
+
+    def test_branded_pages(self):
+        for url_name, model in _BRANDED_TITLES:
+            with self.subTest(url=url_name):
+                self._fill(model)
+                url = reverse(url_name)
+                self._set_mode(False)
+                self.assertEqual(
+                    self._title_of(url),
+                    f'{_TITLE_SEO} · {_TITLE_SITE}',
+                )
+                self._set_mode(True)
+                self._assert_closed(url, _TITLE_SITE)
+                self._fill(model, mode=_DOC_MODE)
+                self._set_mode(True)
+                title = self._title_of(url)
+                self.assertEqual(title, f'{_DOC_MODE} · {_TITLE_SITE}')
+                self.assertIn(_DOC_MODE, title)
+                self.assertNotIn(_TITLE_SEO, title)
+                self.assertNotIn(_TITLE_PAGE, title)
+                self.assertNotIn(NEUTRAL_DESCRIPTION, title)
+
+    def test_empty_seo_title_off_uses_page_title(self):
+        page = ServicesPage.load()
+        page.seo_title = ''
+        page.seo_title_mode = ''
+        page.title = _TITLE_PAGE
+        page.save()
+        url = reverse('content:services')
+        self._set_mode(False)
+        self.assertEqual(self._title_of(url), f'{_TITLE_PAGE} · {_TITLE_SITE}')
+        self._set_mode(True)
+        self._assert_closed(url, _TITLE_SITE)
+
+    def test_title_mode_when_seo_mode_empty(self):
+        self._fill(FaqPage, mode='')
+        url = reverse('content:faq')
+        FaqPage.title_mode = _TITLE_ONLY
+        try:
+            self._set_mode(True)
+            title = self._title_of(url)
+            self.assertEqual(title, f'{_TITLE_ONLY} · {_TITLE_SITE}')
+            self.assertNotIn(_TITLE_SEO, title)
+            self.assertNotIn(_TITLE_PAGE, title)
+            page = FaqPage.load()
+            page.seo_title_mode = _DOC_MODE
+            page.save()
+            title = self._title_of(url)
+            self.assertEqual(title, f'{_DOC_MODE} · {_TITLE_SITE}')
+            self.assertNotIn(_TITLE_ONLY, title)
+        finally:
+            delattr(FaqPage, 'title_mode')
+
+    def test_city_detail(self):
+        city = City.objects.create(
+            name='Львів',
+            slug='lviv-title',
+            seo_title=_TITLE_SEO,
+            seo_title_mode='',
+        )
+        url = reverse('network:city_detail', kwargs={'slug': city.slug})
+        self._set_mode(False)
+        self.assertEqual(self._title_of(url), f'{_TITLE_SEO} · {_TITLE_SITE}')
+        self._set_mode(True)
+        self._assert_closed(url, _TITLE_SITE)
+        self.assertNotIn('Львів', self._title_of(url))
+        city.seo_title = ''
+        city.seo_title_mode = ''
+        city.save()
+        self._set_mode(False)
+        self.assertEqual(self._title_of(url), f'Львів · {_TITLE_SITE}')
+        self._set_mode(True)
+        title = self._title_of(url)
+        self.assertEqual(title, _TITLE_SITE)
+        self.assertNotIn('Львів', title)
+        city.seo_title = _TITLE_SEO
+        city.seo_title_mode = _DOC_MODE
+        city.save()
+        self._set_mode(True)
+        title = self._title_of(url)
+        self.assertEqual(title, f'{_DOC_MODE} · {_TITLE_SITE}')
+        self.assertNotIn(_TITLE_SEO, title)
+        self.assertNotIn('Львів', title)
+
+    def test_pages_without_mode_columns(self):
+        for url_name, model in _PLAIN_TITLES:
+            with self.subTest(url=url_name):
+                page = model.load()
+                page.seo_title = _TITLE_SEO
+                page.title = _TITLE_PAGE
+                page.save()
+                url = reverse(url_name)
+                self._set_mode(False)
+                self.assertEqual(
+                    self._title_of(url),
+                    f'{_TITLE_SEO} · {_TITLE_SITE}',
+                )
+                self._set_mode(True)
+                self._assert_closed(url, _TITLE_SITE)
+
+    def test_blog_category_ignores_view_title(self):
+        self._fill(BlogPage, mode='')
+        category = Category.objects.create(name='ZZ-CAT-NAME', slug='zz-cat-title')
+        Post.objects.create(
+            category=category,
+            title='Курс у касі',
+            slug='zz-cat-title-post',
+            body='Текст про курс.',
+            status=Post.Status.PUBLISHED,
+            exchange_safe=True,
+        )
+        url = reverse('blog:category', kwargs={'category_slug': category.slug})
+        self._set_mode(False)
+        self.assertEqual(self._title_of(url), f'ZZ-CAT-NAME · {_TITLE_SITE}')
+        self._set_mode(True)
+        title = self._title_of(url)
+        self.assertEqual(title, _TITLE_SITE)
+        self.assertNotIn('ZZ-CAT-NAME', title)
+        self.assertNotIn(_TITLE_SEO, title)
+        self.assertNotIn(NEUTRAL_DESCRIPTION, title)
+
+    def test_post_and_pair(self):
+        category = Category.objects.create(name='Нотатки', slug='notatky-title')
+        post = Post.objects.create(
+            category=category,
+            title=_TITLE_PAGE,
+            slug='zz-title-post',
+            body='Текст про курс.',
+            seo_title=_TITLE_SEO,
+            status=Post.Status.PUBLISHED,
+            exchange_safe=True,
+        )
+        pair = CurrencyPair.objects.create(
+            code='CHF',
+            name='Франк',
+            slug='chf-title',
+            seo_title=_TITLE_SEO,
+            exchange_safe=True,
+        )
+        post_url = reverse('blog:post_detail', kwargs={'slug': post.slug})
+        pair_url = reverse('rates:pair_detail', kwargs={'slug': pair.slug})
+        self._set_mode(False)
+        self.assertEqual(self._title_of(post_url), f'{_TITLE_SEO} · {_TITLE_SITE}')
+        self.assertEqual(self._title_of(pair_url), f'{_TITLE_SEO} · {_TITLE_SITE}')
+        self._set_mode(True)
+        self._assert_closed(post_url, _TITLE_SITE)
+        self._assert_closed(pair_url, _TITLE_SITE)
+        pair.seo_title = ''
+        pair.save()
+        self._set_mode(False)
+        self.assertEqual(self._title_of(pair_url), f'CHF · {_TITLE_SITE}')
+        self._set_mode(True)
+        title = self._title_of(pair_url)
+        self.assertEqual(title, _TITLE_SITE)
+        self.assertNotIn('CHF', title)

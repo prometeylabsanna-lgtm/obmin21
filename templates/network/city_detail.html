@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load exchange_mode %}
 
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta city 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{% if page_title %}{{ page_title }} · {% endif %}{{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}{% is_exchange_only as eo %}
 <section class="page-hero">
   <h1 class="page-hero__title">{{ city.name }}</h1>{% mode_field city 'banner_title' as bt %}{% if eo and bt %}<p class="page-hero__lead">{{ bt }}</p>{% endif %}{% mode_field city 'banner_text' as btx %}{% if eo and btx %}<p class="page-hero__lead">{{ btx }}</p>{% endif %}

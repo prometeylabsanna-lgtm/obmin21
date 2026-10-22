@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static content_format exchange_mode %}
 
-{% block title %}{{ page.seo_title|default:site_settings.site_name }}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' %}{% else %}{{ page.seo_title|default:site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}{% is_exchange_only as eo %}
 
 <section class="hero" id="exchange" data-qa="section-exchange">

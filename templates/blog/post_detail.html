@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static content_format exchange_mode %}
 
-{% block title %}{{ post.seo_title|default:post.title }} · {{ site_settings.site_name }}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta post 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ post.seo_title|default:post.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}{% is_exchange_only as eo %}
 <article class="article-page" data-qa="post-detail">
   <header class="article-banner">

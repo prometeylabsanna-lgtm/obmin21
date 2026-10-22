@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static exchange_mode %}
 
-{% block title %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 {% include 'partials/shared_faq_section.html' with extra_class='faq-section--page' qa='faq-page' faq_kicker=page.kicker faq_title=page.title faq_title_accent=page.title_accent faq_lead=page.lead faq_items=faq_items grid_class='faq-section__grid--page' %}
 

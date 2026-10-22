@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static content_format %}
+{% load static content_format exchange_mode %}
 
-{% block title %}{{ page_title }} · {{ site_settings.site_name }}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page_title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 <section class="blog-hero">
   <div class="blog-hero__copy">
