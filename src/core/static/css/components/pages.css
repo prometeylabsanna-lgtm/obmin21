@@ -1,12 +1,12 @@
 .page-hero {
-  padding: calc(12px * var(--scale)) 0 calc(28px * var(--scale));
+  padding: calc(20px * var(--scale)) 0 0;
 }
 
 .page-hero__title {
   margin: 0;
   font-size: clamp(calc(30px * var(--scale)), 4.3vw, calc(57px * var(--scale)));
   font-weight: 700;
-  line-height: 1.08;
+  line-height: 1.05;
   letter-spacing: calc(-0.5px * var(--scale));
 }
 
@@ -20,7 +20,7 @@
 
 .svc-hero {
   padding: calc(20px * var(--scale)) 0 0;
-  margin-bottom: calc(72px * var(--scale));
+  margin-bottom: calc(64px * var(--scale));
   overflow: visible;
 }
 
@@ -374,8 +374,10 @@
 
 .simple-page__title {
   margin: 0 0 calc(20px * var(--scale));
-  font-size: clamp(calc(32px * var(--scale)), 5vw, calc(48px * var(--scale)));
+  font-size: clamp(calc(30px * var(--scale)), 4.3vw, calc(57px * var(--scale)));
   font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: calc(-0.5px * var(--scale));
 }
 
 .simple-page__body {
@@ -392,7 +394,7 @@
 @media (min-width: 768px) {
   .svc-hero {
     padding: calc(20px * var(--scale)) 0 0;
-    margin-bottom: calc(120px * var(--scale));
+    margin-bottom: calc(96px * var(--scale));
   }
 
   .svc-hero__banner {

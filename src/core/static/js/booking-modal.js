@@ -29,6 +29,7 @@
   }
 
   function fillMenu(menu, list, active) {
+    if (!menu) return;
     var html = '';
     list.forEach(function (c) {
       html +=
@@ -148,7 +149,10 @@
       var dTo = to && parseNum(to.sell) > 1000 ? 6 : 2;
       var resultText = fmt(n * rate, dTo) + ' ' + currencyMark(toCode);
       var forText = 'за ' + fmt(n, 6) + ' ' + currencyMark(fromCode);
-      if (fixTextEl) fixTextEl.textContent = resultText + ' ' + forText;
+      if (fixTextEl) {
+        fixTextEl.textContent = resultText + ' ' + forText;
+        fixTextEl.hidden = false;
+      }
       var pairCode = fromCode === 'UAH' ? toCode : fromCode;
       var pairItem = byCode(list, pairCode);
       var pairInput = root.querySelector('[name="pair"]');
@@ -169,7 +173,7 @@
 
     var fromToggle = root.querySelector('[data-bk-from-toggle]');
     var toToggle = root.querySelector('[data-bk-to-toggle]');
-    if (fromToggle) {
+    if (fromToggle && fromMenu) {
       fromToggle.addEventListener('click', function (e) {
         e.stopPropagation();
         var open = fromMenu.hasAttribute('hidden');
@@ -177,7 +181,7 @@
         if (open) fromMenu.removeAttribute('hidden');
       });
     }
-    if (toToggle) {
+    if (toToggle && toMenu) {
       toToggle.addEventListener('click', function (e) {
         e.stopPropagation();
         var open = toMenu.hasAttribute('hidden');

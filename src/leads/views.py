@@ -279,6 +279,6 @@ def contact_submit(request):
             'title': 'Повідомлення надіслано',
             'message': 'Ми звʼяжемося з вами найближчим часом.',
         })
-    return render(request, 'partials/contact_form.html', {
-        'form': form,
-    }, status=422)
+    response = _render_contact_modal(request)
+    response.status_code = 422
+    return response

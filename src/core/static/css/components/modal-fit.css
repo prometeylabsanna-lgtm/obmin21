@@ -1,0 +1,157 @@
+@media (max-height: 800px) {
+  .modal-backdrop {
+    padding-top: var(--safe-top);
+    padding-right: max(calc(8px * var(--scale)), var(--safe-right));
+    padding-bottom: var(--safe-bottom);
+    padding-left: max(calc(8px * var(--scale)), var(--safe-left));
+  }
+
+  .modal,
+  .modal--sm,
+  .bk-modal {
+    max-height: 100dvh;
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
+    padding: calc(14px * var(--scale)) calc(14px * var(--scale)) calc(12px * var(--scale));
+  }
+
+  .modal__title {
+    margin-top: 0;
+    font-size: calc(22px * var(--scale));
+    line-height: 1.15;
+  }
+
+  .modal__lead,
+  .bk-modal .modal__lead {
+    margin-top: calc(6px * var(--scale));
+    font-size: calc(13px * var(--scale));
+    line-height: 1.35;
+  }
+
+  .modal__step {
+    margin-bottom: calc(4px * var(--scale));
+  }
+
+  .modal__body {
+    margin-top: calc(8px * var(--scale));
+  }
+
+  .bk-calc {
+    margin-top: calc(10px * var(--scale));
+    gap: calc(4px * var(--scale));
+  }
+
+  .bk-label {
+    margin-bottom: calc(4px * var(--scale));
+    font-size: calc(12px * var(--scale));
+  }
+
+  .bk-modal .field-row,
+  .bk-modal .field-row--lg,
+  .bk-branch__select {
+    height: calc(44px * var(--scale));
+  }
+
+  .bk-modal .field-row input,
+  .bk-modal .field-row .field-value {
+    font-size: calc(19px * var(--scale));
+  }
+
+  .bk-swap {
+    width: calc(30px * var(--scale));
+    height: calc(30px * var(--scale));
+    margin: calc(-4px * var(--scale)) 0 calc(-8px * var(--scale));
+  }
+
+  .bk-rate {
+    margin-top: 0;
+    font-size: calc(12px * var(--scale));
+  }
+
+  .bk-branch {
+    margin-top: calc(8px * var(--scale));
+  }
+
+  .bk-branch__label {
+    margin-top: calc(6px * var(--scale));
+  }
+
+  .bk-fix {
+    margin-top: calc(10px * var(--scale));
+    height: calc(48px * var(--scale));
+    min-height: calc(48px * var(--scale));
+    font-size: calc(16px * var(--scale));
+  }
+
+  .bk-summary {
+    margin-top: 0;
+    font-size: calc(16px * var(--scale));
+  }
+
+  .bk-contacts {
+    margin-top: calc(10px * var(--scale));
+    gap: calc(8px * var(--scale));
+  }
+
+  .bk-foot {
+    margin-top: calc(8px * var(--scale));
+  }
+
+  .modal .form {
+    gap: calc(6px * var(--scale));
+  }
+
+  .modal .form__label {
+    gap: calc(4px * var(--scale));
+    font-size: calc(12px * var(--scale));
+  }
+
+  .modal .form input:not([type="hidden"]):not([type="checkbox"]),
+  .modal .form select {
+    height: calc(44px * var(--scale));
+    font-size: calc(19px * var(--scale));
+  }
+
+  .modal .form textarea {
+    height: calc(72px * var(--scale));
+    padding: calc(8px * var(--scale)) calc(12px * var(--scale));
+    font-size: calc(16px * var(--scale));
+  }
+
+  .modal .stars svg {
+    width: calc(28px * var(--scale));
+    height: calc(28px * var(--scale));
+  }
+
+  .modal .btn {
+    min-height: calc(44px * var(--scale));
+    padding: calc(8px * var(--scale)) calc(16px * var(--scale));
+  }
+
+  .modal__hint {
+    margin-top: calc(6px * var(--scale));
+  }
+
+  .modal__success {
+    padding: calc(8px * var(--scale)) 0 0;
+  }
+
+  .modal__success-icon {
+    width: calc(48px * var(--scale));
+    height: calc(48px * var(--scale));
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .modal,
+  .modal--sm,
+  .bk-modal {
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - calc(16px * var(--scale)));
+  }
+
+  .bk-modal .field-row input,
+  .modal .form textarea,
+  .modal .form select,
+  .modal .form input:not([type="hidden"]):not([type="checkbox"]) {
+    font-size: calc(19px * var(--scale));
+  }
+}

@@ -69,7 +69,7 @@
 }
 
 .contacts-map {
-  margin-top: calc(96px * var(--scale));
+  margin-top: calc(64px * var(--scale));
   scroll-margin-top: calc(24px * var(--scale));
 }
 
@@ -229,7 +229,7 @@
   }
 
   .contacts-map {
-    margin-top: calc(140px * var(--scale));
+    margin-top: calc(96px * var(--scale));
   }
 
   .contacts-map__layout {

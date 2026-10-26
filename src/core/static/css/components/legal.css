@@ -12,7 +12,7 @@
 
 .legal-page__title {
   margin: calc(16px * var(--scale)) 0 0;
-  font-size: clamp(calc(34px * var(--scale)), 5vw, calc(68px * var(--scale)));
+  font-size: clamp(calc(30px * var(--scale)), 4.3vw, calc(57px * var(--scale)));
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: calc(-0.5px * var(--scale));

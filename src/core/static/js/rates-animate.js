@@ -22,15 +22,22 @@
     }
     var parts = normalized.split('.');
     var decimals = parts.length > 1 ? parts[1].length : 0;
-    return { value: num, decimals: decimals, raw: raw };
+    return { value: num, decimals: decimals, raw: raw, comma: raw.indexOf(',') !== -1 };
   }
 
-  function formatRate(value, decimals) {
-    var text = value.toFixed(decimals);
+  function formatRate(value, decimals, comma) {
+    var negative = value < 0;
+    var text = Math.abs(value).toFixed(decimals);
+    if (comma) {
+      var bits = text.split('.');
+      var whole = bits[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      text = decimals > 0 ? whole + ',' + bits[1] : whole;
+      return negative ? '-' + text : text;
+    }
     if (text.indexOf('.') !== -1) {
       text = text.replace(/0+$/, '').replace(/\.$/, '');
     }
-    return text;
+    return negative ? '-' + text : text;
   }
 
   function animateValue(el, target, delay) {
@@ -39,7 +46,7 @@
     var startedReveal = false;
 
     el.classList.add('is-animating');
-    el.textContent = formatRate(from, target.decimals);
+    el.textContent = formatRate(from, target.decimals, target.comma);
 
     function frame(ts) {
       if (start === null) {
@@ -59,7 +66,7 @@
       var progress = Math.min(1, elapsed / DURATION);
       var eased = easeOutExpo(progress);
       var current = from + (target.value - from) * eased;
-      el.textContent = formatRate(current, target.decimals);
+      el.textContent = formatRate(current, target.decimals, target.comma);
 
       if (progress < 1) {
         window.requestAnimationFrame(frame);

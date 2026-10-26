@@ -1,5 +1,5 @@
 import re
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from django import template
 from django.utils.html import escape
@@ -74,9 +74,11 @@ def phone_tel_filter(value):
 def format_rate(value, style='fixed4'):
     """
     Format exchange rate for display.
-    - fixed4: always 4 decimals (41.2000) — retail/wholesale/cross
+    - ua: 2 decimals, comma separator, space thousands (41,20)
+    - fixed4: always 4 decimals (41.2000) — internal / legacy
     - compact: strip trailing zeros (2410000, 41.2) — crypto / money amounts
     - auto: compact if |value| >= 1000, else fixed4
+    Public pages pass ua. Calculator data attributes keep the raw Decimal.
     """
     if value is None or value == '':
         return ''
@@ -88,6 +90,12 @@ def format_rate(value, style='fixed4'):
     mode = (style or 'fixed4').strip().lower()
     if mode == 'auto':
         mode = 'compact' if abs(amount) >= Decimal('1000') else 'fixed4'
+
+    if mode == 'ua':
+        quantized = amount.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        sign = '-' if quantized < 0 else ''
+        whole, frac = format(abs(quantized), 'f').split('.')
+        return f'{sign}{_ua_grouped(int(whole))},{frac}'
 
     if mode == 'compact':
         if abs(amount) < 1:

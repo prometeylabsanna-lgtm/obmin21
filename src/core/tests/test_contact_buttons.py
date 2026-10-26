@@ -224,5 +224,5 @@ class ContactButtonsTests(TestCase):
         self.assertIn('[data-calc-amount]', script)
         self.assertNotIn('/htmx/zayavka/', booking)
         self.assertNotIn('openModal', booking)
-        self.assertIn("{% static 'js/calc.js' %}?v=16", base)
+        self.assertIn("{% static 'js/calc.js' %}?v=18", base)
         self.assertTrue(reverse('leads:request_modal'))

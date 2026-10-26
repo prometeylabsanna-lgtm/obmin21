@@ -1,10 +1,9 @@
 .contact-modal {
   width: 100%;
-  max-height: calc(100vh - calc(32px * var(--scale)) - var(--safe-top) - var(--safe-bottom));
-  max-height: calc(100dvh - calc(32px * var(--scale)) - var(--safe-top) - var(--safe-bottom));
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  max-height: 100dvh;
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - calc(16px * var(--scale)));
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .contact-modal .modal__title {
@@ -35,8 +34,8 @@
   align-items: center;
   gap: calc(16px * var(--scale));
   width: 100%;
-  min-height: calc(76px * var(--scale));
-  padding: calc(16px * var(--scale)) calc(18px * var(--scale));
+  min-height: calc(72px * var(--scale));
+  padding: calc(14px * var(--scale)) calc(16px * var(--scale));
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-bg);
@@ -184,10 +183,52 @@
 
 @supports (-webkit-touch-callout: none) {
   .contact-modal {
-    padding-bottom: calc(calc(24px * var(--scale)) + var(--safe-bottom));
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - calc(16px * var(--scale)));
+    padding-bottom: calc(calc(16px * var(--scale)) + var(--safe-bottom));
   }
 
   .contact-card {
-    min-height: var(--touch-min);
+    min-height: calc(64px * var(--scale));
+  }
+}
+
+@media (max-height: 800px) {
+  .contact-modal {
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
+    padding: calc(14px * var(--scale)) calc(14px * var(--scale)) calc(12px * var(--scale));
+    overflow: hidden;
+  }
+
+  .contact-modal .modal__title {
+    margin-top: 0;
+    padding-right: calc(36px * var(--scale));
+    font-size: calc(22px * var(--scale));
+  }
+
+  .contact-modal .modal__close {
+    width: calc(32px * var(--scale));
+    height: calc(32px * var(--scale));
+    top: calc(8px * var(--scale));
+    right: max(calc(8px * var(--scale)), var(--safe-right));
+  }
+
+  .contact-modal__list {
+    margin-top: calc(12px * var(--scale));
+    gap: calc(8px * var(--scale));
+  }
+
+  .contact-card {
+    min-height: calc(64px * var(--scale));
+    padding: calc(10px * var(--scale)) calc(12px * var(--scale));
+    gap: calc(12px * var(--scale));
+  }
+
+  .contact-card__icon {
+    width: calc(40px * var(--scale));
+    height: calc(40px * var(--scale));
+  }
+
+  .contact-card__title {
+    font-size: calc(16px * var(--scale));
   }
 }

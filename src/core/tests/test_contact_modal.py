@@ -109,7 +109,7 @@ class ContactModalTests(TestCase):
             html.index('contact-card--telegram'),
         )
         base = (settings.BASE_DIR / 'templates/base.html').read_text(encoding='utf-8')
-        self.assertIn("{% static 'css/components/contact-modal.css' %}?v=3", base)
+        self.assertIn("{% static 'css/components/contact-modal.css' %}?v=4", base)
 
     def test_telegram_card_has_gold_border_modifier(self):
         self._settings(_PHONE, _TELEGRAM)
@@ -178,3 +178,16 @@ class ContactModalTests(TestCase):
         html = self.client.get(reverse('core:home')).content.decode()
         self.assertIn(reverse('leads:contact_modal'), html)
         self.assertNotIn(reverse('leads:request_modal'), html)
+
+    def test_contact_modal_and_home_have_links_without_lead_form(self):
+        self._settings(_PHONE, _TELEGRAM)
+        modal = self._html()
+        home = self.client.get(reverse('core:home')).content.decode()
+        self.assertNotIn('<form', modal.lower())
+        for label, html in (('modal', modal), ('home', home)):
+            lowered = html.lower()
+            self.assertNotIn('name="phone"', html, label)
+            self.assertNotIn('timer', lowered, label)
+            self.assertNotIn('countdown', lowered, label)
+            self.assertIn('tel:', html, label)
+            self.assertIn('t.me', lowered, label)

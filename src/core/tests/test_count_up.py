@@ -11,7 +11,7 @@ from src.core.models import SiteSettings
 
 _ENV = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS')
 _MODULE = re.compile(
-    r'<script type="module" src="[^"]*js/modules/count-up\.js\?v=1"></script>',
+    r'<script type="module" src="[^"]*js/modules/count-up\.js\?v=2"></script>',
 )
 _NUM = re.compile(
     r'<div class="stats-section__num"([^>]*)>(.*?)</div>',

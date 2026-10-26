@@ -78,9 +78,12 @@ def _public_css():
 class PublicScaleTests(SimpleTestCase):
     def test_scale_token_and_no_zoom_or_scale_function(self):
         variables = (_CSS / 'variables.css').read_text(encoding='utf-8')
-        self.assertIn('--scale: 0.9;', variables)
-        self.assertIn('--scale: 1.125;', variables)
-        self.assertIn('--header-h: calc(72px * var(--scale));', variables)
+        self.assertIn('--scale: 1;', variables)
+        self.assertNotIn('--scale: 0.85;', variables)
+        self.assertNotIn('--scale: 1.05;', variables)
+        self.assertIn('--header-h: calc(86px * var(--scale));', variables)
+        self.assertIn('--header-h: calc(88px * var(--scale));', variables)
+        self.assertIn('--container-max: calc(1440px * var(--scale));', variables)
         self.assertIn('--border-w: 1px;', variables)
         self.assertIn('env(safe-area-inset-bottom, 0px)', variables)
         self.assertRegex(variables, r'@media \(min-width: 768px\)')

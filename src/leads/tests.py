@@ -17,6 +17,16 @@ class FormatRateTests(TestCase):
         self.assertEqual(format_rate(Decimal('0.11'), 'compact'), '0.1100')
         self.assertNotEqual(format_rate(Decimal('0.11'), 'compact'), '0,00')
 
+    def test_ua_shows_two_decimals_and_comma(self):
+        self.assertEqual(format_rate(Decimal('41.2000'), 'ua'), '41,20')
+        self.assertEqual(format_rate(Decimal('41.2'), 'ua'), '41,20')
+        self.assertEqual(format_rate('41.205', 'ua'), '41,21')
+        self.assertEqual(format_rate(Decimal('2606151'), 'ua'), '2 606 151,00')
+        self.assertEqual(format_rate(Decimal('-1.5'), 'ua'), '-1,50')
+        self.assertEqual(format_rate(Decimal('0.11'), 'ua'), '0,11')
+        self.assertEqual(format_rate('', 'ua'), '')
+        self.assertEqual(format_rate('ні', 'ua'), 'ні')
+
 
 class QuoteSelectorTests(TestCase):
     def setUp(self):

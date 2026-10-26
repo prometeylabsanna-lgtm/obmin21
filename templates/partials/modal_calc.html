@@ -1,6 +1,5 @@
 <div class="modal-backdrop">
   <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="calc-title" data-qa="modal-calc">
-{% load content_format %}
     <button type="button" class="modal__close" data-close-modal aria-label="Закрити">×</button>
     <div class="modal__step">Калькулятор</div>
     <h2 class="modal__title" id="calc-title">Розрахуйте <span class="accent">обмін</span></h2>
@@ -14,8 +13,8 @@
         <button type="button"
                 class="btn btn--ghost btn--sm calc-codes__btn{% if forloop.first %} is-active{% endif %}"
                 data-calc-code="{{ row.pair.code }}"
-                data-buy="{{ row.quote.buy|format_rate:"auto" }}"
-                data-sell="{{ row.quote.sell|format_rate:"auto" }}"
+                data-buy="{{ row.quote.buy }}"
+                data-sell="{{ row.quote.sell }}"
                 data-pair-id="{{ row.pair.pk }}">{{ row.pair.code }}</button>
         {% endfor %}
       </div>

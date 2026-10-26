@@ -7,7 +7,7 @@ from django.test import SimpleTestCase
 _ROOT = Path(settings.BASE_DIR)
 _CSS = _ROOT / 'src/core/static/css/components/home.css'
 _BASE = _ROOT / 'templates/base.html'
-_CSS_VERSION = 38
+_CSS_VERSION = 40
 _LINK = "{% static 'css/components/home.css' %}?v="
 
 

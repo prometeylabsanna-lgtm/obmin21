@@ -1,5 +1,5 @@
 .adv-hero {
-  padding: calc(8px * var(--scale)) 0 0;
+  padding: 0;
 }
 
 .adv-hero__banner {
@@ -369,12 +369,12 @@
 }
 
 .stats-section--adv {
-  margin-top: calc(96px * var(--scale));
+  margin-top: calc(64px * var(--scale));
 }
 
 @media (min-width: 768px) {
-  .adv-hero {
-    padding: calc(24px * var(--scale)) 0 0;
+  .stats-section--adv {
+    margin-top: calc(96px * var(--scale));
   }
 
   .adv-hero__banner {

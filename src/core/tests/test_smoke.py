@@ -66,6 +66,8 @@ class Obmin21SmokeTests(TestCase):
         resp = self.client.get(reverse('core:home'))
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'USD')
+        self.assertContains(resp, '>41,20<')
+        self.assertNotContains(resp, '>41.2000<')
 
     def test_set_city_changes_phone_and_branches(self):
         resp = self.client.post(reverse('network:set_city'), {'city': 'kyiv'})
@@ -90,7 +92,8 @@ class Obmin21SmokeTests(TestCase):
         })
         self.assertEqual(resp.status_code, 422)
         self.assertNotContains(resp, 'Заявку прийнято', status_code=422)
-        self.assertContains(resp, 'Вкажіть коректний телефон', status_code=422)
+        self.assertNotContains(resp, 'name="phone"', status_code=422)
+        self.assertNotContains(resp, '<form', status_code=422)
         self.assertEqual(ExchangeRequest.objects.count(), before)
 
     def test_valid_request_creates_row(self):

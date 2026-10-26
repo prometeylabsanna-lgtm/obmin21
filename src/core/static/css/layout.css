@@ -1,5 +1,5 @@
 .section {
-  padding: calc(40px * var(--scale)) 0;
+  padding: calc(64px * var(--scale)) 0;
   scroll-margin-top: calc(var(--header-h) + var(--safe-top) + calc(8px * var(--scale)));
   max-width: 100%;
   min-width: 0;
@@ -12,9 +12,9 @@
 
 .section__title {
   font-family: var(--font-display);
-  font-size: clamp(calc(32px * var(--scale)), 5vw, calc(68px * var(--scale)));
+  font-size: clamp(calc(28px * var(--scale)), 4vw, calc(55px * var(--scale)));
   font-weight: var(--font-weight-bold);
-  line-height: 1.1;
+  line-height: 1.05;
   letter-spacing: calc(-0.5px * var(--scale));
   margin: 0;
   color: var(--color-heading);
@@ -65,14 +65,7 @@
 
 @media (min-width: 768px) {
   .section {
-    padding-top: calc(56px * var(--scale));
-    padding-bottom: calc(56px * var(--scale));
-  }
-}
-
-@media (min-width: 1025px) {
-  .section {
-    padding-top: calc(72px * var(--scale));
-    padding-bottom: calc(72px * var(--scale));
+    padding-top: calc(96px * var(--scale));
+    padding-bottom: calc(96px * var(--scale));
   }
 }

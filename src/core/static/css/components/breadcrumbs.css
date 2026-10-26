@@ -43,3 +43,9 @@
   color: #052145;
   font-weight: 400;
 }
+
+@media (min-width: 768px) {
+  .breadcrumbs {
+    padding-top: calc(24px * var(--scale));
+  }
+}

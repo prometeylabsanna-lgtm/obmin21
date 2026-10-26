@@ -122,7 +122,7 @@ class BookingModalCityTests(TestCase):
         self.assertIn("getAttribute('data-quotes-url')", script)
         self.assertIn("'board=retail&city=' + encodeURIComponent(slug)", script)
         self.assertIn('loadCityQuotes()', script)
-        self.assertIn("{% static 'js/booking-modal.js' %}?v=5", base)
+        self.assertIn("{% static 'js/booking-modal.js' %}?v=6", base)
 
     def test_exchange_only_keeps_visible_pairs(self):
         self._mode(True)

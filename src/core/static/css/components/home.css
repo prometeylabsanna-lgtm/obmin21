@@ -1493,6 +1493,12 @@
   }
 }
 
+@media (min-width: 1280px) {
+  .hero__content {
+    max-width: min(calc(680px * var(--scale)), max(calc(472px * var(--scale)), calc(100% - calc(700px * var(--scale)))));
+  }
+}
+
 @media (min-width: 1025px) {
   .calc-box {
     flex-wrap: nowrap;

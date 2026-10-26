@@ -16,6 +16,15 @@
     });
   }
 
+  function formatRateUa(value, decimals) {
+    var n = Number(value);
+    if (!isFinite(n)) return '0,00';
+    return n.toLocaleString('uk-UA', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+  }
+
   function esc(value) {
     return String(value || '').replace(/[&<>"']/g, function (ch) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
@@ -75,8 +84,7 @@
     var code = btn.getAttribute('data-code') || btn.getAttribute('data-calc-code') || '';
     resultEl.textContent = formatUa(amount * buy, 2);
     if (labelEl) {
-      var rateDecimals = buy < 1 ? 4 : 2;
-      labelEl.textContent = 'За поточним курсом 1 ' + code + ' = ' + formatUa(buy, rateDecimals) + ' UAH';
+      labelEl.textContent = 'За поточним курсом 1 ' + code + ' = ' + formatRateUa(buy, 2) + ' UAH';
     }
   }
 
@@ -154,7 +162,7 @@
       if (labelEl) {
         labelEl.textContent =
           'За поточним курсом 1 ' + fromCode + ' = ' +
-          formatUa(rate, rate < 1 ? 4 : 2) + ' ' + toCode;
+          formatRateUa(rate, 2) + ' ' + toCode;
       }
     }
 

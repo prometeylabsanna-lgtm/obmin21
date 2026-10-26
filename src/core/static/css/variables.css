@@ -1,6 +1,6 @@
 :root {
-  /* 0.9; від 1200px — 1.125 (колишні 1.25 × 0.9). */
-  --scale: 0.9;
+  /* 1 = px макета (Obmin21.dc.html). Множник лишається в calc(), щоб розміри можна було підкрутити одним токеном. */
+  --scale: 1;
   --color-bg: #ffffff;
   --color-text: #052145;
   --color-text-muted: #b3b4b6;
@@ -45,7 +45,7 @@
   --radius-pill: calc(20px * var(--scale));
 
   --border-w: 1px;
-  --header-h: calc(72px * var(--scale));
+  --header-h: calc(86px * var(--scale));
   --container-max: calc(1440px * var(--scale));
   --container-pad: calc(16px * var(--scale));
   --touch-min: calc(44px * var(--scale));
@@ -71,18 +71,12 @@
 @media (min-width: 768px) {
   :root {
     --container-pad: calc(30px * var(--scale));
-    --header-h: calc(78px * var(--scale));
+    --header-h: calc(88px * var(--scale));
   }
 }
 
 @media (min-width: 1025px) {
   :root {
     --container-pad: calc(30px * var(--scale));
-  }
-}
-
-@media (min-width: 1200px) {
-  :root {
-    --scale: 1.125;
   }
 }

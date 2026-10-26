@@ -1309,8 +1309,8 @@ class ExchangeOnlyNavBannerTests(TestCase):
         self.assertIn('detail.bannerTitle', script)
         self.assertIn('detail.bannerText', script)
         self.assertNotIn('.style', script)
-        self.assertIn("{% static 'js/nav.js' %}?v=17", base)
-        self.assertNotIn("{% static 'js/nav.js' %}?v=16", base)
+        self.assertIn("{% static 'js/nav.js' %}?v=18", base)
+        self.assertNotIn("{% static 'js/nav.js' %}?v=17", base)
 
 
 class ExchangeOnlyEmptyStatsTests(ExchangeTemplateCase):
