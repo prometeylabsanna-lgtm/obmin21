@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-{% if disallow_default_admin %}Disallow: /admin/
-{% endif %}Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml

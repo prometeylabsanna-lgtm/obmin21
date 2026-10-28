@@ -80,8 +80,10 @@ class CustomAdminUrlTests(TestCase):
                 self.assertEqual(self.client.get('/admin/login/').status_code, 404)
                 robots = self.client.get(reverse('core:robots'))
                 body = robots.content.decode()
+                self.assertEqual(login.get('X-Robots-Tag'), 'noindex, nofollow')
                 self.assertNotIn('test-secret-panel', body)
-                self.assertNotIn('Disallow: /admin/', body)
+                self.assertIn('Disallow: /admin/', body)
+                self.assertNotIn('Disallow: /test-secret-panel/', body)
         finally:
             _reload_urls()
 

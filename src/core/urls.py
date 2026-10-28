@@ -11,5 +11,6 @@ urlpatterns = [
     path('partials/home-branch/', views.home_branch, name='home_branch'),
     path('partials/quotes.json', views.quotes_json, name='quotes_json'),
     path('robots.txt', views.robots_txt, name='robots'),
+    path('llms.txt', views.llms_txt, name='llms'),
     path('sitemap.xml', views.safe_sitemap, name='sitemap'),
 ]

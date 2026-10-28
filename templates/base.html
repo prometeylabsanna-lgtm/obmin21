@@ -1,4 +1,4 @@
-{% load static exchange_mode %}
+{% load static exchange_mode seo %}
 <!DOCTYPE html>
 <html lang="uk">
 
@@ -8,9 +8,7 @@
   <meta name="csrf-token" content="{{ csrf_token }}">
   <title>{% block title %}{% is_exchange_only as eo %}{% if eo %}{% if page %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{% endif %}{{ site_settings.site_name }}{% else %}{% if page_title %}{{ page_title }} · {% endif %}{{ site_settings.site_name }}{% endif %}{% endblock %}
   </title>
-  {% if page_description %}
-  <meta name="description" content="{{ page_description }}">{% endif %}
-  <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+  {% seo_head %}
 
   <link rel="icon" href="{% static 'images/favicon.ico' %}?v=10" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}?v=10">

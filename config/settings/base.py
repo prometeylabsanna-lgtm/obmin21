@@ -11,6 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 ADMIN_URL = normalize(config('ADMIN_URL', default='admin/'))
+_SITE_URL = config('SITE_URL', default='https://obmin21.com').strip().rstrip('/')
+SITE_URL = _SITE_URL if _SITE_URL.startswith('https://') else 'https://obmin21.com'
 
 DEBUG = False
 
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'src.core.middleware.AdminRobotsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

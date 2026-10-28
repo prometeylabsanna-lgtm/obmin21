@@ -101,14 +101,4 @@
   </div>
 </section>
 {% endif %}
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "{{ post_title|escapejs }}",
-  "datePublished": "{{ post.published_at|date:'c' }}",
-  "dateModified": "{{ post.updated_at|date:'c' }}"
-}
-</script>
 {% endblock %}

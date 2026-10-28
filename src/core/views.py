@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.utils.html import strip_tags
@@ -10,6 +9,7 @@ import logging
 
 from src.core.exchange_mode import is_exchange_only, mode_meta, mode_text
 from src.core.responsive_images import hero_for_city
+from src.core.seo import llms_body, robots_body
 from src.core.sitemaps import sitemaps
 from src.core.theme import theme_css_cached
 
@@ -193,13 +193,14 @@ def quotes_json(request):
     return JsonResponse({'quotes': payload})
 
 
+@require_GET
 def robots_txt(request):
-    return render(
-        request,
-        'core/robots.txt',
-        {'disallow_default_admin': settings.ADMIN_URL == 'admin/'},
-        content_type='text/plain',
-    )
+    return HttpResponse(robots_body(), content_type='text/plain; charset=utf-8')
+
+
+@require_GET
+def llms_txt(request):
+    return HttpResponse(llms_body(request), content_type='text/plain; charset=utf-8')
 
 
 @require_GET
