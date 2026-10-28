@@ -25,9 +25,3 @@ def get_bot() -> TeleBot:
             _bot = instance
             logger.info('Telegram bot handlers registered')
         return _bot
-
-
-def reset_bot() -> None:
-    global _bot
-    with _lock:
-        _bot = None

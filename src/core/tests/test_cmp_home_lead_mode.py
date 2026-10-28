@@ -32,7 +32,6 @@ _ENV = 'EXCHANGE_ONLY_MODE'
 _LI = re.compile(
     r'<li><span class="k">([^<]*)</span><strong>([^<]*)</strong></li>'
 )
-# Модуля exchange_stopwords немає в цій гілці (eo/cms).
 # Список скопійовано з:
 # /Users/olegbonislavskyi/Sites/Obmin21-wt-filter/src/core/exchange_stopwords.py
 _STOPWORDS_SOURCE = Path(
