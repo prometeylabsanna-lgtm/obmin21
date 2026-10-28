@@ -1,7 +1,8 @@
-"""Спільна опора EO-тестів: копія реальної бази і публічні адреси.
+"""Спільна опора EO-тестів: копія локальної бази і публічні адреси.
 
 Оригінальний db.sqlite3 тести не відкривають на запис. HTTP-тести ходять
-у тимчасову копію, перевірка міграцій — окремим зʼєднанням mode=ro.
+у тимчасову копію, лише якщо файл є на диску. Якщо файлу немає — модуль
+пропускається. Перевірка міграцій іде тестовим зʼєднанням Django.
 """
 
 import os
@@ -9,6 +10,7 @@ import re
 import sqlite3
 import tempfile
 from pathlib import Path
+from unittest import SkipTest
 from urllib.parse import urljoin, urlparse
 from xml.etree import ElementTree
 
@@ -63,17 +65,25 @@ def real_db_path():
     return (Path(settings.BASE_DIR) / 'db.sqlite3').resolve()
 
 
-def real_db_uri():
-    return f'file:{real_db_path().as_posix()}?mode=ro'
+def is_committed_sqlite(name):
+    """Чи вказує зʼєднання саме на локальний db.sqlite3, а не на тестову базу."""
+    text = str(name or '')
+    if not text or text == ':memory:' or 'mode=memory' in text or 'obmin21_eo_' in text:
+        return False
+    path = text[5:].split('?', 1)[0] if text.startswith('file:') else text
+    try:
+        return Path(path).resolve() == real_db_path()
+    except OSError:
+        return False
 
 
 def copy_real_db():
-    """Підміняє тестову sqlite копією реальної бази. Оригінал лише читається."""
+    """Підміняє тестову sqlite копією локальної бази. Оригінал лише читається."""
     if _STATE.get('active'):
         return
     source = real_db_path()
     if not source.is_file():
-        raise RuntimeError(f'Немає файлу бази {source}')
+        raise SkipTest('Немає локального db.sqlite3; тести не залежать від закоміченої бази')
     handle, raw_name = tempfile.mkstemp(prefix='obmin21_eo_', suffix='.sqlite3')
     os.close(handle)
     dest = Path(raw_name)

@@ -1,5 +1,7 @@
 """Форма FAQ в адмінці підключає TinyMCE, а файловий браузер і flatpages — ні."""
 
+from unittest import SkipTest
+
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles import finders
 from django.core.management import call_command
@@ -7,11 +9,12 @@ from django.db import connection
 from django.test import TestCase
 from django.urls import NoReverseMatch, reverse
 
+from src.core.tests.eo_realdb import is_committed_sqlite
+
 
 def setUpModule():
-    name = str(connection.settings_dict.get('NAME', ''))
-    if name.endswith('db.sqlite3') and 'obmin21_eo_' not in name:
-        return
+    if is_committed_sqlite(connection.settings_dict.get('NAME')):
+        raise SkipTest('Тест TinyMCE не читає db.sqlite3')
     tables = set(connection.introspection.table_names())
     if 'auth_user' not in tables:
         call_command('migrate', verbosity=0, interactive=False)
