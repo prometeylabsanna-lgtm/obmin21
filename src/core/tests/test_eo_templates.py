@@ -115,12 +115,12 @@ class ExchangeOnlyChromeTemplateTests(ExchangeTemplateCase):
     def _services_href(self, slug):
         return f'{reverse("content:services")}#svc-{slug}'
 
-    def test_mode_off_renders_footer_services_and_bitcoin_icon(self):
+    def test_mode_off_renders_footer_services_without_bitcoin_icon(self):
         self._set_mode(False)
         response = self._page()
         self.assertEqual(response.status_code, 200)
         html = response.content.decode()
-        self.assertEqual(html.count('bitcoin.webp'), 5)
+        self.assertEqual(html.count('bitcoin.webp'), 0)
         for marker in _HEADER_NAV:
             self.assertContains(response, marker)
         for title, slug, _safe, _order in _FOOTER_SERVICES:
@@ -133,13 +133,22 @@ class ExchangeOnlyChromeTemplateTests(ExchangeTemplateCase):
         for token in _FORBIDDEN:
             self.assertNotIn(token, header)
 
+    def test_mode_off_mobile_menu_nav_has_no_img(self):
+        self._set_mode(False)
+        response = self._page()
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        start = html.index('mobile-menu__nav')
+        menu = html[start:html.index('</nav>', start)]
+        self.assertNotIn('<img', menu)
+
     def test_mode_off_without_services_has_no_hardcoded_footer_list(self):
         Service.objects.all().delete()
         self._set_mode(False)
         response = self._page()
         self.assertEqual(response.status_code, 200)
         html = response.content.decode()
-        self.assertEqual(html.count('bitcoin.webp'), 5)
+        self.assertEqual(html.count('bitcoin.webp'), 0)
         for token in ('КРИПТОВАЛЮТА', 'ЗОЛОТО', 'ПЕРЕКАЗИ', 'ОПТОВИЙ', 'ЗНОШЕНИХ'):
             self.assertNotContains(response, token)
         self.assertNotContains(response, '#svc-1')
@@ -556,7 +565,7 @@ class ExchangeOnlyServicesCityTemplateTests(ExchangeTemplateCase):
         self.assertIn('Міжнародні перекази і золото', main)
         self.assertIn('Курс долара у касі', main)
         self.assertNotIn(_INTRO_MODE, html)
-        self.assertEqual(html.count('bitcoin.webp'), 5)
+        self.assertEqual(html.count('bitcoin.webp'), 0)
         city = self._city()
         self.assertEqual(city.status_code, 200)
         city_html = city.content.decode()

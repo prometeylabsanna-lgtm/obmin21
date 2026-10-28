@@ -1,5 +1,4 @@
-{% load exchange_mode responsive %}
-{% is_exchange_only as eo %}
+{% load responsive %}
 <div
   class="mobile-menu"
   id="mobile-nav"
@@ -25,11 +24,11 @@
   </div>
 
   <nav class="mobile-menu__nav" aria-label="Мобільне меню">
-    <a data-mi href="{% url 'content:services' %}">Послуги{% if not eo %}<img src="{% static_img 'images/bitcoin.png' %}" alt="" {% img_wh 'images/bitcoin.png' %} loading="lazy" decoding="async">{% endif %}</a>
-    <a data-mi href="{% url 'content:advantages' %}">Переваги{% if not eo %}<img src="{% static_img 'images/bitcoin.png' %}" alt="" {% img_wh 'images/bitcoin.png' %} loading="lazy" decoding="async">{% endif %}</a>
-    <a data-mi href="{% url 'content:faq' %}">FAQ{% if not eo %}<img src="{% static_img 'images/bitcoin.png' %}" alt="" {% img_wh 'images/bitcoin.png' %} loading="lazy" decoding="async">{% endif %}</a>
-    <a data-mi href="{% url 'blog:post_list' %}">Блог{% if not eo %}<img src="{% static_img 'images/bitcoin.png' %}" alt="" {% img_wh 'images/bitcoin.png' %} loading="lazy" decoding="async">{% endif %}</a>
-    <a data-mi href="{% url 'content:contacts' %}">Контакти{% if not eo %}<img src="{% static_img 'images/bitcoin.png' %}" alt="" {% img_wh 'images/bitcoin.png' %} loading="lazy" decoding="async">{% endif %}</a>
+    <a data-mi href="{% url 'content:services' %}">Послуги</a>
+    <a data-mi href="{% url 'content:advantages' %}">Переваги</a>
+    <a data-mi href="{% url 'content:faq' %}">FAQ</a>
+    <a data-mi href="{% url 'blog:post_list' %}">Блог</a>
+    <a data-mi href="{% url 'content:contacts' %}">Контакти</a>
   </nav>
 
   <div class="mobile-menu__bottom">

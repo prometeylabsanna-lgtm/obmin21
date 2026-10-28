@@ -230,23 +230,8 @@
   transition: color 0.25s ease;
 }
 
-.mobile-menu__nav a img {
-  flex: none;
-  width: calc(40px * var(--scale));
-  height: calc(40px * var(--scale));
-  object-fit: contain;
-  filter: grayscale(1) brightness(1.15) contrast(0.9);
-  opacity: 0.75;
-  transition: filter 0.3s ease, opacity 0.3s ease;
-}
-
 .mobile-menu__nav a:hover {
   color: var(--color-accent);
-}
-
-.mobile-menu__nav a:hover img {
-  filter: none;
-  opacity: 1;
 }
 
 .mobile-menu__bottom {
