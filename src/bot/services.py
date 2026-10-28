@@ -171,7 +171,8 @@ def format_branches(city: City) -> str:
     for branch in branches:
         phone = branch.phone or city.phone
         extra = f'\n{phone}' if phone else ''
-        hours = f'\n{branch.hours}' if branch.hours else ''
+        hours_text = branch.hours_display
+        hours = f'\n{hours_text}' if hours_text else ''
         lines.append(f'• {branch.address}{hours}{extra}')
     return '\n'.join(lines)
 

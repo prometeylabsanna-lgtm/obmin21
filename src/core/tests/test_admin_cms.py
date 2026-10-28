@@ -429,7 +429,10 @@ class AdminPanelTests(TestCase):
         )
         self.assertContains(contacts, 'data-inline-type="stacked"')
         self.assertContains(contacts, 'name="branches-0-address"')
-        self.assertContains(contacts, 'Графік')
+        self.assertContains(
+            contacts,
+            'Старий текст графіка (не редагується; графік задається нижче по днях)',
+        )
         self.assertContains(contacts, 'Адреса')
         branch_admin = self.client.get(
             reverse('admin:network_branch_change', args=[branch.pk]),

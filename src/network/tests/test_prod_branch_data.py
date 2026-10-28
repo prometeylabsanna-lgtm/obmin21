@@ -2,9 +2,10 @@ import importlib
 from datetime import time
 
 from django.apps import apps
+from django.db import migrations
 from django.test import SimpleTestCase, TestCase
 
-from src.network.hours import parse_hours
+from src.network.hours import format_hours, parse_hours
 from src.network.models import Branch, BranchOpeningHours, City
 
 _coords = importlib.import_module(
@@ -13,12 +14,11 @@ _coords = importlib.import_module(
 _hours = importlib.import_module(
     'src.network.migrations.0012_fill_branch_opening_hours',
 )
-apply_branch_coordinates = _coords.apply_branch_coordinates
-COORDINATES = _coords.COORDINATES
 fill_branch_opening_hours = _hours.fill_branch_opening_hours
 
 WEEK_HOURS = 'Пн–Нд, 8:00–21:00'
 SPLIT_HOURS = 'Пн–Пт 09:00–19:00, Сб 10:00–16:00'
+STUB_ADDRESS = 'вул. Хрещатик, 1, Київ'
 
 PROD_BRANCHES = [
     ('kyiv', 'Київ', 'вул. Хрещатик, 1, Київ', 'Пн–Нд, 8:00–21:00'),
@@ -59,27 +59,6 @@ PROD_BRANCHES = [
     ('cherkasy', 'Черкаси', 'бул. Шевченка, 200, Черкаси', 'Пн–Нд, 8:00–21:00'),
 ]
 
-FILLED_SLUGS = frozenset({
-    'kharkiv',
-    'kyiv',
-    'odesa',
-    'dnipro',
-    'cherkasy',
-    'lviv',
-    'zaporizhzhia',
-    'mykolaiv',
-    'khmelnytskyi',
-    'rivne',
-})
-NULL_SLUGS = frozenset({
-    'vinnytsia',
-    'poltava',
-    'sumy',
-    'ivano-frankivsk',
-    'kryvyi-rih',
-    'kropyvnytskyi',
-})
-
 
 def _seed_prod_branches():
     branches = {}
@@ -114,56 +93,38 @@ class ProdHoursParseTests(SimpleTestCase):
 
 
 class ProdBranchDataTests(TestCase):
-    def test_coordinates_and_opening_hours_from_prod_rows(self):
+    def test_coordinates_noop_and_opening_hours_from_prod_rows(self):
         self.assertEqual(len(PROD_BRANCHES), 16)
-        self.assertEqual(FILLED_SLUGS | NULL_SLUGS, {row[0] for row in PROD_BRANCHES})
-        self.assertTrue(FILLED_SLUGS.isdisjoint(NULL_SLUGS))
         self.assertEqual(
             {row[3] for row in PROD_BRANCHES},
             {WEEK_HOURS, SPLIT_HOURS},
         )
 
         branches = _seed_prod_branches()
+        before = {}
         for slug, branch in branches.items():
             branch.refresh_from_db()
+            before[slug] = (branch.address, branch.hours, branch.lat, branch.lng)
             self.assertIsNone(branch.lat, slug)
             self.assertIsNone(branch.lng, slug)
+            if branch.address == STUB_ADDRESS and slug != 'kyiv':
+                self.assertFalse(branch.has_real_address, slug)
+            else:
+                self.assertTrue(branch.has_real_address, slug)
 
-        apply_branch_coordinates(apps, None)
+        _coords.Migration.operations[0].code(apps, None)
+        _coords.Migration.operations[0].code(apps, None)
+        migrations.RunPython.noop(apps, None)
 
-        filled = set()
         for slug, branch in branches.items():
             branch.refresh_from_db()
-            key = (branch.city.slug, branch.address)
-            if slug in FILLED_SLUGS:
-                lat, lng = COORDINATES[key]
-                self.assertEqual(branch.lat, lat, slug)
-                self.assertEqual(branch.lng, lng, slug)
-                filled.add(slug)
-            else:
-                self.assertIn(slug, NULL_SLUGS)
-                self.assertNotIn(key, COORDINATES)
-                self.assertIsNone(branch.lat, slug)
-                self.assertIsNone(branch.lng, slug)
-        self.assertEqual(filled, FILLED_SLUGS)
-        self.assertEqual(
-            set(
-                Branch.objects.filter(
-                    lat__isnull=False,
-                    lng__isnull=False,
-                ).values_list('city__slug', flat=True),
-            ),
-            FILLED_SLUGS,
-        )
-        self.assertEqual(
-            set(
-                Branch.objects.filter(
-                    lat__isnull=True,
-                    lng__isnull=True,
-                ).values_list('city__slug', flat=True),
-            ),
-            NULL_SLUGS,
-        )
+            self.assertEqual(
+                (branch.address, branch.hours, branch.lat, branch.lng),
+                before[slug],
+                slug,
+            )
+            self.assertIsNone(branch.lat, slug)
+            self.assertIsNone(branch.lng, slug)
 
         fill_branch_opening_hours(apps, None)
 
@@ -174,6 +135,8 @@ class ProdBranchDataTests(TestCase):
                 ).order_by('day_of_week'),
             )
             self.assertEqual(len(rows), 7, slug)
+            self.assertEqual(format_hours(rows), hours, slug)
+            self.assertEqual(branches[slug].hours_display, hours, slug)
             if hours == 'Пн–Нд, 8:00–21:00':
                 for row in rows:
                     self.assertFalse(row.is_closed, slug)

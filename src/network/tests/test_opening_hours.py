@@ -6,11 +6,14 @@ from django.db import migrations
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import captured_stdout
 
+from src.network import hours as hours_module
 from src.network.hours import (
     SCHEMA_DAYS,
+    format_hours,
     open_slots,
     opening_hours_specification,
     parse_hours,
+    sync_branch_hours_text,
 )
 from src.network.models import Branch, BranchOpeningHours, City
 
@@ -219,3 +222,92 @@ class FillOpeningHoursMigrationTests(TestCase):
                 (branch.hours, branch.phone, branch.address),
                 before[branch.pk],
             )
+
+
+def _rows_for(text):
+    slots = parse_hours(text)
+    by_day = {day: (opens, closes) for day, opens, closes in slots}
+    rows = []
+    for day in range(7):
+        if day in by_day:
+            opens, closes = by_day[day]
+            rows.append(_Row(day, opens, closes, False))
+        else:
+            rows.append(_Row(day, None, None, True))
+    return rows
+
+
+class FormatHoursTests(SimpleTestCase):
+    def test_round_trip_of_both_prod_texts(self):
+        for text in (
+            'Пн–Нд, 8:00–21:00',
+            'Пн–Пт 09:00–19:00, Сб 10:00–16:00',
+        ):
+            with self.subTest(text=text):
+                rows = _rows_for(text)
+                self.assertEqual(format_hours(rows), text)
+                open_only = [
+                    _Row(day, opens, closes)
+                    for day, opens, closes in parse_hours(text)
+                ]
+                self.assertEqual(format_hours(open_only), text)
+                self.assertEqual(parse_hours(format_hours(rows)), parse_hours(text))
+
+    def test_single_group_drops_open_zero_and_keeps_close(self):
+        self.assertEqual(
+            format_hours([_Row(0, time(8, 0), time(9, 5))]),
+            'Пн, 8:00–09:05',
+        )
+
+    def test_gap_keeps_groups_separate_and_pads_hours(self):
+        rows = [
+            _Row(0, time(8, 0), time(21, 0)),
+            _Row(2, time(8, 0), time(21, 0)),
+        ]
+        self.assertEqual(format_hours(rows), 'Пн 08:00–21:00, Ср 08:00–21:00')
+
+    def test_closed_and_empty_produce_blank(self):
+        self.assertEqual(format_hours([]), '')
+        self.assertEqual(format_hours(None), '')
+        self.assertEqual(format_hours([_Row(0, None, None, True)]), '')
+        self.assertIn('Пн–Нд, 8:00–21:00', hours_module.__doc__)
+        self.assertIn('Пн–Пт 09:00–19:00, Сб 10:00–16:00', hours_module.__doc__)
+
+
+class HoursDisplayTests(TestCase):
+    def test_rows_override_legacy_and_empty_falls_back(self):
+        city = City.objects.create(name='Львів', slug='lviv-display')
+        branch = Branch.objects.create(
+            city=city,
+            address='пл. Ринок, 1',
+            hours='старий текст',
+        )
+        self.assertEqual(branch.hours_display, 'старий текст')
+        for day in range(7):
+            BranchOpeningHours.objects.create(
+                branch=branch,
+                day_of_week=day,
+                opens=time(8, 0),
+                closes=time(21, 0),
+            )
+        self.assertEqual(branch.hours_display, 'Пн–Нд, 8:00–21:00')
+        self.assertEqual(branch.hours, 'старий текст')
+        self.assertTrue(sync_branch_hours_text(branch))
+        branch.refresh_from_db()
+        self.assertEqual(branch.hours, 'Пн–Нд, 8:00–21:00')
+        self.assertFalse(sync_branch_hours_text(branch))
+
+        closed = Branch.objects.create(
+            city=city,
+            address='пл. Ринок, 2',
+            hours='Пн–Нд, 8:00–21:00',
+        )
+        for day in range(7):
+            BranchOpeningHours.objects.create(
+                branch=closed,
+                day_of_week=day,
+                is_closed=True,
+            )
+        self.assertEqual(closed.hours_display, '')
+        BranchOpeningHours.objects.filter(branch=branch).delete()
+        self.assertEqual(branch.hours_display, 'Пн–Нд, 8:00–21:00')

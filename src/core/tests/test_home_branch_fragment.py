@@ -80,7 +80,7 @@ class HomeBranchFragmentTests(TestCase):
         text = unescape(html)
         self.assertIn(branch.address, text)
         self.assertIn(branch.phone, text)
-        self.assertIn(branch.hours, text)
+        self.assertIn(branch.hours_display, text)
         iframe = re.search(r'<iframe\b([^>]*)>', text, re.DOTALL)
         self.assertIsNotNone(iframe)
         src = re.search(r'\bsrc="([^"]*)"', iframe.group(1))
@@ -101,7 +101,7 @@ class HomeBranchFragmentTests(TestCase):
         text = unescape(html)
         self.assertNotIn(branch.address, text)
         self.assertNotIn(branch.phone, text)
-        self.assertNotIn(branch.hours, text)
+        self.assertNotIn(branch.hours_display, text)
         self.assertNotIn(branch.map_embed_src(), text)
         self.assertNotIn(branch.map_route_url(), text)
 

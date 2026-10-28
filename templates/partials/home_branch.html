@@ -4,10 +4,10 @@
   <div class="map-section__info">
     <h2 class="map-section__title">{{ page.map_title }}<br><span class="u-accent">{{ page.map_title_accent }}</span></h2>
     <div class="map-section__details">
-      {% if branch.hours %}
+      {% if branch.hours_display %}
       <div>
         <div class="map-section__label">{{ page.map_hours_label }}</div>
-        <div>{{ branch.hours }}</div>
+        <div>{{ branch.hours_display }}</div>
       </div>
       {% endif %}
       <div>

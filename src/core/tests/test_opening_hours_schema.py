@@ -87,7 +87,13 @@ class OpeningHoursSchemaTests(TestCase):
                     'closes': '21:00',
                 }])
                 from_rows = _department(html, structured.address)
-                self.assertEqual(from_rows['openingHours'], _SPLIT)
+                self.assertEqual(from_rows['openingHours'], structured.hours_display)
+                self.assertEqual(
+                    from_rows['openingHours'],
+                    'Пн 10:00–12:00, Нд 11:00–13:00',
+                )
+                self.assertEqual(structured.hours, _SPLIT)
+                self.assertEqual(from_text['openingHours'], parsed.hours_display)
                 self.assertEqual(from_rows['openingHoursSpecification'], [
                     {
                         '@type': 'OpeningHoursSpecification',

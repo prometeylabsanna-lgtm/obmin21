@@ -1,10 +1,10 @@
 from urllib.parse import quote_plus, urlparse
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
 from src.core.exchange_fields import mode_char
-from src.network.hours import WEEKDAYS
+from src.network.hours import WEEKDAYS, format_hours
 
 MAP_EMBED_HELP = (
     'Google Maps → Поділитися → Вбудувати карту → '
@@ -25,6 +25,55 @@ def _google_embed_src(query):
 
 def _unsafe_map_embed_chars(value):
     return any(ch.isspace() or ord(ch) < 32 or ord(ch) == 127 for ch in value)
+
+
+STUB_ADDRESSES = (
+    'вул. Хрещатик, 1, Київ',
+)
+
+_DASHES = str.maketrans({
+    '\u2010': '-',
+    '\u2011': '-',
+    '\u2012': '-',
+    '\u2013': '-',
+    '\u2014': '-',
+    '\u2212': '-',
+    '\ufe58': '-',
+    '\ufe63': '-',
+    '\uff0d': '-',
+})
+_WIDE_SPACES = ('\u00a0', '\u202f', '\u2007', '\u2009', '\u200a')
+
+
+def normalize_address(value):
+    """Зводить пробіли й різні тире, щоб порівняти адресу із заглушкою."""
+    text = str(value or '').translate(_DASHES)
+    for char in _WIDE_SPACES:
+        text = text.replace(char, ' ')
+    return ' '.join(text.split())
+
+
+_STUB_NORMALIZED = frozenset(normalize_address(item) for item in STUB_ADDRESSES)
+
+
+def address_is_real(address, city_slug):
+    """False, якщо адреса порожня або це заглушка Хрещатика не в Києві."""
+    normalized = normalize_address(address)
+    if not normalized:
+        return False
+    if normalized in _STUB_NORMALIZED and city_slug != 'kyiv':
+        return False
+    return True
+
+
+def _city_slug(branch):
+    try:
+        city = branch.city
+    except ObjectDoesNotExist:
+        return None
+    if city is None:
+        return None
+    return getattr(city, 'slug', None)
 
 
 def validate_map_embed_url(value):
@@ -142,10 +191,26 @@ class Branch(models.Model):
         verbose_name='Місто',
     )
     address = models.CharField('Адреса', max_length=255)
-    hours = models.CharField('Графік', max_length=120, blank=True)
+    hours = models.CharField(
+        'Старий текст графіка (не редагується; графік задається нижче по днях)',
+        max_length=120,
+        blank=True,
+        help_text=(
+            'Старий текст графіка (не редагується; графік задається нижче по днях)'
+        ),
+    )
     phone = models.CharField('Телефон', max_length=32, blank=True)
     lat = models.DecimalField('Широта', max_digits=9, decimal_places=6, null=True, blank=True)
     lng = models.DecimalField('Довгота', max_digits=9, decimal_places=6, null=True, blank=True)
+    coords_manual = models.BooleanField(
+        'Координати введено вручну',
+        default=False,
+        help_text=(
+            'Вмикається, якщо у формі змінили широту або довготу. '
+            'Тоді зміна адреси не перезаписує координати. '
+            'Щоб знову визначати їх з адреси, очистіть обидва поля і збережіть.'
+        ),
+    )
     map_url = models.URLField('Посилання на карту', blank=True)
     map_embed_url = models.URLField(
         'URL вбудованої карти',
@@ -165,11 +230,30 @@ class Branch(models.Model):
     def __str__(self):
         return f'{self.city.name}: {self.address}'
 
+    @property
+    def has_real_address(self):
+        return address_is_real(self.address, _city_slug(self))
+
+    @property
+    def hours_display(self):
+        rows = self._opening_rows()
+        if rows:
+            return format_hours(rows)
+        return self.hours or ''
+
+    def _opening_rows(self):
+        if not self.pk:
+            return []
+        related = getattr(self, 'opening_hours', None)
+        if not hasattr(related, 'all'):
+            return []
+        return list(related.all())
+
     def map_embed_src(self):
         embed = (self.map_embed_url or '').strip()
         if embed:
             return embed
-        if self.lat is not None and self.lng is not None:
+        if self.lat is not None and self.lng is not None and self.has_real_address:
             query = f'{format(self.lat, "f")},{format(self.lng, "f")}'
             return _google_embed_src(query)
         return _google_embed_src(f'{self.address}, Ukraine')

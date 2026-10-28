@@ -4,6 +4,7 @@ from django.utils.html import format_html, format_html_join
 from unfold.admin import StackedInline, TabularInline
 
 from src.core.admin_mixins import ListUnfoldAdmin
+from src.network.geocoding import apply_admin_coordinates
 from src.network.models import Branch, City
 from src.rates.models import Quote
 from src.rates.services import ensure_city_quotes
@@ -12,6 +13,7 @@ from src.rates.services import ensure_city_quotes
 class BranchInline(StackedInline):
     model = Branch
     extra = 0
+    readonly_fields = ('hours', 'coords_manual')
     fields = (
         'address',
         'hours',
@@ -20,12 +22,33 @@ class BranchInline(StackedInline):
         'map_url',
         'lat',
         'lng',
+        'coords_manual',
         'is_active',
         'sort_order',
     )
     tab = True
     verbose_name = 'Відділення'
     verbose_name_plural = 'Відділення цього міста'
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+
+        class BoundFormSet(formset):
+            def __init__(self, *args, **kw):
+                super().__init__(*args, **kw)
+                self.request = request
+
+            def save_new(self, form, commit=True):
+                setattr(form.instance, self.fk.name, self.instance)
+                apply_admin_coordinates(self.request, form.instance, form)
+                return super().save_new(form, commit=commit)
+
+            def save_existing(self, form, instance, commit=True):
+                apply_admin_coordinates(self.request, instance, form)
+                return super().save_existing(form, instance, commit=commit)
+
+        BoundFormSet.__name__ = formset.__name__
+        return BoundFormSet
 
 
 class CityQuoteInline(TabularInline):

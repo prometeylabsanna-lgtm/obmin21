@@ -115,6 +115,47 @@ class BranchMapEmbedTests(TestCase):
             _embed('вул. Тестова, 5, Ukraine'),
         )
 
+    def test_coords_used_only_with_real_address(self):
+        other = City.objects.create(name='Полтава', slug='poltava-map')
+        stub = Branch(
+            city=other,
+            address='вул. Хрещатик, 1, Київ',
+            lat=Decimal('50.450100'),
+            lng=Decimal('30.523400'),
+        )
+        self.assertFalse(stub.has_real_address)
+        self.assertEqual(
+            stub.map_embed_src(),
+            _embed('вул. Хрещатик, 1, Київ, Ukraine'),
+        )
+        spaced = Branch(
+            city=other,
+            address='вул.\u00a0Хрещатик,  1, Київ',
+            lat=Decimal('50.450100'),
+            lng=Decimal('30.523400'),
+        )
+        self.assertFalse(spaced.has_real_address)
+        self.assertEqual(
+            spaced.map_embed_src(),
+            _embed('вул.\u00a0Хрещатик,  1, Київ, Ukraine'),
+        )
+        kyiv = City.objects.create(name='Київ', slug='kyiv')
+        capital = Branch(
+            city=kyiv,
+            address='вул. Хрещатик, 1, Київ',
+            lat=Decimal('50.450100'),
+            lng=Decimal('30.523400'),
+        )
+        self.assertTrue(capital.has_real_address)
+        self.assertEqual(capital.map_embed_src(), _embed('50.450100,30.523400'))
+        blank = self.branch(
+            address='   ',
+            lat=Decimal('50.450100'),
+            lng=Decimal('30.523400'),
+        )
+        self.assertFalse(blank.has_real_address)
+        self.assertEqual(blank.map_embed_src(), _embed('   , Ukraine'))
+
     def test_help_text_and_blank_field(self):
         field = Branch._meta.get_field('map_embed_url')
         self.assertTrue(field.blank)

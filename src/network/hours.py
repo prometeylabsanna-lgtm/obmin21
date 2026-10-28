@@ -1,4 +1,20 @@
-"""Розбір тексту графіка відділення і JSON-LD OpeningHoursSpecification."""
+"""Розбір тексту графіка відділення і JSON-LD OpeningHoursSpecification.
+
+format_hours збирає текст із рядків днів і має точно відтворювати
+«Пн–Нд, 8:00–21:00» та «Пн–Пт 09:00–19:00, Сб 10:00–16:00».
+
+Правило:
+- Беруться відкриті дні з часом відкриття і закриття, від понеділка.
+- Послідовні дні з однаковим часом — одна група. Однаковий час із розривом
+  (вихідний або інший інтервал між ними) — різні групи.
+- Один день пишеться «Пн», діапазон — «Пн–Пт» через тире «–».
+- Одна група: «{дні}, {відкриття}–{закриття}». Година відкриття без нуля
+  попереду (8:00, не 08:00). Закриття лишається HH:MM.
+  Приклад: «Пн–Нд, 8:00–21:00».
+- Кілька груп: «{дні} HH:MM–HH:MM», групи через «, », обидві години з нулем.
+  Приклад: «Пн–Пт 09:00–19:00, Сб 10:00–16:00».
+- Вихідний і день без часу в текст не входять.
+"""
 
 import re
 from datetime import time
@@ -114,6 +130,95 @@ def opening_hours_specification(slots):
             'closes': closes,
         })
     return spec
+
+
+def _day_label(start, end):
+    if start == end:
+        return WEEKDAYS[start][1]
+    return f'{WEEKDAYS[start][1]}\u2013{WEEKDAYS[end][1]}'
+
+
+def _loose_clock(value):
+    return f'{value.hour}:{value.minute:02d}'
+
+
+def _open_span(row):
+    if getattr(row, 'is_closed', False):
+        return None
+    opens = getattr(row, 'opens', None)
+    closes = getattr(row, 'closes', None)
+    if not hasattr(opens, 'hour') or not hasattr(closes, 'strftime'):
+        return None
+    try:
+        day = int(row.day_of_week)
+    except (TypeError, ValueError):
+        return None
+    if day < 0 or day > 6:
+        return None
+    return day, opens, closes
+
+
+def format_hours(rows):
+    """Текст графіка з рядків днів. Порожній рядок, якщо відкритих днів немає."""
+    if not rows:
+        return ''
+    chosen = {}
+    for row in rows:
+        span = _open_span(row)
+        if span is None:
+            continue
+        day, opens, closes = span
+        chosen.setdefault(day, (opens, closes))
+    ordered = [(day, *chosen[day]) for day in sorted(chosen)]
+    groups = []
+    for day, opens, closes in ordered:
+        if (
+            groups
+            and groups[-1][1] + 1 == day
+            and groups[-1][2] == opens
+            and groups[-1][3] == closes
+        ):
+            start, _end, group_opens, group_closes = groups[-1]
+            groups[-1] = (start, day, group_opens, group_closes)
+            continue
+        groups.append((day, day, opens, closes))
+    if not groups:
+        return ''
+    if len(groups) == 1:
+        start, end, opens, closes = groups[0]
+        return (
+            f'{_day_label(start, end)}, '
+            f'{_loose_clock(opens)}\u2013{_hhmm(closes)}'
+        )
+    parts = [
+        f'{_day_label(start, end)} {_hhmm(opens)}\u2013{_hhmm(closes)}'
+        for start, end, opens, closes in groups
+    ]
+    return ', '.join(parts)
+
+
+def sync_branch_hours_text(branch):
+    """Якщо є рядки днів, записує format_hours у текст Branch.hours."""
+    if not getattr(branch, 'pk', None):
+        return False
+    cache = getattr(branch, '_prefetched_objects_cache', None)
+    if isinstance(cache, dict):
+        cache.pop('opening_hours', None)
+    related = getattr(branch, 'opening_hours', None)
+    if not hasattr(related, 'all'):
+        return False
+    stored = list(related.all())
+    if not stored:
+        return False
+    text = format_hours(stored)
+    limit = branch._meta.get_field('hours').max_length
+    if limit and len(text) > limit:
+        return False
+    if (branch.hours or '') == text:
+        return False
+    branch.hours = text
+    branch.save(update_fields=['hours'])
+    return True
 
 
 def _structured_rows(branch):

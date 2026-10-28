@@ -82,7 +82,11 @@ def _department(branch, request, origin, business_id):
     if city is not None:
         locality = _kept(mode_text(city, 'name', request), request)
     street = _kept(getattr(branch, 'address', ''), request)
-    hours = _kept(getattr(branch, 'hours', ''), request)
+    if hasattr(branch, 'hours_display'):
+        hours_text = branch.hours_display
+    else:
+        hours_text = getattr(branch, 'hours', '')
+    hours = _kept(hours_text, request)
     phone = _kept(getattr(branch, 'phone', ''), request)
     address = {}
     if street:
@@ -101,7 +105,8 @@ def _department(branch, request, origin, business_id):
     if address:
         address['@type'] = 'PostalAddress'
         node['address'] = address
-    if latitude is not None and longitude is not None:
+    real_address = getattr(branch, 'has_real_address', False)
+    if latitude is not None and longitude is not None and real_address:
         node['geo'] = {
             '@type': 'GeoCoordinates',
             'latitude': latitude,
