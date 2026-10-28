@@ -80,7 +80,7 @@ class SeoHeadTests(TestCase):
         self.assertIn('Organization', types)
         self.assertIn('FinancialService', types)
         self.assertIn('LocalBusiness', types)
-        self.assertNotIn('FAQPage', types)
+        self.assertIn('FAQPage', types)
         self.assertNotIn('Product', types)
         self.assertNotIn('Offer', types)
 

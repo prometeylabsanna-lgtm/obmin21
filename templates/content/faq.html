@@ -4,7 +4,7 @@
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 {% mode_field page 'lead' as faq_lead_text %}{% mode_field page 'title' as faq_title_text %}
-{% include 'partials/shared_faq_section.html' with extra_class='faq-section--page' qa='faq-page' faq_kicker=page.kicker faq_title=faq_title_text faq_title_accent=page.title_accent faq_lead=faq_lead_text faq_items=faq_items grid_class='faq-section__grid--page' %}
+{% include 'partials/shared_faq_section.html' with extra_class='faq-section--page' qa='faq-page' heading_tag='h1' faq_kicker=page.kicker faq_title=faq_title_text faq_title_accent=page.title_accent faq_lead=faq_lead_text faq_items=faq_items grid_class='faq-section__grid--page' %}
 
 <section class="faq-cta faq-cta--split">
   <div class="faq-cta__copy">

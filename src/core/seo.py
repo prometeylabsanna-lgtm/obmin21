@@ -362,6 +362,11 @@ def _graph(context, request, canonical, site_name, description):
     rating = _visible_rating()
     if rating is not None:
         business['aggregateRating'] = rating
+    from src.core.seo_schema import branch_departments, faq_node
+
+    departments = branch_departments(request)
+    if departments:
+        business['department'] = departments
     graph = [organization, business]
     crumbs = _breadcrumb_node(context.get('breadcrumb_items'), request, canonical)
     if crumbs is not None:
@@ -369,6 +374,9 @@ def _graph(context, request, canonical, site_name, description):
     article = _article_node(context, request, canonical, site_name)
     if article is not None:
         graph.append(article)
+    faq = faq_node(request, canonical)
+    if faq is not None:
+        graph.append(faq)
     return {'@context': 'https://schema.org', '@graph': graph}
 
 

@@ -1,9 +1,15 @@
 {% load content_format exchange_mode %}{% is_exchange_only as eo %}
 <section class="faq-section {{ extra_class }}"{% if section_id %} id="{{ section_id }}"{% endif %} data-qa="{{ qa|default:'section-faq' }}">
   <div class="faq-section__head">
+    {% if heading_tag == 'h1' %}
+    <h1 class="faq-section__title">
+      {{ faq_title }}{% if faq_title_accent %} <span class="u-accent">{{ faq_title_accent }}</span>{% endif %}
+    </h1>
+    {% else %}
     <h2 class="faq-section__title">
       {{ faq_title }}{% if faq_title_accent %} <span class="u-accent">{{ faq_title_accent }}</span>{% endif %}
     </h2>
+    {% endif %}
     {% if faq_lead %}<p class="faq-section__lead">{{ faq_lead }}</p>{% endif %}
   </div>
   <div class="faq-section__grid {{ grid_class }}" data-faq>
