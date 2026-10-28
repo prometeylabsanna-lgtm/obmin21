@@ -3,6 +3,7 @@ from types import SimpleNamespace
 from django.shortcuts import render
 
 from src.blog.selectors import get_published_posts
+from src.content.faq_defaults import public_faq_items
 from src.content.models import (
     AdvantageItem,
     AdvantagesPage,
@@ -162,5 +163,5 @@ def faq_page(request):
         ),
     }
     ctx.update(_shared_blocks())
-    ctx['faq_items'] = FaqItem.objects.filter(is_active=True).visible()
+    ctx['faq_items'] = public_faq_items()
     return render(request, 'content/faq.html', ctx)

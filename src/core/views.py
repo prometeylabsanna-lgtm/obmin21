@@ -13,7 +13,8 @@ from src.core.sitemaps import sitemaps
 from src.core.theme import theme_css_cached
 
 from src.blog.selectors import get_published_posts
-from src.content.models import FaqItem, HomePage, HomeStat, Service
+from src.content.faq_defaults import public_faq_items
+from src.content.models import HomePage, HomeStat, Service
 from src.network.selectors import get_city_by_slug
 from src.rates.models import RateBoard
 from src.rates.selectors import get_quotes_for_city, public_board, public_boards
@@ -99,7 +100,7 @@ class HomeView(TemplateView):
                 is_active=True,
                 show_on_home=True,
             ).visible()[:6],
-            'faq_items': FaqItem.objects.filter(is_active=True).visible()[:8],
+            'faq_items': public_faq_items(limit=8),
             'news_posts': list(get_published_posts()[:10]),
             'home_reviews': get_published_reviews(8),
             'home_stats': _home_stat_cards(page, self.request),
