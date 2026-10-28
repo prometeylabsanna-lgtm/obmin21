@@ -193,7 +193,7 @@ class Stage3CopyTests(TestCase):
         self.assertEqual(stat_text_for(page, 1), STAT_1_TEXT)
         self.assertEqual(cmp_us_html_for(page), CMP_US_HTML)
         self.assertIn('криптоактивів', page.iter_stats()[0]['text'])
-        self.assertIn('coins.png', page.why_coins_src())
+        self.assertIn('coins.webp', page.why_coins_src())
         self.assertEqual(
             home_copy_text(home, 'services_lead'),
             HOME_COPY_DEFAULTS['services_lead'],

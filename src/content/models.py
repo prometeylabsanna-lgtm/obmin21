@@ -250,14 +250,38 @@ class Service(ServiceBlockFields, ExchangeSafeMixin, models.Model):
                 return self.image.url
             except ValueError:
                 pass
-        from django.contrib.staticfiles import finders
-        from django.templatetags.static import static
+        from src.core.responsive_images import static_exists, static_image
 
         slug = self.slug or ''
         name = f'images/services/{slug}.jpg'
-        if slug and finders.find(name):
-            return static(name)
-        return static('images/service-1.png')
+        if slug and static_exists(name):
+            return static_image(name)
+        return static_image('images/service-1.png')
+
+    def image_size(self):
+        from src.core.responsive_images import field_size, static_exists, static_size
+
+        if self.image:
+            try:
+                if self.image.url:
+                    size = field_size(self.image)
+                    if size[0]:
+                        return size
+            except ValueError:
+                pass
+        slug = self.slug or ''
+        name = f'images/services/{slug}.jpg'
+        if slug and static_exists(name):
+            return static_size(name)
+        return static_size('images/service-1.png')
+
+    @property
+    def image_width(self):
+        return self.image_size()[0]
+
+    @property
+    def image_height(self):
+        return self.image_size()[1]
 
 
 class AdvantagesPage(ThemeFieldsMixin, AdvantagesSectionsMixin, SingletonModel):

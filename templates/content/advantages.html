@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static content_format exchange_mode %}
+{% load content_format exchange_mode responsive %}
 
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}{% is_exchange_only as eo %}
@@ -20,7 +20,7 @@
       <div class="adv-hero__layer adv-hero__k1">
         <div class="adv-hero__k1-rot">
           <div class="adv-hero__float">
-            <img class="adv-hero__coin" src="{% static 'images/coins-d.png' %}" alt="">
+            <img class="adv-hero__coin" src="{% static_img 'images/coins-d.png' %}" alt="" {% img_wh 'images/coins-d.png' %} decoding="async">
           </div>
         </div>
       </div>
@@ -75,7 +75,7 @@
       <div class="adv-hero__layer adv-hero__k2">
         <div class="adv-hero__k2-rot">
           <div class="adv-hero__float">
-            <img class="adv-hero__coin adv-hero__coin--flip" src="{% static 'images/coins-d.png' %}" alt="">
+            <img class="adv-hero__coin adv-hero__coin--flip" src="{% static_img 'images/coins-d.png' %}" alt="" {% img_wh 'images/coins-d.png' %} decoding="async">
           </div>
         </div>
       </div>
@@ -141,7 +141,7 @@
       class="why-adv__hero"
       style="background-color: {{ page.color_why_banner }};{% if page.why_banner_src %}background-image: url('{{ page.why_banner_src }}');background-size: cover;background-position: center;{% endif %}"
     >
-      {% if eo %}{% if page.why_coins_mode %}<img class="why-adv__coins" src="{{ page.why_coins_mode.url }}" alt="" decoding="async">{% endif %}{% else %}<img class="why-adv__coins" src="{{ page.why_coins_src }}" alt="" decoding="async">{% endif %}
+      {% if eo %}{% if page.why_coins_mode %}<img class="why-adv__coins" src="{{ page.why_coins_mode.url }}" alt="" decoding="async">{% endif %}{% else %}<img class="why-adv__coins" src="{{ page.why_coins_src }}" alt=""{% if not page.why_coins %} {% img_wh 'images/coins.png' %}{% endif %} loading="lazy" decoding="async">{% endif %}
       {% mode_field page 'why_banner_title' as why_banner_title %}
       {% mode_field page 'why_banner_accent' as why_banner_accent %}
       {% mode_field page 'why_banner_text' as why_banner_text %}
@@ -231,7 +231,7 @@
   <div class="cmp-adv__grid">
     <article class="cmp-adv__us">
       <div class="cmp-adv__us-top">
-        <img src="{% static 'images/logo-footer.png' %}?v=13" alt="Obmin21" width="140" height="40">
+        <img src="{% static_img 'images/logo-footer.png' %}" alt="Obmin21" {% img_wh 'images/logo-footer.png' %} loading="lazy" decoding="async">
         <span class="cmp-adv__badge">Рекомендуємо</span>
       </div>
       {% mode_field page 'cmp_us_html' as x %}{% if x %}<div class="cmp-adv__html">{{ x|rich_html }}</div>{% endif %}

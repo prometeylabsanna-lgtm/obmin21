@@ -5,7 +5,7 @@
 {% block content %}{% is_exchange_only as eo %}
 <article class="article-page" data-qa="post-detail">
   <header class="article-banner">
-    {% mode_field post 'title' as post_title %}<img class="article-banner__img" src="{{ post.image_url }}" alt="{{ post_title }}" decoding="async">
+    {% mode_field post 'title' as post_title %}<img class="article-banner__img" src="{{ post.image_url }}" alt="{{ post_title }}"{% if post.image_width %} width="{{ post.image_width }}" height="{{ post.image_height }}"{% endif %} decoding="async" fetchpriority="high">
     <div class="article-banner__shade" aria-hidden="true"></div>
     <div class="article-banner__copy">
       {% if eo %}{% if art.layout_mode.h1a or art.layout_mode.h1b %}<h1 class="article-banner__title">{{ art.layout_mode.h1a }}{% if art.layout_mode.h1b %} <span class="u-accent">{{ art.layout_mode.h1b }}</span>{% endif %}</h1>{% endif %}{% else %}<h1 class="article-banner__title">{{ art.h1a }}{% if art.h1b %} <span class="u-accent">{{ art.h1b }}</span>{% endif %}</h1>{% endif %}
@@ -92,7 +92,7 @@
     <a class="article-related__card" href="{% url 'blog:post_detail' item.slug %}">
       {% mode_field item 'title' as related_title %}
       <div class="article-related__media">
-        <img src="{{ item.image_url }}" alt="{{ related_title }}" loading="lazy" decoding="async">
+        <img src="{{ item.image_url }}" alt="{{ related_title }}"{% if item.image_width %} width="{{ item.image_width }}" height="{{ item.image_height }}"{% endif %} loading="lazy" decoding="async">
       </div>
       <div class="article-related__cat">{{ item.category.name }}</div>
       {% if related_title %}<div class="article-related__name">{{ related_title|brand_mark }}</div>{% endif %}

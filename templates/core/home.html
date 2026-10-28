@@ -1,21 +1,25 @@
 {% extends 'base.html' %}
-{% load static content_format exchange_mode %}
+{% load static content_format exchange_mode responsive %}
 
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' %}{% else %}{{ page.seo_title|default:site_settings.site_name }}{% endif %}{% endblock %}
+{% block preload %}
+<link rel="preload" as="image" href="{{ hero.src }}"{% if hero.srcset %} imagesrcset="{{ hero.srcset }}" imagesizes="{{ hero.sizes }}"{% endif %} fetchpriority="high">
+{% endblock %}
 {% block content %}{% is_exchange_only as eo %}
 
 <section class="hero" id="exchange" data-qa="section-exchange">
   <div class="hero__banner">
     <div class="hero__bg" aria-hidden="true">
       <img
-        src="{% if active_city %}{{ active_city.banner_src }}{% else %}{% static 'images/hero-kyiv.jpg' %}{% endif %}"
+        src="{{ hero.src }}"
+        {% if hero.srcset %}srcset="{{ hero.srcset }}" sizes="{{ hero.sizes }}"{% endif %}
         alt=""
-        width="1600"
-        height="900"
+        width="{{ hero.width }}"
+        height="{{ hero.height }}"
         decoding="async"
         fetchpriority="high"
         data-hero-banner
-        data-hero-fallback="{% static 'images/hero-kyiv.jpg' %}"
+        data-hero-fallback="{{ hero.fallback }}"
         data-static-prefix="{% get_static_prefix %}"
       >
     </div>
@@ -100,7 +104,7 @@
   <div class="promo-banner__stage">
     <article class="promo-banner__slide is-active" data-promo-slide data-href="{% url 'rates:rates_page' %}">
       <div class="promo-banner__media" aria-hidden="true">
-        <img src="{% static 'images/bills.png' %}" alt="" width="900" height="520" loading="lazy">
+        <img src="{% static_img 'images/bills.png' %}" alt="" {% img_wh 'images/bills.png' %} loading="lazy" decoding="async">
       </div>
       <div class="promo-banner__content">
         <h2 class="promo-banner__title">Вигідний курс на<br><span class="u-accent">USD та EUR</span></h2>
@@ -111,7 +115,7 @@
     {% if not eo %}
     <article class="promo-banner__slide" data-promo-slide data-href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" data-blank="1">
       <div class="promo-banner__media" aria-hidden="true">
-        <img src="{% static 'images/coins.png' %}" alt="" width="900" height="520" loading="lazy">
+        <img src="{% static_img 'images/coins.png' %}" alt="" {% img_wh 'images/coins.png' %} loading="lazy" decoding="async">
       </div>
       <div class="promo-banner__content">
         <h2 class="promo-banner__title">USDT, BTC, ETH<br><span class="u-accent">на готівку</span></h2>
@@ -121,7 +125,7 @@
     </article>
     <article class="promo-banner__slide" data-promo-slide data-href="{% url 'content:services' %}">
       <div class="promo-banner__media" aria-hidden="true">
-        <img src="{% static 'images/promo-transfers.png' %}" alt="" width="900" height="520" loading="lazy">
+        <img src="{% static_img 'images/promo-transfers.png' %}" alt="" {% img_wh 'images/promo-transfers.png' %} loading="lazy" decoding="async">
       </div>
       <div class="promo-banner__content">
         <h2 class="promo-banner__title">Грошові перекази<br><span class="u-accent">по Україні та світу</span></h2>
@@ -131,7 +135,7 @@
     </article>
     <article class="promo-banner__slide" data-promo-slide data-modal="1">
       <div class="promo-banner__media" aria-hidden="true">
-        <img src="{% static 'images/promo-swift.png' %}" alt="" width="900" height="520" loading="lazy">
+        <img src="{% static_img 'images/promo-swift.png' %}" alt="" {% img_wh 'images/promo-swift.png' %} loading="lazy" decoding="async">
       </div>
       <div class="promo-banner__content">
         <h2 class="promo-banner__title">SWIFT-перекази<br><span class="u-accent">за кордон</span></h2>
@@ -194,7 +198,7 @@
     {% for svc in services %}{% if not eo or svc.exchange_safe %}
     <a class="svc-card" href="{% url 'content:services' %}#svc-{{ svc.slug }}">
       <div class="svc-card__media">
-        <img src="{{ svc.image_src }}" alt="" loading="lazy">
+        <img src="{{ svc.image_src }}" alt="" loading="lazy" decoding="async"{% if svc.image_width %} width="{{ svc.image_width }}" height="{{ svc.image_height }}"{% endif %}>
       </div>
       <h3 class="svc-card__title">{{ svc.title }}</h3>
       {% mode_field svc 'short_desc' as short_desc %}{% if short_desc %}<div class="svc-card__text">{{ short_desc }}</div>{% endif %}
@@ -232,7 +236,7 @@
     <article class="article-slide">
       {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
-        <img src="{{ post.image_url }}" alt="{{ post_title }}" width="330" height="194" decoding="async">
+        <img src="{{ post.image_url }}" alt="{{ post_title }}"{% if post.image_width %} width="{{ post.image_width }}" height="{{ post.image_height }}"{% endif %} loading="lazy" decoding="async">
       </a>
       {% if post_title %}<a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post_title|brand_mark }}</a>{% endif %}
       {% if post_excerpt %}<p class="article-slide__text">{{ post_excerpt|brand_mark }}</p>{% endif %}

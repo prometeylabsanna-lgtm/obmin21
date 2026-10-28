@@ -139,7 +139,7 @@ def format_body(value):
             continue
         if len(lines) == 1 and _is_heading(lines[0]):
             parts.append(
-                f'<h3 class="detail-page__subhead">{mark_brand(lines[0])}</h3>'
+                f'<h2 class="detail-page__subhead">{mark_brand(lines[0])}</h2>'
             )
             continue
         inner = '<br>'.join(mark_brand(ln) for ln in lines)

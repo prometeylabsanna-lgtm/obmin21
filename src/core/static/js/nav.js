@@ -135,16 +135,23 @@
     }
     var banner = document.querySelector('[data-hero-banner]');
     if (banner) {
+      var applyBanner = function (url) {
+        banner.removeAttribute('srcset');
+        banner.removeAttribute('sizes');
+        banner.src = url;
+      };
       if (detail.bannerUrl) {
-        banner.src = detail.bannerUrl;
+        applyBanner(detail.bannerUrl);
       } else if (detail.slug) {
         var prefix = banner.getAttribute('data-static-prefix') || '/static/';
-        var next = prefix + 'images/hero-' + detail.slug + '.jpg';
+        var next = prefix + 'images/hero-' + detail.slug + '.webp';
         banner.onerror = function () {
           banner.onerror = null;
-          banner.src = banner.getAttribute('data-hero-fallback') || '/static/images/hero-kyiv.jpg';
+          applyBanner(
+            banner.getAttribute('data-hero-fallback') || (prefix + 'images/hero-kyiv.webp')
+          );
         };
-        banner.src = next;
+        applyBanner(next);
       }
     }
     var hideBanner = !!detail.bannerHidden;

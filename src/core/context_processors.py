@@ -29,6 +29,27 @@ def site_chrome(request):
     }
 
 
+_PAGE_STYLES = {
+    'core:home': frozenset({'rates', 'faq', 'home'}),
+    'content:faq': frozenset({'faq', 'home'}),
+    'content:services': frozenset({'home', 'faq', 'pages'}),
+    'content:advantages': frozenset({'home', 'faq', 'pages', 'advantages'}),
+    'content:contacts': frozenset({'contacts'}),
+    'content:privacy': frozenset({'legal'}),
+    'content:offer': frozenset({'legal'}),
+    'content:cookies': frozenset({'legal'}),
+    'rates:rates_page': frozenset({'rates', 'pages'}),
+    'rates:pair_detail': frozenset({'pages'}),
+    'blog:post_list': frozenset({'blog'}),
+    'blog:category': frozenset({'blog'}),
+    'blog:post_detail': frozenset({'article'}),
+    'network:city_list': frozenset({'pages'}),
+    'network:city_detail': frozenset({'pages'}),
+    'reviews:review_list': frozenset({'pages'}),
+}
+_DEFAULT_PAGE_STYLES = frozenset({'pages'})
+
+
 def page_theme(request):
     match = getattr(request, 'resolver_match', None)
     url_name = ''
@@ -38,4 +59,5 @@ def page_theme(request):
         url_name = match.url_name
     return {
         'page_theme': URL_THEME_MAP.get(url_name, 'home'),
+        'page_styles': _PAGE_STYLES.get(url_name, _DEFAULT_PAGE_STYLES),
     }

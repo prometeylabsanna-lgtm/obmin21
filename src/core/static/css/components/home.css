@@ -530,32 +530,44 @@
   position: absolute;
   left: calc(16px * var(--scale));
   right: calc(16px * var(--scale));
-  bottom: calc(14px * var(--scale));
+  bottom: calc(5px * var(--scale));
   display: flex;
-  gap: calc(8px * var(--scale));
+  gap: 0;
+  align-items: center;
   justify-content: center;
   z-index: 2;
 }
 
 .promo-banner__dots button {
   position: relative;
+  width: calc(24px * var(--scale));
+  height: calc(24px * var(--scale));
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: width 0.4s ease;
+}
+
+.promo-banner__dots button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: calc(6px * var(--scale));
   height: calc(6px * var(--scale));
-  border: 0;
   border-radius: calc(3px * var(--scale));
-  padding: 0;
   background: rgba(255, 255, 255, 0.35);
-  cursor: pointer;
+  transform: translate(-50%, -50%);
   transition: width 0.4s ease, background 0.4s ease;
 }
 
-.promo-banner__dots button::after {
-  content: "";
-  position: absolute;
-  inset: calc(-14px * var(--scale)) calc(-6px * var(--scale));
+.promo-banner__dots button.is-active {
+  width: calc(46px * var(--scale));
 }
 
-.promo-banner__dots button.is-active {
+.promo-banner__dots button.is-active::before {
   width: calc(28px * var(--scale));
   background: #ca8d42;
 }
@@ -1312,7 +1324,7 @@
   .promo-banner__dots {
     left: auto;
     right: calc(30px * var(--scale));
-    bottom: calc(24px * var(--scale));
+    bottom: calc(15px * var(--scale));
     justify-content: flex-end;
   }
 

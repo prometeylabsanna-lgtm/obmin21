@@ -56,7 +56,7 @@ from src.rates.models import CurrencyPair
 _ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS')
 
 _FORBIDDEN = (
-    'bitcoin.png',
+    'bitcoin.webp',
     'КРИПТОВАЛЮТА',
     'ЗОЛОТО',
     'ПЕРЕКАЗИ',
@@ -120,7 +120,7 @@ class ExchangeOnlyChromeTemplateTests(ExchangeTemplateCase):
         response = self._page()
         self.assertEqual(response.status_code, 200)
         html = response.content.decode()
-        self.assertEqual(html.count('bitcoin.png'), 5)
+        self.assertEqual(html.count('bitcoin.webp'), 5)
         for marker in _HEADER_NAV:
             self.assertContains(response, marker)
         for title, slug, _safe, _order in _FOOTER_SERVICES:
@@ -139,7 +139,7 @@ class ExchangeOnlyChromeTemplateTests(ExchangeTemplateCase):
         response = self._page()
         self.assertEqual(response.status_code, 200)
         html = response.content.decode()
-        self.assertEqual(html.count('bitcoin.png'), 5)
+        self.assertEqual(html.count('bitcoin.webp'), 5)
         for token in ('КРИПТОВАЛЮТА', 'ЗОЛОТО', 'ПЕРЕКАЗИ', 'ОПТОВИЙ', 'ЗНОШЕНИХ'):
             self.assertNotContains(response, token)
         self.assertNotContains(response, '#svc-1')
@@ -202,9 +202,9 @@ _HOME_STOPS = (
 )
 
 _PROMO_IMAGES = (
-    'coins.png',
-    'promo-transfers.png',
-    'promo-swift.png',
+    'coins.webp',
+    'promo-transfers.webp',
+    'promo-swift.webp',
 )
 
 
@@ -293,7 +293,7 @@ class ExchangeOnlyHomeTemplateTests(ExchangeTemplateCase):
         html = response.content.decode()
         for name in _PROMO_IMAGES:
             self.assertIn(name, html)
-        self.assertIn('bills.png', html)
+        self.assertIn('bills.webp', html)
         self.assertIn('USD та EUR', html)
         self.assertEqual(html.count('data-promo-dot '), 4)
         self.assertEqual(html.count('data-promo-slide'), 4)
@@ -325,7 +325,7 @@ class ExchangeOnlyHomeTemplateTests(ExchangeTemplateCase):
         self.assertIn('data-autoplay="0"', html)
         self.assertIn('data-slides="1"', html)
         self.assertEqual(html.count('data-promo-slide'), 1)
-        self.assertIn('bills.png', html)
+        self.assertIn('bills.webp', html)
         self.assertIn('USD та EUR', html)
         self.assertIn('Обмін валют', html)
         self.assertIn('Який курс долара у відділенні?', html)
@@ -556,7 +556,7 @@ class ExchangeOnlyServicesCityTemplateTests(ExchangeTemplateCase):
         self.assertIn('Міжнародні перекази і золото', main)
         self.assertIn('Курс долара у касі', main)
         self.assertNotIn(_INTRO_MODE, html)
-        self.assertEqual(html.count('bitcoin.png'), 5)
+        self.assertEqual(html.count('bitcoin.webp'), 5)
         city = self._city()
         self.assertEqual(city.status_code, 200)
         city_html = city.content.decode()
@@ -599,7 +599,7 @@ class ExchangeOnlyServicesCityTemplateTests(ExchangeTemplateCase):
         self.assertNotIn('зношених', html)
         self.assertNotIn('Як надіслати переказ золота?', html)
         self.assertNotIn('Міжнародні перекази і золото', html)
-        self.assertNotIn('bitcoin.png', html)
+        self.assertNotIn('bitcoin.webp', html)
         self.assertNotIn('svc-hero__lead', main)
         self.assertNotIn('display:none', ''.join(html.lower().split()))
         _assert_clean(self, html, 'posluhy')
@@ -612,7 +612,7 @@ class ExchangeOnlyServicesCityTemplateTests(ExchangeTemplateCase):
         self.assertIn('Обрати це місто', city_html)
         self.assertNotIn(_BANNER_TITLE, city_html)
         self.assertNotIn(_BANNER_TEXT, city_html)
-        self.assertNotIn('bitcoin.png', city_html)
+        self.assertNotIn('bitcoin.webp', city_html)
         self.assertNotIn('display:none', ''.join(city_html.lower().split()))
         _assert_clean(self, city_html, 'city')
         home = self.client.get(reverse('core:home')).content.decode()
@@ -831,7 +831,7 @@ class ExchangeOnlySeoLinksTests(ExchangeTemplateCase):
         home = pages['home']
         self.assertIn('SWIFT-перекази', home)
         self.assertIn('Грошові перекази', home)
-        self.assertIn('promo-swift.png', home)
+        self.assertIn('promo-swift.webp', home)
         self.assertIn('aria-label="SWIFT"', home)
         self.assertIn('aria-label="Перекази"', home)
         self.assertIn('#svc-obmin-valyut', home)
@@ -862,7 +862,7 @@ class ExchangeOnlySeoLinksTests(ExchangeTemplateCase):
             self.assertNotIn(category, html, label)
             self.assertNotIn(_HIDDEN_POST_TITLE, html, label)
             self.assertNotIn('Перекази', html, label)
-            self.assertNotIn('promo-swift.png', html, label)
+            self.assertNotIn('promo-swift.webp', html, label)
             self.assertNotIn('SWIFT-перекази', html, label)
             self.assertNotIn(_BLOCK_TRANSFER, html, label)
             self.assertNotIn(_HERO_TRANSFER, html, label)
@@ -871,7 +871,7 @@ class ExchangeOnlySeoLinksTests(ExchangeTemplateCase):
             _assert_no_transfer_words(self, html, label)
             self.assertNotIn('display:none', ''.join(html.lower().split()), label)
         self.assertIn('USD та EUR', pages['home'])
-        self.assertIn('bills.png', pages['home'])
+        self.assertIn('bills.webp', pages['home'])
         self.assertNotIn('svc-hero__lead', pages['services'])
         self.assertIn('Курси', pages['blog'])
         self.assertNotIn('Купуйте та продавайте понад 15 валют', pages['services'])
@@ -1309,8 +1309,8 @@ class ExchangeOnlyNavBannerTests(TestCase):
         self.assertIn('detail.bannerTitle', script)
         self.assertIn('detail.bannerText', script)
         self.assertNotIn('.style', script)
-        self.assertIn("{% static 'js/nav.js' %}?v=18", base)
-        self.assertNotIn("{% static 'js/nav.js' %}?v=17", base)
+        self.assertIn("{% static 'js/nav.js' %}?v=19", base)
+        self.assertNotIn("{% static 'js/nav.js' %}?v=18", base)
 
 
 class ExchangeOnlyEmptyStatsTests(ExchangeTemplateCase):
@@ -1489,7 +1489,7 @@ class ExchangeOnlyAdvantagesTemplateTests(ExchangeTemplateCase):
         self.assertIn('Відділень в Україні', html)
         self.assertIn('Криптовалюта', html)
         self.assertIn('USDT', html)
-        self.assertIn('coins.png', html)
+        self.assertIn('coins.webp', html)
         self.assertIn(_WHY_LEAD, html)
         self.assertIn('stats-section__num', html)
 
@@ -1510,7 +1510,7 @@ class ExchangeOnlyAdvantagesTemplateTests(ExchangeTemplateCase):
         self.assertNotIn('Криптовалюта', html)
         self.assertNotIn('USDT', html)
         self.assertNotIn('Зношені', html)
-        self.assertNotIn('coins.png', html)
+        self.assertNotIn('coins.webp', html)
         self.assertIn('Каса без комісії', html)
         self.assertNotIn(_WHY_LEAD, html)
 
@@ -1535,7 +1535,7 @@ class ExchangeOnlyAdvantagesTemplateTests(ExchangeTemplateCase):
         html = self._page().content.decode()
         self.assertIn('криптоактивів', html)
         self.assertIn('Відділень в Україні', html)
-        self.assertIn('coins.png', html)
+        self.assertIn('coins.webp', html)
         self.assertNotIn(_STAT_MODE, html)
         self.assertNotIn(_COIN_MODE, html)
 
@@ -1547,4 +1547,4 @@ class ExchangeOnlyAdvantagesTemplateTests(ExchangeTemplateCase):
         html = self._page().content.decode()
         self.assertIn(_COIN_MODE, html)
         self.assertIn('why-adv__coins', html)
-        self.assertNotIn('coins.png', html)
+        self.assertNotIn('coins.webp', html)

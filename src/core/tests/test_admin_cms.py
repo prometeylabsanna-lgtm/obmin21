@@ -542,11 +542,11 @@ class AdminPanelTests(TestCase):
         )
         listing = self.client.get(reverse('admin:content_service_changelist'))
         self.assertContains(listing, 'cms-svc-thumb')
-        self.assertContains(listing, 'images/services/groshovi-perekazy.jpg')
+        self.assertContains(listing, 'images/services/groshovi-perekazy.webp')
         page = self.client.get(
             reverse('admin:content_service_change', args=[svc.pk]),
         )
         self.assertContains(page, 'cms-image')
-        self.assertContains(page, 'images/services/groshovi-perekazy.jpg')
+        self.assertContains(page, 'images/services/groshovi-perekazy.webp')
         self.assertContains(page, 'data-cms-image-preview')
 

@@ -1,13 +1,13 @@
-{% load static exchange_mode %}
+{% load exchange_mode responsive %}
 {% is_exchange_only as eo %}
 <footer class="site-footer" data-qa="footer" data-theme="footer">
   <div class="site-footer__inner">
     <div class="site-footer__top">
       <a href="{% url 'core:home' %}" class="site-footer__logo">
         {% if site_settings.footer_logo %}
-        <img src="{{ site_settings.footer_logo.url }}" alt="{{ site_settings.site_name }}" width="206" height="72">
+        <img src="{{ site_settings.footer_logo.url }}" alt="{{ site_settings.site_name }}" width="{{ site_settings.footer_logo.width }}" height="{{ site_settings.footer_logo.height }}" loading="lazy" decoding="async">
         {% else %}
-        <img src="{% static 'images/logo-footer.png' %}?v=13" alt="{{ site_settings.site_name }}" width="206" height="72">
+        <img src="{% static_img 'images/logo-footer.png' %}" alt="{{ site_settings.site_name }}" {% img_wh 'images/logo-footer.png' %} loading="lazy" decoding="async">
         {% endif %}
       </a>
 

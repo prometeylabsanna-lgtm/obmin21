@@ -1,5 +1,4 @@
 from django.db import models
-from django.templatetags.static import static
 
 from src.core.exchange_fields import mode_char, mode_image, mode_text
 
@@ -273,7 +272,11 @@ class AdvantagesSectionsMixin(models.Model):
                 return field.url
             except ValueError:
                 pass
-        return static(fallback) if fallback else ''
+        if not fallback:
+            return ''
+        from src.core.responsive_images import static_image
+
+        return static_image(fallback)
 
     def hero_banner_src(self):
         return self._file_src('hero_banner')

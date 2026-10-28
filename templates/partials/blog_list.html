@@ -5,7 +5,7 @@
   <a class="blog-feature" href="{% url 'blog:post_detail' featured.slug %}">
     {% mode_field featured 'title' as feature_title %}{% mode_field featured 'excerpt' as feature_excerpt %}
     <div class="blog-feature__media">
-      <img src="{{ featured.image_url }}" alt="{{ feature_title }}" decoding="async">
+      <img src="{{ featured.image_url }}" alt="{{ feature_title }}"{% if featured.image_width %} width="{{ featured.image_width }}" height="{{ featured.image_height }}"{% endif %} decoding="async" fetchpriority="high">
     </div>
     <div class="blog-feature__copy">
       <div class="blog-feature__meta">
@@ -29,7 +29,7 @@
     <a class="blog-card" href="{% url 'blog:post_detail' post.slug %}">
       {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
       <div class="blog-card__media">
-        <img src="{{ post.image_url }}" alt="{{ post_title }}" loading="lazy" decoding="async">
+        <img src="{{ post.image_url }}" alt="{{ post_title }}"{% if post.image_width %} width="{{ post.image_width }}" height="{{ post.image_height }}"{% endif %} loading="lazy" decoding="async">
       </div>
       <div class="blog-card__meta">
         <span class="blog-card__cat">{{ post.category.name }}</span>

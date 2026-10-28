@@ -124,15 +124,34 @@ class Post(ExchangeSafeMixin, models.Model):
         return self.title
 
     def image_url(self):
-        from django.contrib.staticfiles import finders
-        from django.templatetags.static import static
+        from src.core.responsive_images import static_exists, static_image
 
         name = f'images/articles/{self.slug}.jpg'
-        if finders.find(name):
-            return static(name)
+        if self.slug and static_exists(name):
+            return static_image(name)
         if self.cover:
             return self.cover.url
-        return static('images/service-1.png')
+        return static_image('images/service-1.png')
+
+    def image_size(self):
+        from src.core.responsive_images import field_size, static_exists, static_size
+
+        name = f'images/articles/{self.slug}.jpg'
+        if self.slug and static_exists(name):
+            return static_size(name)
+        if self.cover:
+            size = field_size(self.cover)
+            if size[0]:
+                return size
+        return static_size('images/service-1.png')
+
+    @property
+    def image_width(self):
+        return self.image_size()[0]
+
+    @property
+    def image_height(self):
+        return self.image_size()[1]
 
     def date_uk(self):
         if not self.published_at:

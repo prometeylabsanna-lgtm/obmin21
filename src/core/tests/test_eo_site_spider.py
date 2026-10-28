@@ -139,6 +139,8 @@ def stop_hit(html):
     lowered = html.lower()
     if 'bitcoin.png' in lowered:
         return 'bitcoin.png'
+    if 'bitcoin.webp' in lowered:
+        return 'bitcoin.webp'
     for word in (*STOP_WORDS, *_EXTRA_STOPS):
         token = word.casefold()
         if token in _BOUND:

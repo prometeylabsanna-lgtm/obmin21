@@ -125,13 +125,12 @@ class City(models.Model):
                 return self.banner_image.url
             except ValueError:
                 pass
-        from django.contrib.staticfiles import finders
-        from django.templatetags.static import static
+        from src.core.responsive_images import static_exists, static_image
 
         name = f'images/hero-{self.slug}.jpg'
-        if finders.find(name):
-            return static(name)
-        return static('images/hero-kyiv.jpg')
+        if static_exists(name):
+            return static_image(name)
+        return static_image('images/hero-kyiv.jpg')
 
 
 class Branch(models.Model):

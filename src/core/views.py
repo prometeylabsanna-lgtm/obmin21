@@ -8,7 +8,8 @@ from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap as django_sitemap
 import logging
 
-from src.core.exchange_mode import is_exchange_only, mode_text
+from src.core.exchange_mode import is_exchange_only, mode_meta, mode_text
+from src.core.responsive_images import hero_for_city
 from src.core.sitemaps import sitemaps
 from src.core.theme import theme_css_cached
 
@@ -21,6 +22,11 @@ from src.rates.selectors import get_quotes_for_city, public_board, public_boards
 from src.reviews.selectors import get_published_reviews
 
 logger = logging.getLogger(__name__)
+
+HOME_DESCRIPTION = (
+    'Обмін валют у відділеннях Обмін21: актуальний курс, '
+    'фіксація онлайн і готівковий обмін.'
+)
 
 _RETAIL_ORDER = {'USD': 0, 'EUR': 1, 'PLN': 2}
 _CRYPTO_ORDER = {'BTC': 0, 'ETH': 1, 'USDT': 2}
@@ -90,6 +96,13 @@ class HomeView(TemplateView):
         page = HomePage.load()
         ctx.update({
             'page': page,
+            'page_description': mode_meta(
+                page,
+                'seo_description',
+                request=self.request,
+                outside_default=HOME_DESCRIPTION,
+            ),
+            'hero': hero_for_city(city),
             'rate_rows': rows,
             'calc_currencies': _calc_currencies(rows),
             'rate_updated_at': updated_at,

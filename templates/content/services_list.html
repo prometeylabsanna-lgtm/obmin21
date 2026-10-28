@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static content_format exchange_mode %}
+{% load content_format exchange_mode responsive %}
 
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}{% is_exchange_only as eo %}
@@ -9,7 +9,7 @@
       {% if page.hero_image %}
       <img src="{{ page.hero_image.url }}" alt="" decoding="async">
       {% else %}
-      <img src="{% static 'images/coins.png' %}" alt="" decoding="async">
+      <img src="{% static_img 'images/coins.png' %}" alt="" {% img_wh 'images/coins.png' %} decoding="async" fetchpriority="high">
       {% endif %}
     </div>
     <div class="svc-hero__copy">
@@ -27,7 +27,7 @@
 {% for svc in services %}{% if not eo or svc.exchange_safe %}
 <article class="svc-row{% if forloop.counter|divisibleby:2 %} svc-row--rev{% endif %}" id="svc-{{ svc.slug }}">
   <div class="svc-row__media">
-    <img src="{{ svc.image_src }}" alt="{{ svc.title }}" width="800" height="420" decoding="async">
+    <img src="{{ svc.image_src }}" alt="{{ svc.title }}"{% if svc.image_width %} width="{{ svc.image_width }}" height="{{ svc.image_height }}"{% endif %} loading="lazy" decoding="async">
   </div>
   <div class="svc-row__copy">
     <h2 class="svc-row__title">{{ svc.title }}</h2>
@@ -114,7 +114,7 @@
     <article class="article-slide">
       {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
-        <img src="{{ post.image_url }}" alt="{{ post_title }}" width="330" height="194" decoding="async">
+        <img src="{{ post.image_url }}" alt="{{ post_title }}"{% if post.image_width %} width="{{ post.image_width }}" height="{{ post.image_height }}"{% endif %} loading="lazy" decoding="async">
       </a>
       {% if post_title %}<a class="article-slide__title" href="{% url 'blog:post_detail' post.slug %}">{{ post_title|brand_mark }}</a>{% endif %}
       {% if post_excerpt %}<p class="article-slide__text">{{ post_excerpt|brand_mark }}</p>{% endif %}
