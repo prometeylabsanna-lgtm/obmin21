@@ -140,7 +140,7 @@ html.is-menu-open body {
   position: fixed;
   z-index: 901;
   right: calc(calc(16px * var(--scale)) + var(--safe-right));
-  bottom: calc(calc(16px * var(--scale)) + var(--safe-bottom));
+  bottom: var(--chat-bottom, calc(calc(16px * var(--scale)) + var(--safe-bottom)));
   display: inline-flex;
   align-items: center;
   gap: calc(8px * var(--scale));

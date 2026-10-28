@@ -49,6 +49,8 @@
   --container-max: calc(1440px * var(--scale));
   --container-pad: calc(16px * var(--scale));
   --touch-min: calc(44px * var(--scale));
+  /* min-height .btn — золота CTA в .mobile-menu__bottom. */
+  --menu-cta-h: calc(50px * var(--scale));
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-left: env(safe-area-inset-left, 0px);

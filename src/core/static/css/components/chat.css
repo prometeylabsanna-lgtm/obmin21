@@ -202,6 +202,10 @@
 }
 
 @media (max-width: 767px) {
+  html.is-menu-open .site-chat {
+    --chat-bottom: calc(calc(16px * var(--scale)) + var(--menu-cta-h) + calc(16px * var(--scale)) + var(--safe-bottom));
+  }
+
   .site-chat__panel {
     right: 0;
     left: 0;
