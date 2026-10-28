@@ -13,7 +13,7 @@ from src.core.exchange_preview import build_hide_report
 from src.network.models import City
 from src.rates.models import CurrencyPair
 
-_ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS', 'VERCEL')
+_ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS')
 
 
 class ExchangePreviewTests(TestCase):

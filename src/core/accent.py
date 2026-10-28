@@ -1,5 +1,3 @@
-from django.db.utils import OperationalError, ProgrammingError
-
 from src.core.colors import ACCENT_DEFAULT, LEGACY_ACCENTS
 from src.core.theme import bump_theme_cache
 
@@ -57,10 +55,3 @@ def replace_legacy_accents() -> int:
     if changed:
         bump_theme_cache()
     return changed
-
-
-def ensure_vercel_accent() -> None:
-    try:
-        replace_legacy_accents()
-    except (OperationalError, ProgrammingError):
-        return

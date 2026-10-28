@@ -27,12 +27,11 @@ from src.core.models import ExchangeModeLog, SiteSettings
 from src.rates.models import CurrencyPair, Quote
 from src.reviews.models import Review
 
-_ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS', 'VERCEL')
+_ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS')
 _SAFE_MODELS = (Service, CurrencyPair, Review, Post, FaqItem, AdvantageItem, HomeStat)
 _FILTER_STOPWORDS = Path(
     '/Users/olegbonislavskyi/Sites/Obmin21-wt-filter/src/core/exchange_stopwords.py'
 )
-_BANNER = 'Демо на Vercel: зміни зникнуть після перезапуску'
 
 
 def _perm(app_label, codename):
@@ -333,15 +332,6 @@ class ExchangeAdminTests(TestCase):
             opened = self.client.get(self._settings_url())
             self.assertContains(opened, '/exchange-only/')
             self.assertNotContains(opened, ENV_LOCK_NOTICE)
-
-    def test_vercel_banner_follows_env(self):
-        index = reverse('admin:index')
-        plain = self.client.get(index)
-        self.assertNotContains(plain, _BANNER)
-        with patch.dict(os.environ, {'VERCEL': '1'}):
-            marked = self.client.get(index)
-        self.assertContains(marked, _BANNER)
-        self.assertContains(marked, 'exchange-demo-banner')
 
     def test_mode_log_admin_is_read_only(self):
         self.client.post(self._preview_url())

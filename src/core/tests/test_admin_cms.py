@@ -4,7 +4,6 @@ from django.urls import reverse
 
 from src.content.models import HomePage
 from src.core.models import SiteSettings
-from src.core.vercel_admin import ensure_vercel_admin
 
 
 class AdminPanelTests(TestCase):
@@ -93,17 +92,6 @@ class AdminPanelTests(TestCase):
         self.assertContains(resp, 'images/logo.png')
         self.assertContains(resp, 'images/favicon.ico')
         self.assertNotContains(resp, 'Обмін21 — панель редагування')
-
-    def test_ensure_vercel_admin_keeps_session(self):
-        ensure_vercel_admin()
-        hash_before = User.objects.get(username='admin').password
-        self.client.logout()
-        self.assertTrue(self.client.login(username='admin', password='admin'))
-        ensure_vercel_admin()
-        self.assertEqual(User.objects.get(username='admin').password, hash_before)
-        resp = self.client.get(reverse('admin:index'))
-        self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, 'Адміністрування')
 
     def test_city_home_banner_fields(self):
         from src.network.models import City

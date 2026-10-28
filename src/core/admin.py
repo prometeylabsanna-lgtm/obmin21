@@ -1,4 +1,3 @@
-import os
 from dataclasses import replace
 
 from django.contrib import admin, messages
@@ -21,24 +20,6 @@ from src.core.exchange_preview import (
     toggle_exchange_only,
 )
 from src.core.models import ExchangeModeLog, FooterSettings, HeaderSettings, SiteSettings
-
-
-def install_vercel_demo_banner():
-    site = admin.site
-    if getattr(site, '_vercel_demo_banner', False):
-        return
-    original = site.each_context
-
-    def each_context(request):
-        context = original(request)
-        context['vercel_demo_banner'] = bool(os.environ.get('VERCEL'))
-        return context
-
-    site.each_context = each_context
-    site._vercel_demo_banner = True
-
-
-install_vercel_demo_banner()
 
 
 @admin.register(SiteSettings)

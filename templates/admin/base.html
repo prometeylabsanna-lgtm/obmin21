@@ -16,7 +16,6 @@
             {% endblock %}
 
             {% block messages %}
-                {% include "admin/core/vercel_demo_banner.html" %}
                 <div class="px-4">
                     <div class="{% if not cl.model_admin.list_fullwidth and is_fullwidth != "1" %}container{% endif %} mx-auto {% element_classes 'messages' %}">
                         {% include "unfold/helpers/messages.html" %}
