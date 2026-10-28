@@ -1,7 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 
-from src.blog.models import Category
-from src.blog.selectors import get_published_posts
+from src.blog.selectors import get_published_posts, visible_categories
 from src.content.models import Service
 from src.core.breadcrumbs import safe_reverse
 from src.core.hidden_response import service_public_path
@@ -23,7 +22,7 @@ def public_services():
 
 def public_categories():
     return (
-        Category.objects.filter(pk__in=published_visible_posts().values('category_id'))
+        visible_categories()
         .exclude(slug='')
         .order_by('sort_order', 'name', 'id')
     )

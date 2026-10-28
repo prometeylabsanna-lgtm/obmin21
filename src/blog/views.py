@@ -1,3 +1,4 @@
+from django.core.exceptions import FieldDoesNotExist
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
@@ -35,6 +36,38 @@ def _related_posts(post):
     return related
 
 
+def _model_text(obj, field):
+    meta = getattr(obj, '_meta', None)
+    get_field = getattr(meta, 'get_field', None)
+    if not callable(get_field):
+        return ''
+    try:
+        get_field(field)
+    except FieldDoesNotExist:
+        return ''
+    return ' '.join(str(getattr(obj, field, '') or '').split())
+
+
+def category_page_copy(category, request):
+    """H1, title і description рубрики. seo_* якщо поле є, інакше шаблон з назвою."""
+    name = ' '.join(str(getattr(category, 'name', '') or '').split())
+    if exchange_only(request):
+        title = _model_text(category, 'seo_title_mode')
+        description = _model_text(category, 'seo_description_mode')
+    else:
+        title = _model_text(category, 'seo_title')
+        description = _model_text(category, 'seo_description')
+    if not title:
+        title = name
+    if not description and name:
+        description = f'Статті рубрики {name}.'
+    return {
+        'heading': name or title,
+        'title': title,
+        'description': description,
+    }
+
+
 def post_list(request, category_slug=None):
     qs = get_published_posts()
     category = None
@@ -63,6 +96,7 @@ def post_list(request, category_slug=None):
         else safe_reverse('blog:post_list')
     )
     page = BlogPage.load()
+    copy = category_page_copy(category, request) if category else None
     context = {
         'page': page,
         'featured': featured,
@@ -72,12 +106,17 @@ def post_list(request, category_slug=None):
         'list_url': list_url,
         'categories': visible_categories(),
         'active_category': category,
+        'category_heading': copy['heading'] if copy else '',
         'page_title': (
-            category.name
-            if category
+            copy['title']
+            if copy
             else mode_meta(page, 'seo_title', 'title', limit=None, request=request)
         ),
-        'page_description': mode_meta(page, 'seo_description', 'intro', request=request),
+        'page_description': (
+            copy['description']
+            if copy
+            else mode_meta(page, 'seo_description', 'intro', request=request)
+        ),
     }
     if category:
         context['breadcrumb_items'] = trail(

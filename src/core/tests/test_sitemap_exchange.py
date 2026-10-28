@@ -152,6 +152,44 @@ class SitemapExchangeTests(TestCase):
         )
         self.assertEqual(ServiceSitemap().items(), [])
 
+    def test_sitemap_skips_hidden_filter_and_stop_word_categories(self):
+        hidden = Category.objects.create(
+            name='Прихована рубрика',
+            slug='prykhovana-rubryka',
+            show_in_filter=False,
+        )
+        crypto = Category.objects.create(
+            name='Криптовалюта',
+            slug='kryptovalyuta',
+        )
+        Post.objects.create(
+            category=hidden,
+            title='Нотатка рубрики',
+            slug='prykhovana-notatka',
+            body='Текст',
+            status=Post.Status.PUBLISHED,
+            exchange_safe=True,
+        )
+        Post.objects.create(
+            category=crypto,
+            title='Огляд ринку',
+            slug='oglyad-rynku',
+            body='Текст',
+            status=Post.Status.PUBLISHED,
+            exchange_safe=True,
+        )
+        self._mode(False)
+        shown = self._xml()
+        self.assertNotIn('/blog/kategoriya/prykhovana-rubryka/', shown)
+        self.assertIn('/blog/kategoriya/kryptovalyuta/', shown)
+        self.assertIn('/blog/oglyad-rynku/', shown)
+        self._mode(True)
+        hidden_xml = self._xml()
+        self.assertNotIn('/blog/kategoriya/prykhovana-rubryka/', hidden_xml)
+        self.assertNotIn('/blog/kategoriya/kryptovalyuta/', hidden_xml)
+        self.assertIn('/blog/oglyad-rynku/', hidden_xml)
+        self.assertIn('/blog/kategoriya/porady/', hidden_xml)
+
     def test_public_services_follow_visible_and_topic(self):
         self._mode(False)
         self.assertEqual(

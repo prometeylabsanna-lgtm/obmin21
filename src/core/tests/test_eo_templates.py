@@ -1085,7 +1085,7 @@ class ExchangeOnlyDocumentTitleTests(ExchangeTemplateCase):
                 self._set_mode(True)
                 self._assert_closed(url, _TITLE_SITE)
 
-    def test_blog_category_ignores_view_title(self):
+    def test_blog_category_uses_its_name_in_both_modes(self):
         self._fill(BlogPage, mode='')
         category = Category.objects.create(name='ZZ-CAT-NAME', slug='zz-cat-title')
         Post.objects.create(
@@ -1097,14 +1097,13 @@ class ExchangeOnlyDocumentTitleTests(ExchangeTemplateCase):
             exchange_safe=True,
         )
         url = reverse('blog:category', kwargs={'category_slug': category.slug})
-        self._set_mode(False)
-        self.assertEqual(self._title_of(url), f'ZZ-CAT-NAME · {_TITLE_SITE}')
-        self._set_mode(True)
-        title = self._title_of(url)
-        self.assertEqual(title, _TITLE_SITE)
-        self.assertNotIn('ZZ-CAT-NAME', title)
-        self.assertNotIn(_TITLE_SEO, title)
-        self.assertNotIn(NEUTRAL_DESCRIPTION, title)
+        for enabled in (False, True):
+            with self.subTest(exchange_only=enabled):
+                self._set_mode(enabled)
+                title = self._title_of(url)
+                self.assertEqual(title, f'ZZ-CAT-NAME · {_TITLE_SITE}')
+                self.assertNotIn(_TITLE_SEO, title)
+                self.assertNotIn(NEUTRAL_DESCRIPTION, title)
 
     def test_post_and_pair(self):
         category = Category.objects.create(name='Нотатки', slug='notatky-title')

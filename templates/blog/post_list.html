@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static content_format exchange_mode %}
 
-{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page_title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if active_category %}{% if page_title and page_title != site_settings.site_name %}{{ page_title }} · {% endif %}{{ site_settings.site_name }}{% elif eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page_title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 <section class="blog-hero">
   <div class="blog-hero__copy">
-    <h1 class="blog-hero__title">{{ page.heading }} <span class="u-accent">{{ page.title_accent }}</span></h1>
+    <h1 class="blog-hero__title">{% if category_heading %}{{ category_heading }}{% else %}{{ page.heading }} <span class="u-accent">{{ page.title_accent }}</span>{% endif %}</h1>
     {% mode_field page 'intro' as intro %}{% if intro %}<p class="blog-hero__lead">{{ intro }}</p>{% endif %}
   </div>
   <div class="blog-filters">

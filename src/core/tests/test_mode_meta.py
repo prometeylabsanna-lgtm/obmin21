@@ -425,10 +425,11 @@ class ModeMetaTests(TestCase):
             exchange_safe=True,
         )
         url = '/blog/kategoriya/zz-cat/'
+        description = 'Статті рубрики ZZ-CAT.'
         self._mode(False)
-        self._expect(url, _SEO, 'ZZ-CAT', ['ZZ-BLOG-INTRO', _TITLE])
+        self._expect(url, description, 'ZZ-CAT', ['ZZ-BLOG-INTRO', _TITLE, _SEO])
         self._mode(True)
-        self._expect(url, NEUTRAL_DESCRIPTION, 'ZZ-CAT', [_SEO, 'ZZ-BLOG-INTRO', _TITLE])
+        self._expect(url, description, 'ZZ-CAT', [_SEO, 'ZZ-BLOG-INTRO', _TITLE])
 
     def test_post_detail(self):
         category = Category.objects.create(name='Нотатки', slug='notatky')
