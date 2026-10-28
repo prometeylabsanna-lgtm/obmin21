@@ -9,7 +9,7 @@ urlpatterns = [
     path('tinymce/filebrowser/', tinymce_disabled),
     path('tinymce/flatpages_link_list/', tinymce_disabled),
     path('tinymce/', include('tinymce.urls')),
-    path('admin/', admin.site.urls),
+    path(settings.ADMIN_URL, admin.site.urls),
     path('', include('src.core.urls')),
     path('', include('src.network.urls')),
     path('', include('src.content.urls')),

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.utils.html import strip_tags
@@ -179,7 +180,12 @@ def quotes_json(request):
 
 
 def robots_txt(request):
-    return render(request, 'core/robots.txt', content_type='text/plain')
+    return render(
+        request,
+        'core/robots.txt',
+        {'disallow_default_admin': settings.ADMIN_URL == 'admin/'},
+        content_type='text/plain',
+    )
 
 
 @require_GET

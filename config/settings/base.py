@@ -3,11 +3,14 @@ from pathlib import Path
 from decouple import Csv, config
 from django.templatetags.static import static
 
+from config.admin_url import normalize
 from src.core.colors import UNFOLD_BASE, UNFOLD_PRIMARY
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
+
+ADMIN_URL = normalize(config('ADMIN_URL', default='admin/'))
 
 DEBUG = False
 
@@ -169,7 +172,7 @@ UNFOLD = {
         'navigation': [],
     },
     'LOGIN': {
-        'redirect_after': '/admin/',
+        'redirect_after': '/' + ADMIN_URL,
     },
     'COLORS': {
         'primary': UNFOLD_PRIMARY,

@@ -4,7 +4,19 @@ from django.urls import Resolver404, resolve
 from src.core.breadcrumbs import safe_reverse
 from src.core.exchange_mode import hidden_page_status, is_exchange_only
 
-_SKIP_PREFIXES = ('/admin', '/tinymce', '/static', '/media')
+_FIXED_SKIP_PREFIXES = ('/tinymce', '/static', '/media')
+
+
+def _skip_prefixes():
+    from django.conf import settings
+
+    raw = str(getattr(settings, 'ADMIN_URL', '') or '')
+    admin_root = '/' + raw.lstrip('/').rstrip('/')
+    if admin_root == '/':
+        admin_root = '/admin'
+    return (admin_root, *_FIXED_SKIP_PREFIXES)
+
+
 _SERVICE_URL_NAMES = (
     'content:service_detail',
     'content:service',
@@ -66,7 +78,7 @@ def is_hidden_path(path, request=None):
     if not is_exchange_only(request):
         return False
     clean = (path or '').split('?', 1)[0]
-    if not clean.startswith('/') or clean.startswith(_SKIP_PREFIXES):
+    if not clean.startswith('/') or clean.startswith(_skip_prefixes()):
         return False
     cache = None
     if request is not None:
@@ -91,7 +103,7 @@ def is_hidden_request(request):
     if not is_exchange_only(request):
         return False
     path = request.path_info or '/'
-    if path.startswith(_SKIP_PREFIXES):
+    if path.startswith(_skip_prefixes()):
         return False
     return is_hidden_path(path, request)
 

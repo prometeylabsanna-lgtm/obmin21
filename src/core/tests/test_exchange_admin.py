@@ -271,7 +271,7 @@ class ExchangeAdminTests(TestCase):
         self.client.logout()
         anonymous = self.client.get(preview)
         self.assertEqual(anonymous.status_code, 302)
-        self.assertIn('/admin/login/', anonymous.url)
+        self.assertIn(reverse('admin:login'), anonymous.url)
         plain = User.objects.create_user('plain-etap-8', password='pass-12345', is_staff=False)
         self.client.force_login(plain)
         outsider = self.client.get(preview)

@@ -141,8 +141,8 @@ class AdminPanelTests(TestCase):
         self.assertLess(faq_pos, contacts_pos)
         self.assertNotIn('Заголовок сторінки', html)
         self.assertLess(
-            html.find('/admin/content/blogpage/'),
-            html.find('/admin/blog/post/'),
+            html.find(reverse('admin:content_blogpage_changelist')),
+            html.find(reverse('admin:blog_post_changelist')),
         )
         self.assertContains(resp, 'Оформлення')
         self.assertContains(resp, reverse('admin:content_homesearchsettings_changelist'))
