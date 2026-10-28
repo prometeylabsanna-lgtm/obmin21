@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static content_format exchange_mode %}
+{% load static content_format exchange_mode responsive %}
 
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta post 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ post.seo_title|default:post.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}{% is_exchange_only as eo %}
@@ -26,7 +26,7 @@
       {{ post.body|rich_html }}
       {% if post.figure %}
       <figure class="article-fig">
-        <img src="{{ post.figure.url }}" alt="" loading="lazy" decoding="async">
+        <img src="{{ post.figure.url }}" alt="" {% field_wh post.figure %} loading="lazy" decoding="async">
       </figure>
       {% endif %}
     {% elif eo %}
@@ -45,7 +45,7 @@
         {% endif %}
         {% if sec.fig and art.layout_mode.fig_url %}
         <figure class="article-fig">
-          <img src="{{ art.layout_mode.fig_url }}" alt="{{ art.layout_mode.fig_cap }}" loading="lazy" decoding="async">
+          <img src="{{ art.layout_mode.fig_url }}" alt="{{ art.layout_mode.fig_cap }}"{% if art.layout_mode.fig_width %} width="{{ art.layout_mode.fig_width }}" height="{{ art.layout_mode.fig_height }}"{% endif %} loading="lazy" decoding="async">
           {% if art.layout_mode.fig_cap %}<figcaption>{{ art.layout_mode.fig_cap }}</figcaption>{% endif %}
         </figure>
         {% endif %}
@@ -67,7 +67,7 @@
         {% endif %}
         {% if sec.fig and art.fig_url %}
         <figure class="article-fig">
-          <img src="{{ art.fig_url }}" alt="{{ art.fig_cap }}" loading="lazy" decoding="async">
+          <img src="{{ art.fig_url }}" alt="{{ art.fig_cap }}"{% if art.fig_width %} width="{{ art.fig_width }}" height="{{ art.fig_height }}"{% endif %} loading="lazy" decoding="async">
           {% if art.fig_cap %}<figcaption>{{ art.fig_cap }}</figcaption>{% endif %}
         </figure>
         {% endif %}

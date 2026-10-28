@@ -7,7 +7,7 @@
   <div class="svc-hero__banner">
     <div class="svc-hero__coins" aria-hidden="true">
       {% if page.hero_image %}
-      <img src="{{ page.hero_image.url }}" alt="" decoding="async">
+      <img src="{{ page.hero_image.url }}" alt="" {% field_wh page.hero_image %} decoding="async">
       {% else %}
       <img src="{% static_img 'images/coins.png' %}" alt="" {% img_wh 'images/coins.png' %} decoding="async" fetchpriority="high">
       {% endif %}

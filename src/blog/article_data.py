@@ -223,6 +223,8 @@ def layout_for(post):
                 'sections': [],
                 'fig_cap': '',
                 'fig_url': '',
+                'fig_width': 0,
+                'fig_height': 0,
                 'plain': True,
             }
         words = post.title.split()
@@ -236,10 +238,19 @@ def layout_for(post):
             'sections': [],
             'fig_cap': '',
             'fig_url': '',
+            'fig_width': 0,
+            'fig_height': 0,
             'plain': True,
         }
     fig_name = f"images/articles/{data.get('fig_slug') or post.slug}.jpg"
-    fig_url = static(fig_name) if finders.find(fig_name) else post.image_url()
+    if finders.find(fig_name):
+        from src.core.responsive_images import exact_static_size
+
+        fig_url = static(fig_name)
+        fig_width, fig_height = exact_static_size(fig_name)
+    else:
+        fig_url = post.image_url()
+        fig_width, fig_height = post.image_size()
     sections = []
     for i, sec in enumerate(data.get('sections') or []):
         sections.append({
@@ -256,5 +267,7 @@ def layout_for(post):
         'sections': sections,
         'fig_cap': data.get('fig_cap') or '',
         'fig_url': fig_url,
+        'fig_width': fig_width,
+        'fig_height': fig_height,
         'plain': False,
     }

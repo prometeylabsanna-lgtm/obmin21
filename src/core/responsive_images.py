@@ -46,6 +46,19 @@ def static_size(name):
         return image.size
 
 
+def exact_static_size(name):
+    found = finders.find(name) if name else None
+    if not found:
+        return (0, 0)
+    from PIL import Image
+
+    try:
+        with Image.open(found) as image:
+            return image.size
+    except OSError:
+        return (0, 0)
+
+
 def field_size(field):
     if not field:
         return (0, 0)

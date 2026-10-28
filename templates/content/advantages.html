@@ -141,7 +141,7 @@
       class="why-adv__hero"
       style="background-color: {{ page.color_why_banner }};{% if page.why_banner_src %}background-image: url('{{ page.why_banner_src }}');background-size: cover;background-position: center;{% endif %}"
     >
-      {% if eo %}{% if page.why_coins_mode %}<img class="why-adv__coins" src="{{ page.why_coins_mode.url }}" alt="" decoding="async">{% endif %}{% else %}<img class="why-adv__coins" src="{{ page.why_coins_src }}" alt=""{% if not page.why_coins %} {% img_wh 'images/coins.png' %}{% endif %} loading="lazy" decoding="async">{% endif %}
+      {% if eo %}{% if page.why_coins_mode %}<img class="why-adv__coins" src="{{ page.why_coins_mode.url }}" alt="" {% field_wh page.why_coins_mode %} decoding="async">{% endif %}{% else %}<img class="why-adv__coins" src="{{ page.why_coins_src }}" alt=""{% if not page.why_coins %} {% img_wh 'images/coins.png' %}{% endif %} loading="lazy" decoding="async">{% endif %}
       {% mode_field page 'why_banner_title' as why_banner_title %}
       {% mode_field page 'why_banner_accent' as why_banner_accent %}
       {% mode_field page 'why_banner_text' as why_banner_text %}
