@@ -48,6 +48,8 @@ class Category(models.Model):
         'Показувати у фільтрі на сторінці',
         default=True,
     )
+    seo_title = models.CharField('Назва для SEO', max_length=255, blank=True, default='')
+    seo_description = models.TextField('Опис для SEO', blank=True, default='')
 
     class Meta:
         ordering = ['sort_order', 'name']

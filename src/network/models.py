@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from src.core.exchange_fields import mode_char
+from src.network.hours import WEEKDAYS
 
 MAP_EMBED_HELP = (
     'Google Maps → Поділитися → Вбудувати карту → '
@@ -189,6 +190,39 @@ class Branch(models.Model):
         if self.map_url:
             return self.map_url
         return f'https://maps.google.com/?q={quote_plus(self.address)}'
+
+
+class BranchOpeningHours(models.Model):
+    branch = models.ForeignKey(
+        Branch,
+        on_delete=models.CASCADE,
+        related_name='opening_hours',
+        verbose_name='Відділення',
+    )
+    day_of_week = models.PositiveSmallIntegerField('День тижня', choices=WEEKDAYS)
+    opens = models.TimeField('Відкриття', null=True, blank=True)
+    closes = models.TimeField('Закриття', null=True, blank=True)
+    is_closed = models.BooleanField('Вихідний', default=False)
+
+    class Meta:
+        ordering = ['day_of_week', 'id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=('branch', 'day_of_week'),
+                name='uniq_branch_opening_day',
+            ),
+        ]
+        verbose_name = 'Години роботи'
+        verbose_name_plural = 'Години роботи'
+
+    def __str__(self):
+        label = self.get_day_of_week_display()
+        if self.is_closed or self.opens is None or self.closes is None:
+            return f'{label}: вихідний'
+        return (
+            f'{label}: {self.opens.strftime("%H:%M")}'
+            f'–{self.closes.strftime("%H:%M")}'
+        )
 
 
 from src.network.cms_proxies import BannerCity, ContactCity, MapCity  # noqa: E402,F401

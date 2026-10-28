@@ -1,4 +1,5 @@
 from django.contrib import admin
+from unfold.admin import TabularInline
 
 from src.core.admin_city import (
     BranchInline,
@@ -7,7 +8,7 @@ from src.core.admin_city import (
 )
 from src.core.admin_mixins import ListUnfoldAdmin
 from src.network.cms_proxies import BannerCity, ContactCity, MapCity
-from src.network.models import Branch, City
+from src.network.models import Branch, BranchOpeningHours, City
 
 
 @admin.register(BannerCity)
@@ -48,11 +49,21 @@ class ContactCityAdmin(CitySectionAdmin):
     )
 
 
+class BranchOpeningHoursInline(TabularInline):
+    model = BranchOpeningHours
+    extra = 0
+    fields = ('day_of_week', 'opens', 'closes', 'is_closed')
+    ordering = ('day_of_week',)
+    verbose_name = 'Години роботи'
+    verbose_name_plural = 'Години роботи'
+
+
 @admin.register(Branch)
 class BranchAdmin(ListUnfoldAdmin):
     list_display = ('city', 'address', 'is_active', 'sort_order')
     list_filter = ('city', 'is_active')
     search_fields = ('address', 'city__name')
+    inlines = [BranchOpeningHoursInline]
     fields = (
         'city',
         'address',

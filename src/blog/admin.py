@@ -9,7 +9,13 @@ from src.core.exchange_admin import ExchangeSafeAdminMixin, ExchangeSafeListFilt
 class CategoryAdmin(ListUnfoldAdmin):
     list_display = ('name', 'show_in_filter', 'sort_order')
     list_editable = ('show_in_filter', 'sort_order')
-    fields = ('name', 'show_in_filter', 'sort_order')
+    fields = (
+        'name',
+        'show_in_filter',
+        'sort_order',
+        'seo_title',
+        'seo_description',
+    )
 
 
 @admin.register(Post)

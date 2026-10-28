@@ -5,6 +5,7 @@ from html import unescape
 from django.utils.html import strip_tags
 
 from src.core.exchange_mode import is_exchange_only, mode_text
+from src.network.hours import open_slots, opening_hours_specification
 
 
 def _plain(value):
@@ -108,9 +109,20 @@ def _department(branch, request, origin, business_id):
         }
     if hours:
         node['openingHours'] = hours
+    spec = opening_hours_specification(open_slots(branch) or [])
+    if spec:
+        node['openingHoursSpecification'] = spec
     if phone:
         node['telephone'] = phone
-    if not any(key in node for key in ('name', 'address', 'geo', 'openingHours', 'telephone')):
+    kept = (
+        'name',
+        'address',
+        'geo',
+        'openingHours',
+        'openingHoursSpecification',
+        'telephone',
+    )
+    if not any(key in node for key in kept):
         return None
     node['parentOrganization'] = {'@id': business_id}
     return node
@@ -125,6 +137,7 @@ def branch_departments(request):
     rows = (
         Branch.objects.filter(is_active=True, city__is_active=True)
         .select_related('city')
+        .prefetch_related('opening_hours')
         .order_by('city__sort_order', 'city_id', 'sort_order', 'id')
     )
     nodes = []
