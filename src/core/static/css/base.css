@@ -130,12 +130,6 @@ html.is-menu-open body {
   touch-action: none;
 }
 
-@media (min-width: 768px) {
-  .page__shell {
-    padding-bottom: calc(80px * var(--scale));
-  }
-}
-
 .site-chat__fab {
   position: fixed;
   z-index: 901;
