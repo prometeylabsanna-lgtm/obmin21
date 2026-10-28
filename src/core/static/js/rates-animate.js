@@ -194,6 +194,5 @@
   });
 
   window.Obmin21 = window.Obmin21 || {};
-  window.Obmin21.animateRatesOnce = animateRates;
   window.Obmin21.animateRates = animateRates;
 })();
