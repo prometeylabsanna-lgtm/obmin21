@@ -47,7 +47,7 @@ def notify_submission(kind: str, obj) -> None:
                 lambda: threading.Thread(target=_dispatch, daemon=True).start(),
             )
         else:
-            _dispatch()
+            transaction.on_commit(_dispatch)
     except Exception:
         logger.exception('notify_submission: dispatch failed kind=%s', kind)
 

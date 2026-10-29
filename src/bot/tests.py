@@ -1,3 +1,4 @@
+import json
 from decimal import Decimal
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -5,12 +6,24 @@ from unittest.mock import patch
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from src.bot.client import send_telegram_message
 from src.bot.models import BotSession, TelegramProfile
 from src.bot.services import parse_amount, quote_amounts, submit_exchange, upsert_profile
 from src.bot.states import BotState
 from src.leads.models import ExchangeRequest
 from src.network.models import Branch, City
 from src.rates.models import CurrencyPair, Quote, RateBoard
+
+
+class _FakeTgResponse:
+    def read(self):
+        return b'{"ok":true}'
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return False
 
 
 class BotServiceTests(TestCase):
@@ -117,3 +130,46 @@ class WebChatTests(TestCase):
             {'data': 'mn:ex', 'label': 'Заявка'},
         )
         self.assertEqual(cb.status_code, 200)
+
+
+@override_settings(TELEGRAM_BOT_TOKEN='bot-tok')
+class BotClientChatIdTests(TestCase):
+    """User chat_id is always a single string; TELEGRAM_CHAT_ID list/string must not break bot sends."""
+
+    def test_send_telegram_message_one_request_for_string_chat(self):
+        with patch('urllib.request.urlopen', return_value=_FakeTgResponse()) as urlopen:
+            ok = send_telegram_message('-100123', 'привіт')
+        self.assertTrue(ok)
+        self.assertEqual(urlopen.call_count, 1)
+        req = urlopen.call_args.args[0]
+        body = json.loads(req.data.decode('utf-8'))
+        self.assertEqual(body['chat_id'], '-100123')
+        self.assertIn('/botbot-tok/sendMessage', req.full_url)
+
+    def test_webhook_ok_when_staff_chat_id_is_list_or_string(self):
+        url = reverse('bot:webhook')
+        payload = (
+            '{"update_id":2,"message":{"message_id":1,"date":1,'
+            '"chat":{"id":42,"type":"private"},'
+            '"from":{"id":42,"is_bot":false,"first_name":"Y"},"text":"/help"}}'
+        )
+        for chat_setting in (['-1001', '-1002'], '-100123'):
+            with self.subTest(chat_setting=chat_setting):
+                with override_settings(
+                    TELEGRAM_WEBHOOK_SECRET='test-secret',
+                    TELEGRAM_BOT_TOKEN='123:abc',
+                    TELEGRAM_CHAT_ID=chat_setting,
+                ):
+                    with patch('src.bot.views.get_bot') as mocked:
+                        bot = mocked.return_value
+                        bot.process_new_updates.return_value = None
+                        response = self.client.post(
+                            url,
+                            data=payload,
+                            content_type='application/json',
+                            HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN='test-secret',
+                        )
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.json(), {'ok': True})
+                mocked.assert_called()
+                bot.process_new_updates.assert_called_once()

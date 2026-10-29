@@ -84,7 +84,8 @@ class NotificationBackendTests(TestCase):
 
     def test_telegram_and_resend_on_exchange_post(self):
         with patch('urllib.request.urlopen', return_value=_FakeResponse()) as urlopen:
-            resp = self.client.post(reverse('leads:request_modal'), self._exchange_payload())
+            with self.captureOnCommitCallbacks(execute=True):
+                resp = self.client.post(reverse('leads:request_modal'), self._exchange_payload())
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(ExchangeRequest.objects.count(), 1)
         obj = ExchangeRequest.objects.get()
@@ -121,20 +122,21 @@ class NotificationBackendTests(TestCase):
 
     def test_contact_and_review_posts_notify(self):
         with patch('urllib.request.urlopen', return_value=_FakeResponse()) as urlopen:
-            contact = self.client.post(reverse('leads:contact_submit'), {
-                'name': 'Анна',
-                'phone': '+380991112233',
-                'message': 'Питання & деталі',
-                'consent': True,
-            })
-            review = self.client.post(reverse('reviews:review_submit'), {
-                'name': 'Ігор',
-                'text': 'Все добре <b>',
-                'city_name': 'Харків',
-                'phone': '+380997776655',
-                'rating': '5',
-                'consent': True,
-            })
+            with self.captureOnCommitCallbacks(execute=True):
+                contact = self.client.post(reverse('leads:contact_submit'), {
+                    'name': 'Анна',
+                    'phone': '+380991112233',
+                    'message': 'Питання & деталі',
+                    'consent': True,
+                })
+                review = self.client.post(reverse('reviews:review_submit'), {
+                    'name': 'Ігор',
+                    'text': 'Все добре <b>',
+                    'city_name': 'Харків',
+                    'phone': '+380997776655',
+                    'rating': '5',
+                    'consent': True,
+                })
         self.assertEqual(contact.status_code, 200)
         self.assertEqual(review.status_code, 200)
         self.assertEqual(ContactMessage.objects.count(), 1)
@@ -157,10 +159,11 @@ class NotificationBackendTests(TestCase):
         with patch('urllib.request.urlopen') as urlopen:
             with self.assertLogs('src.core.notifications.telegram', level='WARNING') as tg_logs:
                 with self.assertLogs('src.core.notifications.resend', level='WARNING') as mail_logs:
-                    resp = self.client.post(
-                        reverse('leads:request_modal'),
-                        self._exchange_payload(name='Без ключів'),
-                    )
+                    with self.captureOnCommitCallbacks(execute=True):
+                        resp = self.client.post(
+                            reverse('leads:request_modal'),
+                            self._exchange_payload(name='Без ключів'),
+                        )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(ExchangeRequest.objects.filter(name='Без ключів').count(), 1)
         urlopen.assert_not_called()
@@ -169,21 +172,23 @@ class NotificationBackendTests(TestCase):
 
     def test_urlopen_exception_still_saves(self):
         with patch('urllib.request.urlopen', side_effect=TimeoutError('slow')):
-            resp = self.client.post(reverse('leads:request_modal'), self._exchange_payload(
-                name='Таймаут',
-                phone='+380998887766',
-            ))
+            with self.captureOnCommitCallbacks(execute=True):
+                resp = self.client.post(reverse('leads:request_modal'), self._exchange_payload(
+                    name='Таймаут',
+                    phone='+380998887766',
+                ))
         self.assertEqual(resp.status_code, 200)
         self.assertTrue(ExchangeRequest.objects.filter(name='Таймаут').exists())
 
     def test_urlopen_generic_exception_still_saves_contact(self):
         with patch('urllib.request.urlopen', side_effect=Exception('boom')):
-            resp = self.client.post(reverse('leads:contact_submit'), {
-                'name': 'Помилка',
-                'phone': '+380991122334',
-                'message': 'текст',
-                'consent': True,
-            })
+            with self.captureOnCommitCallbacks(execute=True):
+                resp = self.client.post(reverse('leads:contact_submit'), {
+                    'name': 'Помилка',
+                    'phone': '+380991122334',
+                    'message': 'текст',
+                    'consent': True,
+                })
         self.assertEqual(resp.status_code, 200)
         self.assertTrue(ContactMessage.objects.filter(name='Помилка').exists())
 
