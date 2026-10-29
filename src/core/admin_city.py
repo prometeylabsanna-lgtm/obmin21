@@ -15,6 +15,7 @@ class BranchInline(StackedInline):
     extra = 0
     readonly_fields = ('hours', 'coords_manual')
     fields = (
+        'name',
         'address',
         'hours',
         'phone',

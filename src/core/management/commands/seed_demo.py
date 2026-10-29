@@ -36,6 +36,7 @@ from src.content.page_meta_mode import fill_page_meta_mode
 from src.content.reader_mode_copy import fill_reader_mode_fields
 from src.content.stage3_fill import fill_articles_lead, fill_home_seo_mode
 from src.core.models import SiteSettings
+from src.network.branch_sync import BRANCH_POINTS, match_city_branches
 from src.network.city_mode_copy import fill_city_banner_seo_mode, fill_city_name_mode
 from src.network.models import Branch, City
 from src.rates.models import CurrencyPair, Quote, RateBoard
@@ -43,19 +44,20 @@ from src.rates.pair_mode_copy import fill_fiat_pair_mode
 from src.reviews.models import Review
 
 
-CITIES = [
-    ('Київ', 'kyiv', '+38 (099) 222-22-22', 'вул. Хрещатик, 1, Київ'),
-    ('Харків', 'kharkiv', '+38 (099) 111-11-11', 'вул. Сумська, 10, Харків'),
-    ('Дніпро', 'dnipro', '+38 (099) 444-44-44', 'пр. Яворницького, 50, Дніпро'),
-    ('Одеса', 'odesa', '+38 (099) 333-33-33', 'вул. Дерибасівська, 5, Одеса'),
-    ('Львів', 'lviv', '+38 (099) 121-21-21', 'пл. Ринок, 12, Львів'),
-    ('Запоріжжя', 'zaporizhzhia', '+38 (099) 131-31-31', 'пр. Соборний, 100, Запоріжжя'),
-    ('Вінниця', 'vinnytsia', '+38 (099) 141-41-41', 'вул. Соборна, 30, Вінниця'),
-    ('Миколаїв', 'mykolaiv', '+38 (099) 151-51-51', 'вул. Соборна, 8, Миколаїв'),
-    ('Хмельницький', 'khmelnytskyi', '+38 (099) 161-61-61', 'вул. Проскурівська, 20, Хмельницький'),
-    ('Рівне', 'rivne', '+38 (099) 171-71-71', 'вул. Соборна, 15, Рівне'),
-    ('Черкаси', 'cherkasy', '+38 (099) 777-77-77', 'бул. Шевченка, 200, Черкаси'),
-]
+_SEED_HOURS = 'Пн–Нд, 8:00–21:00'
+_SEED_PHONES = {
+    'kyiv': '+38 (099) 222-22-22',
+    'kharkiv': '+38 (099) 111-11-11',
+    'dnipro': '+38 (099) 444-44-44',
+    'odesa': '+38 (099) 333-33-33',
+    'lviv': '+38 (099) 121-21-21',
+    'zaporizhzhia': '+38 (099) 131-31-31',
+    'vinnytsia': '+38 (099) 141-41-41',
+    'mykolaiv': '+38 (099) 151-51-51',
+    'khmelnytskyi': '+38 (099) 161-61-61',
+    'rivne': '+38 (099) 171-71-71',
+    'cherkasy': '+38 (099) 777-77-77',
+}
 
 PAIRS = [
     ('USD', 'Долар США', 'usd-uah', '41.20', '41.65'),
@@ -344,7 +346,14 @@ class Command(BaseCommand):
         cookies.save()
 
         keep_city_slugs = []
-        for i, (name, slug, phone, address) in enumerate(CITIES):
+        seen_slugs = []
+        for point in BRANCH_POINTS:
+            if point.slug not in seen_slugs:
+                seen_slugs.append(point.slug)
+        for slug in seen_slugs:
+            points = [item for item in BRANCH_POINTS if item.slug == slug]
+            name = points[0].city_name
+            phone = _SEED_PHONES.get(slug, '')
             keep_city_slugs.append(slug)
             city, _ = City.objects.update_or_create(
                 slug=slug,
@@ -352,25 +361,46 @@ class Command(BaseCommand):
                     'name': name,
                     'phone': phone,
                     'is_active': True,
-                    'sort_order': i,
+                    'sort_order': points[0].city_sort,
                 },
             )
-            branch = city.branches.order_by('sort_order', 'id').first()
-            payload = {
-                'address': address,
-                'hours': 'Пн–Нд, 8:00–21:00',
-                'phone': phone,
-                'map_url': 'https://www.google.com/maps/search/?api=1&query=' + quote_plus(address),
-                'is_active': True,
-                'sort_order': 0,
-            }
-            if branch:
+            existing = list(city.branches.order_by('sort_order', 'id'))
+            paired, creates, _leftover = match_city_branches(existing, points)
+            kept_ids = []
+            for point, branch in paired.items():
+                payload = {
+                    'address': point.address,
+                    'name': point.branch_name,
+                    'hours': _SEED_HOURS,
+                    'phone': phone,
+                    'map_url': (
+                        'https://www.google.com/maps/search/?api=1&query='
+                        + quote_plus(point.address)
+                    ),
+                    'is_active': True,
+                    'sort_order': point.branch_sort,
+                }
                 for key, val in payload.items():
                     setattr(branch, key, val)
                 branch.save()
-            else:
-                branch = Branch.objects.create(city=city, **payload)
-            city.branches.exclude(pk=branch.pk).update(is_active=False)
+                kept_ids.append(branch.pk)
+            for point in creates:
+                branch = Branch.objects.create(
+                    city=city,
+                    address=point.address,
+                    name=point.branch_name,
+                    hours=_SEED_HOURS,
+                    phone=phone,
+                    map_url=(
+                        'https://www.google.com/maps/search/?api=1&query='
+                        + quote_plus(point.address)
+                    ),
+                    is_active=True,
+                    sort_order=point.branch_sort,
+                )
+                kept_ids.append(branch.pk)
+            if kept_ids:
+                city.branches.exclude(pk__in=kept_ids).update(is_active=False)
         fill_city_banner_seo_mode(apps, None)
         fill_city_name_mode(apps, None)
         City.objects.exclude(slug__in=keep_city_slugs).update(is_active=False)

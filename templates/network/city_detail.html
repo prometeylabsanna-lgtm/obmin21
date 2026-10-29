@@ -10,7 +10,8 @@
   <div class="card-grid card-grid--2">
     {% for b in branches %}
     <article class="card">
-      <h2 class="card__title">{{ b.address }}</h2>
+      <h2 class="card__title">{% if b.name %}«{{ b.name }}»{% else %}{{ b.address }}{% endif %}</h2>
+      {% if b.name %}<p class="card__text">{{ b.address }}</p>{% endif %}
       {% if b.hours_display %}<p class="card__text">{{ b.hours_display }}</p>{% endif %}
       {% if b.phone %}<p class="card__text">{{ b.phone }}</p>{% endif %}
     </article>

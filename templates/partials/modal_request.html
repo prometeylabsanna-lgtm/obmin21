@@ -53,7 +53,7 @@
         {% if branches %}
         <select class="bk-branch__select" data-bk-branch aria-label="Відділення">
           {% for b in branches %}
-          <option value="{{ b.pk }}"{% if form.branch.value|stringformat:"s" == b.pk|stringformat:"s" %} selected{% endif %}>{{ b.address }}</option>
+          <option value="{{ b.pk }}"{% if form.branch.value|stringformat:"s" == b.pk|stringformat:"s" %} selected{% endif %}>{% if b.name %}«{{ b.name }}» — {% endif %}{{ b.address }}</option>
           {% endfor %}
         </select>
         {% else %}

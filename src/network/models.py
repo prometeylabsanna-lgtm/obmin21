@@ -159,6 +159,12 @@ class City(models.Model):
         'khmelnytskyi': 'у Хмельницькому',
         'rivne': 'у Рівному',
         'cherkasy': 'у Черкасах',
+        'lutsk': 'у Луцьку',
+        'ivano-frankivsk': 'в Івано-Франківську',
+        'zhytomyr': 'у Житомирі',
+        'chernihiv': 'у Чернігові',
+        'ternopil': 'у Тернополі',
+        'chernivtsi': 'у Чернівцях',
     }
 
     @property
@@ -189,6 +195,16 @@ class Branch(models.Model):
         on_delete=models.CASCADE,
         related_name='branches',
         verbose_name='Місто',
+    )
+    name = models.CharField(
+        'Назва відділення',
+        max_length=80,
+        blank=True,
+        default='',
+        help_text=(
+            'Коротка назва точки в межах міста, наприклад Барабашово. '
+            'Порожнє — на сайті лише назва міста.'
+        ),
     )
     address = models.CharField('Адреса', max_length=255)
     hours = models.CharField(
@@ -228,7 +244,10 @@ class Branch(models.Model):
         verbose_name_plural = 'Відділення'
 
     def __str__(self):
-        return f'{self.city.name}: {self.address}'
+        label = self.city.name
+        if (self.name or '').strip():
+            label = f'{label} «{self.name.strip()}»'
+        return f'{label}: {self.address}'
 
     @property
     def has_real_address(self):

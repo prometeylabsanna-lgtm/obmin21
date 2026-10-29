@@ -217,7 +217,15 @@ class SeedPlaceholderCoordsTests(TestCase):
         real.refresh_from_db()
         self.assertIsNone(placeholder.lat)
         self.assertIsNone(placeholder.lng)
-        self.assertEqual(placeholder.address, 'вул. Сумська, 10, Харків')
+        self.assertEqual(placeholder.address, 'вул. Кацарська, 36/38')
+        kharkiv_branches = City.objects.get(slug='kharkiv').branches.filter(
+            is_active=True,
+        )
+        self.assertEqual(kharkiv_branches.count(), 2)
+        self.assertEqual(
+            kharkiv_branches.get(name='Барабашово').address,
+            'метро Академіка Барабашова',
+        )
         self.assertEqual(
             placeholder.map_embed_url,
             'https://www.google.com/maps/embed?pb=seed-keep',

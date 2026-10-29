@@ -68,14 +68,15 @@ class BranchOpeningHoursInline(TabularInline):
 
 @admin.register(Branch)
 class BranchAdmin(ListUnfoldAdmin):
-    list_display = ('city', 'address', 'is_active', 'sort_order')
+    list_display = ('city', 'name', 'address', 'is_active', 'sort_order')
     list_filter = ('city', 'is_active')
-    search_fields = ('address', 'city__name')
+    search_fields = ('address', 'name', 'city__name')
     inlines = [BranchOpeningHoursInline]
     actions = ('geocode_coordinates', 'delete_selected')
     readonly_fields = ('hours', 'coords_manual')
     fields = (
         'city',
+        'name',
         'address',
         'hours',
         'phone',

@@ -99,9 +99,15 @@ def _department(branch, request, origin, business_id):
         '@type': ['FinancialService', 'LocalBusiness'],
         '@id': f'{origin}/#branch-{branch.pk}',
     }
-    name_parts = [part for part in (locality, street) if part]
-    if name_parts:
-        node['name'] = ', '.join(name_parts)
+    branch_label = _kept(getattr(branch, 'name', ''), request)
+    if branch_label and locality:
+        node['name'] = f'{locality} «{branch_label}»'
+    else:
+        name_parts = [part for part in (locality, street) if part]
+        if branch_label and not locality:
+            name_parts.insert(0, f'«{branch_label}»')
+        if name_parts:
+            node['name'] = ', '.join(name_parts)
     if address:
         address['@type'] = 'PostalAddress'
         node['address'] = address
