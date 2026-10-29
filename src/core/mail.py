@@ -1,14 +1,11 @@
-import json
 import logging
-import urllib.error
-import urllib.request
 
 from django.conf import settings
 from django.core.mail.backends.base import BaseEmailBackend
 
-logger = logging.getLogger(__name__)
+from src.core.notifications.resend import post_resend_email, resolve_from_email
 
-_RESEND_URL = 'https://api.resend.com/emails'
+logger = logging.getLogger(__name__)
 
 
 class ResendEmailBackend(BaseEmailBackend):
@@ -32,44 +29,22 @@ class ResendEmailBackend(BaseEmailBackend):
         if not recipients:
             logger.info('Resend skipped: no recipients for %s', message.subject)
             return False
-        payload = {
-            'from': message.from_email or settings.DEFAULT_FROM_EMAIL,
-            'to': recipients,
-            'subject': message.subject or '',
-            'text': message.body or '',
-        }
-        if message.cc:
-            payload['cc'] = list(message.cc)
-        if message.bcc:
-            payload['bcc'] = list(message.bcc)
+        from_email = message.from_email or resolve_from_email()
         html = _html_body(message)
-        if html:
-            payload['html'] = html
-        data = json.dumps(payload, ensure_ascii=False).encode('utf-8')
-        request = urllib.request.Request(
-            _RESEND_URL,
-            data=data,
-            headers={
-                'Authorization': f'Bearer {key}',
-                'Content-Type': 'application/json',
-            },
-            method='POST',
+        ok = post_resend_email(
+            api_key=key,
+            from_email=from_email,
+            to=recipients,
+            subject=message.subject or '',
+            text=message.body or '',
+            html=html,
+            cc=list(message.cc) if message.cc else None,
+            bcc=list(message.bcc) if message.bcc else None,
+            timeout=5,
         )
-        try:
-            with urllib.request.urlopen(request, timeout=10) as response:
-                response.read()
-            return True
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode('utf-8', errors='replace')[:500]
-            logger.error('Resend HTTP %s: %s', exc.code, detail)
-            if not self.fail_silently:
-                raise
-            return False
-        except urllib.error.URLError:
-            logger.exception('Resend request failed')
-            if not self.fail_silently:
-                raise
-            return False
+        if not ok and not self.fail_silently:
+            raise RuntimeError(f'Resend failed for subject={message.subject!r}')
+        return ok
 
 
 def _html_body(message):

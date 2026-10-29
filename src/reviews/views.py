@@ -3,6 +3,7 @@ from django.views.decorators.http import require_http_methods
 
 from src.content.models import ReviewsPage
 from src.core.exchange_mode import mode_meta
+from src.core.notifications import notify_review
 from src.reviews.forms import ReviewForm
 from src.reviews.selectors import get_published_reviews
 
@@ -35,6 +36,7 @@ def review_submit(request):
         from src.content.models import HomePage
         review.home_page = HomePage.load()
         review.save()
+        notify_review(review)
         return render(request, 'partials/form_success.html', {
             'title': 'Дякуємо!',
             'message': 'Ваш відгук надіслано. Він зʼявиться на сайті після перевірки.',

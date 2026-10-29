@@ -1,16 +1,12 @@
-import logging
 import re
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.utils import timezone
 
-from src.bot.client import send_telegram_message
 from src.core.models import SiteSettings
+from src.core.notifications import notify_contact, notify_new_lead
 from src.core.phones import phone_digits
 from src.leads.models import ContactMessage, ExchangeRequest
-
-logger = logging.getLogger(__name__)
 
 PHONE_RE = re.compile(r'^\+?[\d\s\-()]{10,20}$')
 
@@ -76,45 +72,3 @@ def create_contact_message(*, cleaned, city=None, source='web', telegram_chat_id
     )
     notify_contact(obj)
     return obj
-
-
-def notify_new_lead(obj):
-    site = SiteSettings.load()
-    body = (
-        f'Нова заявка #{obj.pk}\n'
-        f'{obj.name} · {obj.phone}\n'
-        f'{obj.pair.code} · {obj.get_direction_display()}\n'
-        f'Віддає: {obj.amount_give} · Отримує: {obj.amount_receive}\n'
-        f'Курс: {obj.rate_fixed}\n'
-        f'{obj.city.name} · {obj.branch.address}\n'
-        f'До: {obj.expires_at:%d.%m.%Y %H:%M}'
-    )
-    _send_email(site, f'Заявка Обмін21 #{obj.pk}', body)
-    _send_telegram(site, body)
-
-
-def notify_contact(obj):
-    site = SiteSettings.load()
-    body = (
-        f'Звернення #{obj.pk}\n'
-        f'{obj.name} · {obj.phone}\n'
-        f'{obj.message}'
-    )
-    _send_email(site, f'Звернення Обмін21 #{obj.pk}', body)
-    _send_telegram(site, body)
-
-
-def _send_email(site, subject, body):
-    to = site.notify_email
-    if not to:
-        logger.info('Lead notify email skipped (empty notify_email): %s', subject)
-        return
-    try:
-        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [to], fail_silently=False)
-    except Exception:
-        logger.exception('Email notify failed')
-
-
-def _send_telegram(site, body):
-    chat_id = site.notify_telegram_chat_id or settings.TELEGRAM_CHAT_ID
-    send_telegram_message(chat_id, body)

@@ -82,7 +82,7 @@ def copy_real_db():
     if _STATE.get('active'):
         return
     source = real_db_path()
-    if not source.is_file():
+    if not source.is_file() or source.stat().st_size == 0:
         raise SkipTest('Немає локального db.sqlite3; тести не залежать від закоміченої бази')
     handle, raw_name = tempfile.mkstemp(prefix='obmin21_eo_', suffix='.sqlite3')
     os.close(handle)
@@ -91,9 +91,12 @@ def copy_real_db():
         _backup_readonly(source, dest)
         _swap_default(source, dest)
         _assert_copy_is_not_original(source)
-    except Exception:
+    except SkipTest:
         restore_test_db()
         raise
+    except Exception as exc:
+        restore_test_db()
+        raise SkipTest(f'Локальний db.sqlite3 непридатний для EO-тестів: {exc}') from exc
 
 
 def restore_test_db():

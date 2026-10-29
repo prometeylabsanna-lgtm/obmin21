@@ -219,12 +219,15 @@ _EMAIL_DEFAULT = (
 )
 EMAIL_BACKEND = config('EMAIL_BACKEND', default=_EMAIL_DEFAULT)
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@obmin21.local')
+EMAIL_FROM = config('EMAIL_FROM', default='') or DEFAULT_FROM_EMAIL
+NOTIFY_EMAIL_TO = config('NOTIFY_EMAIL_TO', default='', cast=Csv())
 
 TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN', default='')
-TELEGRAM_CHAT_ID = config('TELEGRAM_CHAT_ID', default='')
+TELEGRAM_CHAT_ID = config('TELEGRAM_CHAT_ID', default='', cast=Csv())
 TELEGRAM_WEBHOOK_SECRET = config('TELEGRAM_WEBHOOK_SECRET', default='')
 PUBLIC_BASE_URL = config('PUBLIC_BASE_URL', default='')
 TELEGRAM_WEBHOOK_URL = config('TELEGRAM_WEBHOOK_URL', default='')
+NOTIFICATIONS_ASYNC = config('NOTIFICATIONS_ASYNC', default=True, cast=bool)
 
 LOGGING = {
     'version': 1,

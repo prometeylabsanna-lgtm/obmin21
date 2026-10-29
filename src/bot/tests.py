@@ -37,9 +37,8 @@ class BotServiceTests(TestCase):
         buy = quote_amounts(self.pair, self.city, 'buy', Decimal('4160'))
         self.assertEqual(buy['amount_receive'], Decimal('100.00'))
 
-    @patch('src.leads.services._send_telegram')
-    @patch('src.leads.services._send_email')
-    def test_submit_exchange(self, _email, _tg):
+    @patch('src.leads.services.notify_new_lead')
+    def test_submit_exchange(self, _notify):
         user = SimpleNamespace(id=111, username='u1', first_name='Іван', last_name='')
         profile = upsert_profile(user)
         obj = submit_exchange(
