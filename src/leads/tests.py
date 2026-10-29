@@ -1,6 +1,7 @@
 from decimal import Decimal
 from unittest.mock import patch
 
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
@@ -91,11 +92,13 @@ class ExchangeRequestHardeningTests(TestCase):
         return data
 
     def test_server_overwrites_client_rate(self):
+        mail.outbox.clear()
         resp = self.client.post(reverse('leads:request_modal'), self._payload())
         self.assertEqual(resp.status_code, 200)
         obj = ExchangeRequest.objects.get()
         self.assertEqual(obj.rate_fixed, Decimal('41.2000'))
         self.assertEqual(obj.amount_receive, Decimal('4120.00'))
+        self.assertEqual(len(mail.outbox), 0)
 
     @patch('src.leads.services.notify_new_lead')
     def test_duplicate_request_is_idempotent(self, notify):

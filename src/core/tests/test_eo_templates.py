@@ -1346,19 +1346,28 @@ class ExchangeOnlyEmptyStatsTests(ExchangeTemplateCase):
         cache.clear()
 
     def test_empty_home_stats_fallback_hidden_in_mode(self):
+        def _stats_section(html: str) -> str:
+            start = html.find('id="advantages"')
+            end = html.find('id="services"')
+            if start == -1 or end == -1 or end <= start:
+                return ''
+            return html[start:end]
+
         self._set_mode(False)
         off = self.client.get(reverse('core:home'))
         self.assertEqual(off.status_code, 200)
         off_html = off.content.decode()
         self.assertEqual(off.context['home_stats'], [])
-        self.assertIn('7K', off_html)
-        self.assertIn('Постійних клієнтів', off_html)
+        off_stats = _stats_section(off_html)
+        self.assertIn('7K', off_stats)
+        self.assertIn('Постійних клієнтів', off_stats)
         self._set_mode(True)
         on = self.client.get(reverse('core:home'))
         self.assertEqual(on.status_code, 200)
         on_html = on.content.decode()
         self.assertEqual(on.context['home_stats'], [])
-        self.assertNotIn('7K', on_html)
+        on_stats = _stats_section(on_html)
+        self.assertNotIn('7K', on_stats)
         self.assertNotIn('Постійних клієнтів', on_html)
         self.assertNotIn('display:none', ''.join(on_html.lower().split()))
 

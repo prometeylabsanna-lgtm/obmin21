@@ -1,7 +1,7 @@
 """Staff notifications for form submissions (exchange, contact, review).
 
 Forms do not collect client email addresses. Only staff are notified via
-Telegram and/or Resend email — there is no client confirmation email.
+Telegram — there is no client confirmation email.
 """
 
 from __future__ import annotations
@@ -13,7 +13,6 @@ from django.conf import settings
 from django.db import transaction
 
 from . import messages
-from .resend import send_staff_email
 from .telegram import send_telegram_html
 
 logger = logging.getLogger(__name__)
@@ -26,7 +25,7 @@ KIND_REVIEW = 'review'
 def notify_submission(kind: str, obj) -> None:
     """Build and dispatch staff notifications. Never raises; never blocks request when async."""
     try:
-        subject, plain, html_body = messages.build(kind, obj)
+        _subject, _plain, html_body = messages.build(kind, obj)
     except Exception:
         logger.exception('notify_submission: failed to build message kind=%s', kind)
         return
@@ -36,10 +35,6 @@ def notify_submission(kind: str, obj) -> None:
             send_telegram_html(html_body)
         except Exception:
             logger.exception('notify_submission: telegram failed kind=%s', kind)
-        try:
-            send_staff_email(subject, plain)
-        except Exception:
-            logger.exception('notify_submission: email failed kind=%s', kind)
 
     try:
         if getattr(settings, 'NOTIFICATIONS_ASYNC', True):

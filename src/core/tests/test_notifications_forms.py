@@ -1,4 +1,4 @@
-"""Real client POSTs to site forms → Telegram + Resend staff notifications."""
+"""Real client POSTs to site forms → Telegram staff notifications."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from decimal import Decimal
 from unittest.mock import patch
 
 from decouple import Csv
+from django.core import mail
 from django.core.cache import cache
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -49,9 +50,6 @@ _NOTIFY_OK = dict(
     SITE_URL='https://obmin21.test',
     TELEGRAM_BOT_TOKEN='tok-forms',
     TELEGRAM_CHAT_ID=['-1001'],
-    RESEND_API_KEY='re_forms_key',
-    EMAIL_FROM='Staff <from@obmin21.test>',
-    NOTIFY_EMAIL_TO=['ops@obmin21.test'],
     DEFAULT_FROM_EMAIL='fallback@obmin21.test',
 )
 
@@ -60,9 +58,6 @@ _NOTIFY_EMPTY = dict(
     SITE_URL='https://obmin21.test',
     TELEGRAM_BOT_TOKEN='',
     TELEGRAM_CHAT_ID=[],
-    RESEND_API_KEY='',
-    EMAIL_FROM='',
-    NOTIFY_EMAIL_TO=[],
     DEFAULT_FROM_EMAIL='',
 )
 
@@ -89,6 +84,7 @@ class _FormsNotifyFixtures(TestCase):
 
     def setUp(self):
         self.client.post(reverse('network:set_city'), {'city': 'kharkiv-forms-notify'})
+        mail.outbox.clear()
 
     def _clear_site_notify(self):
         cache.delete('site_settings')
@@ -168,26 +164,25 @@ class _FormsNotifyFixtures(TestCase):
 
 @override_settings(**_NOTIFY_OK)
 class FormsNotifyConfiguredTests(_FormsNotifyFixtures):
-    def test_all_forms_send_telegram_and_resend(self):
+    def test_all_forms_send_telegram(self):
         for kind, url, payload, model, field, value in self._post_forms():
             with self.subTest(kind=kind):
                 model.objects.all().delete()
+                mail.outbox.clear()
                 with patch('urllib.request.urlopen', return_value=_FakeResponse()) as urlopen:
                     with self.captureOnCommitCallbacks(execute=True):
                         resp = self.client.post(url, payload)
                 self.assertIn(resp.status_code, (200, 302))
                 self.assertEqual(model.objects.filter(**{field: value}).count(), 1)
                 obj = model.objects.get(**{field: value})
+                self.assertEqual(len(mail.outbox), 0)
 
                 tg_calls = []
-                resend_calls = []
                 for call in urlopen.call_args_list:
                     req = call.args[0]
                     full_url, body, headers = _parse_request(req)
-                    if 'api.telegram.org' in full_url:
-                        tg_calls.append((full_url, body))
-                    elif 'api.resend.com' in full_url:
-                        resend_calls.append((full_url, body, headers))
+                    self.assertIn('api.telegram.org', full_url)
+                    tg_calls.append((full_url, body))
 
                 self.assertEqual(len(tg_calls), 1)
                 tg_url, tg_body = tg_calls[0]
@@ -208,14 +203,6 @@ class FormsNotifyConfiguredTests(_FormsNotifyFixtures):
                     self.assertIn('&lt;b&gt;', tg_body['text'])
                     self.assertIn('Новий відгук', tg_body['text'])
 
-                self.assertEqual(len(resend_calls), 1)
-                resend_url, resend_body, headers = resend_calls[0]
-                self.assertEqual(resend_url, 'https://api.resend.com/emails')
-                self.assertEqual(headers.get('authorization'), 'Bearer re_forms_key')
-                self.assertEqual(resend_body['from'], 'Staff <from@obmin21.test>')
-                self.assertEqual(resend_body['to'], ['ops@obmin21.test'])
-                self.assertIn(str(obj.pk), resend_body['subject'])
-
 
 @override_settings(**_NOTIFY_EMPTY)
 class FormsNotifyEmptyConfigTests(_FormsNotifyFixtures):
@@ -224,22 +211,17 @@ class FormsNotifyEmptyConfigTests(_FormsNotifyFixtures):
         for kind, url, payload, model, field, value in self._post_forms():
             with self.subTest(kind=kind):
                 model.objects.all().delete()
+                mail.outbox.clear()
                 with patch('urllib.request.urlopen') as urlopen:
                     with self.assertLogs('src.core.notifications.telegram', level='WARNING') as tg_logs:
-                        with self.assertLogs('src.core.notifications.resend', level='WARNING') as mail_logs:
-                            with self.captureOnCommitCallbacks(execute=True):
-                                resp = self.client.post(url, payload)
+                        with self.captureOnCommitCallbacks(execute=True):
+                            resp = self.client.post(url, payload)
                 self.assertIn(resp.status_code, (200, 302))
                 self.assertNotEqual(resp.status_code, 500)
                 self.assertEqual(model.objects.filter(**{field: value}).count(), 1)
                 urlopen.assert_not_called()
+                self.assertEqual(len(mail.outbox), 0)
                 self.assertTrue(any('TELEGRAM_BOT_TOKEN' in line for line in tg_logs.output))
-                self.assertTrue(
-                    any(
-                        'RESEND_API_KEY' in line or 'no recipients' in line or 'EMAIL_FROM' in line
-                        for line in mail_logs.output
-                    ),
-                )
 
 
 @override_settings(**_NOTIFY_OK)
@@ -254,6 +236,7 @@ class FormsNotifyFailureTests(_FormsNotifyFixtures):
             for err_name, exc in errors:
                 with self.subTest(kind=kind, error=err_name):
                     model.objects.all().delete()
+                    mail.outbox.clear()
                     unique = f'{value}-{err_name}'
                     data = dict(payload)
                     data[field] = unique
@@ -263,14 +246,12 @@ class FormsNotifyFailureTests(_FormsNotifyFixtures):
                     self.assertNotEqual(resp.status_code, 500)
                     self.assertIn(resp.status_code, (200, 302))
                     self.assertTrue(model.objects.filter(**{field: unique}).exists())
+                    self.assertEqual(len(mail.outbox), 0)
 
 
 @override_settings(
     NOTIFICATIONS_ASYNC=False,
     TELEGRAM_BOT_TOKEN='tok-legacy',
-    RESEND_API_KEY='',
-    EMAIL_FROM='',
-    NOTIFY_EMAIL_TO=[],
     DEFAULT_FROM_EMAIL='',
 )
 class LegacyTelegramChatIdTests(TestCase):
