@@ -62,6 +62,7 @@ _SEED_PHONES = {
 PAIRS = [
     ('USD', 'Долар США', 'usd-uah', '41.20', '41.65'),
     ('EUR', 'Євро', 'eur-uah', '44.93', '45.30'),
+    ('EUR/USD', 'Євро/долар', 'eur-usd', '1.0250', '1.0620'),
     ('PLN', 'Польський злотий', 'pln-uah', '10.25', '10.62'),
     ('GBP', 'Фунт стерлінгів', 'gbp-uah', '52.10', '52.90'),
     ('CHF', 'Швейцарський франк', 'chf-uah', '46.40', '47.20'),
@@ -470,13 +471,6 @@ class Command(BaseCommand):
                             'updated_at': timezone.now(),
                         },
                     )
-
-        CurrencyPair.objects.filter(slug='eur-usd').update(is_active=False)
-
-        btc_uah = CurrencyPair.objects.filter(slug='btc-uah').first()
-        if btc_uah:
-            btc_uah.is_active = False
-            btc_uah.save(update_fields=['is_active'])
 
         crypto_pairs = [
             ('BTC/USDT', 'Bitcoin', 'btc-usdt', '63410', '63980', 'USDT', 200),
