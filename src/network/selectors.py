@@ -19,3 +19,24 @@ def get_city_branches(city):
     if city is None:
         return Branch.objects.none()
     return city.branches.filter(is_active=True).prefetch_related('opening_hours')
+
+
+def get_visible_branches():
+    return (
+        Branch.objects.filter(is_active=True, city__is_active=True)
+        .select_related('city')
+        .prefetch_related('opening_hours')
+        .order_by('city__sort_order', 'sort_order', 'id')
+    )
+
+
+def pick_active_branch(city, branch_id):
+    branches = list(get_city_branches(city))
+    if not branches:
+        return None
+    if branch_id not in (None, ''):
+        target = str(branch_id)
+        for item in branches:
+            if str(item.pk) == target:
+                return item
+    return branches[0]

@@ -4,20 +4,21 @@
   <div class="city-select" data-city-select>
     <button type="button" class="city-select__btn" data-city-toggle data-qa="city-toggle" data-city-slug="{{ active_city.slug }}" aria-expanded="false" aria-haspopup="listbox">
       <svg class="city-select__pin" width="12" height="14" viewBox="0 0 12 14" aria-hidden="true"><path d="M6 0a5 5 0 0 0-5 5c0 3.6 5 9 5 9s5-5.4 5-9a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="var(--color-accent)"></path></svg>
-      <span data-city-label>{% if active_city %}{% mode_field active_city 'name' as city_label %}{% endif %}{% if city_label %}{{ city_label }}{% elif not eo %}Місто{% endif %}</span>
+      <span data-city-label>{% if active_city %}{% mode_field active_city 'name' as city_label %}{% endif %}{% if city_label %}{{ city_label }}{% if active_branch.name %} «{{ active_branch.name }}»{% endif %}{% elif not eo %}Місто{% endif %}</span>
       <svg class="city-select__chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
     </button>
     <div class="city-select__menu" data-city-menu hidden role="listbox">
-      {% for c in cities %}
-      {% mode_field c 'name' as option_name %}
+      {% for b in list_branches %}
+      {% mode_field b.city 'name' as option_name %}
       <form method="post" action="{% url 'network:set_city' %}"
             hx-post="{% url 'network:set_city' %}"
             hx-target="#city-chrome"
             hx-swap="outerHTML">
         {% csrf_token %}
-        <input type="hidden" name="city" value="{{ c.slug }}">
-        <button type="submit" class="city-select__option{% if active_city.slug == c.slug %} is-active{% endif %}" data-qa="city-option">
-          <span>{{ option_name }}</span>
+        <input type="hidden" name="city" value="{{ b.city.slug }}">
+        <input type="hidden" name="branch" value="{{ b.pk }}">
+        <button type="submit" class="city-select__option{% if active_branch.pk == b.pk %} is-active{% endif %}" data-qa="city-option">
+          <span>{{ option_name }}{% if b.name %} «{{ b.name }}»{% endif %}</span>
           <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.4"></path></svg>
         </button>
       </form>

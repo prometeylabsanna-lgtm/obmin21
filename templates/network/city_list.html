@@ -9,9 +9,10 @@
 </section>
 <section>
   <div class="card-grid card-grid--3">
-    {% for city in cities_list %}
-    <a class="card" href="{% url 'network:city_detail' city.slug %}">
-      {% mode_field city 'name' as city_name %}{% if city_name %}<h2 class="card__title">{{ city_name }}</h2>{% endif %}
+    {% for b in list_branches %}
+    <a class="card" href="{% url 'network:city_detail' b.city.slug %}">
+      {% mode_field b.city 'name' as city_name %}{% if city_name %}<h2 class="card__title">{{ city_name }}{% if b.name %} «{{ b.name }}»{% endif %}</h2>{% endif %}
+      {% if b.address %}<p class="card__text">{{ b.address }}</p>{% endif %}
       <span class="link-accent">Детальніше
         <svg width="6" height="10" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
       </span>

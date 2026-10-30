@@ -45,12 +45,9 @@
   touch-action: manipulation;
 }
 
-.contact-modal .contact-card--phone {
-  border-color: var(--color-border);
-}
-
+.contact-modal .contact-card--phone,
 .contact-modal .contact-card--telegram {
-  border-color: var(--color-accent);
+  border-color: var(--color-border);
 }
 
 .contact-card__icon {
@@ -117,13 +114,9 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .contact-card--phone:hover {
-    border-color: var(--color-accent);
-    color: var(--color-navy);
-  }
-
+  .contact-card--phone:hover,
   .contact-card--telegram:hover {
-    border-color: var(--color-accent-hover);
+    border-color: var(--color-accent);
     color: var(--color-navy);
   }
 }

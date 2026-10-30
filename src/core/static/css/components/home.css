@@ -617,8 +617,9 @@
   display: flex;
   align-items: center;
   gap: calc(10px * var(--scale));
-  height: calc(44px * var(--scale));
-  padding: 0 calc(16px * var(--scale));
+  min-height: calc(44px * var(--scale));
+  height: auto;
+  padding: calc(8px * var(--scale)) calc(16px * var(--scale));
   border: 1px solid #d5d9df;
   border-radius: calc(6px * var(--scale));
   background: #fff;
@@ -627,6 +628,14 @@
   font-weight: 500;
   color: #052145;
   cursor: pointer;
+  max-width: 100%;
+}
+
+.map-city__btn span {
+  min-width: 0;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.25;
 }
 
 .map-city__menu {
@@ -634,10 +643,12 @@
   top: calc(100% + calc(8px * var(--scale)));
   left: 0;
   z-index: 50;
-  width: calc(220px * var(--scale));
-  max-height: calc(300px * var(--scale));
+  width: min(calc(260px * var(--scale)), calc(100vw - 32px));
+  max-height: min(calc(70vh - var(--safe-bottom, 0px)), calc(320px * var(--scale)));
+  overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   background: #fff;
   border-radius: calc(8px * var(--scale));
   box-shadow: 0 calc(12px * var(--scale)) calc(36px * var(--scale)) rgba(5, 33, 69, 0.14);
@@ -656,6 +667,8 @@
   color: #052145;
   text-align: left;
   cursor: pointer;
+  white-space: normal;
+  line-height: 1.25;
 }
 
 .map-city__option.is-active,

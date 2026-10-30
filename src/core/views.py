@@ -28,7 +28,7 @@ HOME_DESCRIPTION = (
     'фіксація онлайн і готівковий обмін.'
 )
 
-_RETAIL_ORDER = {'USD': 0, 'EUR': 1, 'PLN': 2}
+_RETAIL_ORDER = {'USD': 0, 'EUR': 1, 'EURUSD': 2, 'EUR/USD': 2, 'PLN': 3}
 _CRYPTO_ORDER = {'BTC': 0, 'ETH': 1, 'USDT': 2}
 
 
@@ -159,7 +159,9 @@ def home_branch(request):
     return render(request, 'partials/home_branch.html', {
         'eo': is_exchange_only(request),
         'cities': getattr(request, 'cities', []),
+        'list_branches': getattr(request, 'list_branches', []),
         'active_city': city,
+        'active_branch': getattr(request, 'active_branch', None),
         'city_branches': getattr(request, 'city_branches', []),
         'page': HomePage.load(),
         'active_phone': _home_branch_phone(city),

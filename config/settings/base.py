@@ -210,6 +210,7 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 CITY_COOKIE_NAME = 'obmin21_city'
+BRANCH_COOKIE_NAME = 'obmin21_branch'
 CITY_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 RATE_HOLD_MINUTES = config('RATE_HOLD_MINUTES', default=30, cast=int)
 

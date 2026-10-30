@@ -118,6 +118,8 @@ class City(models.Model):
         'Текст після назви міста',
         max_length=80,
         default='за вигідним курсом',
+        blank=True,
+        help_text='Порожнє — після назви міста нічого не буде.',
     )
     banner_suffix_mode = mode_char(
         'Текст після назви міста для режиму «Лише обмін»',
@@ -244,10 +246,15 @@ class Branch(models.Model):
         verbose_name_plural = 'Відділення'
 
     def __str__(self):
-        label = self.city.name
-        if (self.name or '').strip():
-            label = f'{label} «{self.name.strip()}»'
-        return f'{label}: {self.address}'
+        return f'{self.list_label}: {self.address}'
+
+    @property
+    def list_label(self):
+        city_name = self.city.name if self.city_id else ''
+        name = (self.name or '').strip()
+        if name:
+            return f'{city_name} «{name}»'
+        return city_name
 
     @property
     def has_real_address(self):

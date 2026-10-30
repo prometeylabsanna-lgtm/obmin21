@@ -1,6 +1,12 @@
 from django.conf import settings
 
-from src.network.selectors import get_active_cities, get_city_by_slug, get_default_city
+from src.network.selectors import (
+    get_active_cities,
+    get_city_by_slug,
+    get_default_city,
+    get_visible_branches,
+    pick_active_branch,
+)
 
 
 class CityMiddleware:
@@ -10,6 +16,7 @@ class CityMiddleware:
     def __call__(self, request):
         cities = list(get_active_cities())
         request.cities = cities
+        request.list_branches = list(get_visible_branches())
 
         slug = request.session.get('city_slug') or request.COOKIES.get(
             settings.CITY_COOKIE_NAME,
@@ -19,8 +26,15 @@ class CityMiddleware:
         if city is None:
             city = get_default_city()
 
+        branch_id = request.session.get('branch_id') or request.COOKIES.get(
+            settings.BRANCH_COOKIE_NAME,
+            '',
+        )
         request.city = city
         request.city_branches = list(city.branches.filter(is_active=True)) if city else []
+        request.active_branch = pick_active_branch(city, branch_id)
+        if request.active_branch is not None:
+            request.session['branch_id'] = request.active_branch.pk
 
         response = self.get_response(request)
 
@@ -28,6 +42,17 @@ class CityMiddleware:
             response.set_cookie(
                 settings.CITY_COOKIE_NAME,
                 city.slug,
+                max_age=settings.CITY_COOKIE_MAX_AGE,
+                samesite='Lax',
+            )
+        if (
+            request.active_branch is not None
+            and request.COOKIES.get(settings.BRANCH_COOKIE_NAME)
+            != str(request.active_branch.pk)
+        ):
+            response.set_cookie(
+                settings.BRANCH_COOKIE_NAME,
+                str(request.active_branch.pk),
                 max_age=settings.CITY_COOKIE_MAX_AGE,
                 samesite='Lax',
             )

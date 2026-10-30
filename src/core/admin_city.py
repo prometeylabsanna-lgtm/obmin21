@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
@@ -55,15 +56,43 @@ class BranchInline(StackedInline):
 class CityQuoteInline(TabularInline):
     model = Quote
     extra = 0
+    can_delete = False
     fields = ('pair', 'board', 'buy', 'sell', 'is_active')
-    autocomplete_fields = ('pair',)
+    readonly_fields = ('pair', 'board')
     verbose_name = 'Курс'
-    verbose_name_plural = 'Курси на банері'
+    verbose_name_plural = 'Курси міста: вимикайте зайві, не змінюйте пару'
     tab = True
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.filter(board__in=('retail', 'crypto'))
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        parent_clean = formset.clean
+
+        def clean(self):
+            parent_clean(self)
+            seen = set()
+            for form in self.forms:
+                data = getattr(form, 'cleaned_data', None)
+                if not data or data.get('DELETE'):
+                    continue
+                pair = data.get('pair') or getattr(form.instance, 'pair_id', None)
+                board = data.get('board') or getattr(form.instance, 'board', None)
+                pair_id = pair.pk if hasattr(pair, 'pk') else pair
+                if not pair_id or not board:
+                    continue
+                key = (pair_id, board)
+                if key in seen:
+                    raise ValidationError(
+                        'Двічі та сама пара на одній дошці. '
+                        'Увімкніть існуючий курс замість зміни пари.'
+                    )
+                seen.add(key)
+
+        formset.clean = clean
+        return formset
 
 
 class CitySectionAdmin(ListUnfoldAdmin):

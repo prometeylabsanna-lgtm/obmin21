@@ -22,6 +22,8 @@ def site_chrome(request):
         'phone_href': phone_tel(phone),
         'cities': getattr(request, 'cities', []),
         'city_branches': getattr(request, 'city_branches', []),
+        'list_branches': getattr(request, 'list_branches', []),
+        'active_branch': getattr(request, 'active_branch', None),
         'breadcrumb_items': breadcrumbs_for_request(request),
         'exchange_only': exchange_only(request),
         'footer_services': Service.objects.filter(is_active=True).visible()[:6],

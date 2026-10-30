@@ -20,6 +20,15 @@ def public_boards():
     return [item for item in RateBoard.choices if item[0] != RateBoard.CRYPTO]
 
 
+def _quote_visible(quote):
+    return bool(
+        quote
+        and quote.is_active
+        and quote.buy > 0
+        and quote.sell > 0
+    )
+
+
 def get_quotes_for_city(city, board=RateBoard.RETAIL):
     city_id = city.id if city else None
     pairs = list(get_active_pairs())
@@ -30,32 +39,31 @@ def get_quotes_for_city(city, board=RateBoard.RETAIL):
         Quote.objects.filter(
             pair__in=pairs,
             board=board,
-            is_active=True,
         )
         .filter(Q(city_id=city_id) | Q(city__isnull=True))
         .select_related('pair', 'city')
     )
 
-    by_pair = {}
-    updated_at = None
+    city_rows = {}
+    global_rows = {}
     for quote in quotes:
-        if quote.buy <= 0 or quote.sell <= 0:
-            continue
-        existing = by_pair.get(quote.pair_id)
-        prefer_city = quote.city_id is not None
-        if existing is None:
-            by_pair[quote.pair_id] = quote
-        elif prefer_city and existing.city_id is None:
-            by_pair[quote.pair_id] = quote
-        if updated_at is None or quote.updated_at > updated_at:
-            updated_at = quote.updated_at
+        if quote.city_id:
+            city_rows[quote.pair_id] = quote
+        else:
+            global_rows[quote.pair_id] = quote
 
     rows = []
+    updated_at = None
     for pair in pairs:
-        quote = by_pair.get(pair.id)
-        if quote is None:
+        if pair.id in city_rows:
+            quote = city_rows[pair.id]
+        else:
+            quote = global_rows.get(pair.id)
+        if not _quote_visible(quote):
             continue
         rows.append({'pair': pair, 'quote': quote})
+        if updated_at is None or quote.updated_at > updated_at:
+            updated_at = quote.updated_at
 
     return rows, updated_at
 
@@ -66,11 +74,17 @@ def get_quote(pair, city, board=RateBoard.RETAIL):
     if not CurrencyPair.objects.visible().filter(pk=pair.pk).exists():
         return None
     city_id = city.id if city else None
-    qs = Quote.objects.filter(pair=pair, board=board, is_active=True)
-    city_quote = qs.filter(city_id=city_id).first() if city_id else None
-    if city_quote and city_quote.buy > 0 and city_quote.sell > 0:
-        return city_quote
-    global_quote = qs.filter(city__isnull=True).first()
-    if global_quote and global_quote.buy > 0 and global_quote.sell > 0:
-        return global_quote
-    return None
+    if city_id:
+        city_quote = Quote.objects.filter(
+            pair=pair,
+            board=board,
+            city_id=city_id,
+        ).first()
+        if city_quote is not None:
+            return city_quote if _quote_visible(city_quote) else None
+    global_quote = Quote.objects.filter(
+        pair=pair,
+        board=board,
+        city__isnull=True,
+    ).first()
+    return global_quote if _quote_visible(global_quote) else None

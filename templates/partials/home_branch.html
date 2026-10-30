@@ -1,6 +1,6 @@
 {% load exchange_mode %}
 {% is_exchange_only as eo %}
-{% with branch=city_branches.0 %}
+{% with branch=active_branch %}
   <div class="map-section__info">
     <h2 class="map-section__title">{{ page.map_title }}<br><span class="u-accent">{{ page.map_title_accent }}</span></h2>
     <div class="map-section__details">
@@ -18,16 +18,17 @@
         <div class="map-section__label">Місто:</div>
         <div class="map-city" data-city-select>
           <button type="button" class="map-city__btn" data-city-toggle aria-expanded="false" aria-haspopup="listbox">
-            <span>{% if active_city %}{% mode_field active_city 'name' as map_city_name %}{% endif %}{% if map_city_name %}{{ map_city_name }}{% elif not eo %}Місто{% endif %}</span>
+            <span>{% if active_city %}{% mode_field active_city 'name' as map_city_name %}{% endif %}{% if map_city_name %}{{ map_city_name }}{% if active_branch.name %} «{{ active_branch.name }}»{% endif %}{% elif not eo %}Місто{% endif %}</span>
             <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="#B3B4B6" fill="none" stroke-width="1.4"></path></svg>
           </button>
           <div class="map-city__menu" data-city-menu hidden role="listbox">
-            {% for c in cities %}
-            {% mode_field c 'name' as map_option_name %}
+            {% for b in list_branches %}
+            {% mode_field b.city 'name' as map_option_name %}
             <form method="post" action="{% url 'network:set_city' %}">
               {% csrf_token %}
-              <input type="hidden" name="city" value="{{ c.slug }}">
-              <button type="submit" class="map-city__option{% if active_city.slug == c.slug %} is-active{% endif %}">{{ map_option_name }}</button>
+              <input type="hidden" name="city" value="{{ b.city.slug }}">
+              <input type="hidden" name="branch" value="{{ b.pk }}">
+              <button type="submit" class="map-city__option{% if active_branch.pk == b.pk %} is-active{% endif %}">{{ map_option_name }}{% if b.name %} «{{ b.name }}»{% endif %}</button>
             </form>
             {% endfor %}
           </div>

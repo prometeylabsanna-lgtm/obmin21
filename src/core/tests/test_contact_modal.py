@@ -109,9 +109,9 @@ class ContactModalTests(TestCase):
             html.index('contact-card--telegram'),
         )
         base = (settings.BASE_DIR / 'templates/base.html').read_text(encoding='utf-8')
-        self.assertIn("{% static 'css/components/contact-modal.css' %}?v=4", base)
+        self.assertIn("{% static 'css/components/contact-modal.css' %}?v=5", base)
 
-    def test_telegram_card_has_gold_border_modifier(self):
+    def test_contact_cards_share_rest_border(self):
         self._settings(_PHONE, _TELEGRAM)
         html = self._html()
         self.assertIn('class="contact-card contact-card--telegram"', html)
@@ -119,16 +119,20 @@ class ContactModalTests(TestCase):
         css = (
             settings.BASE_DIR / 'src/core/static/css/components/contact-modal.css'
         ).read_text(encoding='utf-8')
-        self.assertRegex(
+        rest = re.search(
+            r'\.contact-modal \.contact-card--phone,\s*'
+            r'\.contact-modal \.contact-card--telegram\s*\{([^}]*)\}',
             css,
-            r'\.contact-modal \.contact-card--telegram\s*\{[^}]*'
-            r'border-color:\s*var\(--color-accent\)\s*;',
         )
-        self.assertRegex(
+        self.assertIsNotNone(rest)
+        self.assertIn('border-color: var(--color-border)', rest.group(1))
+        self.assertNotIn('--color-accent', rest.group(1))
+        hover = re.search(
+            r'\.contact-card--telegram:hover\s*\{([^}]*)\}',
             css,
-            r'\.contact-modal \.contact-card--phone\s*\{[^}]*'
-            r'border-color:\s*var\(--color-border\)\s*;',
         )
+        self.assertIsNotNone(hover)
+        self.assertIn('border-color: var(--color-accent)', hover.group(1))
 
     def test_branch_phone_before_city_and_default(self):
         self._settings(_PHONE, _TELEGRAM)

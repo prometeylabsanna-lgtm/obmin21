@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -100,6 +101,22 @@ class Quote(models.Model):
     def __str__(self):
         city = self.city.name if self.city_id else 'глобальний'
         return f'{self.pair.code} {self.board} ({city})'
+
+    def clean(self):
+        if not self.pair_id or not self.board:
+            return
+        qs = Quote.objects.filter(pair_id=self.pair_id, board=self.board)
+        if self.city_id:
+            qs = qs.filter(city_id=self.city_id)
+        else:
+            qs = qs.filter(city__isnull=True)
+        if self.pk:
+            qs = qs.exclude(pk=self.pk)
+        if qs.exists():
+            raise ValidationError(
+                'Курс для цієї пари вже є. Увімкніть існуючий рядок '
+                'і змініть купівлю/продаж — не міняйте саму пару.'
+            )
 
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()

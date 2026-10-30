@@ -117,6 +117,13 @@
   font-size: calc(17px * var(--scale));
   font-weight: 600;
   color: var(--color-text);
+  max-width: min(calc(220px * var(--scale)), calc(100vw - 140px));
+}
+
+.city-select__btn [data-city-label] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .city-select__chevron {
@@ -133,7 +140,12 @@
   top: calc(100% + calc(12px * var(--scale)));
   right: calc(-20px * var(--scale));
   z-index: 50;
-  width: calc(190px * var(--scale));
+  width: min(calc(240px * var(--scale)), calc(100vw - 24px));
+  max-height: min(calc(70vh - var(--safe-bottom, 0px)), calc(420px * var(--scale)));
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   background: var(--color-bg);
   border-radius: calc(8px * var(--scale));
   box-shadow: 0 calc(12px * var(--scale)) calc(36px * var(--scale)) rgba(5, 33, 69, 0.14);
@@ -149,6 +161,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: calc(8px * var(--scale));
   padding: calc(7px * var(--scale)) 0;
   border: 0;
   background: transparent;
@@ -157,6 +170,12 @@
   font-size: calc(14px * var(--scale));
   color: var(--color-text);
   text-align: left;
+}
+
+.city-select__option span {
+  min-width: 0;
+  white-space: normal;
+  line-height: 1.25;
 }
 
 .city-select__option:hover,
@@ -261,7 +280,9 @@
   }
 
   .city-select__menu {
-    right: calc(-60px * var(--scale));
+    right: 0;
+    left: auto;
+    width: min(calc(240px * var(--scale)), calc(100vw - 16px));
   }
 
   .mobile-menu__nav a {
