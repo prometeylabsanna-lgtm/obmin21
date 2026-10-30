@@ -201,7 +201,6 @@ def build_unfold_navigation():
             'collapsible': True,
             'items': [
                 _item('Заявки на обмін', 'assignment', 'admin:leads_exchangerequest_changelist'),
-                _item('Повідомлення з форми', 'mail', 'admin:leads_contactmessage_changelist'),
             ],
         },
         {
