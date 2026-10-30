@@ -145,34 +145,19 @@ class BranchAdminCoordinateTests(TestCase):
         self.assertFalse(saved.coords_manual)
         self.assertEqual(_texts(self.request), [GEOCODE_FAILURE])
 
-    def test_manual_coords_block_geocoding_until_both_cleared(self):
+    def test_manual_coords_flag_still_blocks_address_geocode(self):
         branch = self._branch(
-            lat=Decimal('49.100000'),
+            lat=Decimal('49.200000'),
             lng=Decimal('24.100000'),
-            coords_manual=False,
+            coords_manual=True,
         )
         opener = _House(self.house)
-        saved = self._save(branch, opener, lat='49.200000')
-        self.assertTrue(saved.coords_manual)
+        saved = self._save(branch, opener, address='вул. Інша, 2, Львів')
         self.assertEqual(saved.lat, Decimal('49.200000'))
         self.assertEqual(saved.lng, Decimal('24.100000'))
+        self.assertTrue(saved.coords_manual)
         self.assertEqual(opener.calls, [])
         self.assertEqual(_texts(self.request), [])
-
-        self.request = _request(self.user)
-        saved = self._save(saved, opener, address='вул. Інша, 2, Львів')
-        self.assertEqual(saved.lat, Decimal('49.200000'))
-        self.assertEqual(saved.lng, Decimal('24.100000'))
-        self.assertTrue(saved.coords_manual)
-        self.assertEqual(opener.calls, [])
-
-        self.request = _request(self.user)
-        saved = self._save(saved, opener, lat='', lng='', address='вул. Ще інша, 3, Львів')
-        self.assertIsNone(saved.lat)
-        self.assertIsNone(saved.lng)
-        self.assertFalse(saved.coords_manual)
-        self.assertEqual(saved.address, 'вул. Ще інша, 3, Львів')
-        self.assertEqual(opener.calls, [])
 
     def test_stub_address_change_clears_coords_without_http(self):
         other = City.objects.create(name='Полтава', slug='poltava-admin')
@@ -196,8 +181,6 @@ class BranchAdminCoordinateTests(TestCase):
         data.update({
             'city': str(self.city.pk),
             'address': 'вул. Нова, 8, Львів',
-            'lat': '',
-            'lng': '',
             'sort_order': '0',
         })
         form = form_class(data)
@@ -242,53 +225,11 @@ class BranchAdminCoordinateTests(TestCase):
         self.assertFalse(self.model_admin.inlines)
         self.assertEqual(branch.hours_display, 'Пн–Нд, 8:00–21:00')
 
-    def test_action_counts_and_skips_manual_and_stub(self):
-        real = self._branch(address='вул. Нова, 8, Львів')
-        manual = self._branch(
-            address='вул. Ручна, 2, Львів',
-            lat=Decimal('49.200000'),
-            lng=Decimal('24.200000'),
-            coords_manual=True,
-        )
-        other = City.objects.create(name='Суми', slug='sumy-admin')
-        stub = self._branch(
-            city=other,
-            address='вул. Хрещатик, 1, Київ',
-            lat=Decimal('50.100000'),
-            lng=Decimal('34.100000'),
-        )
-        missing = self._branch(address='вул. Неіснуюча, 9, Львів')
-        opener = _House(self.house)
-        with patch('src.network.geocoding.urlopen', opener):
-            response = self.client.post(
-                reverse('admin:network_branch_changelist'),
-                {
-                    'action': 'geocode_coordinates',
-                    '_selected_action': [
-                        str(real.pk),
-                        str(manual.pk),
-                        str(stub.pk),
-                        str(missing.pk),
-                    ],
-                },
-                follow=True,
-            )
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Визначено координати: 1.')
-        self.assertContains(response, 'Не знайдено: 1.')
-        self.assertContains(response, 'Пропущено, бо координати введено вручну: 1.')
-        self.assertContains(response, 'Пропущено, бо немає справжньої адреси: 1.')
-        self.assertContains(response, GEOCODE_SUCCESS)
-        self.assertContains(response, GEOCODE_FAILURE)
-        real.refresh_from_db()
-        manual.refresh_from_db()
-        stub.refresh_from_db()
-        missing.refresh_from_db()
-        self.assertEqual(real.lat, Decimal('49.841900'))
-        self.assertEqual(manual.lat, Decimal('49.200000'))
-        self.assertEqual(stub.lat, Decimal('50.100000'))
-        self.assertIsNone(missing.lat)
-        self.assertEqual(len(opener.calls), 2)
+    def test_admin_hides_coords_and_route_fields(self):
+        self.assertNotIn('geocode_coordinates', self.model_admin.actions)
+        for name in ('map_url', 'lat', 'lng', 'coords_manual'):
+            self.assertNotIn(name, self.model_admin.fields)
+            self.assertNotIn(name, BranchInline.fields)
 
     def test_client_instructions(self):
         text = (
@@ -301,8 +242,8 @@ class BranchAdminCoordinateTests(TestCase):
         section = Branch._meta.verbose_name_plural
         self.assertIn(f'«{section}»', text)
         self.assertIn('адмін-панелі відкрийте розділ «Відділення»', text)
-        self.assertIn('Широта', text)
-        self.assertIn('Довгота', text)
+        self.assertNotIn('Широта', text)
+        self.assertNotIn('Довгота', text)
         self.assertIn('Графік роботи', text)
         self.assertIn('URL вбудованої карти', text)
         self.assertNotIn('Вихідний', text)
@@ -310,12 +251,16 @@ class BranchAdminCoordinateTests(TestCase):
         self.assertNotIn('Nominatim', text)
         self.assertNotIn('jsonv2', text)
         page = self.client.get(reverse('admin:network_branch_changelist'))
-        self.assertContains(page, 'Визначити координати')
+        self.assertNotContains(page, 'Визначити координати')
         branch = self._branch()
         change = self.client.get(
             reverse('admin:network_branch_change', args=[branch.pk]),
         )
         self.assertNotContains(change, 'Координати введено вручну')
+        self.assertContains(change, 'name="map_embed_url"')
+        self.assertNotContains(change, 'name="map_url"')
+        self.assertNotContains(change, 'name="lat"')
+        self.assertNotContains(change, 'name="lng"')
         self.assertContains(change, 'Графік роботи')
         self.assertNotContains(change, 'Графік по днях')
         self.assertNotContains(change, 'Старий текст графіка')

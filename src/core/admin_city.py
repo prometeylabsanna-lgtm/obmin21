@@ -20,9 +20,6 @@ class BranchInline(StackedInline):
         'hours',
         'phone',
         'map_embed_url',
-        'map_url',
-        'lat',
-        'lng',
         'is_active',
         'sort_order',
     )

@@ -429,7 +429,8 @@ class AdminPanelTests(TestCase):
         )
         self.assertContains(contacts, 'data-inline-type="stacked"')
         self.assertContains(contacts, 'name="branches-0-address"')
-        self.assertContains(
+        self.assertContains(contacts, 'Графік роботи')
+        self.assertNotContains(
             contacts,
             'Старий текст графіка (не редагується; графік задається нижче по днях)',
         )
@@ -439,9 +440,9 @@ class AdminPanelTests(TestCase):
         )
         self.assertEqual(branch_admin.status_code, 200)
         self.assertContains(branch_admin, 'name="map_embed_url"')
-        self.assertContains(branch_admin, 'name="map_url"')
-        self.assertContains(branch_admin, 'name="lat"')
-        self.assertContains(branch_admin, 'name="lng"')
+        self.assertNotContains(branch_admin, 'name="map_url"')
+        self.assertNotContains(branch_admin, 'name="lat"')
+        self.assertNotContains(branch_admin, 'name="lng"')
         index = self.client.get(reverse('admin:index'))
         self.assertContains(index, 'Картки послуг')
         self.assertContains(index, reverse('admin:content_service_changelist'))

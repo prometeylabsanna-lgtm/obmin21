@@ -31,7 +31,6 @@ class SiteSettingsAdmin(SingletonUnfoldAdmin):
         'rate_hold_minutes',
         'hidden_page_status',
         'retry_after_seconds',
-        'exchange_only_since',
         'telegram_url',
         'youtube_url',
         'instagram_url',

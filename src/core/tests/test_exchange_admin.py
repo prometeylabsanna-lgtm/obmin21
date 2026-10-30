@@ -238,6 +238,8 @@ class ExchangeAdminTests(TestCase):
         self.assertContains(settings_page, 'Увімкнути режим «Лише обмін валют»')
         self.assertContains(settings_page, '/exchange-only/')
         self.assertNotContains(settings_page, ENV_LOCK_NOTICE)
+        self.assertNotContains(settings_page, 'name="exchange_only_since"')
+        self.assertNotContains(settings_page, 'Режим «Лише обмін» увімкнено з')
         preview = self.client.get(self._preview_url())
         self.assertEqual(preview.status_code, 200)
         self.assertFalse(stored_exchange_only())

@@ -1,4 +1,4 @@
-from django.contrib import admin, messages
+from django.contrib import admin
 
 from src.core.admin_city import (
     BranchInline,
@@ -7,13 +7,7 @@ from src.core.admin_city import (
 )
 from src.core.admin_mixins import ListUnfoldAdmin, _strip_plain_fields
 from src.network.cms_proxies import BannerCity, ContactCity, MapCity
-from src.network.geocoding import (
-    GEOCODE_FAILURE,
-    GEOCODE_SUCCESS,
-    apply_admin_coordinates,
-    geocode_action_summary,
-    geocode_queryset,
-)
+from src.network.geocoding import apply_admin_coordinates
 from src.network.models import Branch, City
 
 
@@ -60,7 +54,7 @@ class BranchAdmin(ListUnfoldAdmin):
     list_display = ('city', 'name', 'address', 'is_active', 'sort_order')
     list_filter = ('city', 'is_active')
     search_fields = ('address', 'name', 'city__name')
-    actions = ('geocode_coordinates', 'delete_selected')
+    actions = ('delete_selected',)
     fields = (
         'city',
         'name',
@@ -68,9 +62,6 @@ class BranchAdmin(ListUnfoldAdmin):
         'hours',
         'phone',
         'map_embed_url',
-        'map_url',
-        'lat',
-        'lng',
         'is_active',
         'sort_order',
     )
@@ -79,15 +70,6 @@ class BranchAdmin(ListUnfoldAdmin):
         _strip_plain_fields(obj, self.rich_fields)
         apply_admin_coordinates(request, obj, form)
         super().save_model(request, obj, form, change)
-
-    @admin.action(description='Визначити координати')
-    def geocode_coordinates(self, request, queryset):
-        counts = geocode_queryset(queryset.select_related('city'))
-        messages.info(request, geocode_action_summary(**counts))
-        if counts['found']:
-            messages.info(request, GEOCODE_SUCCESS)
-        if counts['missing']:
-            messages.warning(request, GEOCODE_FAILURE)
 
 
 @admin.register(City)

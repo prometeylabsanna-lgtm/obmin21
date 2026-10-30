@@ -11,7 +11,7 @@ from src.core.admin_city import BranchInline
 from src.network.cms_proxies import ContactCity, MapCity
 from src.network.models import MAP_EMBED_HELP, Branch, City, validate_map_embed_url
 
-MAP_FIELDS = ('map_embed_url', 'map_url', 'lat', 'lng')
+MAP_FIELDS = ('map_embed_url',)
 
 ALLOWED_EMBED_URLS = (
     '',
@@ -235,9 +235,9 @@ class BranchMapAdminTests(TestCase):
         self.assertContains(page, 'Поділитися')
         self.assertContains(page, 'Вбудувати карту')
         self.assertContains(page, 'скопіювати значення src')
-        self.assertContains(page, 'Широта')
-        self.assertContains(page, 'Довгота')
-        self.assertContains(page, 'Посилання на карту')
+        self.assertNotContains(page, 'Широта')
+        self.assertNotContains(page, 'Довгота')
+        self.assertNotContains(page, 'Посилання на карту')
         self.assertIn(Branch, admin.site._registry)
         changelist = self.client.get(reverse('admin:network_branch_changelist'))
         self.assertEqual(changelist.status_code, 200)
