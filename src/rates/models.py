@@ -53,7 +53,12 @@ class CurrencyPair(ExchangeSafeMixin, models.Model):
 
     @property
     def flag_code(self):
-        return (self.code or '').upper().split('/')[0]
+        raw = (self.code or '').upper().replace(' ', '')
+        if raw in {'EURUSD', 'EUR/USD'}:
+            return 'EURUSD'
+        if '/' in raw:
+            return raw.split('/', 1)[0]
+        return raw
 
     @property
     def flag_mark(self):

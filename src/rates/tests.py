@@ -47,6 +47,12 @@ class CityQuoteVisibilityTests(TestCase):
                 is_active=pair in {self.usd, self.eur, self.cross},
             )
 
+    def test_eurusd_flag_code_is_cross_pair(self):
+        self.assertEqual(self.cross.flag_code, 'EURUSD')
+        slash = CurrencyPair(code='EUR/USD')
+        self.assertEqual(slash.flag_code, 'EURUSD')
+        self.assertEqual(self.eur.flag_code, 'EUR')
+
     def test_inactive_city_quote_hides_pair(self):
         rows, _ = get_quotes_for_city(self.city, RateBoard.RETAIL)
         codes = [row['pair'].code for row in rows]

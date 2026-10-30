@@ -1,5 +1,4 @@
 from django.contrib import admin, messages
-from unfold.admin import TabularInline
 
 from src.core.admin_city import (
     BranchInline,
@@ -15,8 +14,7 @@ from src.network.geocoding import (
     geocode_action_summary,
     geocode_queryset,
 )
-from src.network.hours import sync_branch_hours_text
-from src.network.models import Branch, BranchOpeningHours, City
+from src.network.models import Branch, City
 
 
 @admin.register(BannerCity)
@@ -57,23 +55,12 @@ class ContactCityAdmin(CitySectionAdmin):
     )
 
 
-class BranchOpeningHoursInline(TabularInline):
-    model = BranchOpeningHours
-    extra = 0
-    fields = ('day_of_week', 'opens', 'closes', 'is_closed')
-    ordering = ('day_of_week',)
-    verbose_name = 'День'
-    verbose_name_plural = 'Графік по днях'
-
-
 @admin.register(Branch)
 class BranchAdmin(ListUnfoldAdmin):
     list_display = ('city', 'name', 'address', 'is_active', 'sort_order')
     list_filter = ('city', 'is_active')
     search_fields = ('address', 'name', 'city__name')
-    inlines = [BranchOpeningHoursInline]
     actions = ('geocode_coordinates', 'delete_selected')
-    readonly_fields = ('hours', 'coords_manual')
     fields = (
         'city',
         'name',
@@ -84,7 +71,6 @@ class BranchAdmin(ListUnfoldAdmin):
         'map_url',
         'lat',
         'lng',
-        'coords_manual',
         'is_active',
         'sort_order',
     )
@@ -93,10 +79,6 @@ class BranchAdmin(ListUnfoldAdmin):
         _strip_plain_fields(obj, self.rich_fields)
         apply_admin_coordinates(request, obj, form)
         super().save_model(request, obj, form, change)
-
-    def save_related(self, request, form, formsets, change):
-        super().save_related(request, form, formsets, change)
-        sync_branch_hours_text(form.instance)
 
     @admin.action(description='Визначити координати')
     def geocode_coordinates(self, request, queryset):

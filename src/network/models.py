@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
 from src.core.exchange_fields import mode_char
-from src.network.hours import WEEKDAYS, format_hours
+from src.network.hours import WEEKDAYS
 
 MAP_EMBED_HELP = (
     'Google Maps → Поділитися → Вбудувати карту → '
@@ -21,6 +21,14 @@ def _google_embed_src(query):
         'https://maps.google.com/maps?q='
         f'{quote_plus(query)}&z=15&hl=uk&output=embed'
     )
+
+
+def default_map_embed_url(address):
+    """Базовий embed з адреси; клієнт може замінити URL у адмінці."""
+    text = (address or '').strip()
+    if not text:
+        return ''
+    return _google_embed_src(f'{text}, Ukraine')
 
 
 def _unsafe_map_embed_chars(value):
@@ -210,12 +218,10 @@ class Branch(models.Model):
     )
     address = models.CharField('Адреса', max_length=255)
     hours = models.CharField(
-        'Старий текст графіка (не редагується; графік задається нижче по днях)',
+        'Графік роботи',
         max_length=120,
         blank=True,
-        help_text=(
-            'Старий текст графіка (не редагується; графік задається нижче по днях)'
-        ),
+        help_text='Наприклад: Пн–Нд, 8:00–21:00',
     )
     phone = models.CharField('Телефон', max_length=32, blank=True)
     lat = models.DecimalField('Широта', max_digits=9, decimal_places=6, null=True, blank=True)
@@ -262,18 +268,7 @@ class Branch(models.Model):
 
     @property
     def hours_display(self):
-        rows = self._opening_rows()
-        if rows:
-            return format_hours(rows)
         return self.hours or ''
-
-    def _opening_rows(self):
-        if not self.pk:
-            return []
-        related = getattr(self, 'opening_hours', None)
-        if not hasattr(related, 'all'):
-            return []
-        return list(related.all())
 
     def map_embed_src(self):
         embed = (self.map_embed_url or '').strip()
@@ -282,7 +277,7 @@ class Branch(models.Model):
         if self.lat is not None and self.lng is not None and self.has_real_address:
             query = f'{format(self.lat, "f")},{format(self.lng, "f")}'
             return _google_embed_src(query)
-        return _google_embed_src(f'{self.address}, Ukraine')
+        return default_map_embed_url(self.address)
 
     def clean_fields(self, exclude=None):
         if isinstance(self.map_embed_url, str):

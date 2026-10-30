@@ -14,7 +14,6 @@ from src.rates.services import ensure_city_quotes
 class BranchInline(StackedInline):
     model = Branch
     extra = 0
-    readonly_fields = ('hours', 'coords_manual')
     fields = (
         'name',
         'address',
@@ -24,7 +23,6 @@ class BranchInline(StackedInline):
         'map_url',
         'lat',
         'lng',
-        'coords_manual',
         'is_active',
         'sort_order',
     )

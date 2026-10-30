@@ -1,4 +1,3 @@
-from datetime import time
 from decimal import Decimal
 from unittest.mock import patch
 from urllib.parse import parse_qs, urlparse
@@ -16,7 +15,7 @@ from django.conf import settings
 from src.core.admin_city import BranchInline
 from src.network.cms_proxies import ContactCity
 from src.network.geocoding import GEOCODE_FAILURE, GEOCODE_SUCCESS
-from src.network.models import Branch, BranchOpeningHours, City
+from src.network.models import Branch, City
 
 
 def _request(user):
@@ -234,26 +233,14 @@ class BranchAdminCoordinateTests(TestCase):
         self.assertFalse(branch.coords_manual)
         self.assertEqual(_texts(request), [GEOCODE_SUCCESS])
 
-    def test_save_related_rewrites_legacy_hours(self):
-        branch = self._branch(hours='старий')
-        for day in range(7):
-            BranchOpeningHours.objects.create(
-                branch=branch,
-                day_of_week=day,
-                opens=time(8, 0),
-                closes=time(21, 0),
-            )
+    def test_hours_field_is_editable_without_day_rows(self):
+        branch = self._branch(hours='Пн–Нд, 8:00–21:00')
         form = self._form(branch)
-        self.model_admin.save_form(self.request, form, True)
-        self.model_admin.save_related(self.request, form, [], True)
-        branch.refresh_from_db()
-        self.assertEqual(branch.hours, 'Пн–Нд, 8:00–21:00')
-        self.assertIn('hours', self.model_admin.readonly_fields)
-        self.assertIn('coords_manual', self.model_admin.readonly_fields)
-        self.assertEqual(
-            self.model_admin.inlines[0].verbose_name_plural,
-            'Графік по днях',
-        )
+        self.assertIn('hours', form.fields)
+        self.assertNotIn('hours', self.model_admin.readonly_fields)
+        self.assertNotIn('coords_manual', getattr(self.model_admin, 'fields', ()) or ())
+        self.assertFalse(self.model_admin.inlines)
+        self.assertEqual(branch.hours_display, 'Пн–Нд, 8:00–21:00')
 
     def test_action_counts_and_skips_manual_and_stub(self):
         real = self._branch(address='вул. Нова, 8, Львів')
@@ -316,7 +303,9 @@ class BranchAdminCoordinateTests(TestCase):
         self.assertIn('адмін-панелі відкрийте розділ «Відділення»', text)
         self.assertIn('Широта', text)
         self.assertIn('Довгота', text)
-        self.assertIn('Вихідний', text)
+        self.assertIn('Графік роботи', text)
+        self.assertIn('URL вбудованої карти', text)
+        self.assertNotIn('Вихідний', text)
         self.assertNotIn('coords_manual', text)
         self.assertNotIn('Nominatim', text)
         self.assertNotIn('jsonv2', text)
@@ -326,9 +315,7 @@ class BranchAdminCoordinateTests(TestCase):
         change = self.client.get(
             reverse('admin:network_branch_change', args=[branch.pk]),
         )
-        self.assertContains(change, 'Координати введено вручну')
-        self.assertContains(
-            change,
-            'Старий текст графіка (не редагується; графік задається нижче по днях)',
-        )
-        self.assertContains(change, 'Графік по днях')
+        self.assertNotContains(change, 'Координати введено вручну')
+        self.assertContains(change, 'Графік роботи')
+        self.assertNotContains(change, 'Графік по днях')
+        self.assertNotContains(change, 'Старий текст графіка')

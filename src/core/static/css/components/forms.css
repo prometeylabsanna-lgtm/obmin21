@@ -152,6 +152,16 @@
   background: radial-gradient(circle, #003399 38%, #ffcc00 40% 46%, #003399 48%);
 }
 
+/* Крос-пара: половина EUR + половина USD */
+.flag[data-code="EURUSD"],
+.flag[data-code="EUR/USD"] {
+  background:
+    radial-gradient(circle at 25% 50%, #ffcc00 0 9%, transparent 10%),
+    linear-gradient(#003399, #003399) left / 50% 100% no-repeat,
+    linear-gradient(#3c3b6e, #3c3b6e) 50% 0 / 22% 54% no-repeat,
+    repeating-linear-gradient(#b22234 0 7.69%, #fff 7.69% 15.38%) right / 50% 100% no-repeat;
+}
+
 .flag[data-code="PLN"],
 .flag--pln {
   background: linear-gradient(180deg, #fff 50%, #dc143c 50%);

@@ -38,7 +38,7 @@ from src.content.stage3_fill import fill_articles_lead, fill_home_seo_mode
 from src.core.models import SiteSettings
 from src.network.branch_sync import BRANCH_POINTS, match_city_branches
 from src.network.city_mode_copy import fill_city_banner_seo_mode, fill_city_name_mode
-from src.network.models import Branch, City
+from src.network.models import Branch, City, default_map_embed_url
 from src.rates.models import CurrencyPair, Quote, RateBoard
 from src.rates.pair_mode_copy import fill_fiat_pair_mode
 from src.reviews.models import Review
@@ -381,6 +381,8 @@ class Command(BaseCommand):
                     'is_active': True,
                     'sort_order': point.branch_sort,
                 }
+                if not str(branch.map_embed_url or '').strip():
+                    payload['map_embed_url'] = default_map_embed_url(point.address)
                 for key, val in payload.items():
                     setattr(branch, key, val)
                 branch.save()
@@ -396,6 +398,7 @@ class Command(BaseCommand):
                         'https://www.google.com/maps/search/?api=1&query='
                         + quote_plus(point.address)
                     ),
+                    map_embed_url=default_map_embed_url(point.address),
                     is_active=True,
                     sort_order=point.branch_sort,
                 )

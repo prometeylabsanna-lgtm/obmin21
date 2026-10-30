@@ -221,33 +221,7 @@ def sync_branch_hours_text(branch):
     return True
 
 
-def _structured_rows(branch):
-    related = getattr(branch, 'opening_hours', None)
-    if not hasattr(related, 'all'):
-        return None
-    rows = list(related.all())
-    if not rows:
-        return None
-    return rows
-
-
 def open_slots(branch):
-    """Рядки графіка, якщо вони є. Інакше розбір Branch.hours. None — не розібрати."""
-    rows = _structured_rows(branch)
-    if rows is not None:
-        slots = []
-        for row in rows:
-            if getattr(row, 'is_closed', False):
-                continue
-            opens = getattr(row, 'opens', None)
-            closes = getattr(row, 'closes', None)
-            if opens is None or closes is None:
-                continue
-            try:
-                day = int(row.day_of_week)
-            except (TypeError, ValueError):
-                continue
-            slots.append((day, opens, closes))
-        return slots
+    """Розбір Branch.hours для schema.org. None — текст не розібрати."""
     text = getattr(branch, 'hours', '') or ''
     return parse_hours(text)

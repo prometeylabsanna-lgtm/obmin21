@@ -154,7 +154,7 @@ class BranchMapEmbedTests(TestCase):
             lng=Decimal('30.523400'),
         )
         self.assertFalse(blank.has_real_address)
-        self.assertEqual(blank.map_embed_src(), _embed('   , Ukraine'))
+        self.assertEqual(blank.map_embed_src(), '')
 
     def test_help_text_and_blank_field(self):
         field = Branch._meta.get_field('map_embed_url')

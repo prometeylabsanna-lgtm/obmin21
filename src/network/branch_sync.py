@@ -1,7 +1,8 @@
 """Каталог відділень і ідемпотентне вирівнювання бази під нього.
 
-Нові рядки не отримують телефон і графік. Існуючі телефон, графік і
-години по днях не змінюються. Зайві відділення деактивуються, не видаляються.
+Нові рядки не отримують телефон і графік. Існуючі телефон і графік
+не змінюються. Порожній map_embed_url заповнюється з адреси (клієнт може
+замінити в адмінці). Зайві відділення деактивуються, не видаляються.
 """
 
 from collections import namedtuple
@@ -9,7 +10,7 @@ from urllib.parse import unquote_plus
 
 from django.db import transaction
 
-from src.network.models import normalize_address
+from src.network.models import default_map_embed_url, normalize_address
 
 Point = namedtuple(
     'Point',
@@ -195,6 +196,13 @@ def _branch_updates(branch, point, field_names):
         if url_mentions_address(branch.map_embed_url, branch.address):
             updates['map_embed_url'] = ''
             notes.append('очищено map_embed_url')
+    next_address = updates.get('address', branch.address)
+    next_embed = updates.get('map_embed_url', branch.map_embed_url)
+    if not str(next_embed or '').strip():
+        filled = default_map_embed_url(next_address)
+        if filled:
+            updates['map_embed_url'] = filled
+            notes.append('заповнено map_embed_url з адреси')
     return updates, notes
 
 
@@ -315,7 +323,7 @@ def _apply(apps, dry_run):
                         'hours': '',
                         'phone': '',
                         'map_url': '',
-                        'map_embed_url': '',
+                        'map_embed_url': default_map_embed_url(point.address),
                         'lat': None,
                         'lng': None,
                         'is_active': True,
