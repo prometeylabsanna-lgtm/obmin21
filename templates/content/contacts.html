@@ -43,14 +43,14 @@
   </div>
 </section>
 
-<section class="contacts-map" id="branches" data-branches>
+<section class="contacts-map" id="branches" data-branches data-set-city-url="{% url 'network:set_city' %}">
   <h2 class="contacts-map__title">{{ page.branches_title }} <span class="u-accent">{{ page.branches_title_accent }}</span></h2>
   {% if map_branches %}
   <div class="contacts-map__layout">
     <div class="contacts-map__list" role="list">
       {% for b in map_branches %}
       {% mode_field b.city 'name' as branch_city %}
-      <button type="button" class="contacts-map__item{% if active_branch.pk == b.pk %} is-active{% endif %}" data-branch data-name="{{ branch_city }}{% if b.name %} «{{ b.name }}»{% endif %}" data-addr="{{ b.address }}" data-map="{{ b.map_embed_src }}" data-link="{{ b.map_route_url }}" aria-pressed="{% if active_branch.pk == b.pk %}true{% else %}false{% endif %}">
+      <button type="button" class="contacts-map__item{% if active_branch.pk == b.pk %} is-active{% endif %}" data-branch data-city="{{ b.city.slug }}" data-branch-id="{{ b.pk }}" data-name="{{ branch_city }}{% if b.name %} «{{ b.name }}»{% endif %}" data-addr="{{ b.address }}" data-map="{{ b.map_embed_src }}" data-link="{{ b.map_route_url }}" aria-pressed="{% if active_branch.pk == b.pk %}true{% else %}false{% endif %}">
         <span class="contacts-map__item-copy">
           <span class="contacts-map__item-name">{{ branch_city }}{% if b.name %} «{{ b.name }}»{% endif %}</span>
           <span class="contacts-map__item-addr">{{ b.address }}</span>
@@ -77,5 +77,5 @@
 </section>
 {% endblock %}
 {% block page_js %}
-<script src="{% static 'js/contacts.js' %}?v=2" defer></script>
+<script src="{% static 'js/contacts.js' %}?v=3" defer></script>
 {% endblock %}

@@ -38,6 +38,8 @@ class CityMiddleware:
 
         response = self.get_response(request)
 
+        city = getattr(request, 'city', None)
+        branch = getattr(request, 'active_branch', None)
         if city and request.COOKIES.get(settings.CITY_COOKIE_NAME) != city.slug:
             response.set_cookie(
                 settings.CITY_COOKIE_NAME,
@@ -46,13 +48,12 @@ class CityMiddleware:
                 samesite='Lax',
             )
         if (
-            request.active_branch is not None
-            and request.COOKIES.get(settings.BRANCH_COOKIE_NAME)
-            != str(request.active_branch.pk)
+            branch is not None
+            and request.COOKIES.get(settings.BRANCH_COOKIE_NAME) != str(branch.pk)
         ):
             response.set_cookie(
                 settings.BRANCH_COOKIE_NAME,
-                str(request.active_branch.pk),
+                str(branch.pk),
                 max_age=settings.CITY_COOKIE_MAX_AGE,
                 samesite='Lax',
             )

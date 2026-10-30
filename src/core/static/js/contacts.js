@@ -9,6 +9,18 @@
   var addrEl = root.querySelector('[data-branches-addr]');
   var linkEl = root.querySelector('[data-branches-link]');
   var buttons = root.querySelectorAll('[data-branch]');
+  var setCityUrl = root.getAttribute('data-set-city-url') || '/htmx/set-city/';
+
+  function syncHeaderCity(btn) {
+    var city = btn.getAttribute('data-city') || '';
+    var branch = btn.getAttribute('data-branch-id') || '';
+    if (!city || !window.htmx) return;
+    window.htmx.ajax('POST', setCityUrl, {
+      target: '#city-chrome',
+      swap: 'outerHTML',
+      values: { city: city, branch: branch },
+    });
+  }
 
   buttons.forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -29,6 +41,7 @@
       if (nameEl) nameEl.textContent = 'Обмін21 · ' + name;
       if (addrEl) addrEl.textContent = addr;
       if (linkEl && link) linkEl.href = link;
+      syncHeaderCity(btn);
     });
   });
 })();

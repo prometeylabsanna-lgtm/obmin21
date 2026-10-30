@@ -2,7 +2,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 
-from src.content.models import CitiesPage, HomePage
+from src.content.models import CitiesPage, ContactsPage, HomePage
 from src.core.models import SiteSettings
 from src.network.models import Branch, City
 
@@ -71,3 +71,45 @@ class BranchListTests(TestCase):
         self.assertContains(fragment, 'метро Академіка Барабашова')
         self.assertNotContains(fragment, 'вул. Кацарська, 36/38')
         self.assertContains(fragment, 'Харків «Барабашово»')
+
+    def test_set_city_cookie_keeps_new_city_not_default(self):
+        """Middleware не має затирати cookie новим вибором старим default-містом."""
+        self.client.get(reverse('core:home'))
+        switched = self.client.post(
+            reverse('network:set_city'),
+            {'city': self.kharkiv.slug, 'branch': str(self.first.pk)},
+            HTTP_HX_REQUEST='true',
+        )
+        self.assertEqual(switched.status_code, 200)
+        self.assertEqual(
+            self.client.cookies[settings.CITY_COOKIE_NAME].value,
+            self.kharkiv.slug,
+        )
+        self.assertEqual(
+            self.client.cookies[settings.BRANCH_COOKIE_NAME].value,
+            str(self.first.pk),
+        )
+        home = self.client.get(reverse('core:home'))
+        self.assertContains(home, 'data-city-slug="%s"' % self.kharkiv.slug)
+        self.assertContains(home, self.kharkiv.name_in)
+
+    def test_contacts_branch_buttons_expose_city_and_branch(self):
+        ContactsPage.load()
+        page = self.client.get(reverse('content:contacts'))
+        self.assertContains(page, 'data-set-city-url="%s"' % reverse('network:set_city'))
+        self.assertContains(page, 'data-city="%s"' % self.kharkiv.slug)
+        self.assertContains(page, 'data-branch-id="%s"' % self.second.pk)
+        self.assertContains(page, 'contacts.js?v=3')
+
+        switched = self.client.post(
+            reverse('network:set_city'),
+            {'city': self.kharkiv.slug, 'branch': str(self.second.pk)},
+            HTTP_HX_REQUEST='true',
+        )
+        self.assertContains(switched, 'Харків «Барабашово»')
+        contacts = self.client.get(reverse('content:contacts'))
+        self.assertContains(contacts, 'метро Академіка Барабашова')
+        html = contacts.content.decode()
+        active = html.find('contacts-map__item is-active')
+        self.assertGreaterEqual(active, 0)
+        self.assertIn('data-branch-id="%s"' % self.second.pk, html[active:active + 400])

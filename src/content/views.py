@@ -101,12 +101,14 @@ def contacts_page(request):
         .select_related('city')
         .order_by('city__sort_order', 'sort_order', 'id')
     )
-    active = map_branches[0] if map_branches else None
-    if request.city:
-        for item in map_branches:
-            if item.city_id == request.city.id:
-                active = item
-                break
+    active = getattr(request, 'active_branch', None)
+    if active is None or active.pk not in {item.pk for item in map_branches}:
+        active = map_branches[0] if map_branches else None
+        if request.city:
+            for item in map_branches:
+                if item.city_id == request.city.id:
+                    active = item
+                    break
     page = ContactsPage.load()
     return render(request, 'content/contacts.html', {
         'page': page,
