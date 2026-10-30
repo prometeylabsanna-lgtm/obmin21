@@ -25,6 +25,7 @@ _TRIGGER_KEYS = {
     'bannerSuffix',
     'bannerText',
     'bannerHidden',
+    'branchId',
 }
 _ART_KEYS = {'post', 'art', 'related', 'page_title', 'page_description', 'breadcrumb_items'}
 _LAYOUT = {

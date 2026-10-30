@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
@@ -99,7 +101,7 @@ class BranchListTests(TestCase):
         self.assertContains(page, 'data-set-city-url="%s"' % reverse('network:set_city'))
         self.assertContains(page, 'data-city="%s"' % self.kharkiv.slug)
         self.assertContains(page, 'data-branch-id="%s"' % self.second.pk)
-        self.assertContains(page, 'contacts.js?v=3')
+        self.assertContains(page, 'contacts.js?v=4')
 
         switched = self.client.post(
             reverse('network:set_city'),
@@ -107,6 +109,9 @@ class BranchListTests(TestCase):
             HTTP_HX_REQUEST='true',
         )
         self.assertContains(switched, 'Харків «Барабашово»')
+        payload = json.loads(switched['HX-Trigger'])
+        self.assertEqual(payload['cityChanged']['branchId'], self.second.pk)
+        self.assertEqual(payload['cityChanged']['slug'], self.kharkiv.slug)
         contacts = self.client.get(reverse('content:contacts'))
         self.assertContains(contacts, 'метро Академіка Барабашова')
         html = contacts.content.decode()

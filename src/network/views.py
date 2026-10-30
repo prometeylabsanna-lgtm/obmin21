@@ -81,6 +81,7 @@ def set_city(request):
                 'bannerHidden': bool(
                     is_exchange_only(request) and not banner_title and not banner_text
                 ),
+                'branchId': branch.pk if branch else None,
             }
         })
         return response
