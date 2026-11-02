@@ -50,6 +50,8 @@
 
 .article-banner__title {
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: #fff;
   font-size: clamp(calc(28px * var(--scale)), 4vw, calc(50px * var(--scale)));
   font-weight: 700;
@@ -249,6 +251,8 @@
 
 .article-related__name {
   margin-top: calc(8px * var(--scale));
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: calc(20px * var(--scale));
   font-weight: 600;
   line-height: 1.25;

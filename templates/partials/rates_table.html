@@ -26,13 +26,16 @@
   <div class="rates-crypto">
     <div class="rates-crypto__title">Криптовалюта <span class="u-accent">від партнерів</span></div>
     <p class="rates-crypto__text">Обмін USDT, BTC, ETH та інших монет здійснюють наші партнери. Менеджер розрахує курс і розповість про умови</p>
-    <a class="btn rates-crypto__cta" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">
+    {% if telegram_href %}
+    <a class="btn rates-crypto__cta" href="{{ telegram_href }}" target="_blank" rel="noopener">
       <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 4.3L2.9 11.5c-1.1.4-1.1 1.1-.2 1.4l4.7 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.8-.4l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-14.8c.3-1.3-.5-1.9-1.3-1.5zM8.7 14l9.7-6.1c.5-.3.9-.1.5.2l-8 7.3-.3 3.4z" fill="#fff"></path></svg>
       Написати менеджеру
     </a>
+    {% endif %}
   </div>
   {% endif %}
   {% if eo or active_board != 'crypto' or home_rates_compact %}
+  {% if rate_rows %}
   <div class="rates-table{% if not eo and active_board == 'crypto' %} rates-table--reserve{% endif %}"{% if not eo and active_board == 'crypto' %} aria-hidden="true"{% endif %}>
     <div class="rates-table__head">
       <div>Валюта</div>
@@ -62,8 +65,6 @@
           </button>
         </div>
       </div>
-      {% empty %}
-      <div class="rates-table__row u-muted">Немає курсів для цієї вкладки</div>
       {% endfor %}
       {% endwith %}
     {% else %}
@@ -73,7 +74,7 @@
           <span class="flag" data-code="{{ row.pair.flag_code }}">{% if row.pair.flag_image %}<img src="{{ row.pair.flag_image.url }}" alt="" width="24" height="16">{% elif row.pair.flag_mark %}{{ row.pair.flag_mark }}{% endif %}</span>
           <div>
             <a href="{% url 'rates:pair_detail' row.pair.slug %}" class="rates-table__code">{{ row.pair.code }}{% if "/" not in row.pair.code %}/UAH{% endif %}</a>
-            <span class="rates-table__name">{{ row.pair.name }}</span>
+            {% if row.pair.name %}<span class="rates-table__name">{{ row.pair.name }}</span>{% endif %}
           </div>
         </div>
         <div class="rates-table__value" data-rate-animate>{{ row.quote.buy|format_rate:"ua" }}</div>
@@ -90,15 +91,16 @@
           </button>
         </div>
       </div>
-      {% empty %}
-      <div class="rates-table__row u-muted">Немає курсів для цієї вкладки</div>
       {% endfor %}
       <div class="rates-table__empty" data-rates-empty hidden>Нічого не знайдено</div>
     {% endif %}
   </div>
+  {% else %}
+  <p class="rates-table__empty">Немає курсів для цієї вкладки</p>
+  {% endif %}
   {% endif %}
   </div>
-  {% if not hide_full_table_link %}
+  {% if rate_rows and not hide_full_table_link %}
   {% if eo or active_board != 'crypto' or home_rates_compact %}
     <div class="rates-table__foot">
       <a class="link-accent" href="{% url 'rates:rates_page' %}">Всі валюти

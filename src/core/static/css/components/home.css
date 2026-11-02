@@ -46,6 +46,8 @@
 
 .hero__title {
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: #fff;
   font-size: clamp(calc(30px * var(--scale)), 4vw, calc(62px * var(--scale)));
   line-height: 1;
@@ -589,6 +591,8 @@
 
 .map-section__title {
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: clamp(calc(28px * var(--scale)), 4vw, calc(55px * var(--scale)));
   font-weight: 700;
   line-height: 1.05;
@@ -600,7 +604,14 @@
   display: flex;
   flex-direction: column;
   gap: calc(22px * var(--scale));
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: calc(16px * var(--scale));
+}
+
+.map-section__details > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .map-section__label {
@@ -611,6 +622,8 @@
 .map-city {
   position: relative;
   display: inline-block;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .map-city__btn {
@@ -633,6 +646,7 @@
 
 .map-city__btn span {
   min-width: 0;
+  overflow-wrap: anywhere;
   white-space: normal;
   text-align: left;
   line-height: 1.25;
@@ -657,6 +671,8 @@
 
 .map-city__option {
   width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
   display: block;
   padding: calc(10px * var(--scale)) calc(12px * var(--scale));
   border: 0;
@@ -829,6 +845,8 @@
 
 .svc-card__title {
   margin: calc(10px * var(--scale)) 0 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: calc(14px * var(--scale));
   font-weight: 600;
   line-height: 1.2;
@@ -1121,6 +1139,8 @@
 
 .article-slide__title {
   display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
   margin-top: calc(12px * var(--scale));
   font-size: calc(14px * var(--scale));
   font-weight: 600;

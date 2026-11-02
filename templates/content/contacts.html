@@ -1,22 +1,23 @@
 {% extends 'base.html' %}
-{% load static content_format exchange_mode %}
+{% load static exchange_mode %}
 
 {% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}
 <section class="contacts-hero">
   {% mode_field page 'heading' as heading %}{% if heading %}<h1 class="contacts-hero__title">{{ heading }} <span class="u-accent">{{ page.title_accent }}</span></h1>{% endif %}
   <div class="contacts-cards">
-    {% with contact_phone=active_phone|default:page.phone %}
-    <a class="contacts-card" href="tel:{{ contact_phone|phone_tel }}">
+    {% if phone_href %}
+    <a class="contacts-card" href="tel:{{ phone_href }}">
       <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg>
       <div>
         <div class="contacts-card__label">Телефон</div>
-        <div class="contacts-card__value">{{ contact_phone }}</div>
+        <div class="contacts-card__value">{{ active_phone }}</div>
         <div class="contacts-card__hint">{{ page.phone_hint }}</div>
       </div>
     </a>
-    {% endwith %}
-    <a class="contacts-card" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">
+    {% endif %}
+    {% if telegram_href %}
+    <a class="contacts-card" href="{{ telegram_href }}" target="_blank" rel="noopener">
       <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3L2.5 10.2l6.8 2.4M21 3l-3.2 17.5-8.5-7.9M21 3L9.3 12.6v5.9l3.1-3.3"></path></svg>
       <div>
         <div class="contacts-card__label">Telegram</div>
@@ -24,6 +25,7 @@
         <div class="contacts-card__hint">{{ page.telegram_hint }}</div>
       </div>
     </a>
+    {% endif %}
     <a class="contacts-card" href="mailto:{{ page.email }}">
       <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3.5 6.5l8.5 6.5 8.5-6.5"></path></svg>
       <div>
@@ -59,17 +61,23 @@
       </button>
       {% endfor %}
     </div>
+    {% if active_branch.map_embed_src or active_branch.address or active_branch.name %}
     <div class="contacts-map__frame">
+      {% if active_branch.map_embed_src %}
       <iframe data-branches-map src="{{ active_branch.map_embed_src }}" title="Карта: {{ active_branch.address }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      {% endif %}
       <div class="contacts-map__card">
         {% mode_field active_branch.city 'name' as active_city_name %}
         <div class="contacts-map__card-name" data-branches-name>Обмін21 · {{ active_city_name }}{% if active_branch.name %} «{{ active_branch.name }}»{% endif %}</div>
-        <div class="contacts-map__card-addr" data-branches-addr>{{ active_branch.address }}</div>
+        {% if active_branch.address %}<div class="contacts-map__card-addr" data-branches-addr>{{ active_branch.address }}</div>{% endif %}
+        {% if active_branch.map_route_url %}
         <a class="contacts-map__card-link" data-branches-link href="{{ active_branch.map_route_url }}" target="_blank" rel="noopener">Прокласти маршрут
           <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
         </a>
+        {% endif %}
       </div>
     </div>
+    {% endif %}
   </div>
   {% else %}
   <p class="u-muted">Відділення з’являться незабаром</p>

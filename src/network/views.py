@@ -9,7 +9,8 @@ from src.network.services import apply_city_cookie, set_active_city
 from src.content.models import CitiesPage
 from src.core.breadcrumbs import safe_reverse, trail
 from src.core.exchange_mode import is_exchange_only, mode_meta, mode_text
-from src.core.phones import phone_tel
+from src.core.models import SiteSettings
+from src.core.phones import resolve_site_phone
 
 
 def city_list(request):
@@ -57,11 +58,12 @@ def set_city(request):
         branch = request.active_branch
 
     if request.headers.get('HX-Request'):
+        phone, phone_href = resolve_site_phone(request, SiteSettings.load())
         response = render(request, 'partials/city_chrome.html', {
             'active_city': city,
             'active_branch': branch,
-            'active_phone': city.phone if city else '',
-            'phone_href': phone_tel(city.phone) if city else '',
+            'active_phone': phone,
+            'phone_href': phone_href,
             'cities': request.cities,
             'list_branches': getattr(request, 'list_branches', list(get_visible_branches())),
             'city_branches': list(get_city_branches(city)),

@@ -4,10 +4,20 @@
 
 .page-hero__title {
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: clamp(calc(30px * var(--scale)), 4.3vw, calc(57px * var(--scale)));
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: calc(-0.5px * var(--scale));
+}
+
+.page-actions {
+  margin-top: calc(28px * var(--scale));
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(12px * var(--scale));
+  min-width: 0;
 }
 
 .page-hero__lead {
@@ -71,6 +81,8 @@
 
 .svc-hero__title {
   margin: calc(12px * var(--scale)) 0 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: #fff;
   font-size: clamp(calc(30px * var(--scale)), 4.3vw, calc(57px * var(--scale)));
   font-weight: 700;
@@ -169,6 +181,8 @@
 
 .svc-row__title {
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: calc(28px * var(--scale));
   font-weight: 700;
   line-height: 1.1;

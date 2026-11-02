@@ -1,6 +1,7 @@
 .card-grid {
   display: grid;
   gap: calc(20px * var(--scale));
+  min-width: 0;
 }
 
 .card-grid--2 {
@@ -16,11 +17,15 @@
   border-radius: var(--radius-lg);
   padding: calc(24px * var(--scale)) calc(20px * var(--scale));
   box-shadow: var(--shadow-card);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .card__title,
 .card__heading {
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: calc(22px * var(--scale));
   font-weight: 700;
   line-height: 1.2;
@@ -29,6 +34,8 @@
 
 .card__text {
   margin: calc(12px * var(--scale)) 0 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: var(--color-text-muted);
   font-size: calc(15px * var(--scale));
   line-height: 1.4;

@@ -2,24 +2,21 @@ from src.content.models import Service
 from src.core.breadcrumbs import breadcrumbs_for_request
 from src.core.exchange_mode import exchange_only
 from src.core.models import SiteSettings
-from src.core.phones import phone_tel
+from src.core.phones import resolve_site_phone, safe_telegram_url
 from src.core.theme import URL_THEME_MAP, theme_version
 
 
 def site_chrome(request):
     settings = SiteSettings.load()
     city = getattr(request, 'city', None)
-    phone = ''
-    if city and city.phone:
-        phone = city.phone
-    elif settings.default_phone:
-        phone = settings.default_phone
+    phone, phone_href = resolve_site_phone(request, settings)
 
     return {
         'site_settings': settings,
         'active_city': city,
         'active_phone': phone,
-        'phone_href': phone_tel(phone),
+        'phone_href': phone_href,
+        'telegram_href': safe_telegram_url(settings.telegram_url),
         'cities': getattr(request, 'cities', []),
         'city_branches': getattr(request, 'city_branches', []),
         'list_branches': getattr(request, 'list_branches', []),
