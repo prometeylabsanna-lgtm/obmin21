@@ -67,12 +67,6 @@ class BlogPageAdmin(SingletonUnfoldAdmin):
     )
     rich_fields = frozenset()
 
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name in ('intro', 'intro_mode'):
-            kwargs['widget'] = CmsAdminTextareaWidget()
-            return db_field.formfield(**kwargs)
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
-
 
 @admin.register(Service)
 class ServiceAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):

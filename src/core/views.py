@@ -18,6 +18,7 @@ from src.core.theme import theme_css_cached
 from src.blog.selectors import get_published_posts
 from src.content.faq_defaults import public_faq_items
 from src.content.models import HomePage, HomeStat, Service
+from src.content.promo_slides import slides_for_home
 from src.network.selectors import get_city_by_slug
 from src.rates.models import RateBoard
 from src.rates.selectors import get_quotes_for_city, public_board, public_boards
@@ -119,6 +120,7 @@ class HomeView(TemplateView):
             'news_posts': list(get_published_posts()[:10]),
             'home_reviews': get_published_reviews(8),
             'home_stats': _home_stat_cards(page, self.request),
+            'promo_slides': slides_for_home(page),
         })
         return ctx
 

@@ -682,5 +682,10 @@ class Command(BaseCommand):
         fill_reader_mode_fields(apps, None)
         fill_advantages_page_mode(apps, None)
         fill_stat_1_text_mode(apps, None)
+        from src.content.promo_slides import fill_promo_slides
+        from src.content.visit_steps import fill_home_fallback, fill_visit_steps
+        fill_promo_slides(apps, None)
+        fill_visit_steps(apps, None)
+        fill_home_fallback(apps, None)
 
         self.stdout.write(self.style.SUCCESS('seed_demo OK'))

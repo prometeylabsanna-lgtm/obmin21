@@ -21,7 +21,6 @@ from src.content.models import (
     ServicesPage,
 )
 from src.core.admin_mixins import SingletonUnfoldAdmin
-from src.core.admin_widgets import CmsAdminTextareaWidget
 
 
 class HomeSectionAdmin(SingletonUnfoldAdmin):
@@ -79,6 +78,25 @@ _register_home(
         'promo_text',
         'promo_button',
     ),
+    extra={
+        'content_fieldsets': ((
+            'Контент',
+            {
+                'description': (
+                    'Ці поля керують першим слайдом (USD та EUR). '
+                    'Решта слайдів, порядок і показ — пункт «Слайди вигідного курсу».'
+                ),
+                'fields': (
+                    'promo_image',
+                    'promo_kicker',
+                    'promo_title',
+                    'promo_title_accent',
+                    'promo_text',
+                    'promo_button',
+                ),
+            },
+        ),),
+    },
 )
 _register_home(
     HomeWhySettings,
@@ -87,20 +105,27 @@ _register_home(
         'why_kicker',
         'why_title',
         'why_title_accent',
+        'why_empty_number',
+        'why_empty_label',
+        'why_empty_text',
     ),
     extra={
         'content_fieldsets': ((
             'Контент',
             {
                 'description': (
-                    'Лише заголовок блоку на головній. '
-                    'Цифри — зі сторінки Переваги.'
+                    'Заголовок блоку на головній. Картки — пункт '
+                    '«Картки «Чому нас обирають»». Якщо карток немає, '
+                    'показуються число і текст нижче.'
                 ),
                 'fields': (
                     'show_why',
                     'why_kicker',
                     'why_title',
                     'why_title_accent',
+                    'why_empty_number',
+                    'why_empty_label',
+                    'why_empty_text',
                 ),
             },
         ),),
@@ -157,6 +182,7 @@ _register_home(
                     'faq_kicker',
                     'faq_title',
                     'faq_title_accent',
+                    'faq_lead',
                 ),
             },
         ),),
@@ -168,6 +194,7 @@ _register_home(
         'show_reviews',
         'reviews_kicker',
         'reviews_title',
+        'reviews_lead',
     ),
     extra={
         'content_fieldsets': ((
@@ -181,6 +208,7 @@ _register_home(
                     'show_reviews',
                     'reviews_kicker',
                     'reviews_title',
+                    'reviews_lead',
                 ),
             },
         ),),
@@ -275,12 +303,6 @@ class RatesPageAdmin(SingletonUnfoldAdmin):
         }),
     )
     rich_fields = frozenset()
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name in ('intro', 'intro_mode'):
-            kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 4})
-            return db_field.formfield(**kwargs)
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 admin.site.register(RatesPage, RatesPageAdmin)
@@ -507,6 +529,7 @@ _register_page(
         'title',
         'title_mode',
         'title_accent',
+        'intro',
         'cta_button',
         'seo_title',
         'seo_title_mode',
@@ -525,6 +548,7 @@ _register_page(
                     'title',
                     'title_mode',
                     'title_accent',
+                    'intro',
                     'cta_button',
                     'seo_title',
                     'seo_title_mode',
@@ -538,3 +562,4 @@ _register_page(
 
 
 from src.content import admin_items  # noqa: F401,E402
+from src.content import admin_public  # noqa: F401,E402

@@ -624,3 +624,5 @@ from src.content.cms_proxies import (  # noqa: E402,F401
     HomeServicesSettings,
     HomeWhySettings,
 )
+from src.content.promo_slides import HomePromoSlide  # noqa: E402,F401
+from src.content.visit_steps import VisitSteps  # noqa: E402,F401

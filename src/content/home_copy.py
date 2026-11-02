@@ -125,6 +125,24 @@ class HomeSectionCopy(models.Model):
         max_length=80,
         default='обирають',
     )
+    why_empty_number = models.CharField(
+        'Число, якщо карток немає',
+        max_length=20,
+        default='7K',
+    )
+    why_empty_label = models.CharField(
+        'Жирний підпис, якщо карток немає',
+        max_length=80,
+        default='Постійних клієнтів',
+    )
+    why_empty_text = models.CharField(
+        'Текст, якщо карток немає',
+        max_length=240,
+        default=(
+            'нам довіряють тисячі людей, які обирають нас '
+            'для швидкого та зручного обміну валют'
+        ),
+    )
     services_kicker = models.CharField(
         'Підпис над заголовком',
         max_length=80,

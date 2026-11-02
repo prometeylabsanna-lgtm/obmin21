@@ -8,6 +8,7 @@
     {% mode_field page 'title' as review_title %}{% if review_title %}<h1 class="page-hero__title">{{ review_title }} <span class="u-accent">{{ page.title_accent }}</span></h1>{% endif %}
     <button type="button" class="btn btn--accent" data-open-modal="{% url 'reviews:review_submit' %}">{{ page.cta_button }}</button>
   </div>
+  {% mode_field page 'intro' as review_intro %}{% if review_intro %}<p class="page-hero__lead">{{ review_intro }}</p>{% endif %}
 </section>
 <section>
   <div class="card-grid card-grid--3">

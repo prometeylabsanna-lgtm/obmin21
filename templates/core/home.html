@@ -45,6 +45,7 @@
   <h2 class="calc-head__title">
     <span>{{ page.calc_title }} <span class="u-accent">{{ page.calc_title_accent }}</span></span>
   </h2>
+  {% if page.calc_lead %}<p class="calc-head__lead">{{ page.calc_lead }}</p>{% endif %}
 </section>
 
 <section class="calc-box" data-calc data-qa="home-calc">
@@ -106,56 +107,31 @@
 
 <section class="promo-banner" data-promo data-qa="promo-banner"{% if eo %} data-autoplay="0" data-slides="1"{% endif %}>
   <div class="promo-banner__stage">
-    <article class="promo-banner__slide is-active" data-promo-slide data-href="{% url 'rates:rates_page' %}">
+    {% for slide in promo_slides %}
+    <article class="promo-banner__slide{% if forloop.first %} is-active{% endif %}" data-promo-slide{% if slide.modal %} data-modal="1"{% else %} data-href="{{ slide.href }}"{% endif %}{% if slide.blank %} data-blank="1"{% endif %}>
       <div class="promo-banner__media" aria-hidden="true">
-        <img src="{% static_img 'images/bills.png' %}" alt="" {% img_wh 'images/bills.png' %} loading="lazy" decoding="async">
+        {% if slide.image_field %}
+        <img src="{{ slide.image_field.url }}" alt="" {% field_wh slide.image_field %} loading="lazy" decoding="async">
+        {% elif slide.image_path %}
+        <img src="{% static_img slide.image_path %}" alt="" {% img_wh slide.image_path %} loading="lazy" decoding="async">
+        {% endif %}
       </div>
       <div class="promo-banner__content">
-        <h2 class="promo-banner__title">Вигідний курс на<br><span class="u-accent">USD та EUR</span></h2>
-        <p class="promo-banner__text">Обмінюйте валюту за актуальним курсом без зайвих кроків</p>
-        <a class="btn btn--accent promo-banner__cta" href="{% url 'rates:rates_page' %}">Обрати валюту</a>
-      </div>
-    </article>
-    {% if not eo %}
-    <article class="promo-banner__slide" data-promo-slide{% if telegram_href %} data-href="{{ telegram_href }}" data-blank="1"{% endif %}>
-      <div class="promo-banner__media" aria-hidden="true">
-        <img src="{% static_img 'images/coins.png' %}" alt="" {% img_wh 'images/coins.png' %} loading="lazy" decoding="async">
-      </div>
-      <div class="promo-banner__content">
-        <h2 class="promo-banner__title">USDT, BTC, ETH<br><span class="u-accent">на готівку</span></h2>
-        <p class="promo-banner__text">Обмін криптовалюти від наших партнерів. Менеджер розрахує курс і розповість про умови</p>
-        {% if telegram_href %}
-        <a class="btn btn--accent promo-banner__cta" href="{{ telegram_href }}" target="_blank" rel="noopener">Написати менеджеру</a>
+        <h2 class="promo-banner__title">{{ slide.title }}<br><span class="u-accent">{{ slide.accent }}</span></h2>
+        <p class="promo-banner__text">{{ slide.text }}</p>
+        {% if slide.modal %}
+        <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{{ slide.href }}">{{ slide.button }}</button>
+        {% else %}
+        <a class="btn btn--accent promo-banner__cta" href="{{ slide.href }}"{% if slide.blank %} target="_blank" rel="noopener"{% endif %}>{{ slide.button }}</a>
         {% endif %}
       </div>
     </article>
-    <article class="promo-banner__slide" data-promo-slide data-href="{% url 'content:services' %}">
-      <div class="promo-banner__media" aria-hidden="true">
-        <img src="{% static_img 'images/promo-transfers.png' %}" alt="" {% img_wh 'images/promo-transfers.png' %} loading="lazy" decoding="async">
-      </div>
-      <div class="promo-banner__content">
-        <h2 class="promo-banner__title">Грошові перекази<br><span class="u-accent">по Україні та світу</span></h2>
-        <p class="promo-banner__text">Надсилайте гроші рідним готівкою або на картку отримувача</p>
-        <a class="btn btn--accent promo-banner__cta" href="{% url 'content:services' %}">Детальніше</a>
-      </div>
-    </article>
-    <article class="promo-banner__slide" data-promo-slide data-modal="1">
-      <div class="promo-banner__media" aria-hidden="true">
-        <img src="{% static_img 'images/promo-swift.png' %}" alt="" {% img_wh 'images/promo-swift.png' %} loading="lazy" decoding="async">
-      </div>
-      <div class="promo-banner__content">
-        <h2 class="promo-banner__title">SWIFT-перекази<br><span class="u-accent">за кордон</span></h2>
-        <p class="promo-banner__text">Міжнародні перекази на рахунки в банках понад 100 країн</p>
-        <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{% url 'leads:contact_modal' %}">Зробити заявку</button>
-      </div>
-    </article>
-    {% endif %}
+    {% endfor %}
   </div>
   {% if not eo %}<div class="promo-banner__dots" data-promo-dots>
-    <button type="button" class="is-active" data-promo-dot aria-label="USD та EUR"></button>
-    <button type="button" data-promo-dot aria-label="Криптовалюта"></button>
-    <button type="button" data-promo-dot aria-label="Перекази"></button>
-    <button type="button" data-promo-dot aria-label="SWIFT"></button>
+    {% for slide in promo_slides %}
+    <button type="button"{% if forloop.first %} class="is-active"{% endif %} data-promo-dot aria-label="{{ slide.dot_label }}"></button>
+    {% endfor %}
   </div>{% endif %}
 </section>
 
@@ -185,8 +161,8 @@
     {% empty %}
     {% if not eo %}
     <div class="stats-section__item">
-      <div class="stats-section__num" data-count-up>7K</div>
-      <p><b>Постійних клієнтів</b> — нам довіряють тисячі людей, які обирають нас для швидкого та зручного обміну валют</p>
+      <div class="stats-section__num" data-count-up>{{ page.why_empty_number }}</div>
+      <p><b>{{ page.why_empty_label }}</b> — {{ page.why_empty_text }}</p>
     </div>
     {% endif %}
     {% endfor %}
@@ -224,7 +200,7 @@
 {% endif %}
 
 {% if page.show_reviews %}
-{% include 'partials/shared_reviews_section.html' with reviews_kicker=page.reviews_kicker reviews_title=page.reviews_title home_reviews=home_reviews %}
+{% include 'partials/shared_reviews_section.html' with reviews_kicker=page.reviews_kicker reviews_title=page.reviews_title reviews_lead=page.reviews_lead home_reviews=home_reviews %}
 {% endif %}
 
 {% if page.show_articles %}

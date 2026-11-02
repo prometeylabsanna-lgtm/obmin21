@@ -67,20 +67,20 @@
 
 <section class="svc-how">
   <div class="svc-how__head">
-    <h2 class="svc-how__title">Три кроки до <span class="u-accent">обміну</span></h2>
+    <h2 class="svc-how__title">{{ visit_steps.title }} <span class="u-accent">{{ visit_steps.title_accent }}</span></h2>
   </div>
   <div class="svc-how__grid">
     <article class="svc-how__card">
-      <h3 class="svc-how__name">Оберіть послугу</h3>
-      <p class="svc-how__text">Розрахуйте суму в калькуляторі або зателефонуйте консультанту.</p>
+      <h3 class="svc-how__name">{{ visit_steps.step_1_title }}</h3>
+      <p class="svc-how__text">{{ visit_steps.step_1_text }}</p>
     </article>
     <article class="svc-how__card">
-      <h3 class="svc-how__name">Зафіксуйте курс</h3>
-      <p class="svc-how__text">Забронюйте заявку онлайн — курс діє 30 хвилин.</p>
+      <h3 class="svc-how__name">{{ visit_steps.step_2_title }}</h3>
+      <p class="svc-how__text">{{ visit_steps.step_2_text }} {{ rate_hold_label }}.</p>
     </article>
     <article class="svc-how__card">
-      <h3 class="svc-how__name">Прийдіть у відділення</h3>
-      <p class="svc-how__text">Отримайте гроші у зручному відділенні з паспортом або ID-карткою.</p>
+      <h3 class="svc-how__name">{{ visit_steps.step_3_title }}</h3>
+      <p class="svc-how__text">{{ visit_steps.step_3_text }}</p>
     </article>
   </div>
 </section>
@@ -94,7 +94,7 @@
 <section class="articles-section" id="news" data-qa="section-news">
   <div class="slider-head">
     <div>
-      <h2 class="slider-head__title">Корисні <span class="u-accent">статті</span></h2>
+      <h2 class="slider-head__title">{{ home_page.articles_title }} <span class="u-accent">{{ home_page.articles_title_accent }}</span></h2>
       {% if eo %}
       {% if home_page %}{% mode_field home_page 'articles_lead' as al %}{% endif %}
       {% if not al %}{% mode_field page 'intro' as al %}{% endif %}

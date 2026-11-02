@@ -38,6 +38,11 @@ def build_unfold_navigation():
                 _item('Розрахунок обміну', 'calculate', 'admin:content_homecalcsettings_changelist'),
                 _item('Вигідний курс', 'payments', 'admin:content_homepromosettings_changelist'),
                 _item(
+                    'Слайди вигідного курсу',
+                    'view_carousel',
+                    'admin:content_homepromoslide_changelist',
+                ),
+                _item(
                     'Знайдіть нас на карті',
                     'map',
                     'admin:network_mapcity_changelist',
@@ -109,6 +114,7 @@ def build_unfold_navigation():
                     'admin:content_servicespage_changelist',
                 ),
                 _item('Картки послуг', 'handyman', 'admin:content_service_changelist'),
+                _item('Три кроки', 'format_list_numbered', 'admin:content_visitsteps_changelist'),
             ],
         },
         {
@@ -121,6 +127,7 @@ def build_unfold_navigation():
                     'star',
                     'admin:content_advantagespage_changelist',
                 ),
+                _item('Три кроки', 'format_list_numbered', 'admin:content_visitsteps_changelist'),
             ],
         },
         {

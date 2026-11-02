@@ -1,3 +1,5 @@
+import re
+
 from django.contrib import messages
 from django.db.models import ImageField
 from django.http import HttpResponseRedirect
@@ -51,6 +53,63 @@ def _is_plain_textarea(name, extra=()):
     if name in PLAIN_TEXTAREA_FIELDS or base in PLAIN_TEXTAREA_FIELDS:
         return True
     return name.endswith(('_lead', '_text')) or base.endswith(('_lead', '_text'))
+
+
+_SENTENCE_END = re.compile(r'[.!?…](?:\s|$)')
+_LONG_COPY_NAMES = frozenset({'intro', 'hero_lead'})
+_KEEP_HTML = frozenset({'body', 'answer', 'faq', 'seo_block_body'})
+
+
+def _is_long_copy(db_field):
+    base = content_field_name(db_field.name)
+    if base in _LONG_COPY_NAMES:
+        return True
+    if db_field.get_internal_type() != 'TextField':
+        return False
+    default = db_field.default if isinstance(db_field.default, str) else ''
+    return len(_SENTENCE_END.findall(default)) >= 2
+
+
+def _keeps_html(name):
+    base = content_field_name(name)
+    return base.endswith('_html') or base in _KEEP_HTML
+
+
+def _strip_editor_plain(obj):
+    for field in obj._meta.fields:
+        if field.get_internal_type() not in ('CharField', 'TextField'):
+            continue
+        if (
+            _is_rich_field(field.name)
+            or _keeps_html(field.name)
+            or not _is_long_copy(field)
+        ):
+            continue
+        setattr(obj, field.name, plain_text(getattr(obj, field.name) or ''))
+
+
+def _text_widget(db_field, kwargs, rich_fields, plain_fields=()):
+    name = db_field.name
+    long_copy = _is_long_copy(db_field)
+    kwargs = with_field_limits(
+        db_field,
+        kwargs,
+        rich=_is_rich_field(name, rich_fields) or long_copy,
+    )
+    if name in plain_fields:
+        if db_field.get_internal_type() == 'TextField':
+            kwargs.setdefault(
+                'widget',
+                CmsAdminTextareaWidget(attrs={'rows': 18}),
+            )
+        return kwargs, True
+    if _is_plain_textarea(name, rich_fields) and not long_copy:
+        kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 3})
+        return kwargs, True
+    if _is_rich_field(name, rich_fields) or long_copy:
+        kwargs['widget'] = CmsTinyMCE()
+        return kwargs, True
+    return kwargs, False
 COLOR_PREFIXES = ('color_', 'header_color_', 'footer_color_')
 PLAIN_SKIP = frozenset({
     'color_bg',
@@ -249,21 +308,10 @@ class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         name = db_field.name
-        kwargs = with_field_limits(
-            db_field, kwargs, rich=_is_rich_field(name, self.rich_fields),
+        kwargs, handled = _text_widget(
+            db_field, kwargs, self.rich_fields, self.plain_fields,
         )
-        if _is_plain_textarea(name, self.rich_fields):
-            kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 3})
-            return db_field.formfield(**kwargs)
-        if name in self.plain_fields:
-            if db_field.get_internal_type() == 'TextField':
-                kwargs.setdefault(
-                    'widget',
-                    CmsAdminTextareaWidget(attrs={'rows': 18}),
-                )
-            return db_field.formfield(**kwargs)
-        if _is_rich_field(name, self.rich_fields):
-            kwargs['widget'] = CmsTinyMCE()
+        if handled:
             return db_field.formfield(**kwargs)
         if name.startswith(COLOR_PREFIXES) or name in self.style_fields:
             kwargs['widget'] = CmsAdminColorWidget()
@@ -285,6 +333,7 @@ class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
                 setattr(obj, name, html_to_plain_legal(getattr(obj, name) or ''))
         _sanitize_rich_fields(obj, self.rich_fields)
         _strip_plain_fields(obj, self.rich_fields)
+        _strip_editor_plain(obj)
         convert_instance_images(obj)
         super().save_model(request, obj, form, change)
         messages.success(request, 'Зміни успішно збережено!')
@@ -300,15 +349,8 @@ class ListUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
         return self._slug_fieldsets(fieldsets, obj)
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        name = db_field.name
-        kwargs = with_field_limits(
-            db_field, kwargs, rich=_is_rich_field(name, self.rich_fields),
-        )
-        if _is_plain_textarea(name, self.rich_fields):
-            kwargs['widget'] = CmsAdminTextareaWidget(attrs={'rows': 3})
-            return db_field.formfield(**kwargs)
-        if _is_rich_field(name, self.rich_fields):
-            kwargs['widget'] = CmsTinyMCE()
+        kwargs, handled = _text_widget(db_field, kwargs, self.rich_fields)
+        if handled:
             return db_field.formfield(**kwargs)
         if isinstance(db_field, ImageField):
             kwargs['widget'] = _image_widget(self, db_field, request)
@@ -324,5 +366,6 @@ class ListUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
     def save_model(self, request, obj, form, change):
         _sanitize_rich_fields(obj, self.rich_fields)
         _strip_plain_fields(obj, self.rich_fields)
+        _strip_editor_plain(obj)
         convert_instance_images(obj)
         super().save_model(request, obj, form, change)

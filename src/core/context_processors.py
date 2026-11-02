@@ -1,4 +1,5 @@
 from src.content.models import Service
+from src.content.visit_steps import VisitSteps, minutes_phrase
 from src.core.breadcrumbs import breadcrumbs_for_request
 from src.core.exchange_mode import exchange_only
 from src.core.models import SiteSettings
@@ -23,6 +24,8 @@ def site_chrome(request):
         'active_branch': getattr(request, 'active_branch', None),
         'breadcrumb_items': breadcrumbs_for_request(request),
         'exchange_only': exchange_only(request),
+        'visit_steps': VisitSteps.load(),
+        'rate_hold_label': minutes_phrase(settings.rate_hold_minutes),
         'footer_services': Service.objects.filter(is_active=True).visible()[:6],
         'theme_version': theme_version(),
     }
