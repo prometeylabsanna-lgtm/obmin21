@@ -13,7 +13,7 @@
     {% if faq_lead %}<p class="faq-section__lead">{{ faq_lead }}</p>{% endif %}
   </div>
   <div class="faq-section__grid {{ grid_class }}" data-faq>
-    {% for item in faq_items %}{% if not eo or item.exchange_safe %}
+    {% for item in faq_items %}{% if item|shows_in_exchange %}
     <div class="faq-card">
       <button type="button" class="faq-card__q" aria-expanded="false">
         <span>{{ item.question }}</span>

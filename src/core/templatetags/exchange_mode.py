@@ -5,6 +5,7 @@ from src.core.exchange_mode import (
     is_exchange_only as exchange_only_enabled,
     mode_meta as mode_meta_value,
     mode_text,
+    shows_in_exchange_mode,
 )
 
 register = template.Library()
@@ -17,6 +18,11 @@ def _site_name(context):
     from src.core.models import SiteSettings
 
     return SiteSettings.load().site_name
+
+
+@register.filter
+def shows_in_exchange(obj):
+    return shows_in_exchange_mode(obj)
 
 
 @register.simple_tag(takes_context=True)

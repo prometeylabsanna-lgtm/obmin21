@@ -88,7 +88,7 @@
 <section class="article-related">
   <h2 class="article-related__title">Читайте <span class="u-accent">також</span></h2>
   <div class="article-related__grid">
-    {% for item in related %}{% if not eo or item.exchange_safe %}
+    {% for item in related %}{% if item|shows_in_exchange %}
     <a class="article-related__card" href="{% url 'blog:post_detail' item.slug %}">
       {% mode_field item 'title' as related_title %}
       <div class="article-related__media">

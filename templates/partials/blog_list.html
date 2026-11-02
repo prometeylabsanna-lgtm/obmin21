@@ -1,7 +1,7 @@
 {% load static content_format exchange_mode %}
 {% is_exchange_only as eo %}
 <div id="blog-list" data-qa="blog-list">
-  {% if featured %}{% if not eo or featured.exchange_safe %}
+  {% if featured %}{% if featured|shows_in_exchange %}
   <a class="blog-feature" href="{% url 'blog:post_detail' featured.slug %}">
     {% mode_field featured 'title' as feature_title %}{% mode_field featured 'excerpt' as feature_excerpt %}
     <div class="blog-feature__media">
@@ -25,7 +25,7 @@
 
   {% if posts %}
   <div class="blog-grid">
-    {% for post in posts %}{% if not eo or post.exchange_safe %}
+    {% for post in posts %}{% if post|shows_in_exchange %}
     <a class="blog-card" href="{% url 'blog:post_detail' post.slug %}">
       {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
       <div class="blog-card__media">

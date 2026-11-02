@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="exchange-hide">
+    <h1>{{ title }}</h1>
+    <section class="exchange-hide__card">
+        <p>{{ intro }}</p>
+        {% if rows %}
+            <ul class="exchange-hide__list">
+                {% for row in rows %}
+                    <li>{{ row }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Серед вибраних немає міських курсів.</p>
+        {% endif %}
+        <form method="post" action="{{ request.get_full_path }}">
+            {% csrf_token %}
+            {% for obj in queryset %}
+                <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk }}">
+            {% endfor %}
+            <input type="hidden" name="action" value="{{ action_name }}">
+            <input type="hidden" name="confirm" value="yes">
+            <input type="hidden" name="select_across" value="0">
+            <button type="submit" class="exchange-hide__confirm">{{ confirm_label }}</button>
+        </form>
+        <p><a class="exchange-hide__cancel" href="{{ cancel_url }}">Скасувати</a></p>
+    </section>
+</div>
+{% endblock %}

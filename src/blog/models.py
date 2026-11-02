@@ -8,6 +8,7 @@ from src.core.exchange_fields import (
     mode_json,
     mode_text,
 )
+from src.core.exchange_classify import freeze_auto_kind
 from src.core.exchange_mode import ExchangeSafeMixin
 
 _UK_MONTHS = (
@@ -60,11 +61,28 @@ class Category(models.Model):
         return self.name
 
 
+class ContentKind(models.TextChoices):
+    CURRENCY = 'currency', 'Валюта'
+    NON_EXCHANGE = 'non_exchange', 'Не обмін'
+    AUTO = 'auto', 'Авто'
+
+
 class Post(ExchangeSafeMixin, models.Model):
     exchange_safe = models.BooleanField(
         EXCHANGE_SAFE_VERBOSE,
         default=False,
         help_text=EXCHANGE_SAFE_CURRENCY_HELP,
+    )
+    content_kind = models.CharField(
+        'Тип для режиму «Лише обмін»',
+        max_length=16,
+        choices=ContentKind.choices,
+        default=ContentKind.AUTO,
+        help_text=(
+            'Авто перераховується з назви, адреси і рубрики. '
+            'Валюта лишається на сайті, Не обмін ховається. '
+            'Ручний вибір сильніший за перерахунок, доки знову не стоїть Авто.'
+        ),
     )
 
     class Status(models.TextChoices):
@@ -124,6 +142,9 @@ class Post(ExchangeSafeMixin, models.Model):
 
     def __str__(self):
         return self.title
+
+    def apply_exchange_classification(self):
+        return freeze_auto_kind(self, 'content_kind')
 
     def image_url(self):
         from src.core.responsive_images import static_exists, static_image

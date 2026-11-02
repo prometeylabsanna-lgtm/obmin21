@@ -131,13 +131,10 @@ def _post_is_hidden(slug):
 
     if not slug:
         return False
-    post = Post.objects.filter(
-        slug=slug,
-        status=Post.Status.PUBLISHED,
-    ).only('id', 'exchange_safe').first()
-    if post is None:
+    published = Post.objects.filter(slug=slug, status=Post.Status.PUBLISHED)
+    if not published.exists():
         return False
-    return not post.exchange_safe
+    return not published.visible().exists()
 
 
 def _category_is_hidden(slug):
@@ -176,11 +173,11 @@ def _service_is_hidden(slug):
     if not slug:
         return False
     service = Service.objects.filter(slug=slug, is_active=True).only(
-        'id', 'exchange_safe', 'title', 'slug', 'seo_title', 'seo_description',
+        'id', 'title', 'slug', 'seo_title', 'seo_description',
     ).first()
     if service is None:
         return False
-    if not service.exchange_safe:
+    if not Service.objects.visible().filter(pk=service.pk).exists():
         return True
     blob = ' '.join(
         part for part in (

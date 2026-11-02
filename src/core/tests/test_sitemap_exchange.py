@@ -134,7 +134,7 @@ class SitemapExchangeTests(TestCase):
         self.assertNotIn('okrema-notatka', xml)
         self.assertNotIn('chernetka', xml)
         self.assertIn('/usd-uah/', xml)
-        self.assertNotIn('eur-uah', xml)
+        self.assertIn('/eur-uah/', xml)
         self.assertNotIn('btc-usdt', xml)
         self.assertIn('/blog/kategoriya/porady/', xml)
         self.assertNotIn('/blog/kategoriya/arkhiv/', xml)
@@ -144,7 +144,7 @@ class SitemapExchangeTests(TestCase):
         self.assertNotIn('swift-perekaz', xml)
         self.assertEqual(
             list(PairSitemap().items().values_list('slug', flat=True)),
-            ['usd-uah'],
+            ['eur-uah', 'usd-uah'],
         )
         self.assertEqual(
             list(CategorySitemap().items().values_list('slug', flat=True)),

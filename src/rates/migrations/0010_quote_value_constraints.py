@@ -35,7 +35,7 @@ def _fix_invalid_quotes(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rates', '0007_reactivate_eur_usd_pair'),
+        ('rates', '0009_quote_inherits_base'),
     ]
 
     operations = [

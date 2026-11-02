@@ -17,14 +17,14 @@
       {% mode_field page 'hero_text' as ht %}{% if not eo or ht %}<p class="svc-hero__lead">{{ ht }}</p>{% endif %}
     </div>
     <div class="svc-hero__chips">
-      {% for svc in services %}{% if not eo or svc.exchange_safe %}
+      {% for svc in services %}{% if svc|shows_in_exchange %}
       <a href="#svc-{{ svc.slug }}">{{ svc.title }}</a>
       {% endif %}{% endfor %}
     </div>
   </div>
 </section>
 
-{% for svc in services %}{% if not eo or svc.exchange_safe %}
+{% for svc in services %}{% if svc|shows_in_exchange %}
 <article class="svc-row{% if forloop.counter|divisibleby:2 %} svc-row--rev{% endif %}" id="svc-{{ svc.slug }}">
   <div class="svc-row__media">
     <img src="{{ svc.image_src }}" alt="{{ svc.title }}"{% if svc.image_width %} width="{{ svc.image_width }}" height="{{ svc.image_height }}"{% endif %} loading="lazy" decoding="async">
@@ -109,7 +109,7 @@
     </div>
   </div>
   <div class="articles-track" data-slider="articles">
-    {% for post in news_posts %}{% if not eo or post.exchange_safe %}
+    {% for post in news_posts %}{% if post|shows_in_exchange %}
     <article class="article-slide">
       {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
       <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">

@@ -16,7 +16,7 @@
           <div class="site-footer__heading">Послуги</div>
           <div class="site-footer__links">
             {% for svc in footer_services %}
-            {% if not eo or svc.exchange_safe %}
+            {% if svc|shows_in_exchange %}
             <a href="{% url 'content:services' %}#svc-{{ svc.slug }}">{{ svc.title|upper }}</a>
             {% endif %}
             {% endfor %}

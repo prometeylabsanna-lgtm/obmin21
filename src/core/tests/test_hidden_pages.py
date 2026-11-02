@@ -79,6 +79,12 @@ class HiddenPageTests(TestCase):
             slug='btc-usdt',
             exchange_safe=True,
         )
+        self.hidden_crypto = CurrencyPair.objects.create(
+            code='ETH',
+            name='Ethereum',
+            slug='eth-uah',
+            exchange_safe=False,
+        )
         self.inactive_pair = CurrencyPair.objects.create(
             code='GBP',
             name='Фунт',
@@ -175,9 +181,13 @@ class HiddenPageTests(TestCase):
         inactive = self.client.get(
             reverse('rates:pair_detail', args=[self.inactive_pair.slug]),
         )
+        hidden_crypto = self.client.get(
+            reverse('rates:pair_detail', args=[self.hidden_crypto.slug]),
+        )
         self.assertEqual(safe.status_code, 200)
-        self.assertEqual(unsafe.status_code, 503)
+        self.assertEqual(unsafe.status_code, 200)
         self.assertEqual(marked_safe.status_code, 200)
+        self.assertEqual(hidden_crypto.status_code, 503)
         self.assertEqual(inactive.status_code, 404)
 
     def test_status_404_omits_retry_after(self):
@@ -197,7 +207,7 @@ class HiddenPageTests(TestCase):
         self._mode(True)
         SiteSettings.objects.filter(pk=1).update(retry_after_seconds=3600)
         response = self.client.get(
-            reverse('rates:pair_detail', args=[self.unsafe_pair.slug]),
+            reverse('rates:pair_detail', args=[self.hidden_crypto.slug]),
         )
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response['Retry-After'], '3600')
@@ -253,6 +263,13 @@ class HiddenPageTests(TestCase):
             is_active=True,
             exchange_safe=False,
         )
+        neutral = Service.objects.create(
+            title='Доставка квітів',
+            slug='kvitky',
+            short_desc='Букет',
+            is_active=True,
+            exchange_safe=False,
+        )
         swift = Service.objects.create(
             title='SWIFT переказ',
             slug='swift-perekaz',
@@ -268,7 +285,8 @@ class HiddenPageTests(TestCase):
             is_active=True,
             exchange_safe=True,
         )
-        self.assertTrue(is_hidden_match(_service_match(hidden.slug)))
+        self.assertFalse(is_hidden_match(_service_match(hidden.slug)))
+        self.assertTrue(is_hidden_match(_service_match(neutral.slug)))
         self.assertTrue(is_hidden_match(_service_match(swift.slug, url_name='custom')))
         self.assertFalse(is_hidden_match(_service_match(opened.slug)))
         self.assertFalse(is_hidden_match(_service_match('nema-posluhy')))

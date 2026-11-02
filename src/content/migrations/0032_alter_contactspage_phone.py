@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0030_seed_exchange_safe_faq'),
+        ('content', '0031_exchange_visibility_kind'),
     ]
 
     operations = [

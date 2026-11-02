@@ -1,3 +1,5 @@
+import copy
+
 from django.db.models import Q
 
 from src.core.exchange_mode import exchange_only
@@ -55,11 +57,8 @@ def get_quotes_for_city(city, board=RateBoard.RETAIL):
     rows = []
     updated_at = None
     for pair in pairs:
-        if pair.id in city_rows:
-            quote = city_rows[pair.id]
-        else:
-            quote = global_rows.get(pair.id)
-        if not _quote_visible(quote):
+        quote = _public_quote(city_rows.get(pair.id), global_rows.get(pair.id))
+        if quote is None:
             continue
         rows.append({'pair': pair, 'quote': quote})
         if updated_at is None or quote.updated_at > updated_at:
@@ -74,17 +73,36 @@ def get_quote(pair, city, board=RateBoard.RETAIL):
     if not CurrencyPair.objects.visible().filter(pk=pair.pk).exists():
         return None
     city_id = city.id if city else None
+    city_quote = None
     if city_id:
         city_quote = Quote.objects.filter(
             pair=pair,
             board=board,
             city_id=city_id,
         ).first()
-        if city_quote is not None:
-            return city_quote if _quote_visible(city_quote) else None
-    global_quote = Quote.objects.filter(
+    base = Quote.objects.filter(
         pair=pair,
         board=board,
         city__isnull=True,
     ).first()
-    return global_quote if _quote_visible(global_quote) else None
+    if city_id:
+        return _public_quote(city_quote, base)
+    return base if _quote_visible(base) else None
+
+
+def _public_quote(city_quote, base):
+    if city_quote is None:
+        return base if _quote_visible(base) else None
+    if not city_quote.is_active:
+        return None
+    if not city_quote.inherits_base:
+        return city_quote if _quote_visible(city_quote) else None
+    if base is None or not base.is_active:
+        return None
+    if city_quote.buy == base.buy and city_quote.sell == base.sell:
+        return city_quote if _quote_visible(city_quote) else None
+    shown = copy.copy(city_quote)
+    shown.buy = base.buy
+    shown.sell = base.sell
+    shown.updated_at = base.updated_at
+    return shown if _quote_visible(shown) else None
