@@ -7,12 +7,14 @@ from django.db import migrations, models
 def fill_public_copy(apps, schema_editor):
     from src.content.home_copy import fill_calc_lock
     from src.content.promo_slides import fill_promo_slides
+    from src.content.public_copy_fill import clear_unseen_public_copy
     from src.content.visit_steps import fill_home_fallback, fill_visit_steps
 
     fill_promo_slides(apps, schema_editor)
     fill_visit_steps(apps, schema_editor)
     fill_home_fallback(apps, schema_editor)
     fill_calc_lock(apps, schema_editor)
+    clear_unseen_public_copy(apps, schema_editor)
 
 
 class Migration(migrations.Migration):

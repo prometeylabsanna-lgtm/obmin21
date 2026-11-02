@@ -277,13 +277,7 @@ class Command(BaseCommand):
 
         HomePage.load()
         home = HomePage.load()
-        home.seo_block_title = 'Обмін валют в Україні'
-        home.seo_block_body = (
-            'Обмін21 — мережа обмінних пунктів. На сайті ви бачите актуальний курс, '
-            'можете порахувати суму в калькуляторі та залишити заявку з фіксацією курсу. '
-            'Розрахунок відбувається у відділенні.'
-        )
-        home.promo_title = 'Вигідний курс'
+        home.promo_title = 'Вигідний курс на'
         home.promo_title_accent = 'USD та EUR'
         home.save()
         fill_home_seo_mode(apps, None)
@@ -631,9 +625,6 @@ class Command(BaseCommand):
 
         faq_page = FaqPage.load()
         faq_page.title = 'FAQ'
-        faq_page.intro = (
-            'Короткі відповіді на найчастіші питання про обмін валют у мережі Обмін21.'
-        )
         faq_page.seo_title = 'FAQ — питання та відповіді'
         faq_page.seo_description = (
             'Як забронювати курс, які документи потрібні, комісії та робота відділень Обмін21.'

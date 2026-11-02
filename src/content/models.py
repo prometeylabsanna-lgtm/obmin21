@@ -95,7 +95,7 @@ class HomePage(HomeSectionCopy, ThemeFieldsMixin, SingletonModel):
     promo_title = models.CharField(
         'Заголовок',
         max_length=120,
-        default='Вигідний курс',
+        default='Вигідний курс на',
     )
     promo_title_accent = models.CharField(
         'Акцент у заголовку',
@@ -115,7 +115,8 @@ class HomePage(HomeSectionCopy, ThemeFieldsMixin, SingletonModel):
     seo_block_title = models.CharField(
         'Заголовок інформаційного блоку',
         max_length=160,
-        default='Обмін валют',
+        blank=True,
+        default='',
     )
     seo_block_title_mode = mode_char(
         'Заголовок інформаційного блоку для режиму «Лише обмін»',
@@ -396,7 +397,8 @@ class ContactsPage(ThemeFieldsMixin, SingletonModel):
     branches_kicker = models.CharField(
         'Підпис блоку відділень',
         max_length=80,
-        default='Відділення',
+        blank=True,
+        default='',
     )
     branches_title = models.CharField(
         'Заголовок блоку відділень',
@@ -582,7 +584,12 @@ class BlogPage(ThemeFieldsMixin, SingletonModel):
 
 class ReviewsPage(ThemeFieldsMixin, SingletonModel):
     theme_slug = 'reviews'
-    kicker = models.CharField('Підпис над заголовком', max_length=80, default='Відгуки')
+    kicker = models.CharField(
+        'Підпис над заголовком',
+        max_length=80,
+        blank=True,
+        default='',
+    )
     title = models.CharField('Заголовок', max_length=120, default='Відгуки')
     title_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
     title_accent = models.CharField(
@@ -590,11 +597,7 @@ class ReviewsPage(ThemeFieldsMixin, SingletonModel):
         max_length=80,
         default='клієнтів',
     )
-    intro = models.TextField(
-        'Підзаголовок',
-        blank=True,
-        default='Що кажуть люди, які вже обмінювали валюту в Обмін21.',
-    )
+    intro = models.TextField('Підзаголовок', blank=True, default='')
     cta_button = models.CharField(
         'Кнопка',
         max_length=80,

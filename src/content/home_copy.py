@@ -28,7 +28,8 @@ class HomeSectionCopy(models.Model):
     calc_kicker = models.CharField(
         'Підпис над заголовком',
         max_length=80,
-        default='Калькулятор',
+        blank=True,
+        default='',
     )
     calc_title = models.CharField(
         'Заголовок',
@@ -43,7 +44,8 @@ class HomeSectionCopy(models.Model):
     calc_lead = models.CharField(
         'Підзаголовок',
         max_length=240,
-        default='Дізнайтесь, скільки ви отримаєте та зафіксуйте курс онлайн',
+        blank=True,
+        default='',
     )
     calc_give = models.CharField(
         'Підпис «Віддаю»',
@@ -79,7 +81,8 @@ class HomeSectionCopy(models.Model):
     map_kicker = models.CharField(
         'Підпис над заголовком',
         max_length=80,
-        default='Відділення',
+        blank=True,
+        default='',
     )
     map_title = models.CharField(
         'Заголовок',
@@ -114,7 +117,8 @@ class HomeSectionCopy(models.Model):
     why_kicker = models.CharField(
         'Підпис над заголовком',
         max_length=80,
-        default='Переваги',
+        blank=True,
+        default='',
     )
     why_title = models.CharField(
         'Заголовок',
@@ -147,7 +151,8 @@ class HomeSectionCopy(models.Model):
     services_kicker = models.CharField(
         'Підпис над заголовком',
         max_length=80,
-        default='Послуги',
+        blank=True,
+        default='',
     )
     services_title = models.CharField(
         'Заголовок',
@@ -171,7 +176,8 @@ class HomeSectionCopy(models.Model):
     faq_kicker = models.CharField(
         'Підпис над заголовком',
         max_length=80,
-        default='Відповіді',
+        blank=True,
+        default='',
     )
     faq_title = models.CharField(
         'Заголовок',
@@ -186,7 +192,8 @@ class HomeSectionCopy(models.Model):
     reviews_kicker = models.CharField(
         'Підпис над заголовком',
         max_length=80,
-        default='Відгуки',
+        blank=True,
+        default='',
     )
     reviews_title = models.CharField(
         'Заголовок',
@@ -196,7 +203,8 @@ class HomeSectionCopy(models.Model):
     articles_kicker = models.CharField(
         'Підпис над заголовком',
         max_length=80,
-        default='Статті',
+        blank=True,
+        default='',
     )
     articles_title = models.CharField(
         'Заголовок',

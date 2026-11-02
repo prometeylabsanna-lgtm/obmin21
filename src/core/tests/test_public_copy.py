@@ -114,9 +114,17 @@ class PublicCopyTests(TestCase):
         service.seo_description = 'ZqServiceDesc'
         service.save(update_fields=['body', 'seo_title', 'seo_description'])
         page = self.client.get(reverse('content:services'))
-        self.assertContains(page, 'ZqServiceBody')
-        self.assertContains(page, 'ZqServiceSeo')
-        self.assertContains(page, 'ZqServiceDesc')
+        html = page.content.decode()
+        self.assertNotIn('ZqServiceBody', html)
+        self.assertIn('alt="Послуга"', html)
+        self.assertNotIn('alt="ZqServiceSeo"', html)
+        head, _, body = html.partition('<body')
+        self.assertIn('ZqServiceSeo', head)
+        self.assertIn('ZqServiceDesc', head)
+        self.assertNotIn('ZqServiceSeo', body)
+        self.assertNotIn('ZqServiceDesc', body)
+        self.assertIn('og:title', head)
+        self.assertIn('og:description', head)
 
     def test_promo_slides_follow_order_and_active_flag(self):
         home = HomePage.load()
@@ -214,6 +222,24 @@ class PublicCopyTests(TestCase):
         self.assertEqual(home.why_empty_number, number)
         self.assertEqual(home.calc_lock, lock)
         self.assertEqual(steps.step_1_title, title)
+
+    def test_first_slide_keeps_template_title(self):
+        home = HomePage.load()
+        home.promo_title = 'Вигідний курс'
+        home.save(update_fields=['promo_title'])
+        fill_promo_slides(apps, None)
+        home.refresh_from_db()
+        self.assertEqual(home.promo_title, 'Вигідний курс на')
+        slide = HomePromoSlide.objects.get(page=home, code='usd-eur')
+        self.assertEqual(slide.title, 'Вигідний курс на')
+        html = self.client.get(reverse('core:home')).content.decode()
+        self.assertIn('Вигідний курс на', html)
+        self.assertNotIn('Вигідний курс на на', html)
+
+    def test_empty_kickers_and_seo_block_stay_off_home(self):
+        html = self.client.get(reverse('core:home')).content.decode()
+        self.assertNotIn('id="about"', html)
+        self.assertNotIn('calc-head__lead', html)
 
     def test_sidebar_lists_slide_and_steps_blocks(self):
         page = self.client.get(reverse('admin:index'))

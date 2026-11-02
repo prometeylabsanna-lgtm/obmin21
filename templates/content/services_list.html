@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load content_format exchange_mode responsive %}
 
-{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{{ page.seo_title|default:page.title }} · {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block title %}{% is_exchange_only as eo %}{% if eo %}{% mode_meta page 'seo_title' 'title' as eo_title %}{% if eo_title != site_settings.site_name %}{{ eo_title }} · {% endif %}{{ site_settings.site_name }}{% else %}{% if service_head_title %}{{ service_head_title }}{% else %}{{ page.seo_title|default:page.title }}{% endif %} · {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block content %}{% is_exchange_only as eo %}
 <section class="svc-hero">
   <div class="svc-hero__banner">
@@ -34,8 +34,6 @@
   <div class="svc-row__copy">
     <h2 class="svc-row__title">{{ svc.title }}</h2>
     {% mode_field svc 'block_text' as bt %}{% if not eo or bt %}<p class="svc-row__text">{{ bt }}</p>{% endif %}
-    {% if svc.body %}<div class="svc-row__text">{{ svc.body|linebreaks }}</div>{% endif %}
-    {% if svc.seo_description %}<p class="svc-row__text">{{ svc.seo_description }}</p>{% endif %}
     {% mode_field svc 'block_points' as pts %}{% if pts %}
     <div class="svc-row__points">
       {% if eo %}{% for pt in pts.splitlines %}{% if pt %}

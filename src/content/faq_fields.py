@@ -4,7 +4,12 @@ from src.core.exchange_fields import mode_char
 
 
 class FaqPageCopy(models.Model):
-    kicker = models.CharField('Підпис над заголовком', max_length=80, default='Відповіді')
+    kicker = models.CharField(
+        'Підпис над заголовком',
+        max_length=80,
+        blank=True,
+        default='',
+    )
     title_accent = models.CharField(
         'Акцент у заголовку',
         max_length=80,

@@ -16,12 +16,15 @@ LINK_CHOICES = (
     (LINK_MODAL, 'Форма заявки'),
 )
 
+FULL_FIRST_TITLE = 'Вигідний курс на'
+LEGACY_FIRST_TITLE = 'Вигідний курс'
+
 SLIDE_SPECS = (
     {
         'code': 'usd-eur',
         'sort_order': 0,
         'exchange_safe': True,
-        'title': 'Вигідний курс на',
+        'title': FULL_FIRST_TITLE,
         'title_accent': 'USD та EUR',
         'text': 'Обмінюйте валюту за актуальним курсом без зайвих кроків',
         'button_label': 'Обрати валюту',
@@ -125,6 +128,21 @@ class HomePromoSlide(ExchangeSafeMixin, models.Model):
         super().save(*args, **kwargs)
 
 
+def _write_full_first_title(home, slide):
+    updates = []
+    if (getattr(home, 'promo_title', '') or '').strip() == LEGACY_FIRST_TITLE:
+        home.promo_title = FULL_FIRST_TITLE
+        updates.append('promo_title')
+    if updates:
+        home.save(update_fields=updates)
+    if slide is None:
+        return
+    title = (slide.title or '').strip()
+    if title in ('', LEGACY_FIRST_TITLE):
+        slide.title = FULL_FIRST_TITLE
+        slide.save(update_fields=['title'])
+
+
 def fill_promo_slides(apps, schema_editor):
     Slide = apps.get_model('content', 'HomePromoSlide')
     Home = apps.get_model('content', 'HomePage')
@@ -133,15 +151,8 @@ def fill_promo_slides(apps, schema_editor):
         if Slide.objects.filter(page_id=home.pk, code=spec['code']).exists():
             continue
         Slide.objects.create(page_id=home.pk, **spec)
-
-
-def _with_na(title):
-    text = (title or '').strip()
-    if not text:
-        return ''
-    if text.casefold().endswith('на'):
-        return text
-    return f'{text} на'
+    first = Slide.objects.filter(page_id=home.pk, code='usd-eur').first()
+    _write_full_first_title(home, first)
 
 
 def _filled(value, fallback):
@@ -177,7 +188,7 @@ def slides_for_home(page):
         image_field = slide.image if getattr(slide.image, 'name', '') else None
         image_path = '' if image_field else slide.image_path
         if slide.code == 'usd-eur':
-            title = _with_na(page.promo_title) or slide.title
+            title = _filled(page.promo_title, slide.title)
             accent = _filled(page.promo_title_accent, slide.title_accent)
             text = _filled(page.promo_text, slide.text)
             button = _filled(page.promo_button, slide.button_label)

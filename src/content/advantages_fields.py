@@ -95,7 +95,12 @@ def _color(label, default=NAVY):
 
 
 class AdvantagesSectionsMixin(models.Model):
-    hero_kicker = models.CharField('Підпис над заголовком', max_length=80, default='Переваги')
+    hero_kicker = models.CharField(
+        'Підпис над заголовком',
+        max_length=80,
+        blank=True,
+        default='',
+    )
     hero_title = models.CharField('Заголовок банера', max_length=120, default='Чому обирають')
     hero_title_accent = models.CharField('Акцент у заголовку', max_length=80, default='Обмін21')
     hero_lead = models.TextField(
@@ -124,7 +129,12 @@ class AdvantagesSectionsMixin(models.Model):
         blank=True,
     )
 
-    stats_kicker = models.CharField('Підпис блоку', max_length=80, default='Цифри')
+    stats_kicker = models.CharField(
+        'Підпис блоку',
+        max_length=80,
+        blank=True,
+        default='',
+    )
     stats_title = models.CharField('Заголовок', max_length=120, default='Обмін21')
     stats_title_accent = models.CharField('Акцент у заголовку', max_length=80, default='у цифрах')
     stat_1_title = models.CharField('Перевага 1 — заголовок', max_length=40, default='7K')
@@ -154,7 +164,12 @@ class AdvantagesSectionsMixin(models.Model):
     )
     stat_4_text_mode = mode_text('Перевага 4 — підзаголовок для режиму «Лише обмін»')
 
-    why_kicker = models.CharField('Підпис блоку', max_length=80, default='Чому ми')
+    why_kicker = models.CharField(
+        'Підпис блоку',
+        max_length=80,
+        blank=True,
+        default='',
+    )
     why_kicker_mode = mode_char('Підпис блоку для режиму «Лише обмін»', 80)
     why_title = models.CharField(
         'Заголовок',
@@ -245,7 +260,12 @@ class AdvantagesSectionsMixin(models.Model):
     )
     why_5_text_mode = mode_text('Перевага 5 — підзаголовок для режиму «Лише обмін»')
 
-    cmp_kicker = models.CharField('Підпис блоку', max_length=80, default='Порівняння')
+    cmp_kicker = models.CharField(
+        'Підпис блоку',
+        max_length=80,
+        blank=True,
+        default='',
+    )
     cmp_kicker_mode = mode_char('Підпис блоку для режиму «Лише обмін»', 80)
     cmp_title = models.CharField('Заголовок', max_length=120, default='Обмін21 чи')
     cmp_title_mode = mode_char('Заголовок для режиму «Лише обмін»', 120)
