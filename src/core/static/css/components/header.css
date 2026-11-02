@@ -46,7 +46,6 @@
   align-items: center;
   gap: calc(18px * var(--scale));
   flex-wrap: wrap;
-  min-width: 0;
 }
 
 .site-header__phone {
@@ -104,14 +103,11 @@
 
 .city-select {
   position: relative;
-  min-width: 0;
-  max-width: 100%;
 }
 
 .city-select__btn {
   display: flex;
   align-items: center;
-  min-width: 0;
   gap: calc(6px * var(--scale));
   border: 0;
   background: transparent;
@@ -121,11 +117,10 @@
   font-size: calc(17px * var(--scale));
   font-weight: 600;
   color: var(--color-text);
-  max-width: min(100%, calc(220px * var(--scale)), calc(100vw - 140px));
+  max-width: min(calc(220px * var(--scale)), calc(100vw - 140px));
 }
 
 .city-select__btn [data-city-label] {
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

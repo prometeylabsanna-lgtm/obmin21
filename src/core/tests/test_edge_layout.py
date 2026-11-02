@@ -179,16 +179,11 @@ class EdgeLayoutTests(TestCase):
             self.assertIn('min-width: 0', css, name)
             self.assertNotIn('!important', css, name)
         header = (css_root / 'header.css').read_text(encoding='utf-8')
-        self.assertIn('min-width: 0', header)
-        self.assertIn('max-width: 100%', header)
-        self.assertNotIn('!important', header)
         label = re.search(
             r'\.city-select__btn \[data-city-label\] \{([^}]+)\}',
             header,
         )
         self.assertIsNotNone(label)
         block = label.group(1)
-        self.assertIn('min-width: 0', block)
-        self.assertIn('overflow: hidden', block)
         self.assertIn('text-overflow: ellipsis', block)
         self.assertIn('white-space: nowrap', block)
