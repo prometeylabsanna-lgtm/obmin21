@@ -20,7 +20,7 @@ def fill_public_copy(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0030_seed_exchange_safe_faq'),
+        ('content', '0032_alter_contactspage_phone'),
     ]
 
     operations = [
@@ -67,6 +67,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('exchange_safe', models.BooleanField(default=False, help_text='У режимі «Лише обмін» на сайті лишаються лише позначені записи. Новий запис створюється без галочки і в цьому режимі не показується. Коли режим вимкнено, галочка ні на що не впливає.', verbose_name='Показувати в режимі «Лише обмін»')),
+                ('exchange_visibility', models.CharField(choices=[('auto', 'Авто'), ('show', 'Показувати'), ('hide', 'Приховати')], default='auto', help_text='Авто — за типом: фіат і валютні матеріали видимі, крипто, метал, SWIFT і перекази приховані. Показувати і Приховати сильніші за тип і за стару галочку.', max_length=8, verbose_name='Видимість у режимі «Лише обмін»')),
                 ('code', models.CharField(blank=True, help_text='Службовий код. Для базових слайдів не змінюйте.', max_length=40, verbose_name='Код')),
                 ('title', models.CharField(max_length=120, verbose_name='Заголовок')),
                 ('title_accent', models.CharField(blank=True, max_length=80, verbose_name='Акцент у заголовку')),
@@ -86,6 +87,96 @@ class Migration(migrations.Migration):
                 'ordering': ['sort_order', 'id'],
                 'constraints': [models.UniqueConstraint(fields=('page', 'code'), name='content_promo_slide_code')],
             },
+        ),
+        migrations.AlterField(
+            model_name='advantagespage',
+            name='cmp_kicker',
+            field=models.CharField(blank=True, default='Порівняння', max_length=80, verbose_name='Підпис блоку'),
+        ),
+        migrations.AlterField(
+            model_name='advantagespage',
+            name='hero_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='advantagespage',
+            name='stats_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис блоку'),
+        ),
+        migrations.AlterField(
+            model_name='advantagespage',
+            name='why_kicker',
+            field=models.CharField(blank=True, default='Чому ми', max_length=80, verbose_name='Підпис блоку'),
+        ),
+        migrations.AlterField(
+            model_name='contactspage',
+            name='branches_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис блоку відділень'),
+        ),
+        migrations.AlterField(
+            model_name='faqpage',
+            name='kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='articles_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='calc_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='calc_lead',
+            field=models.CharField(blank=True, default='', max_length=240, verbose_name='Підзаголовок'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='faq_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='map_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='promo_title',
+            field=models.CharField(default='Вигідний курс на', max_length=120, verbose_name='Заголовок'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='reviews_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='seo_block_title',
+            field=models.CharField(blank=True, default='', max_length=160, verbose_name='Заголовок інформаційного блоку'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='services_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='homepage',
+            name='why_kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
+        ),
+        migrations.AlterField(
+            model_name='reviewspage',
+            name='intro',
+            field=models.TextField(blank=True, default='', verbose_name='Підзаголовок'),
+        ),
+        migrations.AlterField(
+            model_name='reviewspage',
+            name='kicker',
+            field=models.CharField(blank=True, default='', max_length=80, verbose_name='Підпис над заголовком'),
         ),
         migrations.RunPython(fill_public_copy, migrations.RunPython.noop),
     ]

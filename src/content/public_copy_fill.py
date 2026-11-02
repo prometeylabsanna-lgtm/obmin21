@@ -28,7 +28,9 @@ _PAGES = (
         'hero_kicker': ('Переваги',),
         'stats_kicker': ('Цифри',),
         'why_kicker': ('Чому ми',),
+        'why_kicker_mode': ('Чому ми',),
         'cmp_kicker': ('Порівняння',),
+        'cmp_kicker_mode': ('Порівняння',),
     }),
     ('FaqPage', {
         'kicker': ('Відповіді',),

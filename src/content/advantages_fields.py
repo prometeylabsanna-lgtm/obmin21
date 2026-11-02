@@ -168,7 +168,7 @@ class AdvantagesSectionsMixin(models.Model):
         'Підпис блоку',
         max_length=80,
         blank=True,
-        default='',
+        default='Чому ми',
     )
     why_kicker_mode = mode_char('Підпис блоку для режиму «Лише обмін»', 80)
     why_title = models.CharField(
@@ -264,7 +264,7 @@ class AdvantagesSectionsMixin(models.Model):
         'Підпис блоку',
         max_length=80,
         blank=True,
-        default='',
+        default='Порівняння',
     )
     cmp_kicker_mode = mode_char('Підпис блоку для режиму «Лише обмін»', 80)
     cmp_title = models.CharField('Заголовок', max_length=120, default='Обмін21 чи')

@@ -164,9 +164,10 @@ def slides_for_home(page):
     from django.urls import reverse
 
     from src.core.models import SiteSettings
+    from src.core.phones import safe_telegram_url
 
     site = SiteSettings.load()
-    telegram = (site.telegram_url or '').strip() or 'https://t.me/obmin21'
+    telegram = safe_telegram_url(site.telegram_url)
     hrefs = {
         LINK_RATES: reverse('rates:rates_page'),
         LINK_SERVICES: reverse('content:services'),

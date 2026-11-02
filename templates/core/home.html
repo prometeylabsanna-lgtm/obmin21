@@ -109,7 +109,7 @@
 <section class="promo-banner" data-promo data-qa="promo-banner"{% if eo %} data-autoplay="0" data-slides="1"{% endif %}>
   <div class="promo-banner__stage">
     {% for slide in promo_slides %}
-    <article class="promo-banner__slide{% if forloop.first %} is-active{% endif %}" data-promo-slide{% if slide.modal %} data-modal="1"{% else %} data-href="{{ slide.href }}"{% endif %}{% if slide.blank %} data-blank="1"{% endif %}>
+    <article class="promo-banner__slide{% if forloop.first %} is-active{% endif %}" data-promo-slide{% if slide.modal %} data-modal="1"{% elif slide.href %} data-href="{{ slide.href }}"{% if slide.blank %} data-blank="1"{% endif %}{% endif %}>
       <div class="promo-banner__media" aria-hidden="true">
         {% if slide.image_field %}
         <img src="{{ slide.image_field.url }}" alt="" {% field_wh slide.image_field %} loading="lazy" decoding="async">
@@ -121,8 +121,8 @@
         <h2 class="promo-banner__title">{{ slide.title }}<br><span class="u-accent">{{ slide.accent }}</span></h2>
         <p class="promo-banner__text">{{ slide.text }}</p>
         {% if slide.modal %}
-        <button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{{ slide.href }}">{{ slide.button }}</button>
-        {% else %}
+        {% if slide.button %}<button type="button" class="btn btn--accent promo-banner__cta" data-open-modal="{{ slide.href }}">{{ slide.button }}</button>{% endif %}
+        {% elif slide.href %}
         <a class="btn btn--accent promo-banner__cta" href="{{ slide.href }}"{% if slide.blank %} target="_blank" rel="noopener"{% endif %}>{{ slide.button }}</a>
         {% endif %}
       </div>
