@@ -4,6 +4,8 @@
 
 .blog-hero__title {
   margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: clamp(calc(30px * var(--scale)), 4.3vw, calc(57px * var(--scale)));
   font-weight: 700;
   line-height: 1.05;
@@ -115,6 +117,8 @@
 
 .blog-feature__title {
   margin-top: calc(18px * var(--scale));
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: calc(26px * var(--scale));
   font-weight: 700;
   line-height: 1.12;
@@ -195,6 +199,8 @@
 
 .blog-card__title {
   margin-top: calc(10px * var(--scale));
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: calc(14px * var(--scale));
   font-weight: 600;
   line-height: 1.2;

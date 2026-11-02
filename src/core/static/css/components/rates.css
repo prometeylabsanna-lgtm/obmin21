@@ -103,12 +103,16 @@
 }
 
 .rates-table__code {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-weight: 600;
   color: var(--color-navy);
 }
 
 .rates-table__name {
   display: none;
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: var(--color-text-muted);
   font-size: calc(12px * var(--scale));
   font-weight: 400;

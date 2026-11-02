@@ -7,19 +7,21 @@
   {% mode_field city 'name' as city_name %}{% if city_name %}<h1 class="page-hero__title">{{ city_name }}</h1>{% endif %}{% mode_field city 'banner_title' as bt %}{% if eo and bt %}<p class="page-hero__lead">{{ bt }}</p>{% endif %}{% mode_field city 'banner_text' as btx %}{% if eo and btx %}<p class="page-hero__lead">{{ btx }}</p>{% endif %}
 </section>
 <section>
+  {% if branches %}
   <div class="card-grid card-grid--2">
     {% for b in branches %}
     <article class="card">
       <h2 class="card__title">{% if b.name %}«{{ b.name }}»{% else %}{{ b.address }}{% endif %}</h2>
-      {% if b.name %}<p class="card__text">{{ b.address }}</p>{% endif %}
+      {% if b.name and b.address %}<p class="card__text">{{ b.address }}</p>{% endif %}
       {% if b.hours_display %}<p class="card__text">{{ b.hours_display }}</p>{% endif %}
       {% if b.phone %}<p class="card__text">{{ b.phone }}</p>{% endif %}
     </article>
-    {% empty %}
-    <p class="u-muted">Відділення зʼявляться незабаром</p>
     {% endfor %}
   </div>
-  <div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:12px">
+  {% else %}
+  <p class="u-muted">Відділення зʼявляться незабаром</p>
+  {% endif %}
+  <div class="page-actions">
     <a class="btn btn--accent" href="{% url 'network:select_city' city.slug %}">Обрати це місто</a>
     <button type="button" class="btn btn--ghost" data-open-modal="{% url 'leads:contact_modal' %}">Зробити заявку</button>
   </div>

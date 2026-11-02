@@ -46,6 +46,7 @@
   align-items: center;
   gap: calc(18px * var(--scale));
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .site-header__phone {
@@ -103,11 +104,14 @@
 
 .city-select {
   position: relative;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .city-select__btn {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: calc(6px * var(--scale));
   border: 0;
   background: transparent;
@@ -121,9 +125,9 @@
 }
 
 .city-select__btn [data-city-label] {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .city-select__chevron {

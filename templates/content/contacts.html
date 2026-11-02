@@ -61,17 +61,23 @@
       </button>
       {% endfor %}
     </div>
+    {% if active_branch.map_embed_src or active_branch.address or active_branch.name %}
     <div class="contacts-map__frame">
+      {% if active_branch.map_embed_src %}
       <iframe data-branches-map src="{{ active_branch.map_embed_src }}" title="Карта: {{ active_branch.address }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      {% endif %}
       <div class="contacts-map__card">
         {% mode_field active_branch.city 'name' as active_city_name %}
         <div class="contacts-map__card-name" data-branches-name>Обмін21 · {{ active_city_name }}{% if active_branch.name %} «{{ active_branch.name }}»{% endif %}</div>
-        <div class="contacts-map__card-addr" data-branches-addr>{{ active_branch.address }}</div>
+        {% if active_branch.address %}<div class="contacts-map__card-addr" data-branches-addr>{{ active_branch.address }}</div>{% endif %}
+        {% if active_branch.map_route_url %}
         <a class="contacts-map__card-link" data-branches-link href="{{ active_branch.map_route_url }}" target="_blank" rel="noopener">Прокласти маршрут
           <svg width="6" height="10" viewBox="0 0 6 10" aria-hidden="true"><path d="M1 1l4 4-4 4" stroke="var(--color-accent)" fill="none" stroke-width="1.5"></path></svg>
         </a>
+        {% endif %}
       </div>
     </div>
+    {% endif %}
   </div>
   {% else %}
   <p class="u-muted">Відділення з’являться незабаром</p>
