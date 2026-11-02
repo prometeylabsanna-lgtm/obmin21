@@ -143,7 +143,8 @@ class NotificationBackendTests(TestCase):
         self.assertIn('Звернення', joined)
         self.assertIn('Питання &amp; деталі', joined)
         self.assertIn('Новий відгук', joined)
-        self.assertIn('&lt;b&gt;', joined)
+        self.assertIn('Все добре', joined)
+        self.assertNotIn('<script', joined.lower())
 
     @override_settings(TELEGRAM_BOT_TOKEN='')
     def test_missing_config_no_request_warning_and_saved(self):

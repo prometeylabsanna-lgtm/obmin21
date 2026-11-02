@@ -7,6 +7,7 @@ from src.core.exchange_fields import (
     EXCHANGE_SAFE_VERBOSE,
 )
 from src.core.exchange_mode import ExchangeSafeMixin
+from src.core.plain_text import plain_text
 
 
 class Review(ExchangeSafeMixin, models.Model):
@@ -44,6 +45,10 @@ class Review(ExchangeSafeMixin, models.Model):
 
     def __str__(self):
         return f'{self.name}: {self.text[:40]}'
+
+    def save(self, *args, **kwargs):
+        self.text = plain_text(self.text)
+        super().save(*args, **kwargs)
 
     @property
     def initial(self):

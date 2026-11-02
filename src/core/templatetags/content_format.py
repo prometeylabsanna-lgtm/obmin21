@@ -5,6 +5,7 @@ from django import template
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from src.core.html_sanitize import sanitize_rich_html
 from src.core.phones import phone_tel as to_tel
 from src.core.plain_text import html_to_plain_legal
 
@@ -122,7 +123,7 @@ def rich_html(value):
         return ''
     text = str(value)
     if looks_like_html(text):
-        return mark_safe(text)
+        return mark_safe(sanitize_rich_html(text))
     return format_body(text)
 
 

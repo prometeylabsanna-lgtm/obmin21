@@ -12,6 +12,7 @@ from src.core.admin_widgets import (
     CmsAdminTextareaWidget,
     CmsTinyMCE,
 )
+from src.core.html_sanitize import sanitize_rich_html
 from src.core.image_fallbacks import image_fallback_url, image_preview_fit
 from src.core.media_webp import convert_instance_images
 from src.core.plain_text import html_to_plain_legal, plain_text
@@ -90,6 +91,15 @@ def _strip_plain_fields(obj, rich_names):
             continue
         if field.get_internal_type() in ('CharField', 'SlugField', 'EmailField', 'URLField'):
             setattr(obj, field.name, plain_text(getattr(obj, field.name) or ''))
+
+
+def _sanitize_rich_fields(obj, rich_names=()):
+    for field in obj._meta.fields:
+        if not _is_rich_field(field.name, rich_names):
+            continue
+        value = getattr(obj, field.name, None)
+        if value:
+            setattr(obj, field.name, sanitize_rich_html(value))
 
 
 def _has_choices(db_field):
@@ -273,6 +283,7 @@ class SingletonUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
         for name in self.plain_fields:
             if hasattr(obj, name):
                 setattr(obj, name, html_to_plain_legal(getattr(obj, name) or ''))
+        _sanitize_rich_fields(obj, self.rich_fields)
         _strip_plain_fields(obj, self.rich_fields)
         convert_instance_images(obj)
         super().save_model(request, obj, form, change)
@@ -311,6 +322,7 @@ class ListUnfoldAdmin(AutoSlugAdmin, ModelAdmin):
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):
+        _sanitize_rich_fields(obj, self.rich_fields)
         _strip_plain_fields(obj, self.rich_fields)
         convert_instance_images(obj)
         super().save_model(request, obj, form, change)

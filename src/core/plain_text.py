@@ -3,9 +3,16 @@ import re
 
 from django.utils.html import strip_tags
 
+_DANGEROUS_BLOCK = re.compile(
+    r'<(script|style|iframe|object|embed|noscript)\b[^>]*>.*?</\1\s*>'
+    r'|<(script|style|iframe|object|embed|noscript)\b[^>]*/?>',
+    re.IGNORECASE | re.DOTALL,
+)
+
 
 def plain_text(value: str) -> str:
-    return unescape(strip_tags(value or '')).replace('\xa0', ' ').strip()
+    text = _DANGEROUS_BLOCK.sub('', value or '')
+    return unescape(strip_tags(text)).replace('\xa0', ' ').strip()
 
 
 LEGAL_HEADINGS = (

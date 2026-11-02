@@ -200,7 +200,8 @@ class FormsNotifyConfiguredTests(_FormsNotifyFixtures):
                     self.assertIn('Звернення', tg_body['text'])
                 else:
                     self.assertIn('&lt;x&gt;', tg_body['text'])
-                    self.assertIn('&lt;b&gt;', tg_body['text'])
+                    self.assertIn('Все добре', tg_body['text'])
+                    self.assertNotIn('<script', tg_body['text'].lower())
                     self.assertIn('Новий відгук', tg_body['text'])
 
 

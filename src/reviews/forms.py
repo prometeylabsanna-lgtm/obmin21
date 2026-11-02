@@ -1,5 +1,6 @@
 from django import forms
 
+from src.core.plain_text import plain_text
 from src.network.models import City
 from src.reviews.models import Review
 
@@ -48,6 +49,9 @@ class ReviewForm(forms.ModelForm):
             'consent': forms.CheckboxInput(attrs={'class': 'form__checkbox'}),
             'rating': forms.HiddenInput(),
         }
+
+    def clean_text(self):
+        return plain_text(self.cleaned_data.get('text') or '')
 
     def clean_rating(self):
         rating = self.cleaned_data.get('rating') or 5

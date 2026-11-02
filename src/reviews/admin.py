@@ -32,7 +32,7 @@ class ReviewAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
             ),
         }),
     )
-    rich_fields = frozenset({'text'})
+    rich_fields = frozenset()
 
     @admin.action(description='Опублікувати на сайті')
     def publish_reviews(self, request, queryset):
