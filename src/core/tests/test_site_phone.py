@@ -1,10 +1,13 @@
 import re
+from pathlib import Path
+from unittest.mock import patch
 
 from django.conf import settings
 from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
 
+from src.bot import texts
 from src.content.models import Service
 from src.core.models import SiteSettings
 from src.core.phones import phone_tel
@@ -125,6 +128,26 @@ class SitePhoneTests(TestCase):
         self.assertIn('Телефон:', transcript)
         self.assertNotIn(_CITY_PHONE, transcript)
         self.assertNotIn('Телефон міста:', transcript)
+
+    def test_bot_branch_phone_label_from_texts(self):
+        city = self._city('lviv-texts-phone', _CITY_PHONE)
+        self._branch(city, _BRANCH_PHONE)
+        with patch.object(texts, 'PHONE_LABEL', 'Підпис:'):
+            chat = self.client.post(reverse('bot:chat_send'), {'text': 'відділення'})
+        self.assertEqual(chat.status_code, 200)
+        transcript = chat.content.decode()
+        self.assertIn('Підпис:', transcript)
+        self.assertIn(_BRANCH_PHONE, transcript)
+        self.assertNotIn('Телефон:', transcript)
+
+    def test_chat_phone_css_uses_color_token(self):
+        css_path = Path(__file__).resolve().parents[1] / 'static/css/components/chat.css'
+        css = css_path.read_text(encoding='utf-8')
+        match = re.search(r'\.site-chat__phone\s*\{[^}]+\}', css)
+        self.assertIsNotNone(match)
+        rule = match.group(0)
+        self.assertNotIn('#fff', rule)
+        self.assertIn('var(--color-accent-ink)', rule)
 
     def test_cookie_switches_branch_phone(self):
         city = self._city('lviv-two-branches', _CITY_PHONE)

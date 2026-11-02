@@ -28,11 +28,11 @@ def _contact_line(city):
         phone = str(getattr(city, 'phone', '') or '').strip()
         if not phone:
             return ''
-        return f'Телефон міста: {phone}'
+        return f'{texts.PHONE_CITY_LABEL} {phone}'
     display, _href = resolve_site_phone(request, SiteSettings.load())
     if not display:
         return ''
-    return f'Телефон: {display}'
+    return f'{texts.PHONE_LABEL} {display}'
 
 
 def after_city(bot, chat_id: int, profile, city) -> None:
@@ -44,7 +44,11 @@ def after_city(bot, chat_id: int, profile, city) -> None:
         text = body if not extra else f'{body}\n\n{extra}'
         bot.send_message(chat_id, text)
     else:
-        fallback = extra.removeprefix('Телефон: ').removeprefix('Телефон міста: ').strip()
+        fallback = (
+            extra.removeprefix(f'{texts.PHONE_LABEL} ')
+            .removeprefix(f'{texts.PHONE_CITY_LABEL} ')
+            .strip()
+        )
         bot.send_message(chat_id, fallback or texts.NO_BRANCHES or texts.CONTACTS_EMPTY)
     send_menu(bot, chat_id)
 

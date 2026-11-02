@@ -96,7 +96,7 @@
   align-items: center;
   max-width: 100%;
   margin-top: 2px;
-  color: #fff;
+  color: var(--color-accent-ink);
   font-size: calc(14px * var(--scale));
   font-weight: var(--font-weight-semibold);
   line-height: 1.3;

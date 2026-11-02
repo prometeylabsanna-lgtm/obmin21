@@ -35,6 +35,8 @@ SAVED_FEEDBACK = 'Звернення прийнято. Менеджер відп
 RATES_HEADER = 'Курси роздріб, {city} (куп / прод):'
 BRANCHES_HEADER = 'Відділення, {city}:'
 CONTACTS_EMPTY = 'Контакти міста не заповнені.'
+PHONE_LABEL = 'Телефон:'
+PHONE_CITY_LABEL = 'Телефон міста:'
 HELP = (
     '/start — меню\n'
     '/cancel — скасувати сценарій\n'
