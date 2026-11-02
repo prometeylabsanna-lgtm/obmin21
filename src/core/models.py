@@ -1,6 +1,13 @@
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.db import models
+
+from src.core.contact_validators import (
+    display_ua_phone,
+    normalize_telegram_url,
+    validate_ua_phone_or_blank,
+)
 
 from src.core.colors import (
     ACCENT_DEFAULT,
@@ -72,7 +79,12 @@ class SiteSettings(models.Model):
         max_length=64,
         blank=True,
     )
-    default_phone = models.CharField('Телефон, якщо місто не обрано', max_length=32, blank=True)
+    default_phone = models.CharField(
+        'Телефон, якщо місто не обрано',
+        max_length=32,
+        blank=True,
+        validators=[validate_ua_phone_or_blank],
+    )
     footer_copy = models.CharField(
         'Рядок копірайту внизу',
         max_length=120,
@@ -141,6 +153,20 @@ class SiteSettings(models.Model):
 
     def __str__(self):
         return self.site_name
+
+    def clean(self):
+        super().clean()
+        self.default_phone = display_ua_phone(self.default_phone)
+        if (self.telegram_url or '').strip():
+            self.telegram_url = normalize_telegram_url(self.telegram_url)
+
+    def clean_fields(self, exclude=None):
+        if (self.telegram_url or '').strip():
+            try:
+                self.telegram_url = normalize_telegram_url(self.telegram_url)
+            except ValidationError as exc:
+                raise ValidationError({'telegram_url': exc.messages}) from exc
+        super().clean_fields(exclude=exclude)
 
     def save(self, *args, **kwargs):
         self.pk = 1

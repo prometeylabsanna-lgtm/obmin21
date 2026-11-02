@@ -1,4 +1,11 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+
+from src.core.contact_validators import (
+    display_ua_phone,
+    normalize_telegram_handle,
+    validate_ua_phone_or_blank,
+)
 
 from src.content.advantages_fields import AdvantagesSectionsMixin
 from src.content.faq_fields import FaqPageCopy
@@ -335,7 +342,12 @@ class ContactsPage(ThemeFieldsMixin, SingletonModel):
         default='з нами',
     )
     intro = models.TextField('Вступний текст', blank=True)
-    phone = models.CharField('Телефон', max_length=40, default='+38(044)444 44 44')
+    phone = models.CharField(
+        'Телефон',
+        max_length=40,
+        default='+38(044)444 44 44',
+        validators=[validate_ua_phone_or_blank],
+    )
     phone_hint = models.CharField(
         'Підказка до телефону',
         max_length=80,
@@ -390,6 +402,15 @@ class ContactsPage(ThemeFieldsMixin, SingletonModel):
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        super().clean()
+        self.phone = display_ua_phone(self.phone)
+        if (self.telegram or '').strip():
+            try:
+                self.telegram = normalize_telegram_handle(self.telegram)
+            except ValidationError as exc:
+                raise ValidationError({'telegram': exc.messages}) from exc
 
 
 class PrivacyPage(ThemeFieldsMixin, SingletonModel):

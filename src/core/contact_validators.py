@@ -1,0 +1,63 @@
+import re
+from urllib.parse import urlparse
+
+from django.core.exceptions import ValidationError
+
+from src.core.phones import is_ua_phone, normalize_ua_phone
+
+_PHONE_MSG = 'Введіть український номер у форматі +380XXXXXXXXX'
+_TG_MSG = 'Вкажіть Telegram у форматі @name або https://t.me/name'
+_TG_NAME = re.compile(r'^[A-Za-z0-9_]{5,32}$')
+_TG_URL_PREFIX = re.compile(r'(?i)^(?:https?://)?t\.me/')
+
+
+def validate_ua_phone_or_blank(value):
+    if value is None or (isinstance(value, str) and not value.strip()):
+        return
+    if not is_ua_phone(value):
+        raise ValidationError(_PHONE_MSG)
+
+
+def display_ua_phone(value):
+    raw = (value or '').strip()
+    if not raw:
+        return ''
+    normalized = normalize_ua_phone(raw)
+    if not normalized:
+        return ''
+    local = normalized[4:]
+    return f'+38 (0{local[:2]}) {local[2:5]}-{local[5:7]}-{local[7:9]}'
+
+
+def _telegram_name(value):
+    raw = (value or '').strip()
+    if not raw:
+        return ''
+    if raw.startswith('@'):
+        name = raw[1:].strip()
+    elif _TG_URL_PREFIX.match(raw):
+        url = raw if '://' in raw else f'https://{raw}'
+        parsed = urlparse(url)
+        host = (parsed.hostname or '').lower()
+        if host != 't.me':
+            raise ValidationError(_TG_MSG)
+        name = (parsed.path or '').strip('/').split('/')[0]
+    else:
+        raise ValidationError(_TG_MSG)
+    if not _TG_NAME.match(name):
+        raise ValidationError(_TG_MSG)
+    return name
+
+
+def normalize_telegram_url(value):
+    name = _telegram_name(value)
+    if not name:
+        return ''
+    return f'https://t.me/{name}'
+
+
+def normalize_telegram_handle(value):
+    name = _telegram_name(value)
+    if not name:
+        return ''
+    return f'@{name}'

@@ -3,6 +3,7 @@ from urllib.parse import quote_plus, urlparse
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
+from src.core.contact_validators import display_ua_phone, validate_ua_phone_or_blank
 from src.core.exchange_fields import mode_char
 from src.network.hours import WEEKDAYS
 
@@ -103,7 +104,12 @@ class City(models.Model):
     name = models.CharField('Назва', max_length=80)
     name_mode = mode_char('Назва для режиму «Лише обмін»', 80)
     slug = models.SlugField('Код у посиланні', unique=True, max_length=80)
-    phone = models.CharField('Телефон', max_length=32, blank=True)
+    phone = models.CharField(
+        'Телефон',
+        max_length=32,
+        blank=True,
+        validators=[validate_ua_phone_or_blank],
+    )
     is_active = models.BooleanField('Активне', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
@@ -198,6 +204,10 @@ class City(models.Model):
             return static_image(name)
         return static_image('images/hero-kyiv.jpg')
 
+    def clean(self):
+        super().clean()
+        self.phone = display_ua_phone(self.phone)
+
 
 class Branch(models.Model):
     city = models.ForeignKey(
@@ -223,7 +233,12 @@ class Branch(models.Model):
         blank=True,
         help_text='Наприклад: Пн–Нд, 8:00–21:00',
     )
-    phone = models.CharField('Телефон', max_length=32, blank=True)
+    phone = models.CharField(
+        'Телефон',
+        max_length=32,
+        blank=True,
+        validators=[validate_ua_phone_or_blank],
+    )
     lat = models.DecimalField('Широта', max_digits=9, decimal_places=6, null=True, blank=True)
     lng = models.DecimalField('Довгота', max_digits=9, decimal_places=6, null=True, blank=True)
     coords_manual = models.BooleanField(
@@ -286,6 +301,7 @@ class Branch(models.Model):
 
     def clean(self):
         super().clean()
+        self.phone = display_ua_phone(self.phone)
         try:
             validate_map_embed_url(self.map_embed_url)
         except ValidationError as exc:
