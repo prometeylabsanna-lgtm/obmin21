@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from django.apps import apps
+from django.conf import settings
 from django.core.cache import cache
 from django.test import TestCase
 
@@ -15,9 +16,7 @@ from src.core.exchange_fields import resolved_text
 from src.core.models import SiteSettings
 
 _ENV = 'EXCHANGE_ONLY_MODE'
-_STOPWORDS_PATH = Path(
-    '/Users/olegbonislavskyi/Sites/Obmin21-wt-filter/src/core/exchange_stopwords.py'
-)
+_STOPWORDS_PATH = Path(settings.BASE_DIR) / 'src' / 'core' / 'exchange_stopwords.py'
 
 
 def load_filter_stopwords():

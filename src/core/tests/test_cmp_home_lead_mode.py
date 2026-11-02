@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 
 from django.apps import apps
+from django.conf import settings
 from django.core.cache import cache
 from django.test import TestCase
 
@@ -32,11 +33,8 @@ _ENV = 'EXCHANGE_ONLY_MODE'
 _LI = re.compile(
     r'<li><span class="k">([^<]*)</span><strong>([^<]*)</strong></li>'
 )
-# Список скопійовано з:
-# /Users/olegbonislavskyi/Sites/Obmin21-wt-filter/src/core/exchange_stopwords.py
-_STOPWORDS_SOURCE = Path(
-    '/Users/olegbonislavskyi/Sites/Obmin21-wt-filter/src/core/exchange_stopwords.py'
-)
+# Список узгоджено з src/core/exchange_stopwords.py
+_STOPWORDS_SOURCE = Path(settings.BASE_DIR) / 'src' / 'core' / 'exchange_stopwords.py'
 STOP_WORDS = (
     'крипт',
     'krypto',

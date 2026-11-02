@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.auth.models import Permission, User
 from django.core.cache import cache
 from django.test import Client, TestCase
@@ -29,9 +30,7 @@ from src.reviews.models import Review
 
 _ENV_KEYS = ('EXCHANGE_ONLY_MODE', 'HIDDEN_PAGE_STATUS')
 _SAFE_MODELS = (Service, CurrencyPair, Review, Post, FaqItem, AdvantageItem, HomeStat)
-_FILTER_STOPWORDS = Path(
-    '/Users/olegbonislavskyi/Sites/Obmin21-wt-filter/src/core/exchange_stopwords.py'
-)
+_FILTER_STOPWORDS = Path(settings.BASE_DIR) / 'src' / 'core' / 'exchange_stopwords.py'
 
 
 def _perm(app_label, codename):

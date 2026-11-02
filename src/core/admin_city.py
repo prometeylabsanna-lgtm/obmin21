@@ -55,7 +55,7 @@ class CityQuoteInline(TabularInline):
     fields = ('pair', 'board', 'buy', 'sell', 'is_active')
     readonly_fields = ('pair', 'board')
     verbose_name = 'Курс'
-    verbose_name_plural = 'Курси міста: вимикайте зайві, не змінюйте пару'
+    verbose_name_plural = 'Курси на банері'
     tab = True
 
     def get_queryset(self, request):

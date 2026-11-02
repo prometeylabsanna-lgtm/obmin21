@@ -12,7 +12,7 @@ from src.core.models import ExchangeModeLog, SiteSettings
 
 ENV_LOCK_NOTICE = 'Режим задано змінною сервера, кнопка тимчасово не діє.'
 
-# Джерело: /Users/olegbonislavskyi/Sites/Obmin21-wt-filter/src/core/exchange_stopwords.py
+# Джерело: src/core/exchange_stopwords.py
 _FALLBACK_STOP_WORDS = (
     'крипт',
     'krypto',

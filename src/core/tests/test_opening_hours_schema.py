@@ -22,7 +22,8 @@ def _department(html, address):
 
 
 class OpeningHoursSchemaTests(TestCase):
-    def test_json_ld_uses_rows_then_text_and_keeps_hours_string(self):
+    def test_json_ld_uses_hours_text_and_keeps_rows_separate(self):
+        """Текст Branch.hours — джерело openingHours; рядки днів не підміняють його."""
         city = City.objects.create(name='Київ', slug='kyiv-hours-schema')
         parsed = Branch.objects.create(
             city=city,
@@ -88,29 +89,23 @@ class OpeningHoursSchemaTests(TestCase):
                 }])
                 from_rows = _department(html, structured.address)
                 self.assertEqual(from_rows['openingHours'], structured.hours_display)
-                self.assertEqual(
-                    from_rows['openingHours'],
-                    'Пн 10:00–12:00, Нд 11:00–13:00',
-                )
+                self.assertEqual(from_rows['openingHours'], _SPLIT)
                 self.assertEqual(structured.hours, _SPLIT)
                 self.assertEqual(from_text['openingHours'], parsed.hours_display)
                 self.assertEqual(from_rows['openingHoursSpecification'], [
                     {
                         '@type': 'OpeningHoursSpecification',
-                        'dayOfWeek': [SCHEMA_DAYS[0]],
-                        'opens': '10:00',
-                        'closes': '12:00',
+                        'dayOfWeek': list(SCHEMA_DAYS[:5]),
+                        'opens': '09:00',
+                        'closes': '19:00',
                     },
                     {
                         '@type': 'OpeningHoursSpecification',
-                        'dayOfWeek': [SCHEMA_DAYS[6]],
-                        'opens': '11:00',
-                        'closes': '13:00',
+                        'dayOfWeek': [SCHEMA_DAYS[5]],
+                        'opens': '10:00',
+                        'closes': '16:00',
                     },
                 ])
-                self.assertNotIn(SCHEMA_DAYS[5], json.dumps(
-                    from_rows['openingHoursSpecification'],
-                ))
                 dirty = _department(html, unknown.address)
                 self.assertEqual(dirty['openingHours'], 'Щодня 8:00-21:00')
                 self.assertNotIn('openingHoursSpecification', dirty)

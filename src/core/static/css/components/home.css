@@ -643,7 +643,7 @@
   top: calc(100% + calc(8px * var(--scale)));
   left: 0;
   z-index: 50;
-  width: min(calc(260px * var(--scale)), calc(100vw - 32px));
+  width: min(calc(260px * var(--scale)), calc(100vw - calc(32px * var(--scale))));
   max-height: min(calc(70vh - var(--safe-bottom, 0px)), calc(320px * var(--scale)));
   overflow-x: hidden;
   overflow-y: auto;

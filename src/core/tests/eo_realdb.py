@@ -82,7 +82,7 @@ def copy_real_db():
     if _STATE.get('active'):
         return
     source = real_db_path()
-    if not source.is_file():
+    if not source.is_file() or source.stat().st_size == 0:
         raise SkipTest('Немає локального db.sqlite3; тести не залежать від закоміченої бази')
     handle, raw_name = tempfile.mkstemp(prefix='obmin21_eo_', suffix='.sqlite3')
     os.close(handle)

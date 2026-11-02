@@ -117,7 +117,7 @@
   font-size: calc(17px * var(--scale));
   font-weight: 600;
   color: var(--color-text);
-  max-width: min(calc(220px * var(--scale)), calc(100vw - 140px));
+  max-width: min(calc(220px * var(--scale)), calc(100vw - calc(140px * var(--scale))));
 }
 
 .city-select__btn [data-city-label] {
@@ -140,7 +140,7 @@
   top: calc(100% + calc(12px * var(--scale)));
   right: calc(-20px * var(--scale));
   z-index: 50;
-  width: min(calc(240px * var(--scale)), calc(100vw - 24px));
+  width: min(calc(240px * var(--scale)), calc(100vw - calc(24px * var(--scale))));
   max-height: min(calc(70vh - var(--safe-bottom, 0px)), calc(420px * var(--scale)));
   overflow-x: hidden;
   overflow-y: auto;
@@ -282,7 +282,7 @@
   .city-select__menu {
     right: 0;
     left: auto;
-    width: min(calc(240px * var(--scale)), calc(100vw - 16px));
+    width: min(calc(240px * var(--scale)), calc(100vw - calc(16px * var(--scale))));
   }
 
   .mobile-menu__nav a {
