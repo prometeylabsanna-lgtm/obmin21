@@ -210,7 +210,15 @@ class ExchangeSafeMixin(models.Model):
         return ()
 
     def save(self, *args, **kwargs):
-        changed = list(self.apply_exchange_classification() or ())
+        changed = []
+        if self.exchange_visibility not in {
+            ExchangeVisibility.AUTO,
+            ExchangeVisibility.SHOW,
+            ExchangeVisibility.HIDE,
+        }:
+            self.exchange_visibility = ExchangeVisibility.AUTO
+            changed.append('exchange_visibility')
+        changed.extend(self.apply_exchange_classification() or ())
         update_fields = kwargs.get('update_fields')
         if update_fields is not None and changed:
             kwargs['update_fields'] = list(dict.fromkeys([*update_fields, *changed]))

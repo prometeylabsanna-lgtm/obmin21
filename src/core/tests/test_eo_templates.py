@@ -187,7 +187,15 @@ class ExchangeOnlyChromeTemplateTests(ExchangeTemplateCase):
         for token in ('крипт', 'золот', 'переказ', 'оптов', 'зношен'):
             self.assertNotIn(token, lowered)
         footer = html[html.index('<footer'):html.index('</footer>')]
-        self.assertNotIn('#svc-', footer)
+        self.assertIn(self._services_href('obmin-valiut'), footer)
+        for slug in (
+            'hroshovi-perekazy',
+            'kryptovaliuta',
+            'investytsiine-zoloto',
+            'optovyi-obmin',
+            'zamina-znoshenykh',
+        ):
+            self.assertNotIn(self._services_href(slug), footer)
         self.assertNotIn('display:none', ''.join(lowered.split()))
 
 

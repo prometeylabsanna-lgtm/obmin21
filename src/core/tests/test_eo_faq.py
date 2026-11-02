@@ -42,7 +42,7 @@ class ExchangeFaqTests(TestCase):
         )
 
     def test_fallback_shows_base_questions_when_none_are_safe(self):
-        FaqItem.objects.update(exchange_safe=False)
+        FaqItem.objects.update(exchange_safe=False, exchange_visibility='auto')
         self._mode(True)
         for url in self._pages():
             response = self.client.get(url)

@@ -78,7 +78,10 @@ class ExchangeSafeAdminMixin:
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'exchange_safe':
             kwargs['help_text'] = db_field.help_text or EXCHANGE_SAFE_HELP
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
+        formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
+        if db_field.name in ('exchange_visibility', 'content_kind') and formfield is not None:
+            formfield.required = False
+        return formfield
 
     @admin.action(description='Позначити як обмін', permissions=['change'])
     def mark_exchange_safe(self, request, queryset):
