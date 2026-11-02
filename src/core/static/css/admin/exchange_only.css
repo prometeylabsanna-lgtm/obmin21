@@ -95,6 +95,19 @@
   cursor: not-allowed;
 }
 
+.exchange-hide__cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 1.2;
+  text-decoration: underline;
+}
+
 .exchange-mode-notice {
   margin-bottom: 16px;
   border-color: #ca8d42;

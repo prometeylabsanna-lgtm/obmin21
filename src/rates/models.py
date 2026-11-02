@@ -113,6 +113,14 @@ class Quote(models.Model):
     sell = models.DecimalField('Продаж', max_digits=14, decimal_places=4)
     updated_at = models.DateTimeField('Оновлено', default=timezone.now)
     is_active = models.BooleanField('Активний', default=True)
+    inherits_base = models.BooleanField(
+        'Наслідує базовий курс',
+        default=False,
+        help_text=(
+            'Лише для курсу міста. Увімкнено — на сайті купівля і продаж '
+            'беруться з базового курсу цієї пари. Вимкнено — свої числа міста.'
+        ),
+    )
 
     class Meta:
         ordering = ['pair__sort_order', 'pair__code']
@@ -146,5 +154,13 @@ class Quote(models.Model):
             )
 
     def save(self, *args, **kwargs):
+        from src.rates.base_rate import sync_inherits_base
+
         self.updated_at = timezone.now()
+        sync_inherits_base(self)
+        update_fields = kwargs.get('update_fields')
+        if update_fields is not None:
+            kwargs['update_fields'] = list(
+                set(update_fields) | {'inherits_base', 'updated_at'}
+            )
         super().save(*args, **kwargs)
