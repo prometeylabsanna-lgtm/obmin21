@@ -138,7 +138,10 @@ class ExchangeModeTests(TestCase):
         self._set_mode(True)
         for record in records:
             visible_ids = set(type(record).objects.visible().values_list('pk', flat=True))
-            self.assertNotIn(record.pk, visible_ids)
+            if isinstance(record, CurrencyPair):
+                self.assertIn(record.pk, visible_ids)
+            else:
+                self.assertNotIn(record.pk, visible_ids)
 
     def test_data_migration_inverts_saved_flag(self):
         import importlib
@@ -171,6 +174,12 @@ class ExchangeModeTests(TestCase):
             is_active=True,
         )
         Service.objects.create(
+            title='SWIFT переказ',
+            slug='swift-mode',
+            short_desc='За кордон',
+            is_active=True,
+        )
+        Service.objects.create(
             title='Безпечний обмін',
             slug='bezpechnyi-mode',
             short_desc='Обмін євро у відділенні',
@@ -179,7 +188,8 @@ class ExchangeModeTests(TestCase):
         )
         self._set_mode(True)
         response = self.client.get(reverse('content:services'))
-        self.assertNotContains(response, 'Готівковий обмін')
+        self.assertContains(response, 'Готівковий обмін')
+        self.assertNotContains(response, 'SWIFT переказ')
         self.assertContains(response, 'Безпечний обмін')
 
     def test_is_exchange_only_is_alias_of_exchange_only(self):

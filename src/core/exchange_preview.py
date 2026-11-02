@@ -211,33 +211,36 @@ def build_hide_report():
 
 
 def _hidden_groups():
+    from src.core.exchange_mode import hidden_in_exchange_mode
+
     groups = []
     for label in _HIDDEN_LABELS:
         model = apps.get_model(label)
         records = tuple(
             RecordRow(_label(obj), _change_url(obj))
-            for obj in model.objects.filter(exchange_safe=False).order_by('pk')
+            for obj in hidden_in_exchange_mode(model.objects.all()).order_by('pk')
         )
         groups.append(RecordGroup(str(model._meta.verbose_name_plural), records))
     return tuple(groups)
 
 
 def _unavailable_urls():
+    from src.core.exchange_mode import exchange_mode_public_q, hidden_in_exchange_mode
+
     rows = []
     post_model = apps.get_model('blog.Post')
     published = post_model.Status.PUBLISHED
-    hidden_posts = post_model.objects.filter(
-        exchange_safe=False,
-        status=published,
+    public_posts = exchange_mode_public_q(post_model)
+    hidden_posts = hidden_in_exchange_mode(
+        post_model.objects.filter(status=published),
     ).exclude(slug='').order_by('pk')
     for post in hidden_posts:
         url = _reverse('blog:post_detail', slug=post.slug)
         if url:
             rows.append(UrlRow(f'Стаття: {_label(post)}', url))
     pair_model = apps.get_model('rates.CurrencyPair')
-    hidden_pairs = pair_model.objects.filter(
-        exchange_safe=False,
-        is_active=True,
+    hidden_pairs = hidden_in_exchange_mode(
+        pair_model.objects.filter(is_active=True),
     ).exclude(slug='').order_by('pk')
     for pair in hidden_pairs:
         url = _reverse('rates:pair_detail', slug=pair.slug)
@@ -252,7 +255,7 @@ def _unavailable_urls():
         )
         if not published_posts.exists():
             continue
-        if published_posts.filter(exchange_safe=True).exists():
+        if published_posts.filter(public_posts).exists():
             continue
         url = _reverse('blog:category', category_slug=category.slug)
         if url:
@@ -343,15 +346,19 @@ def _scan_cities():
 
 
 def _scan_visible_posts():
+    from src.core.exchange_mode import exchange_mode_public_q, hidden_in_exchange_mode
+
     post_model = apps.get_model('blog.Post')
+    public_posts = exchange_mode_public_q(post_model)
     visible = post_model.objects.filter(
-        exchange_safe=True,
+        public_posts,
         status=post_model.Status.PUBLISHED,
     ).prefetch_related('related_posts').order_by('pk')
     hidden_by_slug = {
         post.slug: post
-        for post in post_model.objects.filter(exchange_safe=False).exclude(slug='')
+        for post in hidden_in_exchange_mode(post_model.objects.all()).exclude(slug='')
     }
+    hidden_ids = {post.pk for post in hidden_by_slug.values()}
     warnings = []
     links = []
     for post in visible:
@@ -376,7 +383,7 @@ def _scan_visible_posts():
             seen.add(target.pk)
             links.append(_link_row(post, target, admin_url))
         for target in post.related_posts.all():
-            if target.exchange_safe or target.pk in seen:
+            if target.pk not in hidden_ids or target.pk in seen:
                 continue
             seen.add(target.pk)
             links.append(_link_row(post, target, admin_url))

@@ -4,6 +4,7 @@ from src.content.advantages_fields import AdvantagesSectionsMixin
 from src.content.faq_fields import FaqPageCopy
 from src.content.home_copy import HomeSectionCopy
 from src.content.service_blocks import ServiceBlockFields
+from src.core.exchange_classify import freeze_auto_kind
 from src.core.exchange_fields import mode_char, mode_text
 from src.core.exchange_mode import ExchangeSafeMixin
 from src.core.colors import (
@@ -210,6 +211,20 @@ class ServicesPage(ThemeFieldsMixin, SingletonModel):
 
 
 class Service(ServiceBlockFields, ExchangeSafeMixin, models.Model):
+    content_kind = models.CharField(
+        'Тип для режиму «Лише обмін»',
+        max_length=16,
+        choices=(
+            ('currency', 'Валюта'),
+            ('non_exchange', 'Не обмін'),
+            ('auto', 'Авто'),
+        ),
+        default='auto',
+        help_text=(
+            'Авто перераховується з назви й адреси. '
+            'Валюта лишається на сайті, Не обмін ховається.'
+        ),
+    )
     title = models.CharField('Назва', max_length=120)
     slug = models.SlugField('Адреса сторінки', unique=True, max_length=80)
     image = models.ImageField('Фото картки', upload_to='services/', blank=True)
@@ -237,6 +252,9 @@ class Service(ServiceBlockFields, ExchangeSafeMixin, models.Model):
 
     def __str__(self):
         return self.title
+
+    def apply_exchange_classification(self):
+        return freeze_auto_kind(self, 'content_kind')
 
     def save(self, *args, **kwargs):
         from src.core.plain_text import plain_text

@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from src.core.exchange_classify import classify_pair_kind
 from src.core.exchange_fields import mode_char, mode_text
 from src.core.exchange_mode import ExchangeSafeMixin
 from src.network.models import City
@@ -12,7 +13,21 @@ class RateBoard(models.TextChoices):
     CRYPTO = 'crypto', 'Крипто'
 
 
+class PairKind(models.TextChoices):
+    FIAT = 'fiat', 'Фіат'
+    CRYPTO = 'crypto', 'Крипто'
+    METAL = 'metal', 'Метал'
+    OTHER = 'other', 'Інше'
+
+
 class CurrencyPair(ExchangeSafeMixin, models.Model):
+    kind = models.CharField(
+        'Тип пари',
+        max_length=8,
+        choices=PairKind.choices,
+        default=PairKind.OTHER,
+        help_text='Рахується з коду і назви під час збереження.',
+    )
     code = models.CharField('Код', max_length=16)
     name = models.CharField('Назва', max_length=80)
     slug = models.SlugField('Код у посиланні', unique=True, max_length=40)
@@ -50,6 +65,13 @@ class CurrencyPair(ExchangeSafeMixin, models.Model):
 
     def __str__(self):
         return self.code
+
+    def apply_exchange_classification(self):
+        kind = classify_pair_kind(self.code, self.name, self.slug, self.base_code)
+        if self.kind == kind:
+            return ()
+        self.kind = kind
+        return ('kind',)
 
     @property
     def flag_code(self):
