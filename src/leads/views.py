@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from src.core.exchange_mode import is_exchange_only, mode_text
 from src.core.exchange_stopwords import matches_stop_words
 from src.core.models import SiteSettings
-from src.core.phones import phone_tel
+from src.core.phones import resolve_site_phone
 from src.leads.forms import ContactMessageForm, ExchangeRequestForm
 from src.leads.services import create_contact_message, create_exchange_request
 from src.network.models import Branch
@@ -79,23 +79,6 @@ def telegram_nick(url):
     if not segment:
         return ''
     return f'@{segment}'
-
-
-def _contact_phone(request, site):
-    """Телефон відділення, інакше міста, інакше телефон із загальних налаштувань."""
-    city = getattr(request, 'city', None)
-    branches = getattr(request, 'city_branches', None)
-    if branches is None and city is not None:
-        branches = get_city_branches(city)
-    for branch in branches or []:
-        phone = _plain(getattr(branch, 'phone', ''))
-        if phone:
-            return phone
-    if city is not None:
-        phone = _plain(getattr(city, 'phone', ''))
-        if phone:
-            return phone
-    return _plain(site.default_phone)
 
 
 def _visible_copy(value, request):
@@ -184,11 +167,7 @@ def _modal_context(request, form=None):
         if chosen and chosen.city_id:
             selected_city = chosen.city
     site = SiteSettings.load()
-    phone = ''
-    if city and city.phone:
-        phone = city.phone
-    elif site.default_phone:
-        phone = site.default_phone
+    phone, phone_href = resolve_site_phone(request, site)
     telegram_url = site.telegram_url or 'https://t.me/obmin21'
     if form is None:
         form = ExchangeRequestForm(city=city, initial={
@@ -210,7 +189,7 @@ def _modal_context(request, form=None):
         'booking_city_id': selected_city.pk if selected_city else '',
         'booking_direct': request.method != 'POST' and request.GET.get('direct') == '1',
         'phone_display': phone,
-        'phone_tel': phone_tel(phone),
+        'phone_tel': phone_href,
         'telegram_url': telegram_url,
         'telegram_handle': _telegram_handle(telegram_url),
     }
@@ -218,12 +197,12 @@ def _modal_context(request, form=None):
 
 def _render_contact_modal(request):
     site = SiteSettings.load()
-    phone = _contact_phone(request, site)
+    phone, phone_href = resolve_site_phone(request, site)
     telegram_url = _plain(site.telegram_url)
     context = _contact_modal_copy(request)
     context.update({
         'phone_display': phone,
-        'phone_tel': phone_tel(phone),
+        'phone_tel': phone_href,
         'telegram_url': telegram_url,
         'telegram_nick': telegram_nick(telegram_url),
     })

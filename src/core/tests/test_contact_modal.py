@@ -134,14 +134,15 @@ class ContactModalTests(TestCase):
         self.assertIsNotNone(hover)
         self.assertIn('border-color: var(--color-accent)', hover.group(1))
 
-    def test_branch_phone_before_city_and_default(self):
+    def test_city_phone_not_branch_when_they_differ(self):
+        """Попап бере телефон міста, як шапка, а не номер відділення."""
         self._settings(_PHONE, _TELEGRAM)
         city = self._city('lviv-branch-phone', _CITY_PHONE)
         self._branch(city, _BRANCH_PHONE)
         html = self._html()
-        self.assertIn(f'href="tel:{phone_tel(_BRANCH_PHONE)}"', html)
-        self.assertIn(_BRANCH_PHONE, html)
-        self.assertNotIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
+        self.assertIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
+        self.assertIn(_CITY_PHONE, html)
+        self.assertNotIn(f'href="tel:{phone_tel(_BRANCH_PHONE)}"', html)
         self.assertNotIn(f'href="tel:{phone_tel(_PHONE)}"', html)
 
     def test_city_phone_when_branch_empty(self):

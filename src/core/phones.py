@@ -16,3 +16,14 @@ def phone_tel(phone):
     if digits.startswith('38'):
         return f'+{digits}'
     return f'+{digits}'
+
+
+def resolve_site_phone(request, settings):
+    """Номер шапки і попапів: телефон міста, інакше загальний номер сайту."""
+    city = getattr(request, 'city', None)
+    display = ''
+    if city is not None:
+        display = str(getattr(city, 'phone', '') or '').strip()
+    if not display and settings is not None:
+        display = str(getattr(settings, 'default_phone', '') or '').strip()
+    return display, phone_tel(display)

@@ -8,6 +8,8 @@ from django.contrib.sitemaps.views import sitemap as django_sitemap
 import logging
 
 from src.core.exchange_mode import is_exchange_only, mode_meta, mode_text
+from src.core.models import SiteSettings
+from src.core.phones import resolve_site_phone
 from src.core.responsive_images import hero_for_city
 from src.core.seo import llms_body, robots_body
 from src.core.sitemaps import sitemaps
@@ -144,18 +146,11 @@ def rates_partial(request):
     })
 
 
-def _home_branch_phone(city):
-    if city and city.phone:
-        return city.phone
-    from src.core.models import SiteSettings
-
-    return SiteSettings.load().default_phone or ''
-
-
 @require_GET
 @never_cache
 def home_branch(request):
     city = getattr(request, 'city', None)
+    phone, _phone_href = resolve_site_phone(request, SiteSettings.load())
     return render(request, 'partials/home_branch.html', {
         'eo': is_exchange_only(request),
         'cities': getattr(request, 'cities', []),
@@ -164,7 +159,7 @@ def home_branch(request):
         'active_branch': getattr(request, 'active_branch', None),
         'city_branches': getattr(request, 'city_branches', []),
         'page': HomePage.load(),
-        'active_phone': _home_branch_phone(city),
+        'active_phone': phone,
     })
 
 
