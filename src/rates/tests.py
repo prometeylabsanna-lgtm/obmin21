@@ -156,13 +156,14 @@ class QuoteValueValidationTests(TestCase):
         )
 
     def test_rejects_non_positive_and_buy_gt_sell(self):
+        over = str(QUOTE_VALUE_MAX + Decimal('0.0001'))
         cases = (
             ('-5', '41', 'buy'),
             ('0', '41', 'buy'),
             ('41', '0', 'sell'),
             ('41.50', '41.00', 'buy'),
-            ('1000000.0001', '1000000.0001', 'buy'),
-            ('1', '1000000.0001', 'sell'),
+            (over, over, 'buy'),
+            ('1', over, 'sell'),
         )
         for buy, sell, field in cases:
             with self.subTest(buy=buy, sell=sell):
@@ -176,6 +177,30 @@ class QuoteValueValidationTests(TestCase):
         quote.full_clean()
         top = self._quote(str(QUOTE_VALUE_MAX), str(QUOTE_VALUE_MAX))
         top.full_clean()
+        field = Quote._meta.get_field('buy')
+        integer_digits = field.max_digits - field.decimal_places
+        self.assertLess(QUOTE_VALUE_MAX, Decimal(10) ** integer_digits)
+
+    def test_btc_uah_2450000_is_valid(self):
+        pair = CurrencyPair.objects.create(
+            code='BTC/UAH',
+            name='Біткоїн',
+            slug='btc-uah-prod',
+            base_code='UAH',
+            sort_order=9,
+        )
+        quote = Quote(
+            pair=pair,
+            board=RateBoard.CRYPTO,
+            city=None,
+            buy=Decimal('2450000'),
+            sell=Decimal('2450000'),
+        )
+        quote.full_clean()
+        quote.save()
+        stored = Quote.objects.get(pk=quote.pk)
+        self.assertEqual(stored.buy, Decimal('2450000'))
+        self.assertEqual(stored.sell, Decimal('2450000'))
 
     def test_admin_form_and_inline_use_validation(self):
         form = QuoteAdminForm(data={

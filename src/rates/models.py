@@ -9,7 +9,8 @@ from src.core.exchange_fields import mode_char, mode_text
 from src.core.exchange_mode import ExchangeSafeMixin
 from src.network.models import City
 
-QUOTE_VALUE_MAX = Decimal('1000000')
+QUOTE_VALUE_MAX = Decimal('100000000')
+QUOTE_VALUE_MAX_LABEL = f'{int(QUOTE_VALUE_MAX):,}'.replace(',', ' ')
 
 
 class RateBoard(models.TextChoices):
@@ -140,12 +141,12 @@ class Quote(models.Model):
             if buy <= 0:
                 errors['buy'] = 'Купівля має бути більшою за 0.'
             elif buy > QUOTE_VALUE_MAX:
-                errors['buy'] = 'Купівля не може перевищувати 1 000 000.'
+                errors['buy'] = f'Купівля не може перевищувати {QUOTE_VALUE_MAX_LABEL}.'
         if sell is not None:
             if sell <= 0:
                 errors['sell'] = 'Продаж має бути більшим за 0.'
             elif sell > QUOTE_VALUE_MAX:
-                errors['sell'] = 'Продаж не може перевищувати 1 000 000.'
+                errors['sell'] = f'Продаж не може перевищувати {QUOTE_VALUE_MAX_LABEL}.'
         if (
             buy is not None
             and sell is not None
