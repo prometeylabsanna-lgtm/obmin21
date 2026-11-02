@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 from src.content.models import ReviewsPage
 from src.core.exchange_mode import mode_meta
 from src.core.notifications import notify_review
+from src.core.rate_limit import allow_request
 from src.reviews.forms import ReviewForm
 from src.reviews.selectors import get_published_reviews
 
@@ -28,6 +29,12 @@ def review_submit(request):
         return render(request, 'partials/modal_review.html', {
             'form': ReviewForm(),
         })
+
+    if not allow_request(request, 'review'):
+        return render(request, 'partials/form_error.html', {
+            'title': 'Забагато запитів',
+            'message': 'Спробуйте ще раз через кілька хвилин.',
+        }, status=429)
 
     form = ReviewForm(request.POST)
     if form.is_valid():

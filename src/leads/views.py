@@ -272,6 +272,13 @@ def contact_modal(request):
 
 @require_http_methods(['POST'])
 def contact_submit(request):
+    from src.core.rate_limit import allow_request
+
+    if not allow_request(request, 'contact'):
+        return render(request, 'partials/form_error.html', {
+            'title': 'Забагато запитів',
+            'message': 'Спробуйте ще раз через кілька хвилин.',
+        }, status=429)
     form = ContactMessageForm(request.POST)
     if form.is_valid():
         create_contact_message(cleaned=form.cleaned_data, city=request.city)

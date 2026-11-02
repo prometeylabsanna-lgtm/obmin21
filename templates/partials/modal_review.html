@@ -14,6 +14,7 @@
           hx-disabled-elt="find button[type=submit]"
           data-qa="review-form">
       {% csrf_token %}
+      <div class="form__hp-wrap" aria-hidden="true">{{ form.website }}</div>
       <div style="font-size:14px">Ваша оцінка</div>
       {{ form.rating }}
       <div class="stars" data-stars>

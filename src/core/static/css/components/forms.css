@@ -68,6 +68,19 @@
   font-size: calc(13px * var(--scale));
 }
 
+.form__hp-wrap,
+.form__hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  border: 0;
+}
+
 .field-row {
   display: flex;
   height: calc(50px * var(--scale));

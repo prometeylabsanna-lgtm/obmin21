@@ -88,8 +88,11 @@ class ExchangeRequestForm(forms.ModelForm):
     def clean_phone(self):
         phone = self.cleaned_data['phone']
         if not validate_phone(phone):
-            raise forms.ValidationError('Вкажіть коректний телефон')
-        return phone
+            raise forms.ValidationError(
+                'Вкажіть телефон у форматі +380XXXXXXXXX',
+            )
+        from src.core.phones import normalize_ua_phone
+        return normalize_ua_phone(phone)
 
     def clean_consent(self):
         consent = self.cleaned_data.get('consent')
@@ -155,8 +158,11 @@ class ContactMessageForm(forms.ModelForm):
     def clean_phone(self):
         phone = self.cleaned_data['phone']
         if not validate_phone(phone):
-            raise forms.ValidationError('Вкажіть коректний телефон')
-        return phone
+            raise forms.ValidationError(
+                'Вкажіть телефон у форматі +380XXXXXXXXX',
+            )
+        from src.core.phones import normalize_ua_phone
+        return normalize_ua_phone(phone)
 
     def clean_consent(self):
         consent = self.cleaned_data.get('consent')

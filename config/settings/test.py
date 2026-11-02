@@ -12,3 +12,6 @@ SYNC_BRANCHES_ON_MIGRATE = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 NOTIFICATIONS_ASYNC = False
+
+# Увімкнення лише в тестах rate limit (@override_settings).
+RATELIMIT_ENABLE = False

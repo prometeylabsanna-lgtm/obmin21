@@ -1,22 +1,21 @@
-import re
-
 from django.conf import settings
 from django.utils import timezone
 
 from src.core.models import SiteSettings
 from src.core.notifications import notify_contact, notify_new_lead
-from src.core.phones import phone_digits
+from src.core.phones import normalize_ua_phone, phone_digits
 from src.leads.models import ContactMessage, ExchangeRequest
-
-PHONE_RE = re.compile(r'^\+?[\d\s\-()]{10,20}$')
 
 
 def normalize_phone(phone):
-    return re.sub(r'\s+', ' ', phone.strip())
+    normalized = normalize_ua_phone(phone)
+    if normalized:
+        return normalized
+    return (phone or '').strip()
 
 
 def validate_phone(phone):
-    return bool(PHONE_RE.match(phone or ''))
+    return normalize_ua_phone(phone) not in (None, '')
 
 
 def create_exchange_request(*, cleaned, city, hold_minutes=None, source='web', telegram_chat_id=''):

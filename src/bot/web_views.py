@@ -65,12 +65,14 @@ def chat_log(request):
 
 @require_POST
 def chat_send(request):
+    from src.core.rate_limit import allow_request
+
     chat_id = ensure_web_chat_id(request)
     user = web_from_user(request)
     text = (request.POST.get('text') or '').strip()[:2000]
     if not text:
         return render(request, 'bot/chat_messages.html', {'messages': []})
-    if not _rate_ok(chat_id):
+    if not allow_request(request, 'chat') or not _rate_ok(chat_id):
         return render(request, 'bot/chat_messages.html', {
             'messages': [_store(chat_id, ChatMessage.Role.BOT, 'Забагато запитів. Зачекайте хвилину.')],
         })
