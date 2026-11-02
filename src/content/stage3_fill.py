@@ -1,14 +1,6 @@
 import copy
 
-
-def _blank(value):
-    return not str(value or '').strip()
-
-
-def _json_empty(value):
-    if value in (None, '', [], ()):
-        return True
-    return isinstance(value, dict) and not value
+from src.core.deploy_seed import empty_needs_seed, json_needs_seed
 
 
 def fill_content_copy(apps, schema_editor):
@@ -22,11 +14,11 @@ def fill_content_copy(apps, schema_editor):
         if row is None:
             continue
         updates = {}
-        if _blank(row.block_text):
+        if empty_needs_seed(row.block_text, schema_editor):
             updates['block_text'] = block['text']
-        if _blank(row.block_points):
+        if empty_needs_seed(row.block_points, schema_editor):
             updates['block_points'] = points_as_text(block['points'])
-        if _blank(row.block_cta):
+        if empty_needs_seed(row.block_cta, schema_editor):
             updates['block_cta'] = block['cta']
         if updates:
             Service.objects.filter(pk=row.pk).update(**updates)
@@ -35,13 +27,13 @@ def fill_content_copy(apps, schema_editor):
     page = AdvantagesPage.objects.filter(pk=1).first()
     if page is not None:
         updates = {}
-        if _blank(page.cmp_us_html):
+        if empty_needs_seed(page.cmp_us_html, schema_editor):
             updates['cmp_us_html'] = CMP_US_HTML
-        if _blank(page.cmp_them_html):
+        if empty_needs_seed(page.cmp_them_html, schema_editor):
             updates['cmp_them_html'] = CMP_THEM_HTML
         for index, text in STAT_TEXTS.items():
             field_name = f'stat_{index}_text'
-            if _blank(getattr(page, field_name)):
+            if empty_needs_seed(getattr(page, field_name), schema_editor):
                 updates[field_name] = text
         if updates:
             AdvantagesPage.objects.filter(pk=page.pk).update(**updates)
@@ -51,7 +43,7 @@ def fill_content_copy(apps, schema_editor):
     if home is not None:
         updates = {}
         for name, default in HOME_COPY_DEFAULTS.items():
-            if _blank(getattr(home, name)):
+            if empty_needs_seed(getattr(home, name), schema_editor):
                 updates[name] = default
         if updates:
             HomePage.objects.filter(pk=home.pk).update(**updates)
@@ -63,7 +55,7 @@ def fill_article_layouts(apps, schema_editor):
     Post = apps.get_model('blog', 'Post')
     for slug, payload in BY_SLUG.items():
         row = Post.objects.filter(slug=slug).first()
-        if row is None or not _json_empty(row.layout):
+        if row is None or not json_needs_seed(row.layout, schema_editor):
             continue
         Post.objects.filter(pk=row.pk).update(layout=copy.deepcopy(payload))
 
@@ -87,17 +79,17 @@ def fill_services_page_mode(apps, schema_editor):
         return
     updates = {}
     for name, text in SERVICES_PAGE_MODE_COPY.items():
-        if _blank(getattr(page, name, '')):
+        if empty_needs_seed(getattr(page, name, ''), schema_editor):
             updates[name] = text
     if updates:
         ServicesPage.objects.filter(pk=page.pk).update(**updates)
 
 
-def _fill_blank_fields(model, row, mapping):
+def _fill_blank_fields(model, row, mapping, schema_editor):
     names = {field.name for field in model._meta.fields}
     updates = {}
     for name, text in mapping.items():
-        if name not in names or not _blank(getattr(row, name, '')):
+        if name not in names or not empty_needs_seed(getattr(row, name, ''), schema_editor):
             continue
         updates[name] = text
     if updates:
@@ -119,7 +111,7 @@ def fill_home_seo_mode(apps, schema_editor):
     HomePage = apps.get_model('content', 'HomePage')
     home = HomePage.objects.filter(pk=1).first()
     if home is not None:
-        _fill_blank_fields(HomePage, home, HOME_SEO_MODE_COPY)
+        _fill_blank_fields(HomePage, home, HOME_SEO_MODE_COPY, schema_editor)
 
 
 def fill_articles_lead(apps, schema_editor):
@@ -130,7 +122,7 @@ def fill_articles_lead(apps, schema_editor):
     home = HomePage.objects.filter(pk=1).first()
     if home is None:
         return
-    _fill_blank_fields(HomePage, home, {'articles_lead': SERVICES_MENTION_LEAD})
+    _fill_blank_fields(HomePage, home, {'articles_lead': SERVICES_MENTION_LEAD}, schema_editor)
 
 
 def fill_cmp_and_home_lead_mode(apps, schema_editor):
@@ -141,12 +133,12 @@ def fill_cmp_and_home_lead_mode(apps, schema_editor):
     AdvantagesPage = apps.get_model('content', 'AdvantagesPage')
     page = AdvantagesPage.objects.filter(pk=1).first()
     if page is not None:
-        _fill_blank_fields(AdvantagesPage, page, CMP_MODE_COPY)
+        _fill_blank_fields(AdvantagesPage, page, CMP_MODE_COPY, schema_editor)
 
     HomePage = apps.get_model('content', 'HomePage')
     home = HomePage.objects.filter(pk=1).first()
     if home is not None:
-        _fill_blank_fields(HomePage, home, HOME_LEAD_MODE)
+        _fill_blank_fields(HomePage, home, HOME_LEAD_MODE, schema_editor)
 
 
 def noop_reverse(apps, schema_editor):

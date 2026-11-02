@@ -105,10 +105,12 @@ def minutes_phrase(value):
     return f'{number} {word}'
 
 
-def _fill_blank(row, defaults):
+def _fill_blank(row, defaults, schema_editor):
+    from src.core.deploy_seed import empty_needs_seed
+
     updates = []
     for name, value in defaults.items():
-        if not str(getattr(row, name) or '').strip():
+        if empty_needs_seed(getattr(row, name), schema_editor):
             setattr(row, name, value)
             updates.append(name)
     if updates:
@@ -118,7 +120,7 @@ def _fill_blank(row, defaults):
 def fill_visit_steps(apps, schema_editor):
     Model = apps.get_model('content', 'VisitSteps')
     row, _ = Model.objects.get_or_create(pk=1)
-    _fill_blank(row, STEP_DEFAULTS)
+    _fill_blank(row, STEP_DEFAULTS, schema_editor)
 
 
 def fill_home_fallback(apps, schema_editor):
@@ -126,4 +128,4 @@ def fill_home_fallback(apps, schema_editor):
     row = Home.objects.filter(pk=1).first()
     if row is None:
         return
-    _fill_blank(row, HOME_FALLBACK)
+    _fill_blank(row, HOME_FALLBACK, schema_editor)

@@ -35,6 +35,7 @@ from src.content.advantages_mode_copy import (
 from src.content.page_meta_mode import fill_page_meta_mode
 from src.content.reader_mode_copy import fill_reader_mode_fields
 from src.content.stage3_fill import fill_articles_lead, fill_home_seo_mode
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.core.models import SiteSettings
 from src.network.branch_sync import BRANCH_POINTS, match_city_branches
 from src.network.city_mode_copy import fill_city_banner_seo_mode, fill_city_name_mode
@@ -280,8 +281,8 @@ class Command(BaseCommand):
         home.promo_title = 'Вигідний курс на'
         home.promo_title_accent = 'USD та EUR'
         home.save()
-        fill_home_seo_mode(apps, None)
-        fill_articles_lead(apps, None)
+        fill_home_seo_mode(apps, SEED_FILL_CONTEXT)
+        fill_articles_lead(apps, SEED_FILL_CONTEXT)
 
         blog_page = BlogPage.load()
         blog_page.title = 'Блог'
@@ -399,8 +400,8 @@ class Command(BaseCommand):
                 kept_ids.append(branch.pk)
             if kept_ids:
                 city.branches.exclude(pk__in=kept_ids).update(is_active=False)
-        fill_city_banner_seo_mode(apps, None)
-        fill_city_name_mode(apps, None)
+        fill_city_banner_seo_mode(apps, SEED_FILL_CONTEXT)
+        fill_city_name_mode(apps, SEED_FILL_CONTEXT)
         City.objects.exclude(slug__in=keep_city_slugs).update(is_active=False)
 
         for i, (code, name, slug, buy, sell) in enumerate(PAIRS):
@@ -668,17 +669,17 @@ class Command(BaseCommand):
                 },
             )
 
-        fill_page_meta_mode(apps, None)
-        fill_fiat_pair_mode(apps, None)
-        fill_reader_mode_fields(apps, None)
-        fill_advantages_page_mode(apps, None)
-        fill_stat_1_text_mode(apps, None)
+        fill_page_meta_mode(apps, SEED_FILL_CONTEXT)
+        fill_fiat_pair_mode(apps, SEED_FILL_CONTEXT)
+        fill_reader_mode_fields(apps, SEED_FILL_CONTEXT)
+        fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)
+        fill_stat_1_text_mode(apps, SEED_FILL_CONTEXT)
         from src.content.home_copy import fill_calc_lock
         from src.content.promo_slides import fill_promo_slides
         from src.content.visit_steps import fill_home_fallback, fill_visit_steps
-        fill_promo_slides(apps, None)
-        fill_visit_steps(apps, None)
-        fill_home_fallback(apps, None)
-        fill_calc_lock(apps, None)
+        fill_promo_slides(apps, SEED_FILL_CONTEXT)
+        fill_visit_steps(apps, SEED_FILL_CONTEXT)
+        fill_home_fallback(apps, SEED_FILL_CONTEXT)
+        fill_calc_lock(apps, SEED_FILL_CONTEXT)
 
         self.stdout.write(self.style.SUCCESS('seed_demo OK'))

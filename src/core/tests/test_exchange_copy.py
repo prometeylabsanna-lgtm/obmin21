@@ -20,6 +20,7 @@ from src.content.home_copy import HOME_COPY_DEFAULTS, home_copy_text
 from src.content.models import AdvantagesPage, HomePage, Service
 from src.content.service_blocks import SERVICE_BLOCK_DEFAULTS, SERVICE_BLOCKS
 from src.content.stage3_fill import fill_article_layouts, fill_content_copy
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.core.models import SiteSettings
 
 _ENV = 'EXCHANGE_ONLY_MODE'
@@ -96,7 +97,7 @@ class Stage3CopyTests(TestCase):
         self.assertEqual(page.stat_1_text, 'Своя статистика')
         self.assertEqual(home.services_lead, 'Свій лід')
 
-    def test_fill_restores_empty_page_copy(self):
+    def test_fill_does_not_restore_admin_cleared_fields_on_deploy(self):
         page = AdvantagesPage.load()
         page.cmp_us_html = ''
         page.stat_1_text = ''
@@ -106,6 +107,24 @@ class Stage3CopyTests(TestCase):
         home.articles_lead = ''
         home.save(update_fields=['services_lead', 'articles_lead'])
         fill_content_copy(apps, None)
+        fill_content_copy(apps, None)
+        page.refresh_from_db()
+        home.refresh_from_db()
+        self.assertEqual(page.cmp_us_html, '')
+        self.assertEqual(page.stat_1_text, '')
+        self.assertEqual(home.services_lead, '')
+        self.assertEqual(home.articles_lead, '')
+
+    def test_fill_seeds_empty_fields_during_migration_context(self):
+        page = AdvantagesPage.load()
+        page.cmp_us_html = ''
+        page.stat_1_text = ''
+        page.save(update_fields=['cmp_us_html', 'stat_1_text'])
+        home = HomePage.load()
+        home.services_lead = ''
+        home.articles_lead = ''
+        home.save(update_fields=['services_lead', 'articles_lead'])
+        fill_content_copy(apps, SEED_FILL_CONTEXT)
         fill_content_copy(apps, None)
         page.refresh_from_db()
         home.refresh_from_db()

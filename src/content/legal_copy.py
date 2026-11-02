@@ -32,6 +32,10 @@ def apply_sentence_replacements(value):
 
 
 def apply_legal_replacements(apps, schema_editor=None):
+    from src.core.deploy_seed import migration_context
+
+    if not migration_context(schema_editor):
+        return
     for model_name in LEGAL_PAGE_BODIES:
         model = apps.get_model('content', model_name)
         for row in model.objects.all():

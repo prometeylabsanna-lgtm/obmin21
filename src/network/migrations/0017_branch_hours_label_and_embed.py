@@ -1,28 +1,10 @@
-from urllib.parse import quote_plus
-
 from django.db import migrations, models
 
 
-def _embed(address):
-    text = (address or '').strip()
-    if not text:
-        return ''
-    return (
-        'https://maps.google.com/maps?q='
-        f'{quote_plus(f"{text}, Ukraine")}&z=15&hl=uk&output=embed'
-    )
-
-
 def fill_empty_map_embeds(apps, schema_editor):
-    Branch = apps.get_model('network', 'Branch')
-    for branch in Branch.objects.all().iterator():
-        if str(branch.map_embed_url or '').strip():
-            continue
-        filled = _embed(branch.address)
-        if not filled:
-            continue
-        branch.map_embed_url = filled
-        branch.save(update_fields=['map_embed_url'])
+    from src.network.map_embed_fill import fill_empty_map_embeds as fill_embeds
+
+    fill_embeds(apps, schema_editor)
 
 
 class Migration(migrations.Migration):

@@ -1,6 +1,7 @@
 """Порожні title/meta тексти режиму «Лише обмін». Повтор не перезаписує правки."""
 
 from src.content.stage3_fill import SERVICES_PAGE_MODE_COPY
+from src.core.deploy_seed import empty_needs_seed
 from src.core.exchange_stopwords import matches_stop_words
 
 EXCHANGE_SHORT_DESC_MODE = (
@@ -103,10 +104,6 @@ PAGE_MODE_COPY = {
 }
 
 
-def _blank(value):
-    return not str(value or '').strip()
-
-
 def service_blob(row):
     return '\n'.join((
         str(getattr(row, 'slug', '') or ''),
@@ -126,11 +123,11 @@ def is_exchange_service(row):
     return 'обмін' in title and 'валют' in title
 
 
-def _fill_blank(model, row, mapping):
+def _fill_blank(model, row, mapping, schema_editor):
     names = {field.name for field in model._meta.fields}
     updates = {}
     for name, text in mapping.items():
-        if name not in names or not _blank(getattr(row, name, '')):
+        if name not in names or not empty_needs_seed(getattr(row, name, ''), schema_editor):
             continue
         if matches_stop_words(text):
             continue
@@ -139,14 +136,14 @@ def _fill_blank(model, row, mapping):
         model.objects.filter(pk=row.pk).update(**updates)
 
 
-def _fill_exchange_services(apps):
+def _fill_exchange_services(apps, schema_editor):
     Service = apps.get_model('content', 'Service')
     if not any(field.name == 'short_desc_mode' for field in Service._meta.fields):
         return
     for row in Service.objects.all().order_by('pk'):
         if not is_exchange_service(row):
             continue
-        _fill_blank(Service, row, {'short_desc_mode': EXCHANGE_SHORT_DESC_MODE})
+        _fill_blank(Service, row, {'short_desc_mode': EXCHANGE_SHORT_DESC_MODE}, schema_editor)
 
 
 def fill_page_meta_mode(apps, schema_editor):
@@ -157,5 +154,5 @@ def fill_page_meta_mode(apps, schema_editor):
         row = model.objects.filter(pk=1).first()
         if row is None:
             continue
-        _fill_blank(model, row, mapping)
-    _fill_exchange_services(apps)
+        _fill_blank(model, row, mapping, schema_editor)
+    _fill_exchange_services(apps, schema_editor)

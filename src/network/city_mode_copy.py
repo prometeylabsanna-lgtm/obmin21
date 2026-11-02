@@ -1,6 +1,4 @@
-def _blank(value):
-    return not str(value or '').strip()
-
+from src.core.deploy_seed import empty_needs_seed
 
 CITY_MODE_COPY = {
     'banner_title_mode': 'Обмін валют',
@@ -22,7 +20,7 @@ def fill_city_banner_seo_mode(apps, schema_editor):
     for row in City.objects.all().order_by('pk'):
         updates = {}
         for name, text in CITY_MODE_COPY.items():
-            if name not in names or not _blank(getattr(row, name, '')):
+            if name not in names or not empty_needs_seed(getattr(row, name, ''), schema_editor):
                 continue
             updates[name] = text
         if updates:
@@ -36,7 +34,7 @@ def fill_city_name_mode(apps, schema_editor):
         return
     limit = City._meta.get_field('name_mode').max_length
     for row in City.objects.all().order_by('pk'):
-        if not _blank(getattr(row, 'name_mode', '')):
+        if not empty_needs_seed(getattr(row, 'name_mode', ''), schema_editor):
             continue
         name = str(getattr(row, 'name', '') or '').strip()
         if not name or (limit and len(name) > limit):

@@ -13,6 +13,7 @@ from src.content.advantages_fields import (
     STAT_1_TEXT_MODE,
     advantage_default,
 )
+from src.core.deploy_seed import empty_needs_seed
 from src.core.exchange_stopwords import matches_stop_words
 
 _TEXT_TYPES = frozenset({'CharField', 'TextField'})
@@ -116,7 +117,10 @@ def fill_stat_1_text_mode(apps, schema_editor):
     if page is None:
         return {}
     names = {field.name for field in page_model._meta.fields}
-    if 'stat_1_text_mode' not in names or not _blank(getattr(page, 'stat_1_text_mode', '')):
+    if 'stat_1_text_mode' not in names or not empty_needs_seed(
+        getattr(page, 'stat_1_text_mode', ''),
+        schema_editor,
+    ):
         return {}
     page_model.objects.filter(pk=page.pk).update(stat_1_text_mode=STAT_1_TEXT_MODE)
     return {'stat_1_text_mode': STAT_1_TEXT_MODE}
@@ -133,7 +137,7 @@ def fill_advantages_page_mode(apps, schema_editor):
     updates = {}
     for base, kind in iter_mode_targets(page_model):
         mode_name = f'{base}_mode'
-        if mode_name not in names or not _blank(getattr(page, mode_name, '')):
+        if mode_name not in names or not empty_needs_seed(getattr(page, mode_name, ''), schema_editor):
             continue
         if kind == 'image':
             base_name = _file_name(getattr(page, base, ''))

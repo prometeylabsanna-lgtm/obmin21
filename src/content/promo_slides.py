@@ -128,7 +128,11 @@ class HomePromoSlide(ExchangeSafeMixin, models.Model):
         super().save(*args, **kwargs)
 
 
-def _write_full_first_title(home, slide):
+def _write_full_first_title(home, slide, schema_editor):
+    from src.core.deploy_seed import migration_context
+
+    if not migration_context(schema_editor):
+        return
     updates = []
     if (getattr(home, 'promo_title', '') or '').strip() == LEGACY_FIRST_TITLE:
         home.promo_title = FULL_FIRST_TITLE
@@ -152,7 +156,7 @@ def fill_promo_slides(apps, schema_editor):
             continue
         Slide.objects.create(page_id=home.pk, **spec)
     first = Slide.objects.filter(page_id=home.pk, code='usd-eur').first()
-    _write_full_first_title(home, first)
+    _write_full_first_title(home, first, schema_editor)
 
 
 def _filled(value, fallback):

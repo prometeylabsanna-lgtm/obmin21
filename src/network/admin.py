@@ -7,12 +7,14 @@ from src.core.admin_city import (
 )
 from src.core.admin_mixins import ListUnfoldAdmin, _strip_plain_fields
 from src.network.cms_proxies import BannerCity, ContactCity, MapCity
+from src.network.forms_banner import BannerCityForm
 from src.network.geocoding import apply_admin_coordinates
 from src.network.models import Branch, City
 
 
 @admin.register(BannerCity)
 class BannerCityAdmin(CitySectionAdmin):
+    form = BannerCityForm
     inlines = [CityQuoteInline]
     fieldsets = (
         ('Обрати місто', {'fields': ('city_switch',)}),

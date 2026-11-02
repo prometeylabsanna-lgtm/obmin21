@@ -3,6 +3,7 @@
 Повтор не перезаписує правки. Картку з стоп-словом у базовому тексті не заповнює.
 """
 
+from src.core.deploy_seed import empty_needs_seed
 from src.core.exchange_stopwords import matches_stop_words
 from src.core.plain_text import plain_text
 
@@ -42,11 +43,11 @@ def stat_base_is_clean(number, text):
     return not matches_stop_words(number, text, number_plain, text_plain)
 
 
-def _fill_blank(model, row, mapping):
+def _fill_blank(model, row, mapping, schema_editor):
     names = {field.name for field in model._meta.fields}
     updates = {}
     for name, text in mapping.items():
-        if name not in names or not _blank(getattr(row, name, '')):
+        if name not in names or not empty_needs_seed(getattr(row, name, ''), schema_editor):
             continue
         if matches_stop_words(text):
             continue
@@ -58,7 +59,7 @@ def _fill_blank(model, row, mapping):
         model.objects.filter(pk=row.pk).update(**updates)
 
 
-def fill_home_stat_mode(apps):
+def fill_home_stat_mode(apps, schema_editor):
     HomeStat = apps.get_model('content', 'HomeStat')
     names = {field.name for field in HomeStat._meta.fields}
     if 'number_mode' not in names or 'text_mode' not in names:
@@ -71,14 +72,14 @@ def fill_home_stat_mode(apps):
             continue
         updates = {}
         if (
-            _blank(getattr(row, 'number_mode', ''))
+            empty_needs_seed(getattr(row, 'number_mode', ''), schema_editor)
             and number_plain
             and (not number_limit or len(number_plain) <= number_limit)
             and not matches_stop_words(number_plain)
         ):
             updates['number_mode'] = number_plain
         if (
-            _blank(getattr(row, 'text_mode', ''))
+            empty_needs_seed(getattr(row, 'text_mode', ''), schema_editor)
             and text_plain
             and not matches_stop_words(text_plain)
         ):
@@ -89,7 +90,7 @@ def fill_home_stat_mode(apps):
 
 def fill_reader_mode_fields(apps, schema_editor):
     """Заповнює порожні поля режиму. Повтор не перезаписує правки."""
-    fill_home_stat_mode(apps)
+    fill_home_stat_mode(apps, schema_editor)
     for label, mapping in PAGE_MODE_COPY.items():
         app_label, model_name = label.split('.')
         model = apps.get_model(app_label, model_name)
@@ -99,4 +100,4 @@ def fill_reader_mode_fields(apps, schema_editor):
         row = model.objects.filter(pk=1).first()
         if row is None:
             row = model.objects.create(pk=1)
-        _fill_blank(model, row, mapping)
+        _fill_blank(model, row, mapping, schema_editor)

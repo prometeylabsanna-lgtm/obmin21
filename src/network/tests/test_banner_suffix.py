@@ -5,6 +5,7 @@ from django.urls import reverse
 from src.content.models import HomePage
 from src.core.models import SiteSettings
 from src.network.admin import BannerCityAdmin
+from src.network.forms_banner import STALE_BANNER_MESSAGE
 from src.network.cms_proxies import BannerCity
 from src.network.models import City
 
@@ -25,6 +26,7 @@ class BannerSuffixBlankTests(TestCase):
         request.user = user
         admin = BannerCityAdmin(BannerCity, None)
         form_class = admin.get_form(request, city)
+        blank = form_class(instance=city)
         form = form_class(
             data={
                 'banner_title': city.banner_title,
@@ -35,6 +37,7 @@ class BannerSuffixBlankTests(TestCase):
                 'banner_text_mode': '',
                 'banner_button': city.banner_button,
                 'banner_button_mode': '',
+                'banner_stamp': blank['banner_stamp'].value(),
             },
             instance=city,
         )
@@ -55,3 +58,31 @@ class BannerSuffixBlankTests(TestCase):
         self.client.post(reverse('network:set_city'), {'city': city.slug})
         html = self.client.get(reverse('core:home')).content.decode()
         self.assertIn('<span data-hero-suffix></span>', html)
+
+    def test_banner_admin_rejects_stale_tab(self):
+        city = City.objects.create(name='Київ', slug='kyiv-stale-tab')
+        user = User.objects.create_superuser('admin2', 'a2@b.c', 'x')
+        request = RequestFactory().post('/admin/')
+        request.user = user
+        admin = BannerCityAdmin(BannerCity, None)
+        form_class = admin.get_form(request, city)
+        opened = form_class(instance=city)
+        stale = opened['banner_stamp'].value()
+        City.objects.filter(pk=city.pk).update(banner_title='Змінено в іншій вкладці')
+        city.refresh_from_db()
+        posted = form_class(
+            data={
+                'banner_title': 'Спроба зі старої форми',
+                'banner_title_mode': '',
+                'banner_suffix': '',
+                'banner_suffix_mode': '',
+                'banner_text': city.banner_text,
+                'banner_text_mode': '',
+                'banner_button': city.banner_button,
+                'banner_button_mode': '',
+                'banner_stamp': stale,
+            },
+            instance=city,
+        )
+        self.assertFalse(posted.is_valid())
+        self.assertIn(STALE_BANNER_MESSAGE, posted.errors.as_json())

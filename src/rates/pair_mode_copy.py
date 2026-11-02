@@ -29,8 +29,7 @@ _CRYPTO_MARKERS = (
 _METAL_CODES = frozenset({'XAU', 'XAG', 'GOLD', 'SILVER'})
 
 
-def _blank(value):
-    return not str(value or '').strip()
+from src.core.deploy_seed import empty_needs_seed
 
 
 def pair_blob(row):
@@ -88,7 +87,7 @@ def fill_fiat_pair_mode(apps, schema_editor):
             continue
         updates = {}
         for name, text in fiat_pair_mode_copy(code).items():
-            if name not in names or not _blank(getattr(row, name, '')):
+            if name not in names or not empty_needs_seed(getattr(row, name, ''), schema_editor):
                 continue
             if matches_stop_words(text):
                 continue

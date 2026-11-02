@@ -25,6 +25,7 @@ from src.core.exchange_stopwords import matches_stop_words
 from src.core.models import SiteSettings
 from src.core.tests.test_services_page_mode import load_filter_stopwords
 from src.network.admin import CityAdmin, ContactCityAdmin, MapCityAdmin
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.network.city_mode_copy import fill_city_name_mode
 from src.network.models import City
 
@@ -194,9 +195,9 @@ class ReaderModeFieldTests(TestCase):
             row = model.objects.get(pk=1)
             model.objects.filter(pk=row.pk).update(**{name: '' for name in mapping})
 
+        fill_reader_mode_fields(apps, SEED_FILL_CONTEXT)
         fill_reader_mode_fields(apps, None)
-        fill_reader_mode_fields(apps, None)
-        fill_city_name_mode(apps, None)
+        fill_city_name_mode(apps, SEED_FILL_CONTEXT)
         fill_city_name_mode(apps, None)
 
         dirty.refresh_from_db()

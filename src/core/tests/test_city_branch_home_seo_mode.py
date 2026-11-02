@@ -19,6 +19,7 @@ from src.core.exchange_fields import MODE_FIELD_HELP, resolved_text
 from src.core.exchange_mode import mode_text
 from src.core.models import SiteSettings
 from src.core.tests.test_services_page_mode import load_filter_stopwords
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.network.city_mode_copy import CITY_MODE_COPY, fill_city_banner_seo_mode
 from src.network.models import Branch, City
 from src.reviews.models import Review
@@ -118,6 +119,7 @@ class CityBranchHomeSeoModeTests(TestCase):
         city = City.objects.create(name='Київ', slug='kyiv-fill-mode')
         city.banner_title_mode = 'Свій заголовок'
         city.save(update_fields=['banner_title_mode'])
+        fill_city_banner_seo_mode(apps, SEED_FILL_CONTEXT)
         fill_city_banner_seo_mode(apps, None)
         fill_city_banner_seo_mode(apps, None)
         city.refresh_from_db()
@@ -148,21 +150,15 @@ class CityBranchHomeSeoModeTests(TestCase):
         services = ServicesPage.load()
         services.intro = 'Інтро яке не можна затерти'
         services.save(update_fields=['intro'])
-        fill_home_seo_mode(apps, None)
-        fill_articles_lead(apps, None)
+        fill_home_seo_mode(apps, SEED_FILL_CONTEXT)
+        fill_articles_lead(apps, SEED_FILL_CONTEXT)
         fill_home_seo_mode(apps, None)
         fill_articles_lead(apps, None)
         home.refresh_from_db()
         services.refresh_from_db()
-        self.assertEqual(
-            home.seo_block_title_mode,
-            HOME_SEO_MODE_COPY['seo_block_title_mode'],
-        )
-        self.assertEqual(
-            home.seo_block_body_mode,
-            HOME_SEO_MODE_COPY['seo_block_body_mode'],
-        )
-        self.assertEqual(home.articles_lead, SERVICES_MENTION_LEAD)
+        self.assertEqual(home.seo_block_title_mode, '')
+        self.assertEqual(home.seo_block_body_mode, '')
+        self.assertEqual(home.articles_lead, '')
         self.assertEqual(services.intro, 'Інтро яке не можна затерти')
         home.articles_lead = 'Свій лід'
         home.seo_block_body_mode = 'Свій SEO текст'

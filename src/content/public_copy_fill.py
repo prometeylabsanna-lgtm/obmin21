@@ -63,6 +63,10 @@ def _clear(model, mapping):
 
 
 def clear_unseen_public_copy(apps, schema_editor):
+    from src.core.deploy_seed import migration_context
+
+    if not migration_context(schema_editor):
+        return
     home = apps.get_model('content', 'HomePage')
     _clear(home, _HOME)
     for model_name, mapping in _PAGES:

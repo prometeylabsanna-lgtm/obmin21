@@ -18,6 +18,7 @@ from src.content.models import (
     VisitSteps,
 )
 from src.content.promo_slides import fill_promo_slides
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.content.visit_steps import fill_home_fallback, fill_visit_steps
 from src.core.models import SiteSettings
 
@@ -209,25 +210,31 @@ class PublicCopyTests(TestCase):
         run()
         home.refresh_from_db()
         steps.refresh_from_db()
+        self.assertEqual(home.why_empty_number, '')
+        self.assertEqual(home.why_empty_text.strip(), '')
+        self.assertEqual(home.calc_lock, 'Курс діє')
+        self.assertEqual(steps.step_1_title, '')
+
+        fill_visit_steps(apps, SEED_FILL_CONTEXT)
+        fill_home_fallback(apps, SEED_FILL_CONTEXT)
+        home.refresh_from_db()
+        steps.refresh_from_db()
         self.assertEqual(home.why_empty_number, '7K')
         self.assertTrue(home.why_empty_text.strip())
-        self.assertEqual(home.calc_lock, 'Курс діє')
         self.assertEqual(steps.step_1_title, 'Оберіть послугу')
         number = home.why_empty_number
-        lock = home.calc_lock
         title = steps.step_1_title
         run()
         home.refresh_from_db()
         steps.refresh_from_db()
         self.assertEqual(home.why_empty_number, number)
-        self.assertEqual(home.calc_lock, lock)
         self.assertEqual(steps.step_1_title, title)
 
-    def test_first_slide_keeps_template_title(self):
+    def test_first_slide_keeps_template_title_on_migration_fill(self):
         home = HomePage.load()
         home.promo_title = 'Вигідний курс'
         home.save(update_fields=['promo_title'])
-        fill_promo_slides(apps, None)
+        fill_promo_slides(apps, SEED_FILL_CONTEXT)
         home.refresh_from_db()
         self.assertEqual(home.promo_title, 'Вигідний курс на')
         slide = HomePromoSlide.objects.get(page=home, code='usd-eur')
