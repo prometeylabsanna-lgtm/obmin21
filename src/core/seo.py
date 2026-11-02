@@ -6,6 +6,7 @@ from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 
 from src.core.exchange_mode import NEUTRAL_DESCRIPTION, is_exchange_only, mode_meta
+from src.core.phones import safe_telegram_url
 from src.core.exchange_stopwords import matches_stop_words
 from src.core.seo_words import contains_stop_word, strip_stop_words
 
@@ -251,6 +252,8 @@ def _same_as(site, request):
     exchange = is_exchange_only(request)
     for field in ('telegram_url', 'youtube_url', 'instagram_url', 'facebook_url'):
         value = str(getattr(site, field, '') or '').strip()
+        if field == 'telegram_url':
+            value = safe_telegram_url(value)
         if not value.startswith(('https://', 'http://')):
             continue
         value = value.split('#', 1)[0].split('?', 1)[0]

@@ -113,14 +113,16 @@
       </div>
     </article>
     {% if not eo %}
-    <article class="promo-banner__slide" data-promo-slide data-href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" data-blank="1">
+    <article class="promo-banner__slide" data-promo-slide{% if telegram_href %} data-href="{{ telegram_href }}" data-blank="1"{% endif %}>
       <div class="promo-banner__media" aria-hidden="true">
         <img src="{% static_img 'images/coins.png' %}" alt="" {% img_wh 'images/coins.png' %} loading="lazy" decoding="async">
       </div>
       <div class="promo-banner__content">
         <h2 class="promo-banner__title">USDT, BTC, ETH<br><span class="u-accent">на готівку</span></h2>
         <p class="promo-banner__text">Обмін криптовалюти від наших партнерів. Менеджер розрахує курс і розповість про умови</p>
-        <a class="btn btn--accent promo-banner__cta" href="{{ site_settings.telegram_url|default:'https://t.me/obmin21' }}" target="_blank" rel="noopener">Написати менеджеру</a>
+        {% if telegram_href %}
+        <a class="btn btn--accent promo-banner__cta" href="{{ telegram_href }}" target="_blank" rel="noopener">Написати менеджеру</a>
+        {% endif %}
       </div>
     </article>
     <article class="promo-banner__slide" data-promo-slide data-href="{% url 'content:services' %}">

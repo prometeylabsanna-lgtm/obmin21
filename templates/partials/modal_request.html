@@ -68,6 +68,7 @@
 
     <div class="bk-step" data-bk-panel="2"{% if not booking_direct %} hidden{% endif %}>
       <p class="bk-summary" data-bk-fix-text hidden></p>
+      {% if phone_tel or telegram_url %}
       <div class="bk-contacts">
         {% if phone_tel %}
         <a class="bk-contact" href="tel:{{ phone_tel }}">
@@ -92,6 +93,7 @@
         </a>
         {% endif %}
       </div>
+      {% endif %}
       <div class="bk-foot">
         {% if not booking_direct %}<button type="button" class="bk-back" data-bk-back>← Змінити суму</button>{% endif %}
         <span class="bk-hours">Щодня з 8:00 до 21:00</span>
