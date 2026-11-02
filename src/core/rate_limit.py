@@ -10,9 +10,11 @@ DEFAULT_WINDOW = 600  # 10 хвилин
 
 
 def client_ip(request) -> str:
-    forwarded = (request.META.get('HTTP_X_FORWARDED_FOR') or '').strip()
-    if forwarded:
-        return forwarded.split(',')[0].strip() or 'unknown'
+    """IP, який дописав єдиний nginx ($proxy_add_x_forwarded_for — у кінець списку)."""
+    forwarded = request.META.get('HTTP_X_FORWARDED_FOR') or ''
+    parts = [part.strip() for part in forwarded.split(',') if part.strip()]
+    if parts:
+        return parts[-1]
     return (request.META.get('REMOTE_ADDR') or '').strip() or 'unknown'
 
 

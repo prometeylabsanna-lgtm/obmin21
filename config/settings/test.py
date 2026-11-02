@@ -15,3 +15,10 @@ NOTIFICATIONS_ASYNC = False
 
 # Увімкнення лише в тестах rate limit (@override_settings).
 RATELIMIT_ENABLE = False
+
+# Таблицю django_cache створює createcachetable на deploy, не міграції тестів.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+}

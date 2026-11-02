@@ -90,6 +90,14 @@ DATABASES = {
     }
 }
 
+# Спільний для процесів gunicorn. LocMemCache живе окремо в кожному воркері.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    }
+}
+
 SYNC_BRANCHES_ON_MIGRATE = True
 
 AUTH_PASSWORD_VALIDATORS = [

@@ -1,8 +1,9 @@
 from django.core.cache import cache
-from django.test import Client, TestCase, override_settings
+from django.test import Client, RequestFactory, SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 
 from src.core.phones import normalize_ua_phone
+from src.core.rate_limit import allow_request, client_ip
 from src.leads.forms import ContactMessageForm
 from src.leads.models import ContactMessage
 from src.network.models import City
@@ -130,3 +131,39 @@ class FormRateLimitTests(TestCase):
         fourth = client.post(chat_url, {'text': 'ще'})
         self.assertEqual(fourth.status_code, 200)
         self.assertContains(fourth, 'Забагато запитів')
+
+
+class ClientIpTests(SimpleTestCase):
+    def test_spoofed_forwarded_for_counts_as_rightmost(self):
+        request = RequestFactory().get(
+            '/',
+            HTTP_X_FORWARDED_FOR='9.9.9.9, 5.5.5.5',
+            REMOTE_ADDR='127.0.0.1',
+        )
+        self.assertEqual(client_ip(request), '5.5.5.5')
+
+    def test_blank_forwarded_for_falls_back_to_remote_addr(self):
+        request = RequestFactory().get(
+            '/',
+            HTTP_X_FORWARDED_FOR=' , ',
+            REMOTE_ADDR='203.0.113.9',
+        )
+        self.assertEqual(client_ip(request), '203.0.113.9')
+
+
+@override_settings(RATELIMIT_ENABLE=True)
+class ForwardedForRateLimitTests(SimpleTestCase):
+    def setUp(self):
+        cache.clear()
+
+    def test_changing_leftmost_forwarded_for_does_not_bypass_limit(self):
+        factory = RequestFactory()
+        original = factory.post('/', HTTP_X_FORWARDED_FOR='9.9.9.9, 5.5.5.5')
+        self.assertEqual(client_ip(original), '5.5.5.5')
+        for _ in range(3):
+            self.assertTrue(allow_request(original, 'xff', limit=3, window=600))
+        self.assertFalse(allow_request(original, 'xff', limit=3, window=600))
+
+        rotated = factory.post('/', HTTP_X_FORWARDED_FOR='8.8.8.8, 5.5.5.5')
+        self.assertEqual(client_ip(rotated), '5.5.5.5')
+        self.assertFalse(allow_request(rotated, 'xff', limit=3, window=600))
