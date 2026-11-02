@@ -19,7 +19,7 @@ from src.content.models import (
     ServicesPage,
 )
 from src.content.service_blocks import SERVICE_BLOCKS
-from src.core.exchange_mode import is_exchange_only, mode_meta, mode_text
+from src.core.exchange_mode import mode_meta, mode_text
 from src.network.models import Branch
 from src.reviews.selectors import get_published_reviews
 
@@ -59,26 +59,6 @@ def _shared_blocks():
     }
 
 
-def _service_document_meta(page, services, request):
-    title = mode_meta(page, 'seo_title', 'title', limit=None, request=request)
-    description = mode_meta(page, 'seo_description', 'hero_text', request=request)
-    head_title = ''
-    if is_exchange_only(request):
-        return title, description, head_title
-    for svc in services:
-        seo_title = (svc.seo_title or '').strip()
-        if seo_title:
-            title = seo_title
-            head_title = seo_title
-            break
-    for svc in services:
-        seo_description = (svc.seo_description or '').strip()
-        if seo_description:
-            description = seo_description
-            break
-    return title, description, head_title
-
-
 def services_list(request):
     page = ServicesPage.load()
     services = []
@@ -90,15 +70,13 @@ def services_list(request):
         for name in ('block_text_mode', 'block_points_mode', 'block_cta_mode'):
             setattr(svc, name, getattr(svc, name, ''))
         services.append(svc)
-    title, description, head_title = _service_document_meta(page, services, request)
     ctx = {
         'page': page,
         'services': services,
         'home_page': HomePage.load(),
         'news_posts': list(get_published_posts()[:10]),
-        'page_title': title,
-        'page_description': description,
-        'service_head_title': head_title,
+        'page_title': mode_meta(page, 'seo_title', 'title', limit=None, request=request),
+        'page_description': mode_meta(page, 'seo_description', 'hero_text', request=request),
     }
     ctx.update(_shared_blocks())
     return render(request, 'content/services_list.html', ctx)

@@ -250,8 +250,19 @@ class Service(ServiceBlockFields, ExchangeSafeMixin, models.Model):
     )
     is_active = models.BooleanField('Показувати на сайті', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
-    seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
-    seo_description = models.CharField('Опис для SEO', max_length=320, blank=True)
+    _SERVICE_SEO_HELP = 'Для майбутніх окремих сторінок послуг; зараз на сайті не використовується'
+    seo_title = models.CharField(
+        'Назва для SEO',
+        max_length=160,
+        blank=True,
+        help_text=_SERVICE_SEO_HELP,
+    )
+    seo_description = models.CharField(
+        'Опис для SEO',
+        max_length=320,
+        blank=True,
+        help_text=_SERVICE_SEO_HELP,
+    )
 
     class Meta:
         ordering = ['sort_order', 'id']
