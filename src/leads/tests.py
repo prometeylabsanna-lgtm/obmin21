@@ -45,11 +45,12 @@ class QuoteSelectorTests(TestCase):
             pair=self.bad,
             board=RateBoard.RETAIL,
             city=None,
-            buy=Decimal('0'),
-            sell=Decimal('0'),
+            buy=Decimal('0.01'),
+            sell=Decimal('0.02'),
+            is_active=False,
         )
 
-    def test_skips_zero_quotes(self):
+    def test_skips_inactive_quotes(self):
         rows, _ = get_quotes_for_city(self.city, RateBoard.RETAIL)
         codes = {row['pair'].code for row in rows}
         self.assertIn('USD', codes)

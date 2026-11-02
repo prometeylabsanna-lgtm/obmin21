@@ -4,6 +4,7 @@ from django.utils.http import urlencode
 
 from src.core.admin_mixins import ListUnfoldAdmin
 from src.core.exchange_admin import ExchangeSafeAdminMixin, ExchangeSafeListFilter
+from src.rates.forms import QuoteAdminForm
 from src.rates.models import CurrencyPair, Quote, RateBoard
 
 
@@ -40,6 +41,7 @@ class CurrencyPairAdmin(ExchangeSafeAdminMixin, ListUnfoldAdmin):
 
 @admin.register(Quote)
 class QuoteAdmin(ListUnfoldAdmin):
+    form = QuoteAdminForm
     list_display = ('pair', 'city', 'buy', 'sell', 'updated_at', 'is_active')
     list_filter = ('city', 'is_active')
     list_editable = ('buy', 'sell', 'is_active')

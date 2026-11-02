@@ -1,10 +1,15 @@
+from decimal import Decimal
+
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import F, Q
 from django.utils import timezone
 
 from src.core.exchange_fields import mode_char, mode_text
 from src.core.exchange_mode import ExchangeSafeMixin
 from src.network.models import City
+
+QUOTE_VALUE_MAX = Decimal('1000000')
 
 
 class RateBoard(models.TextChoices):
@@ -101,6 +106,26 @@ class Quote(models.Model):
                 fields=['pair', 'board', 'city'],
                 name='uniq_quote_pair_board_city',
             ),
+            models.CheckConstraint(
+                condition=Q(buy__gt=0),
+                name='quote_buy_positive',
+            ),
+            models.CheckConstraint(
+                condition=Q(sell__gt=0),
+                name='quote_sell_positive',
+            ),
+            models.CheckConstraint(
+                condition=Q(buy__lte=F('sell')),
+                name='quote_buy_lte_sell',
+            ),
+            models.CheckConstraint(
+                condition=Q(buy__lte=QUOTE_VALUE_MAX),
+                name='quote_buy_max',
+            ),
+            models.CheckConstraint(
+                condition=Q(sell__lte=QUOTE_VALUE_MAX),
+                name='quote_sell_max',
+            ),
         ]
 
     def __str__(self):
@@ -108,6 +133,32 @@ class Quote(models.Model):
         return f'{self.pair.code} {self.board} ({city})'
 
     def clean(self):
+        errors = {}
+        buy = self.buy
+        sell = self.sell
+        if buy is not None:
+            if buy <= 0:
+                errors['buy'] = 'Купівля має бути більшою за 0.'
+            elif buy > QUOTE_VALUE_MAX:
+                errors['buy'] = 'Купівля не може перевищувати 1 000 000.'
+        if sell is not None:
+            if sell <= 0:
+                errors['sell'] = 'Продаж має бути більшим за 0.'
+            elif sell > QUOTE_VALUE_MAX:
+                errors['sell'] = 'Продаж не може перевищувати 1 000 000.'
+        if (
+            buy is not None
+            and sell is not None
+            and buy > 0
+            and sell > 0
+            and buy <= QUOTE_VALUE_MAX
+            and sell <= QUOTE_VALUE_MAX
+            and buy > sell
+        ):
+            errors['buy'] = 'Купівля не може бути більшою за продаж.'
+            errors['sell'] = 'Продаж має бути не меншим за купівлю.'
+        if errors:
+            raise ValidationError(errors)
         if not self.pair_id or not self.board:
             return
         qs = Quote.objects.filter(pair_id=self.pair_id, board=self.board)

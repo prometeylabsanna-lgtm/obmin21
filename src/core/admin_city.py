@@ -7,6 +7,7 @@ from unfold.admin import StackedInline, TabularInline
 from src.core.admin_mixins import ListUnfoldAdmin
 from src.network.geocoding import apply_admin_coordinates
 from src.network.models import Branch, City
+from src.rates.forms import QuoteAdminForm
 from src.rates.models import Quote
 from src.rates.services import ensure_city_quotes
 
@@ -50,6 +51,7 @@ class BranchInline(StackedInline):
 
 class CityQuoteInline(TabularInline):
     model = Quote
+    form = QuoteAdminForm
     extra = 0
     can_delete = False
     fields = ('pair', 'board', 'buy', 'sell', 'is_active')

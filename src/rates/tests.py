@@ -1,7 +1,8 @@
 from decimal import Decimal
 
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from src.content.models import HomePage, RatesPage
@@ -9,7 +10,8 @@ from src.core.admin_city import CityQuoteInline
 from src.core.models import SiteSettings
 from src.core.views import _ordered_rows, _RETAIL_ORDER
 from src.network.models import City
-from src.rates.models import CurrencyPair, Quote, RateBoard
+from src.rates.forms import QuoteAdminForm
+from src.rates.models import QUOTE_VALUE_MAX, CurrencyPair, Quote, RateBoard
 from src.rates.selectors import get_quote, get_quotes_for_city
 from src.rates.services import ensure_city_quotes
 
@@ -129,3 +131,81 @@ class PublicRatesRespectCityActiveTests(TestCase):
         self.assertNotContains(kursy, 'PLN/UAH')
         self.assertNotContains(home, 'data-code="PLN"')
         self.assertNotContains(kursy, 'data-code="PLN"')
+
+
+class QuoteValueValidationTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.pair = CurrencyPair.objects.create(
+            code='USD', name='Долар', slug='usd-quote-val', sort_order=0,
+        )
+        cls.user = User.objects.create_superuser(
+            username='quote-admin',
+            email='quote@example.com',
+            password='pass-12345',
+        )
+
+    def _quote(self, buy, sell, **extra):
+        return Quote(
+            pair=self.pair,
+            board=RateBoard.RETAIL,
+            city=None,
+            buy=Decimal(buy),
+            sell=Decimal(sell),
+            **extra,
+        )
+
+    def test_rejects_non_positive_and_buy_gt_sell(self):
+        cases = (
+            ('-5', '41', 'buy'),
+            ('0', '41', 'buy'),
+            ('41', '0', 'sell'),
+            ('41.50', '41.00', 'buy'),
+            ('1000000.0001', '1000000.0001', 'buy'),
+            ('1', '1000000.0001', 'sell'),
+        )
+        for buy, sell, field in cases:
+            with self.subTest(buy=buy, sell=sell):
+                quote = self._quote(buy, sell)
+                with self.assertRaises(ValidationError) as ctx:
+                    quote.full_clean()
+                self.assertIn(field, ctx.exception.message_dict)
+
+    def test_accepts_equal_bounds(self):
+        quote = self._quote('41.20', '41.20')
+        quote.full_clean()
+        top = self._quote(str(QUOTE_VALUE_MAX), str(QUOTE_VALUE_MAX))
+        top.full_clean()
+
+    def test_admin_form_and_inline_use_validation(self):
+        form = QuoteAdminForm(data={
+            'pair': self.pair.pk,
+            'board': RateBoard.RETAIL,
+            'city': '',
+            'buy': '-5',
+            'sell': '41',
+            'is_active': True,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('buy', form.errors)
+        self.assertIn('більшою за 0', form.errors['buy'][0])
+        self.assertIs(CityQuoteInline.form, QuoteAdminForm)
+
+    def test_admin_change_rejects_buy_gt_sell(self):
+        quote = self._quote('41.20', '41.65')
+        quote.save()
+        client = Client()
+        client.force_login(self.user)
+        url = reverse('admin:rates_quote_change', args=[quote.pk])
+        response = client.post(url, {
+            'pair': self.pair.pk,
+            'city': '',
+            'buy': '50',
+            'sell': '40',
+            'is_active': 'on',
+            'board': RateBoard.RETAIL,
+        })
+        self.assertEqual(response.status_code, 200)
+        quote.refresh_from_db()
+        self.assertEqual(quote.buy, Decimal('41.20'))
+        self.assertEqual(quote.sell, Decimal('41.65'))
