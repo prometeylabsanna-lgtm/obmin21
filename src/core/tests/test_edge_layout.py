@@ -173,8 +173,22 @@ class EdgeLayoutTests(TestCase):
         home = self.client.get(reverse('core:home')).content.decode()
         self.assertIn(_ADDRESS, home)
         css_root = settings.BASE_DIR / 'src/core/static/css/components'
-        for name in ('cards.css', 'home.css', 'contacts.css', 'pages.css', 'header.css'):
+        for name in ('cards.css', 'home.css', 'contacts.css', 'pages.css'):
             css = (css_root / name).read_text(encoding='utf-8')
             self.assertIn('overflow-wrap: anywhere', css, name)
             self.assertIn('min-width: 0', css, name)
             self.assertNotIn('!important', css, name)
+        header = (css_root / 'header.css').read_text(encoding='utf-8')
+        self.assertIn('min-width: 0', header)
+        self.assertIn('max-width: 100%', header)
+        self.assertNotIn('!important', header)
+        label = re.search(
+            r'\.city-select__btn \[data-city-label\] \{([^}]+)\}',
+            header,
+        )
+        self.assertIsNotNone(label)
+        block = label.group(1)
+        self.assertIn('min-width: 0', block)
+        self.assertIn('overflow: hidden', block)
+        self.assertIn('text-overflow: ellipsis', block)
+        self.assertIn('white-space: nowrap', block)

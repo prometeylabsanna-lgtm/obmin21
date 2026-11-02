@@ -121,13 +121,14 @@
   font-size: calc(17px * var(--scale));
   font-weight: 600;
   color: var(--color-text);
-  max-width: min(calc(220px * var(--scale)), calc(100vw - 140px));
+  max-width: min(100%, calc(220px * var(--scale)), calc(100vw - 140px));
 }
 
 .city-select__btn [data-city-label] {
   min-width: 0;
-  overflow-wrap: anywhere;
-  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .city-select__chevron {
