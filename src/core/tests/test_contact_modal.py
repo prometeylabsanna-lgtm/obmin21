@@ -85,6 +85,14 @@ class ContactModalTests(TestCase):
             phone=phone,
         )
 
+    def _choose(self, city, branch):
+        session = self.client.session
+        session.pop('city_slug', None)
+        session.pop('branch_id', None)
+        session.save()
+        self.client.cookies[settings.CITY_COOKIE_NAME] = city.slug
+        self.client.cookies[settings.BRANCH_COOKIE_NAME] = str(branch.pk)
+
     def _html(self):
         response = self.client.get(reverse('leads:contact_modal'))
         self.assertEqual(response.status_code, 200)
@@ -134,16 +142,50 @@ class ContactModalTests(TestCase):
         self.assertIsNotNone(hover)
         self.assertIn('border-color: var(--color-accent)', hover.group(1))
 
-    def test_city_phone_not_branch_when_they_differ(self):
-        """Попап бере телефон міста, як шапка, а не номер відділення."""
+    def test_branch_phone_before_city_and_default(self):
         self._settings(_PHONE, _TELEGRAM)
         city = self._city('lviv-branch-phone', _CITY_PHONE)
         self._branch(city, _BRANCH_PHONE)
         html = self._html()
+        self.assertIn(f'href="tel:{phone_tel(_BRANCH_PHONE)}"', html)
+        self.assertIn(_BRANCH_PHONE, html)
+        self.assertNotIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
+        self.assertNotIn(f'href="tel:{phone_tel(_PHONE)}"', html)
+
+    def test_cookie_branch_overrides_first_branch(self):
+        self._settings(_PHONE, _TELEGRAM)
+        city = self._city('lviv-cookie-branch', _CITY_PHONE)
+        first = self._branch(city, '+38 (032) 111-11-11')
+        second = Branch.objects.create(
+            city=city,
+            address='вул. Друга, 9',
+            phone=_BRANCH_PHONE,
+            sort_order=2,
+        )
+        self._choose(city, second)
+        html = self._html()
+        self.assertIn(f'href="tel:{phone_tel(_BRANCH_PHONE)}"', html)
+        self.assertIn(_BRANCH_PHONE, html)
+        self.assertNotIn(f'href="tel:{phone_tel(first.phone)}"', html)
+        self.assertNotIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
+        self.assertNotIn(f'href="tel:{phone_tel(_PHONE)}"', html)
+
+    def test_empty_branch_uses_city_then_default(self):
+        self._settings(_PHONE, _TELEGRAM)
+        city = self._city('lviv-fallback-phone', _CITY_PHONE)
+        self._branch(city, '')
+        html = self._html()
         self.assertIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
         self.assertIn(_CITY_PHONE, html)
-        self.assertNotIn(f'href="tel:{phone_tel(_BRANCH_PHONE)}"', html)
         self.assertNotIn(f'href="tel:{phone_tel(_PHONE)}"', html)
+
+        city.phone = ''
+        city.save()
+        cache.clear()
+        html = self._html()
+        self.assertIn(f'href="tel:{phone_tel(_PHONE)}"', html)
+        self.assertIn(_PHONE, html)
+        self.assertNotIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
 
     def test_city_phone_when_branch_empty(self):
         self._settings(_PHONE, _TELEGRAM)

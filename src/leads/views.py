@@ -151,6 +151,7 @@ def _modal_context(request, form=None):
                 'branches': branch_rows,
             })
     selected_city = city
+    chosen = None
     raw_branch = form['branch'].value() if form is not None else None
     if raw_branch:
         chosen = Branch.objects.filter(pk=raw_branch, is_active=True).select_related('city').first()

@@ -10,10 +10,10 @@
         <div>{{ branch.hours_display }}</div>
       </div>
       {% endif %}
-      {% if branch.phone or active_phone %}
+      {% if active_phone %}
       <div>
         <div class="map-section__label">{{ page.map_phone_label }}</div>
-        <div>{% if branch.phone %}{{ branch.phone }}{% else %}{{ active_phone }}{% endif %}</div>
+        <div>{{ active_phone }}</div>
       </div>
       {% endif %}
       <div>

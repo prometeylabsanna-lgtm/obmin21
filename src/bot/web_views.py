@@ -8,6 +8,7 @@ from src.bot.conversation import handle_callback, handle_text
 from src.bot.models import ChatMessage
 from src.bot.outbox import Outgoing
 from src.bot.web_identity import ensure_web_chat_id, web_from_user
+from src.core.phones import pop_phone_request, push_phone_request
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,14 @@ def _rate_ok(chat_id: str) -> bool:
         return False
     cache.set(key, n + 1, 60)
     return True
+
+
+def _call_with_phone(request, fn):
+    token = push_phone_request(request)
+    try:
+        return fn()
+    finally:
+        pop_phone_request(token)
 
 
 def _store(chat_id: str, role: str, text: str, buttons=None) -> ChatMessage:
@@ -58,7 +67,7 @@ def chat_log(request):
     user = web_from_user(request)
     messages = list(ChatMessage.objects.filter(chat_id=chat_id))
     if not messages:
-        replies = handle_text(user, '/start')
+        replies = _call_with_phone(request, lambda: handle_text(user, '/start'))
         messages = _store_replies(chat_id, replies)
     return render(request, 'bot/chat_messages.html', {'messages': messages})
 
@@ -76,7 +85,7 @@ def chat_send(request):
         })
     user_msg = _store(chat_id, ChatMessage.Role.USER, text)
     try:
-        replies = handle_text(user, text)
+        replies = _call_with_phone(request, lambda: handle_text(user, text))
     except Exception:
         logger.exception('Web chat text failed')
         replies = [Outgoing(html='Сталася помилка. Спробуйте /start')]
@@ -98,7 +107,7 @@ def chat_callback(request):
     label = (request.POST.get('label') or data)[:80]
     user_msg = _store(chat_id, ChatMessage.Role.USER, label)
     try:
-        replies = handle_callback(user, data)
+        replies = _call_with_phone(request, lambda: handle_callback(user, data))
     except Exception:
         logger.exception('Web chat callback failed')
         replies = [Outgoing(html='Сталася помилка. Спробуйте /start')]
