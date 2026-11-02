@@ -302,7 +302,7 @@ class AdminPanelTests(TestCase):
             follow=True,
         )
         self.assertNotContains(reviews_admin, 'Вступний текст')
-        self.assertNotContains(reviews_admin, 'Підзаголовок')
+        self.assertContains(reviews_admin, 'Підзаголовок')
         advantages_admin = self.client.get(
             reverse('admin:content_advantagespage_changelist'),
             follow=True,

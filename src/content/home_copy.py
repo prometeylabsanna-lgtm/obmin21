@@ -68,7 +68,8 @@ class HomeSectionCopy(models.Model):
     calc_lock = models.CharField(
         'Підпис під кнопкою',
         max_length=80,
-        default='Курс діє 30 хв',
+        default='Курс діє',
+        help_text='Якщо текст саме «Курс діє», хвилини додаються з поля «Хвилин фіксації курсу».',
     )
     calc_amount = models.CharField(
         'Сума за замовчуванням',
@@ -264,4 +265,26 @@ def home_copy_text(page, name):
     from src.core.exchange_fields import resolved_text
 
     return resolved_text(page, name, HOME_COPY_DEFAULTS.get(name, ''))
+
+
+CALC_LOCK_LEGACY = (
+    'Курс діє 30 хв',
+    'Курс діє 30 хв.',
+    'Курс діє 30 хвилин',
+    'Курс діє 30 хвилин.',
+    'Курс діє 30 хвилини',
+)
+CALC_LOCK_PREFIX = 'Курс діє'
+
+
+def fill_calc_lock(apps, schema_editor):
+    Home = apps.get_model('content', 'HomePage')
+    row = Home.objects.filter(pk=1).first()
+    if row is None:
+        return
+    current = (getattr(row, 'calc_lock', '') or '').strip()
+    if current not in CALC_LOCK_LEGACY:
+        return
+    row.calc_lock = CALC_LOCK_PREFIX
+    row.save(update_fields=['calc_lock'])
 

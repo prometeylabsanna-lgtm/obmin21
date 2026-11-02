@@ -13,9 +13,9 @@
   <div class="mobile-menu__top">
     <a href="{% url 'core:home' %}" class="mobile-menu__logo">
       {% if site_settings.header_logo %}
-      <img src="{{ site_settings.header_logo.url }}" alt="{{ site_settings.site_name }}" width="{{ site_settings.header_logo.width }}" height="{{ site_settings.header_logo.height }}" decoding="async">
+      <img src="{{ site_settings.header_logo.url }}" alt="{% if site_settings.logo_text %}{{ site_settings.logo_text }}{{ site_settings.logo_accent }}{% else %}{{ site_settings.site_name }}{% endif %}" width="{{ site_settings.header_logo.width }}" height="{{ site_settings.header_logo.height }}" decoding="async">
       {% else %}
-      <img src="{% static_img 'images/logo.png' %}" alt="{{ site_settings.site_name }}" {% img_wh 'images/logo.png' %} decoding="async">
+      <img src="{% static_img 'images/logo.png' %}" alt="{% if site_settings.logo_text %}{{ site_settings.logo_text }}{{ site_settings.logo_accent }}{% else %}{{ site_settings.site_name }}{% endif %}" {% img_wh 'images/logo.png' %} decoding="async">
       {% endif %}
     </a>
     <button type="button" class="mobile-menu__close" data-menu-close aria-label="Закрити меню" data-qa="menu-close">

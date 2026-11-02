@@ -34,6 +34,8 @@
   <div class="svc-row__copy">
     <h2 class="svc-row__title">{{ svc.title }}</h2>
     {% mode_field svc 'block_text' as bt %}{% if not eo or bt %}<p class="svc-row__text">{{ bt }}</p>{% endif %}
+    {% if svc.body %}<div class="svc-row__text">{{ svc.body|linebreaks }}</div>{% endif %}
+    {% if svc.seo_description %}<p class="svc-row__text">{{ svc.seo_description }}</p>{% endif %}
     {% mode_field svc 'block_points' as pts %}{% if pts %}
     <div class="svc-row__points">
       {% if eo %}{% for pt in pts.splitlines %}{% if pt %}

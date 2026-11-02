@@ -9,8 +9,10 @@
     style="background-color: {{ page.color_hero_bg }};{% if page.hero_banner_src %}background-image: radial-gradient(ellipse 60% 70% at 80% 115%, rgba(var(--color-accent-rgb), 0.28), rgba(var(--color-accent-rgb), 0) 70%), url('{{ page.hero_banner_src }}');background-size: auto, cover;background-position: 80% 115%, right center;background-repeat: no-repeat;{% endif %}"
   >
     <div class="adv-hero__copy">
+      {% if page.hero_kicker %}<p class="adv-hero__lead">{{ page.hero_kicker }}</p>{% endif %}
       <h1 class="adv-hero__title">{{ page.hero_title }}<br><span class="u-accent">{{ page.hero_title_accent }}</span></h1>
       {% mode_field page 'hero_lead' as hero_lead %}{% if hero_lead %}<p class="adv-hero__lead">{{ hero_lead }}</p>{% endif %}
+      {% if page.intro %}<p class="adv-hero__lead">{{ page.intro }}</p>{% endif %}
       <div class="adv-hero__btns">
         <button type="button" class="btn btn--accent" data-open-modal="{% url 'leads:contact_modal' %}">{{ page.hero_btn_primary }}</button>
         <a class="btn adv-hero__ghost" href="#adv">{{ page.hero_btn_secondary }}</a>
@@ -84,6 +86,7 @@
 </section>
 
 <section class="stats-section stats-section--adv">
+  {% if page.stats_kicker %}<p class="map-section__label">{{ page.stats_kicker }}</p>{% endif %}
   <h2 class="stats-section__title">{{ page.stats_title }} <span class="u-accent">{{ page.stats_title_accent }}</span></h2>
   <div class="stats-section__grid">
     {% if not eo %}
@@ -130,8 +133,10 @@
   {% mode_field page 'why_title' as why_title %}
   {% mode_field page 'why_title_accent' as why_title_accent %}
   {% mode_field page 'why_lead' as why_lead %}
-  {% if not eo or why_title or why_title_accent or why_lead %}
+  {% mode_field page 'why_kicker' as why_kicker %}
+  {% if not eo or why_title or why_title_accent or why_lead or why_kicker %}
   <div class="why-adv__head">
+    {% if why_kicker %}<p class="why-adv__lead">{{ why_kicker }}</p>{% endif %}
     {% if not eo or why_title or why_title_accent %}<h2 class="why-adv__title">{{ why_title }}{% if not eo or why_title_accent %} <span class="u-accent">{{ why_title_accent }}</span>{% endif %}</h2>{% endif %}
     {% if not eo or why_lead %}<p class="why-adv__lead">{{ why_lead }}</p>{% endif %}
   </div>
@@ -223,15 +228,17 @@
 <section class="cmp-adv">
   {% mode_field page 'cmp_title' as cmp_title %}
   {% mode_field page 'cmp_title_accent' as cmp_title_accent %}
-  {% if not eo or cmp_title or cmp_title_accent %}
+  {% mode_field page 'cmp_kicker' as cmp_kicker %}
+  {% if not eo or cmp_title or cmp_title_accent or cmp_kicker %}
   <div class="cmp-adv__head">
+    {% if cmp_kicker %}<p class="why-adv__lead">{{ cmp_kicker }}</p>{% endif %}
     <h2 class="cmp-adv__title">{{ cmp_title }}{% if not eo or cmp_title_accent %} <span class="u-accent">{{ cmp_title_accent }}</span>{% endif %}</h2>
   </div>
   {% endif %}
   <div class="cmp-adv__grid">
     <article class="cmp-adv__us">
       <div class="cmp-adv__us-top">
-        <img src="{% static_img 'images/logo-footer.png' %}" alt="Obmin21" {% img_wh 'images/logo-footer.png' %} loading="lazy" decoding="async">
+        <img src="{% static_img 'images/logo-footer.png' %}" alt="{% if site_settings.logo_text %}{{ site_settings.logo_text }}{{ site_settings.logo_accent }}{% else %}{{ site_settings.site_name }}{% endif %}" {% img_wh 'images/logo-footer.png' %} loading="lazy" decoding="async">
         <span class="cmp-adv__badge">Рекомендуємо</span>
       </div>
       {% mode_field page 'cmp_us_html' as x %}{% if x %}<div class="cmp-adv__html">{{ x|rich_html }}</div>{% endif %}

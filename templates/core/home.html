@@ -42,6 +42,7 @@
 </section>
 
 <section class="calc-head" id="calculator">
+  {% if page.calc_kicker %}<p class="calc-head__lead">{{ page.calc_kicker }}</p>{% endif %}
   <h2 class="calc-head__title">
     <span>{{ page.calc_title }} <span class="u-accent">{{ page.calc_title_accent }}</span></span>
   </h2>
@@ -151,6 +152,7 @@
 
 {% if page.show_why %}
 <section class="stats-section" id="advantages" data-qa="section-stats">
+  {% if page.why_kicker %}<p class="map-section__label">{{ page.why_kicker }}</p>{% endif %}
   <h2 class="stats-section__title">{{ page.why_title }} <span class="u-accent">{{ page.why_title_accent }}</span></h2>
   <div class="stats-section__grid">
     {% for item in home_stats %}
@@ -173,6 +175,7 @@
 {% if page.show_services %}
 <section class="services-section" id="services" data-qa="section-services">
   <div class="services-section__head">
+    {% if page.services_kicker %}<p class="map-section__label">{{ page.services_kicker }}</p>{% endif %}
     <h2 class="services-section__title">{{ page.services_title }} <span class="u-accent">{{ page.services_title_accent }}</span></h2>
     {% mode_field page 'services_lead' as x %}{% if x %}<p class="services-section__lead">{{ x }}</p>{% endif %}
   </div>
@@ -207,6 +210,7 @@
 <section class="articles-section" id="news" data-qa="section-news">
   <div class="slider-head">
     <div>
+      {% if page.articles_kicker %}<p class="map-section__label">{{ page.articles_kicker }}</p>{% endif %}
       <h2 class="slider-head__title">{{ page.articles_title }} <span class="u-accent">{{ page.articles_title_accent }}</span></h2>
       {% mode_field page 'articles_lead' as x %}{% if x %}<p class="articles-section__lead">{{ x }}</p>{% endif %}
     </div>
@@ -238,6 +242,15 @@
     <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Попередній"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
     <button type="button" class="slider-nav__btn" data-slider-next aria-label="Наступний"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M1.5 1.5L7 7l-5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
   </div>
+</section>
+{% endif %}
+
+{% mode_field page 'seo_block_title' as seo_block_title %}
+{% mode_field page 'seo_block_body' as seo_block_body %}
+{% if seo_block_title or seo_block_body %}
+<section class="articles-section" id="about" data-qa="section-seo-block">
+  {% if seo_block_title %}<h2 class="slider-head__title">{{ seo_block_title }}</h2>{% endif %}
+  {% if seo_block_body %}<div class="page-hero__lead">{{ seo_block_body|rich_html }}</div>{% endif %}
 </section>
 {% endif %}
 

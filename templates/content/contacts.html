@@ -5,6 +5,7 @@
 {% block content %}
 <section class="contacts-hero">
   {% mode_field page 'heading' as heading %}{% if heading %}<h1 class="contacts-hero__title">{{ heading }} <span class="u-accent">{{ page.title_accent }}</span></h1>{% endif %}
+  {% if page.intro %}<p class="contacts-hero__lead">{{ page.intro }}</p>{% endif %}
   <div class="contacts-cards">
     {% if phone_href %}
     <a class="contacts-card" href="tel:{{ phone_href }}">
@@ -46,6 +47,7 @@
 </section>
 
 <section class="contacts-map" id="branches" data-branches data-set-city-url="{% url 'network:set_city' %}">
+  {% if page.branches_kicker %}<p class="map-section__label">{{ page.branches_kicker }}</p>{% endif %}
   <h2 class="contacts-map__title">{{ page.branches_title }} <span class="u-accent">{{ page.branches_title_accent }}</span></h2>
   {% if map_branches %}
   <div class="contacts-map__layout">

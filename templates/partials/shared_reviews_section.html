@@ -1,8 +1,9 @@
 <section class="reviews-section" id="reviews" data-qa="section-reviews">
   <div class="slider-head">
     <div class="slider-head__copy">
+      {% if reviews_kicker %}<p class="page-hero__lead">{{ reviews_kicker }}</p>{% endif %}
       <h2 class="slider-head__title">{{ reviews_title|default:'Відгуки' }}</h2>
-      {% if reviews_lead %}<p class="articles-section__lead">{{ reviews_lead }}</p>{% endif %}
+      {% if reviews_lead %}<p class="page-hero__lead">{{ reviews_lead }}</p>{% endif %}
     </div>
     <div class="slider-nav slider-nav--desk" data-slider-nav="reviews">
       <button type="button" class="slider-nav__btn" data-slider-prev aria-label="Назад"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>

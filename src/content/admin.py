@@ -283,6 +283,7 @@ admin.site.register(HomeSeoSettings, HomeSeoAdmin)
 
 
 class RatesPageAdmin(SingletonUnfoldAdmin):
+    plain_fields = frozenset({'intro', 'intro_mode'})
     content_fieldsets = (
         ('Контент', {
             'description': (
