@@ -1,9 +1,24 @@
+.page:has([data-qa="post-detail"]) .breadcrumbs {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .page:has([data-qa="post-detail"]) .breadcrumbs__list {
   flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.page:has([data-qa="post-detail"]) .breadcrumbs__item:last-child {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: normal;
 }
 
 .page:has([data-qa="post-detail"]) .breadcrumbs__current {
+  min-width: 0;
   white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* Запас під плаваючу кнопку чату: наприкінці статті вона не лягає на текст. */
