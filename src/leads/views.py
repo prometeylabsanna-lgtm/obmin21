@@ -202,7 +202,6 @@ def _render_contact_modal(request):
     return render(request, 'partials/modal_contact.html', context)
 
 
-@require_http_methods(['GET', 'POST'])
 def _honeypot_hit(request):
     return bool((request.POST.get('website') or '').strip())
 
@@ -212,6 +211,7 @@ def _honeypot_response():
     return HttpResponse('', content_type='text/html; charset=utf-8')
 
 
+@require_http_methods(['GET', 'POST'])
 def exchange_request_modal(request):
     if request.method != 'POST':
         return _render_contact_modal(request)

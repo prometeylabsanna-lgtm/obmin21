@@ -97,3 +97,38 @@ class FormatBodyListTests(TestCase):
         from src.core.templatetags.content_format import rich_html
         out = rich_html('Вступ.\n\n- Один\n- Два')
         self.assertIn('<ul class="detail-page__list"><li>Один</li><li>Два</li></ul>', out)
+
+
+class LeadViewMethodTests(R2Base):
+    def test_request_modal_rejects_put_delete(self):
+        url = reverse('leads:request_modal')
+        for method in ('put', 'delete', 'patch'):
+            self.assertEqual(getattr(self.client, method)(url).status_code, 405, method)
+        self.assertEqual(self.client.get(url).status_code, 200)
+
+    def test_contact_submit_post_only(self):
+        url = reverse('leads:contact_submit')
+        for method in ('get', 'put', 'delete'):
+            self.assertEqual(getattr(self.client, method)(url).status_code, 405, method)
+
+    def test_honeypot_helper_is_plain_function(self):
+        from src.leads import views
+        self.assertFalse(hasattr(views._honeypot_hit, '__wrapped__'))
+        self.assertTrue(hasattr(views.exchange_request_modal, '__wrapped__'))
+
+
+class CopyCsvTests(TestCase):
+    def test_fiksatsiya_row_exact(self):
+        import csv
+        from pathlib import Path
+        p = Path(__file__).resolve().parents[2] / 'blog' / 'data' / 'copy_h1_2026_11_03.csv'
+        raw = p.read_bytes()
+        self.assertFalse(raw.startswith(b'\xef\xbb\xbf'))
+        self.assertNotIn(b'\r', raw)
+        rows = {r['slug']: r for r in csv.DictReader(raw.decode('utf-8').splitlines())}
+        row = rows['fiksatsiya-kursu-onlain']
+        self.assertEqual(row['h1a'], 'Як фіксація курсу онлайн')
+        self.assertEqual(row['h1b'], 'захищає від коливань')
+        for r in rows.values():
+            for v in r.values():
+                self.assertEqual(v, v.strip())
