@@ -146,26 +146,46 @@ class Post(ExchangeSafeMixin, models.Model):
     def apply_exchange_classification(self):
         return freeze_auto_kind(self, 'content_kind')
 
-    def image_url(self):
+    def _uploaded_cover(self):
+        """Завантажена в адмінці обкладинка, якщо файл реально існує."""
+        cover = self.cover
+        if not cover or not cover.name:
+            return None
+        try:
+            if not cover.storage.exists(cover.name):
+                return None
+        except (OSError, ValueError):
+            return None
+        return cover
+
+    @property
+    def cover_url(self):
+        """Обкладинка статті: post.cover (адмінка) → static/images/articles/<slug>.jpg|webp → заглушка."""
         from src.core.responsive_images import static_exists, static_image
 
+        cover = self._uploaded_cover()
+        if cover is not None:
+            return cover.url
         name = f'images/articles/{self.slug}.jpg'
         if self.slug and static_exists(name):
             return static_image(name)
-        if self.cover:
-            return self.cover.url
         return static_image('images/service-1.png')
+
+    def image_url(self):
+        return self.cover_url
 
     def image_size(self):
         from src.core.responsive_images import field_size, static_exists, static_size
 
+        cover = self._uploaded_cover()
+        if cover is not None:
+            size = field_size(cover)
+            if size[0]:
+                return size
+            return (0, 0)
         name = f'images/articles/{self.slug}.jpg'
         if self.slug and static_exists(name):
             return static_size(name)
-        if self.cover:
-            size = field_size(self.cover)
-            if size[0]:
-                return size
         return static_size('images/service-1.png')
 
     @property

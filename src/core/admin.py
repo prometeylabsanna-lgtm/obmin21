@@ -4,7 +4,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action
 
 from src.core import admin_auth  # noqa: F401
@@ -19,7 +19,15 @@ from src.core.exchange_preview import (
     stored_exchange_only,
     toggle_exchange_only,
 )
-from src.core.models import ExchangeModeLog, FooterSettings, HeaderSettings, SiteSettings
+from src.core.models import (
+    ExchangeModeLog,
+    FooterColumn,
+    FooterLink,
+    FooterSettings,
+    HeaderMenuItem,
+    HeaderSettings,
+    SiteSettings,
+)
 
 
 @admin.register(SiteSettings)
@@ -37,6 +45,14 @@ class SiteSettingsAdmin(SingletonUnfoldAdmin):
         'facebook_url',
         'notify_email',
         'notify_telegram_chat_id',
+        'favicon',
+        'favicon_png',
+        'apple_touch_icon',
+        'app_icon',
+        'manifest_name',
+        'manifest_short_name',
+        'theme_color',
+        'manifest_background_color',
     )
     style_fields = ()
 
@@ -107,10 +123,53 @@ class SiteSettingsAdmin(SingletonUnfoldAdmin):
         )
 
 
+class _SortableInline(TabularInline):
+    extra = 0
+    ordering_field = 'sort_order'
+    hide_ordering_field = True
+    tab = True
+
+
+class HeaderMenuItemInline(_SortableInline):
+    model = HeaderMenuItem
+    fields = ('label', 'page', 'url', 'open_new_tab', 'show_desktop', 'show_mobile', 'is_active', 'sort_order')
+    verbose_name = 'Пункт меню'
+    verbose_name_plural = 'Меню шапки'
+
+
+class FooterColumnInline(_SortableInline):
+    model = FooterColumn
+    fields = ('title', 'kind', 'is_active', 'sort_order')
+    show_change_link = True
+    verbose_name_plural = 'Колонки підвалу (посилання — у «Змінити»)'
+
+
+class FooterLinkInline(_SortableInline):
+    model = FooterLink
+    fields = ('label', 'page', 'url', 'open_new_tab', 'is_active', 'sort_order')
+    tab = False
+
+
+@admin.register(FooterColumn)
+class FooterColumnAdmin(ModelAdmin):
+    list_display = ('title', 'kind', 'is_active', 'sort_order')
+    list_editable = ('is_active', 'sort_order')
+    fields = ('title', 'kind', 'is_active', 'sort_order')
+    inlines = (FooterLinkInline,)
+
+    def save_model(self, request, obj, form, change):
+        if not obj.settings_id:
+            obj.settings_id = 1
+        super().save_model(request, obj, form, change)
+
+
 @admin.register(HeaderSettings)
 class HeaderSettingsAdmin(SingletonUnfoldAdmin):
+    inlines = (HeaderMenuItemInline,)
     content_fields = (
         'header_logo',
+        'header_cta_enabled',
+        'header_cta_label',
     )
     style_fields = (
         'header_color_bg',
@@ -122,6 +181,7 @@ class HeaderSettingsAdmin(SingletonUnfoldAdmin):
 
 @admin.register(FooterSettings)
 class FooterSettingsAdmin(SingletonUnfoldAdmin):
+    inlines = (FooterColumnInline,)
     content_fields = (
         'footer_logo',
         'footer_copy',

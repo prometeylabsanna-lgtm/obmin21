@@ -1,6 +1,7 @@
 from src.bot import keyboards, services, texts
 from src.bot.handlers.common import send_menu
 from src.bot.states import EXCHANGE_STATES, BotState
+from src.core.timefmt import local_fmt
 from src.leads.models import ExchangeRequest
 from src.leads.services import normalize_phone, validate_phone
 from src.network.selectors import get_city_branches
@@ -228,7 +229,7 @@ def handle_confirm(bot, chat_id, profile) -> None:
     bot.send_message(
         chat_id,
         texts.SAVED_REQUEST.format(
-            until=obj.expires_at.strftime('%H:%M %d.%m.%Y'),
+            until=local_fmt(obj.expires_at),
             address=texts.safe(obj.branch.address),
         ),
     )

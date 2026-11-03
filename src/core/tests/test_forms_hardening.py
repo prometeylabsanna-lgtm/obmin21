@@ -85,7 +85,7 @@ class FormRateLimitTests(TestCase):
         cache.clear()
         City.objects.create(name='Київ', slug='kyiv-rl', phone='+380992222222')
 
-    def test_review_contact_chat_limited_to_three(self):
+    def test_review_contact_limited_to_three_chat_per_dialog(self):
         review_url = reverse('reviews:review_submit')
         contact_url = reverse('leads:contact_submit')
         chat_url = reverse('bot:chat_send')
@@ -122,15 +122,17 @@ class FormRateLimitTests(TestCase):
         self.assertEqual(client.post(contact_url, contact_payload).status_code, 429)
         self.assertEqual(ContactMessage.objects.count(), 3)
 
+        # Чат: звичайна розмова (>=20 повідомлень/хв на діалог) не блокується.
+        from src.bot.web_views import RATE_LIMIT
+
         client.get(reverse('bot:chat_log'))
-        for _ in range(3):
-            self.assertEqual(
-                client.post(chat_url, {'text': 'привіт'}).status_code,
-                200,
-            )
-        fourth = client.post(chat_url, {'text': 'ще'})
-        self.assertEqual(fourth.status_code, 200)
-        self.assertContains(fourth, 'Забагато запитів')
+        for _ in range(RATE_LIMIT):
+            resp = client.post(chat_url, {'text': 'привіт'})
+            self.assertEqual(resp.status_code, 200)
+            self.assertNotContains(resp, 'Забагато запитів')
+        over = client.post(chat_url, {'text': 'ще'})
+        self.assertEqual(over.status_code, 200)
+        self.assertContains(over, 'Забагато запитів')
 
 
 class ClientIpTests(SimpleTestCase):

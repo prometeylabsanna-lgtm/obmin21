@@ -18,6 +18,7 @@ def build_unfold_navigation():
             'items': [
                 _item('Шапка сайту', 'web_asset', 'admin:core_headersettings_changelist'),
                 _item('Підвал сайту', 'view_agenda', 'admin:core_footersettings_changelist'),
+                _item('Колонки підвалу', 'view_column', 'admin:core_footercolumn_changelist'),
                 _item('Загальні налаштування', 'settings', 'admin:core_sitesettings_changelist'),
                 {
                     'title': 'Журнал режиму «Лише обмін»',

@@ -228,3 +228,17 @@ def page_not_found(request, exception):
 
 def tinymce_disabled(request):
     return HttpResponseNotFound()
+
+
+def site_webmanifest(request):
+    """Динамічний manifest з налаштувань (назва, кольори, іконка)."""
+    import json
+
+    from django.http import HttpResponse
+
+    from src.core.site_chrome import manifest_payload
+
+    body = json.dumps(manifest_payload(SiteSettings.load()), ensure_ascii=False, indent=2)
+    response = HttpResponse(body, content_type='application/manifest+json; charset=utf-8')
+    response['Cache-Control'] = 'public, max-age=3600'
+    return response

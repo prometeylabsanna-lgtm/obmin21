@@ -137,6 +137,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Вхід без ?next веде в адмінку (не /accounts/profile/).
+LOGIN_URL = 'admin:login'
+LOGIN_REDIRECT_URL = 'admin:index'
+
 UNFOLD = {
     'SITE_TITLE': 'Обмін21',
     'SITE_HEADER': 'Обмін21',

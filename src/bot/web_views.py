@@ -13,16 +13,23 @@ from src.core.phones import pop_phone_request, push_phone_request
 logger = logging.getLogger(__name__)
 
 HISTORY_LIMIT = 40
+# Ліміт на діалог: не менше 20 повідомлень/хв (кнопки бота теж рахуються).
 RATE_LIMIT = 40
+RATE_WINDOW = 60
+# Ліміт на IP (кілька вкладок/сесій з одного IP) — запас від спаму, не для звичайної розмови.
+IP_RATE_LIMIT = 120
 
 
 def _rate_ok(chat_id: str) -> bool:
+    """Фіксоване вікно 60 с: лічильник не продовжує TTL на кожне повідомлення."""
     key = f'webchat:{chat_id}'
-    n = cache.get(key, 0)
-    if n >= RATE_LIMIT:
-        return False
-    cache.set(key, n + 1, 60)
-    return True
+    cache.add(key, 0, RATE_WINDOW)
+    try:
+        n = cache.incr(key)
+    except ValueError:
+        cache.set(key, 1, RATE_WINDOW)
+        n = 1
+    return n <= RATE_LIMIT
 
 
 def _call_with_phone(request, fn):
@@ -81,7 +88,9 @@ def chat_send(request):
     text = (request.POST.get('text') or '').strip()[:2000]
     if not text:
         return render(request, 'bot/chat_messages.html', {'messages': []})
-    if not allow_request(request, 'chat') or not _rate_ok(chat_id):
+    if not _rate_ok(chat_id) or not allow_request(
+        request, 'chat', limit=IP_RATE_LIMIT, window=RATE_WINDOW,
+    ):
         return render(request, 'bot/chat_messages.html', {
             'messages': [_store(chat_id, ChatMessage.Role.BOT, 'Забагато запитів. Зачекайте хвилину.')],
         })

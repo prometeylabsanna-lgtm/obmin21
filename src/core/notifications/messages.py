@@ -47,7 +47,9 @@ def _build_exchange(obj) -> tuple[str, str, str]:
         direction = obj.get_direction_display()
     expires = ''
     if getattr(obj, 'expires_at', None) is not None:
-        expires = obj.expires_at.strftime('%d.%m.%Y %H:%M')
+        from src.core.timefmt import local_fmt
+
+        expires = local_fmt(obj.expires_at, '%d.%m.%Y %H:%M')
     link = admin_change_url(obj)
 
     subject = f'Заявка Обмін21 #{obj.pk}'

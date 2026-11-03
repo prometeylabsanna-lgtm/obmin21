@@ -6,6 +6,7 @@ from typing import Any
 
 from django.db import transaction
 
+from src.core.timefmt import local_fmt
 from src.bot.models import BotSession, TelegramProfile
 from src.bot.states import BotState
 from src.leads.models import ExchangeRequest
@@ -24,6 +25,17 @@ logger = logging.getLogger(__name__)
 
 MAX_AMOUNT = Decimal('9999999999.99')
 AMOUNT_Q = Decimal('0.01')
+
+
+def is_web_chat(chat_id) -> bool:
+    from src.bot.web_identity import WEB_PREFIX
+
+    return str(chat_id or '').startswith(WEB_PREFIX)
+
+
+def lead_source(chat_id) -> str:
+    """Заявки з веб-чату — source=web, з бота Telegram — telegram."""
+    return 'web' if is_web_chat(chat_id) else 'telegram'
 
 
 def upsert_profile(from_user) -> TelegramProfile:
@@ -159,7 +171,7 @@ def format_rates(city: City) -> str:
         quote = row['quote']
         lines.append(f'{pair.code}: {quote.buy} / {quote.sell}')
     if updated:
-        lines.append(f'Оновлено: {updated:%d.%m.%Y %H:%M}')
+        lines.append(f'Оновлено: {local_fmt(updated, "%d.%m.%Y %H:%M")}')
     return '\n'.join(lines)
 
 
@@ -203,7 +215,10 @@ def submit_exchange(chat_id: str, profile: TelegramProfile, data: dict):
     if calc is None:
         raise ValueError('no quote')
     username = profile.username
-    messenger = f'@{username}' if username else 'Telegram'
+    if is_web_chat(chat_id):
+        messenger = 'Чат на сайті'
+    else:
+        messenger = f'@{username}' if username else 'Telegram'
     cleaned = {
         'name': name,
         'phone': phone,
@@ -219,7 +234,7 @@ def submit_exchange(chat_id: str, profile: TelegramProfile, data: dict):
     return create_exchange_request(
         cleaned=cleaned,
         city=city,
-        source='telegram',
+        source=lead_source(chat_id),
         telegram_chat_id=str(chat_id),
     )
 
@@ -234,6 +249,6 @@ def submit_feedback(chat_id: str, profile: TelegramProfile, data: dict):
     return create_contact_message(
         cleaned={'name': name, 'phone': phone, 'message': message},
         city=city,
-        source='telegram',
+        source=lead_source(chat_id),
         telegram_chat_id=str(chat_id),
     )

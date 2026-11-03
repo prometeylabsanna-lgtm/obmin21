@@ -90,6 +90,55 @@ class SiteSettings(models.Model):
         max_length=120,
         default='© 2026. Обмін21. Усі права захищені',
     )
+    header_cta_enabled = models.BooleanField(
+        'Показувати кнопку заявки в шапці',
+        default=True,
+    )
+    header_cta_label = models.CharField(
+        'Текст кнопки заявки в шапці',
+        max_length=40,
+        default='Зробити заявку',
+        help_text='Кнопка відкриває форму заявки. Порожньо — «Зробити заявку».',
+    )
+    favicon = models.FileField(
+        'Іконка сайту (favicon .ico/.png/.svg)',
+        upload_to='chrome/icons/',
+        blank=True,
+        help_text='Якщо порожньо — стандартна іконка Обмін21.',
+    )
+    favicon_png = models.ImageField(
+        'Іконка PNG 48×48',
+        upload_to='chrome/icons/',
+        blank=True,
+        help_text='Квадратна PNG, щонайменше 48×48. Порожньо — стандартна.',
+    )
+    apple_touch_icon = models.ImageField(
+        'Іконка для iPhone (180×180)',
+        upload_to='chrome/icons/',
+        blank=True,
+    )
+    app_icon = models.ImageField(
+        'Іконка застосунку (512×512)',
+        upload_to='chrome/icons/',
+        blank=True,
+        help_text='Для site.webmanifest. Порожньо — стандартні 192/512.',
+    )
+    manifest_name = models.CharField('Назва в manifest', max_length=60, default='Обмін21')
+    manifest_short_name = models.CharField('Коротка назва в manifest', max_length=30, default='Обмін21')
+    theme_color = models.CharField(
+        'Колір теми браузера',
+        max_length=7,
+        default='#052145',
+        validators=[hex_color_validator],
+        help_text=COLOR_HELP,
+    )
+    manifest_background_color = models.CharField(
+        'Колір фону manifest',
+        max_length=7,
+        default='#ffffff',
+        validators=[hex_color_validator],
+        help_text=COLOR_HELP,
+    )
     header_color_bg = models.CharField(
         'Колір фону шапки',
         max_length=7,
@@ -228,5 +277,127 @@ class ExchangeModeLog(models.Model):
         verbose_name_plural = 'Журнал режиму «Лише обмін»'
 
     def __str__(self):
-        moment = self.created_at.strftime('%Y-%m-%d %H:%M') if self.created_at else ''
+        from src.core.timefmt import local_fmt
+
+        moment = local_fmt(self.created_at, '%Y-%m-%d %H:%M')
         return f'{moment}: {self.from_value} → {self.to_value}'
+
+
+# --- Навігація шапки та колонки підвалу (CMS) ---
+
+class SitePage(models.TextChoices):
+    HOME = 'core:home', 'Головна'
+    SERVICES = 'content:services', 'Послуги'
+    ADVANTAGES = 'content:advantages', 'Переваги'
+    FAQ = 'content:faq', 'FAQ'
+    BLOG = 'blog:post_list', 'Блог'
+    CONTACTS = 'content:contacts', 'Контакти'
+    REVIEWS = 'reviews:review_list', 'Відгуки'
+    RATES = 'rates:rates_page', 'Курси валют'
+    CITIES = 'network:city_list', 'Міста'
+    PRIVACY = 'content:privacy', 'Політика конфіденційності'
+    OFFER = 'content:offer', 'Публічна оферта'
+    COOKIES = 'content:cookies', 'Політика cookie'
+
+
+LINK_HELP = 'Оберіть сторінку сайту або вкажіть власне посилання (/шлях/ чи https://…).'
+
+
+class _LinkMixin(models.Model):
+    label = models.CharField('Назва', max_length=80)
+    page = models.CharField(
+        'Сторінка сайту',
+        max_length=40,
+        choices=SitePage.choices,
+        blank=True,
+        help_text=LINK_HELP,
+    )
+    url = models.CharField('Власне посилання', max_length=300, blank=True)
+    open_new_tab = models.BooleanField('Відкривати в новій вкладці', default=False)
+    sort_order = models.PositiveIntegerField('Порядок', default=0)
+    is_active = models.BooleanField('Показувати', default=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.label
+
+    def clean(self):
+        super().clean()
+        url = (self.url or '').strip()
+        if not self.page and not url:
+            raise ValidationError({'page': 'Оберіть сторінку або вкажіть посилання.'})
+        if url and not (url.startswith('/') or url.startswith(('https://', 'http://', 'tel:', 'mailto:', '#'))):
+            raise ValidationError({'url': 'Посилання має починатися з /, https://, tel: або mailto:.'})
+        self.url = url
+
+    @property
+    def href(self):
+        from django.urls import NoReverseMatch, reverse
+
+        if self.page:
+            try:
+                return reverse(self.page)
+            except NoReverseMatch:
+                return ''
+        return (self.url or '').strip()
+
+
+class HeaderMenuItem(_LinkMixin):
+    settings = models.ForeignKey(
+        SiteSettings,
+        on_delete=models.CASCADE,
+        related_name='header_menu_items',
+        default=1,
+        db_constraint=False,  # singleton pk=1; сід меню не створює рядок налаштувань
+        verbose_name='Налаштування',
+    )
+    show_desktop = models.BooleanField('У шапці (комп’ютер)', default=True)
+    show_mobile = models.BooleanField('У мобільному меню', default=True)
+
+    class Meta:
+        ordering = ['sort_order', 'id']
+        verbose_name = 'Пункт меню шапки'
+        verbose_name_plural = 'Меню шапки'
+
+
+class FooterColumn(models.Model):
+    class Kind(models.TextChoices):
+        LINKS = 'links', 'Посилання (задаються нижче)'
+        SERVICES = 'services', 'Послуги (автоматично з розділу «Послуги»)'
+
+    settings = models.ForeignKey(
+        SiteSettings,
+        on_delete=models.CASCADE,
+        related_name='footer_columns',
+        default=1,
+        db_constraint=False,  # singleton pk=1; сід меню не створює рядок налаштувань
+        verbose_name='Налаштування',
+    )
+    title = models.CharField('Заголовок колонки', max_length=80)
+    kind = models.CharField('Вміст', max_length=16, choices=Kind.choices, default=Kind.LINKS)
+    sort_order = models.PositiveIntegerField('Порядок', default=0)
+    is_active = models.BooleanField('Показувати', default=True)
+
+    class Meta:
+        ordering = ['sort_order', 'id']
+        verbose_name = 'Колонка підвалу'
+        verbose_name_plural = 'Колонки підвалу'
+
+    def __str__(self):
+        return self.title
+
+
+class FooterLink(_LinkMixin):
+    column = models.ForeignKey(
+        FooterColumn,
+        on_delete=models.CASCADE,
+        related_name='links',
+        verbose_name='Колонка',
+    )
+
+    class Meta:
+        ordering = ['sort_order', 'id']
+        verbose_name = 'Посилання підвалу'
+        verbose_name_plural = 'Посилання підвалу'

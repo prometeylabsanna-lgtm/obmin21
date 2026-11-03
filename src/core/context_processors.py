@@ -4,6 +4,7 @@ from src.core.breadcrumbs import breadcrumbs_for_request
 from src.core.exchange_mode import exchange_only
 from src.core.models import SiteSettings
 from src.core.phones import resolve_site_phone, safe_telegram_url
+from src.core.site_chrome import footer_columns, header_cta, header_menu, site_icons
 from src.core.theme import URL_THEME_MAP, theme_version
 
 
@@ -11,6 +12,7 @@ def site_chrome(request):
     settings = SiteSettings.load()
     city = getattr(request, 'city', None)
     phone, phone_href = resolve_site_phone(request, settings)
+    services = list(Service.objects.filter(is_active=True).visible()[:6])
 
     return {
         'site_settings': settings,
@@ -26,7 +28,12 @@ def site_chrome(request):
         'exchange_only': exchange_only(request),
         'visit_steps': VisitSteps.load(),
         'rate_hold_label': minutes_phrase(settings.rate_hold_minutes),
-        'footer_services': Service.objects.filter(is_active=True).visible()[:6],
+        'footer_services': services,
+        # CMS шапки/підвалу (FE підключає в partials/header, mobile_nav, footer, base).
+        'header_menu': header_menu(request),
+        'header_cta': header_cta(settings),
+        'footer_columns': footer_columns(request, services),
+        'site_icons': site_icons(settings),
         'theme_version': theme_version(),
     }
 

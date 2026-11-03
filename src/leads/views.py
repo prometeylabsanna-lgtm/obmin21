@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 from src.core.exchange_mode import is_exchange_only, mode_text
 from src.core.exchange_stopwords import matches_stop_words
 from src.core.models import SiteSettings
+from src.core.timefmt import local_fmt
 from src.core.phones import resolve_site_phone, safe_telegram_url
 from src.leads.forms import ContactMessageForm, ExchangeRequestForm
 from src.leads.services import create_contact_message, create_exchange_request
@@ -213,7 +214,7 @@ def exchange_request_modal(request):
         return render(request, 'partials/form_success.html', {
             'title': 'Заявку прийнято',
             'message': (
-                f'Курс зафіксовано до {obj.expires_at:%H:%M %d.%m.%Y}. '
+                f'Курс зафіксовано до {local_fmt(obj.expires_at)}. '
                 f'Чекаємо вас у відділенні: {obj.branch.address}.'
             ),
         })
