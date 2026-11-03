@@ -7,11 +7,12 @@ from django.utils.safestring import mark_safe
 
 from src.core.html_sanitize import sanitize_rich_html
 from src.core.phones import phone_tel as to_tel
-from src.core.plain_text import html_to_plain_legal
+from src.core.plain_text import html_to_plain_legal, plain_text
 
 register = template.Library()
 
 _HEADING_END = ('.', '!', '?', ':', '…', ';', ',')
+_BLOCK_BREAK_RE = re.compile(r'<br\s*/?>|</(p|div|li|h[1-6])\s*>', re.IGNORECASE)
 _BRAND_RE = re.compile(r'(обмін)(21)', re.IGNORECASE)
 
 
@@ -52,7 +53,13 @@ def brand_mark(value):
     """Highlight Обмін21 in plain text (newlines → <br>)."""
     if not value:
         return ''
-    lines = str(value).split('\n')
+    text = str(value)
+    if looks_like_html(text):
+        # Plain-text slot got HTML (e.g. excerpt pasted from the editor):
+        # keep paragraph breaks, drop tags, then escape as usual.
+        text = _BLOCK_BREAK_RE.sub('\n', text)
+        text = '\n'.join(ln.strip() for ln in plain_text(text).split('\n') if ln.strip())
+    lines = text.split('\n')
     return mark_safe('<br>'.join(mark_brand(line) for line in lines))
 
 

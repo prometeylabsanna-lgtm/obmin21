@@ -1,5 +1,6 @@
 import re
 
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
@@ -202,9 +203,20 @@ def _render_contact_modal(request):
 
 
 @require_http_methods(['GET', 'POST'])
+def _honeypot_hit(request):
+    return bool((request.POST.get('website') or '').strip())
+
+
+def _honeypot_response():
+    # Neutral empty 200: nothing saved, no success message for bots.
+    return HttpResponse('', content_type='text/html; charset=utf-8')
+
+
 def exchange_request_modal(request):
     if request.method != 'POST':
         return _render_contact_modal(request)
+    if _honeypot_hit(request):
+        return _honeypot_response()
     city = request.city
     form = ExchangeRequestForm(request.POST, city=city)
     if form.is_valid() and city is not None:
@@ -250,6 +262,8 @@ def contact_submit(request):
             'title': 'Забагато запитів',
             'message': 'Спробуйте ще раз через кілька хвилин.',
         }, status=429)
+    if _honeypot_hit(request):
+        return _honeypot_response()
     form = ContactMessageForm(request.POST)
     if form.is_valid():
         create_contact_message(cleaned=form.cleaned_data, city=request.city)

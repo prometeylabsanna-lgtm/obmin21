@@ -194,7 +194,10 @@ def _plain_title(context, request):
 
 
 def _description(context, request):
-    text = _one_line(context.get('page_description'))
+    from src.core.plain_text import plain_text
+
+    raw = context.get('page_description')
+    text = _one_line(plain_text(str(raw)) if raw else raw)
     if (
         is_exchange_only(request)
         and text
@@ -395,15 +398,30 @@ def build_head(request, context):
     ) else 'website'
     robots_meta = 'noindex, follow' if getattr(request, 'GET', None) else ''
     payload = _graph(context, request, canonical, site_name, description)
+    og_image, og_width, og_height = _og_image_url(), OG_WIDTH, OG_HEIGHT
+    og_type_mime = 'image/webp'
+    post = context.get('post') if og_type == 'article' else None
+    if post is not None:
+        cover = _article_image(post, request)
+        if cover:
+            import mimetypes
+
+            og_image = cover
+            og_type_mime = mimetypes.guess_type(cover.split('?')[0])[0] or ''
+            try:
+                og_width, og_height = post.image_size()
+            except Exception:  # noqa: BLE001 - size is optional metadata
+                og_width = og_height = 0
     return {
         'site_name': site_name,
         'title': title,
         'description': description,
         'canonical': canonical,
         'og_type': og_type,
-        'og_image': _og_image_url(),
-        'og_width': OG_WIDTH,
-        'og_height': OG_HEIGHT,
+        'og_image': og_image,
+        'og_width': og_width,
+        'og_height': og_height,
+        'og_image_type': og_type_mime,
         'robots_meta': robots_meta,
         'json_ld': mark_safe(_json(payload)),
     }
