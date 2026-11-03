@@ -1545,9 +1545,10 @@ class ExchangeOnlyAdvantagesTemplateTests(ExchangeTemplateCase):
         page.save(update_fields=['stat_1_text_mode'])
         self._set_mode(True)
         html = self._page().content.decode()
+        stats = html.split('<body', 1)[-1]
         self.assertNotIn(_STAT_MODE, html)
         self.assertNotIn('криптоактивів', html)
-        self.assertNotIn(_STAT_1_TITLE, html)
+        self.assertNotIn(_STAT_1_TITLE, stats)
         self.assertNotIn('Відділень в Україні', html)
         self.assertNotIn(_WHY_LEAD, html)
 

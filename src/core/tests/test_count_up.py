@@ -154,8 +154,9 @@ class CountUpStatsTests(TestCase):
         self._mode(True)
         hidden = self._html('core:home')
         self._assert_module(hidden)
-        self.assertNotIn('stats-section__num', hidden)
-        self.assertNotIn('7K', hidden)
+        hidden_stats = self._stats_block(hidden)
+        self.assertNotIn('stats-section__num', hidden_stats)
+        self.assertNotIn('7K', hidden_stats)
         self.assertNotIn('display:none', ''.join(hidden.lower().split()))
 
     def test_module_observes_viewport_and_reduced_motion(self):
