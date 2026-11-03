@@ -48,7 +48,8 @@
 
 .cmp-adv__badge {
   border: 1px solid var(--color-accent);
-  color: var(--link);
+  /* Бейдж на темному фоні: золото 5.65:1 на navy. */
+  color: var(--color-accent);
   border-radius: calc(20px * var(--scale));
   padding: calc(5px * var(--scale)) calc(12px * var(--scale));
   font-size: calc(12px * var(--scale));
