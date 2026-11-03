@@ -9,6 +9,8 @@
   padding: calc(18px * var(--scale)) 0;
   position: relative;
   z-index: 40;
+  min-width: 0;
+  max-width: 100%;
   background: var(--color-bg);
   color: var(--color-text);
 }
@@ -103,6 +105,8 @@
 
 .city-select {
   position: relative;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .city-select__btn {
@@ -117,10 +121,19 @@
   font-size: calc(17px * var(--scale));
   font-weight: 600;
   color: var(--color-text);
+  min-width: 0;
   max-width: min(calc(220px * var(--scale)), calc(100vw - calc(140px * var(--scale))));
+  -webkit-tap-highlight-color: transparent;
+}
+
+.city-select__pin,
+.city-select__chevron {
+  flex: none;
 }
 
 .city-select__btn [data-city-label] {
+  flex: 0 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -270,13 +283,42 @@
 }
 
 @media (max-width: 767px) {
-  /* Довга назва не вміщається поруч із логотипом і переносить actions
-     на наступний рядок. space-between лишає цей рядок зліва, тож меню
-     (right: -60px, 190px) виходить за лівий край. auto-margin тримає
-     блок біля правого краю і в одному ряді, і після переносу. */
+  /* Лого, місто і бургер лишаються в одному ряду. Довга назва стискається. */
+  .site-header {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .site-header__logo {
+    flex: 0 0 auto;
+  }
+
   .site-header__actions {
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    min-width: 0;
     margin-left: auto;
     max-width: 100%;
+  }
+
+  .city-select {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .city-select__btn {
+    width: auto;
+    max-width: 100%;
+    gap: calc(4px * var(--scale));
+    font-size: calc(14px * var(--scale));
+  }
+
+  .site-header__menu-toggle {
+    flex: none;
   }
 
   .city-select__menu {
@@ -287,6 +329,25 @@
 
   .mobile-menu__nav a {
     font-size: calc(22px * var(--scale));
+  }
+}
+
+@media (max-width: 360px) {
+  .site-header__logo img {
+    height: calc(32px * var(--scale));
+  }
+
+  .city-select__btn {
+    font-size: calc(13px * var(--scale));
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .site-header__actions,
+  .city-select,
+  .city-select__btn,
+  .city-select__btn [data-city-label] {
+    min-width: 0;
   }
 }
 
