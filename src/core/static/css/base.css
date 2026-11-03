@@ -165,6 +165,24 @@ html.is-menu-open body {
   justify-content: center;
 }
 
+/* Дубль правила з chat.css (той вантажиться асинхронно) — кнопка одразу компактна, без стрибка. */
+@media (max-width: 767px) {
+  .site-chat__fab {
+    width: var(--touch-min);
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+  }
+
+  .site-chat__fab-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+}
+
 .detail-page__subhead {
   font-size: 1.17em;
   font-weight: 700;

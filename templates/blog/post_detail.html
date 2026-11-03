@@ -23,7 +23,7 @@
   <div class="article-body">
     {% mode_field post 'excerpt' as excerpt %}{% if excerpt %}<p class="article-body__lead">{{ excerpt|brand_mark }}</p>{% elif eo %}{% if art.layout_mode.lead %}<p class="article-body__lead">{{ art.layout_mode.lead|brand_mark }}</p>{% endif %}{% elif art.lead %}<p class="article-body__lead">{{ art.lead|brand_mark }}</p>{% endif %}
     {% if post.body %}
-      {{ post.body|rich_html }}
+      <div class="article-body__rich">{{ post.body|rich_html }}</div>
       {% if post.figure %}
       <figure class="article-fig">
         {% if post.figure.url %}
@@ -33,7 +33,7 @@
       {% endif %}
     {% elif eo %}
       {% if art.layout_mode.plain %}
-      {{ post.body|format_body }}
+      <div class="article-body__rich">{{ post.body|format_body }}</div>
       {% else %}
       {% for sec in art.layout_mode.sections %}
       {% if sec.h or sec.p|join:"" or sec.list|join:"" or sec.fig and art.layout_mode.fig_url %}
@@ -56,7 +56,7 @@
       {% endfor %}
       {% endif %}
     {% elif art.plain %}
-      {{ post.body|format_body }}
+      <div class="article-body__rich">{{ post.body|format_body }}</div>
     {% else %}
       {% for sec in art.sections %}
       <section class="article-sec">

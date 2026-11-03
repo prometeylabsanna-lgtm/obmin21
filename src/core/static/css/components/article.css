@@ -6,6 +6,11 @@
   white-space: normal;
 }
 
+/* Запас під плаваючу кнопку чату: наприкінці статті вона не лягає на текст. */
+.page:has([data-qa="post-detail"]) .page__main {
+  padding-bottom: calc(var(--touch-min) + calc(24px * var(--scale)) + var(--safe-bottom));
+}
+
 .article-banner {
   position: relative;
   margin-top: calc(20px * var(--scale));
@@ -88,6 +93,48 @@
   font-size: calc(17px * var(--scale));
   line-height: 1.55;
   font-weight: 500;
+}
+
+/*
+ * Тіло статті з rich_html / format_body: теги без класів (p, h2, ul).
+ * Ритм і типографіка ті самі, що в .article-sec__* — щоб обидві розкладки
+ * статті виглядали однаково.
+ */
+.article-body__rich {
+  color: #44546a;
+  font-size: calc(16px * var(--scale));
+  line-height: 1.65;
+}
+
+.article-body__rich p,
+.article-body__rich ul,
+.article-body__rich ol,
+.article-body__rich blockquote,
+.article-body__rich table,
+.article-body__rich figure {
+  margin: calc(20px * var(--scale)) 0 0;
+}
+
+.article-body__rich h2,
+.article-body__rich h3,
+.article-body__rich h4 {
+  margin: calc(40px * var(--scale)) 0 0;
+  color: #052145;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: calc(-0.3px * var(--scale));
+}
+
+.article-body__rich h2 {
+  font-size: calc(24px * var(--scale));
+}
+
+.article-body__rich h3 {
+  font-size: calc(20px * var(--scale));
+}
+
+.article-body__rich h4 {
+  font-size: calc(18px * var(--scale));
 }
 
 .article-sec__title {
@@ -277,6 +324,25 @@
     font-size: calc(32px * var(--scale));
   }
 
+  .article-body__rich h2,
+  .article-body__rich h3,
+  .article-body__rich h4 {
+    margin-top: calc(56px * var(--scale));
+  }
+
+  .article-body__rich h2 {
+    font-size: calc(32px * var(--scale));
+  }
+
+  .article-body__rich h3 {
+    font-size: calc(24px * var(--scale));
+  }
+
+  .article-body__rich h4 {
+    font-size: calc(20px * var(--scale));
+  }
+
+  .article-body__rich,
   .article-sec__p,
   .article-sec__list li {
     font-size: calc(17px * var(--scale));

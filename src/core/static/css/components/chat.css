@@ -242,6 +242,22 @@
     pointer-events: none;
   }
 
+  /* Кругла кнопка без підпису: удвічі вужча, менше закриває текст статті. */
+  .site-chat__fab {
+    width: var(--touch-min);
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+  }
+
+  .site-chat__fab-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
   .site-chat__panel {
     right: 0;
     left: 0;
