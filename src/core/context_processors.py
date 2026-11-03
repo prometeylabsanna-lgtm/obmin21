@@ -1,3 +1,7 @@
+import re
+
+from django.conf import settings as django_settings
+
 from src.content.models import Service
 from src.content.visit_steps import VisitSteps, minutes_phrase
 from src.core.breadcrumbs import breadcrumbs_for_request
@@ -14,7 +18,9 @@ def site_chrome(request):
     phone, phone_href = resolve_site_phone(request, settings)
     services = list(Service.objects.filter(is_active=True).visible()[:6])
 
+    gtm_id = getattr(django_settings, 'GTM_ID', '') or ''
     return {
+        'gtm_id': gtm_id if re.fullmatch(r'GTM-[A-Z0-9]+', gtm_id) else '',
         'site_settings': settings,
         'active_city': city,
         'active_phone': phone,

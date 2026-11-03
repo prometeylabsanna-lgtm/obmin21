@@ -9,11 +9,13 @@
   </a>
 
   <nav class="site-header__nav" aria-label="Основне меню">
+    {% if header_menu %}{% for item in header_menu %}{% if item.show_desktop %}<a href="{{ item.href }}"{% if item.is_current %} aria-current="page"{% endif %}{% if item.page == "content:services" %} data-qa="nav-services"{% elif item.page == "content:advantages" %} data-qa="nav-advantages"{% elif item.page == "content:faq" %} data-qa="nav-faq"{% elif item.page == "blog:post_list" %} data-qa="nav-blog"{% elif item.page == "content:contacts" %} data-qa="nav-contacts"{% endif %}{% if item.new_tab %} target="_blank" rel="noopener"{% endif %}>{{ item.label|upper }}</a>{% endif %}{% endfor %}{% else %}
     <a href="{% url 'content:services' %}" data-qa="nav-services">ПОСЛУГИ</a>
     <a href="{% url 'content:advantages' %}" data-qa="nav-advantages">ПЕРЕВАГИ</a>
     <a href="{% url 'content:faq' %}" data-qa="nav-faq">FAQ</a>
     <a href="{% url 'blog:post_list' %}" data-qa="nav-blog">БЛОГ</a>
     <a href="{% url 'content:contacts' %}" data-qa="nav-contacts">КОНТАКТИ</a>
+    {% endif %}
   </nav>
 
   {% include 'partials/city_chrome.html' %}

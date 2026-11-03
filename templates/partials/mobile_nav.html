@@ -24,11 +24,13 @@
   </div>
 
   <nav class="mobile-menu__nav" aria-label="Мобільне меню">
+    {% if header_menu %}{% for item in header_menu %}{% if item.show_mobile %}<a data-mi href="{{ item.href }}"{% if item.is_current %} aria-current="page"{% endif %}{% if item.new_tab %} target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a>{% endif %}{% endfor %}{% else %}
     <a data-mi href="{% url 'content:services' %}">Послуги</a>
     <a data-mi href="{% url 'content:advantages' %}">Переваги</a>
     <a data-mi href="{% url 'content:faq' %}">FAQ</a>
     <a data-mi href="{% url 'blog:post_list' %}">Блог</a>
     <a data-mi href="{% url 'content:contacts' %}">Контакти</a>
+    {% endif %}
   </nav>
 
   <div class="mobile-menu__bottom">

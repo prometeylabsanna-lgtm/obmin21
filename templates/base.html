@@ -3,6 +3,7 @@
 <html lang="uk">
 
 <head>
+  {% include 'partials/gtm_head.html' %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="csrf-token" content="{{ csrf_token }}">
@@ -10,12 +11,21 @@
   </title>
   {% seo_head %}
 
+  {% if site_icons %}
+  <link rel="icon" href="{{ site_icons.favicon }}" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ site_icons.favicon_32 }}">
+  <link rel="icon" type="image/png" sizes="48x48" href="{{ site_icons.favicon_48 }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ site_icons.apple_touch }}">
+  <link rel="manifest" href="{{ site_icons.manifest_url }}">
+  <meta name="theme-color" content="{{ site_icons.theme_color }}">
+  {% else %}
   <link rel="icon" href="{% static 'images/favicon.ico' %}?v=10" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}?v=10">
   <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/favicon-48x48.png' %}?v=10">
   <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}?v=10">
   <link rel="manifest" href="{% static 'site.webmanifest' %}?v=10">
   <meta name="theme-color" content="#052145">
+  {% endif %}
 
   {% block preload %}{% endblock %}
 
@@ -89,6 +99,7 @@
 </head>
 
 <body class="page" data-qa="page" data-theme="{{ page_theme|default:'home' }}">
+  {% include 'partials/gtm_body.html' %}
   <div class="page__shell">
     {% include 'partials/header.html' %}
     {% if breadcrumb_items %}

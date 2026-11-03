@@ -33,9 +33,11 @@
   </a>
   {% endif %}
 
-  <button type="button" class="btn btn--accent site-header__cta" data-open-modal="{% url 'leads:contact_modal' %}" data-qa="cta-request">
-    Зробити заявку
+  {% if not header_cta or header_cta.enabled %}
+  <button type="button" class="btn btn--accent site-header__cta" data-open-modal="{% if header_cta.modal_url %}{{ header_cta.modal_url }}{% else %}{% url 'leads:contact_modal' %}{% endif %}" data-qa="cta-request">
+    {{ header_cta.label|default:'Зробити заявку' }}
   </button>
+  {% endif %}
 
   <button
     type="button"

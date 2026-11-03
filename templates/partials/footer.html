@@ -12,6 +12,17 @@
       </a>
 
       <div class="site-footer__nav">
+        {% if footer_columns %}
+        {% for col in footer_columns %}
+        <div class="site-footer__col">
+          <div class="site-footer__heading">{{ col.title }}</div>
+          <div class="site-footer__links{% if forloop.last and col.kind != 'services' %} site-footer__links--docs{% endif %}">
+            {% for link in col.links %}<a href="{{ link.href }}"{% if link.new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label|upper }}</a>{% endfor %}
+          </div>
+        </div>
+
+        {% endfor %}
+        {% else %}
         <div class="site-footer__col">
           <div class="site-footer__heading">Послуги</div>
           <div class="site-footer__links">
@@ -44,6 +55,7 @@
           </div>
         </div>
 
+        {% endif %}
         <div class="site-footer__col site-footer__col--contact">
           {% if active_phone and phone_href %}
           <a class="site-footer__phone" href="tel:{{ phone_href }}" data-qa="footer-phone">
