@@ -171,6 +171,34 @@ html.is-menu-open body {
   line-height: 1.2;
 }
 
+/* Списки з format_body ('- ' рядки) — як .article-sec__list, колір/кегль від тексту довкола. */
+.detail-page__list {
+  margin: calc(16px * var(--scale)) 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(10px * var(--scale));
+}
+
+.detail-page__list > li {
+  position: relative;
+  padding-left: calc(18px * var(--scale));
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.detail-page__list > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: calc(6px * var(--scale));
+  height: calc(6px * var(--scale));
+  border-radius: 50%;
+  background: var(--btn-primary-bg);
+}
+
 
 /* Фокус для скрол-контейнерів (axe scrollable-region-focusable). */
 .reviews-track:focus-visible,
