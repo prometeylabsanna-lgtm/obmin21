@@ -45,7 +45,7 @@
 
 .faq-item.is-open .faq-item__icon {
   transform: rotate(45deg);
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
   color: #fff;
 }
 

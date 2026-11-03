@@ -19,7 +19,7 @@
 
 .why-adv__lead {
   margin: calc(16px * var(--scale)) auto 0;
-  color: #b3b4b6;
+  color: var(--ink-muted);
   font-size: calc(16px * var(--scale));
   line-height: 1.4;
   max-width: calc(560px * var(--scale));
@@ -111,7 +111,7 @@
 
 .why-adv__text {
   margin: calc(10px * var(--scale)) 0 0;
-  color: #b3b4b6;
+  color: var(--ink-muted);
   font-size: calc(15px * var(--scale));
   line-height: 1.4;
   max-width: calc(420px * var(--scale));

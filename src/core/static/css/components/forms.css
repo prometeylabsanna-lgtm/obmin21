@@ -350,3 +350,11 @@
   color: var(--color-text-soft);
   font-size: calc(13px * var(--scale));
 }
+
+/* Placeholder — текст, контраст ≥4.5:1. */
+.form-field__input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder);
+  opacity: 1;
+}

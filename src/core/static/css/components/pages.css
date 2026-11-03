@@ -192,7 +192,7 @@
 
 .svc-row__text {
   margin: calc(14px * var(--scale)) 0 0;
-  color: #b3b4b6;
+  color: var(--ink-muted);
   font-size: calc(16px * var(--scale));
   line-height: 1.4;
   max-width: calc(520px * var(--scale));
@@ -310,7 +310,7 @@
 
 .svc-how__text {
   margin: auto 0 0;
-  color: #b3b4b6;
+  color: var(--ink-muted);
   font-size: calc(15px * var(--scale));
   line-height: 1.5;
   max-width: calc(300px * var(--scale));

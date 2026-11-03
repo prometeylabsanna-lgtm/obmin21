@@ -12,7 +12,7 @@ body {
 }
 
 ::selection {
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
   color: var(--color-accent-ink);
 }
 
@@ -23,7 +23,7 @@ a {
 }
 
 a:hover {
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 a:focus-visible,
@@ -85,7 +85,12 @@ button.rates-tabs__btn:focus-visible {
 }
 
 .u-accent {
-  color: var(--color-accent);
+  color: var(--accent-large);
+}
+
+/* Акцент у звичайному тексті (<24px) — темніший відтінок, 5.65:1. */
+.brand-mark .u-accent {
+  color: var(--link);
 }
 
 .u-soft {
@@ -93,7 +98,7 @@ button.rates-tabs__btn:focus-visible {
 }
 
 .link-accent {
-  color: var(--color-accent);
+  color: var(--link);
   font-weight: var(--font-weight-semibold);
   display: inline-flex;
   align-items: center;
@@ -106,7 +111,7 @@ button.rates-tabs__btn:focus-visible {
 }
 
 .link-accent:hover {
-  color: var(--color-accent-hover);
+  color: var(--btn-primary-hover);
 }
 
 .link-accent:hover svg {
@@ -142,7 +147,7 @@ html.is-menu-open body {
   padding: 0 calc(16px * var(--scale)) 0 calc(12px * var(--scale));
   border: 0;
   border-radius: calc(999px * var(--scale));
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
   color: #fff;
   font: inherit;
   font-size: calc(15px * var(--scale));
@@ -166,3 +171,75 @@ html.is-menu-open body {
   line-height: 1.2;
 }
 
+
+/* Фокус для скрол-контейнерів (axe scrollable-region-focusable). */
+.reviews-track:focus-visible,
+.articles-track:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: calc(4px * var(--scale));
+}
+
+/*
+ * Target size (WCAG 2.2 2.5.8 + стандарт --touch-min 44px).
+ * Hit area розширюємо через ::after, вигляд не змінюється.
+ */
+.site-footer a,
+.site-footer__phone,
+.breadcrumbs__item a,
+.site-footer__credit-link,
+.rates-table__code,
+.rates-table__pair,
+.link-accent,
+.contacts-map__card-link,
+.site-header__nav a,
+.mobile-menu__nav a,
+.site-header__menu-toggle,
+.city-select__btn,
+.btn--sm,
+.rates-tabs__btn,
+.faq-section [role="tab"],
+.legal-page__chip,
+.article-slide__title {
+  position: relative;
+}
+
+.site-footer a::after,
+.site-footer__phone::after,
+.breadcrumbs__item a::after,
+.site-footer__credit-link::after,
+.rates-table__code::after,
+.rates-table__pair::after,
+.link-accent::after,
+.contacts-map__card-link::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, calc(24px * var(--scale)));
+  height: max(100%, calc(24px * var(--scale)));
+  transform: translate(-50%, -50%);
+}
+
+.site-header__nav a::after,
+.mobile-menu__nav a::after,
+.site-header__menu-toggle::after,
+.city-select__btn::after,
+.btn--sm::after,
+.rates-tabs__btn::after,
+.faq-section [role="tab"]::after,
+.legal-page__chip::after,
+.article-slide__title::after,
+.link-accent[href]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, var(--touch-min));
+  height: max(100%, var(--touch-min));
+  transform: translate(-50%, -50%);
+}
+
+.gtm-noscript {
+  display: none;
+  visibility: hidden;
+}

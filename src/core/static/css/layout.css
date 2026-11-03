@@ -22,7 +22,7 @@
 
 .section__title .u-accent,
 .section__title span.accent {
-  color: var(--color-accent);
+  color: var(--accent-large);
 }
 
 .section__head {

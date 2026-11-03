@@ -25,7 +25,7 @@
   padding: 0 calc(16px * var(--scale)) 0 calc(12px * var(--scale));
   border: 0;
   border-radius: calc(999px * var(--scale));
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
   color: #fff;
   font: inherit;
   font-size: calc(15px * var(--scale));
@@ -36,7 +36,7 @@
 }
 
 .site-chat__fab:hover {
-  background: var(--color-accent-hover);
+  background: var(--btn-primary-hover);
 }
 
 .site-chat.is-open .site-chat__fab {
@@ -107,7 +107,7 @@
 }
 
 .site-chat__phone:hover {
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 .site-chat__status {
@@ -184,7 +184,7 @@
 
 .site-chat__chip:hover {
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 .site-chat__form {
@@ -212,7 +212,7 @@
   padding: 0 calc(14px * var(--scale));
   border: 0;
   border-radius: var(--radius-sm);
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
   color: #fff;
   font: inherit;
   font-size: calc(14px * var(--scale));
@@ -221,7 +221,7 @@
 }
 
 .site-chat__send:hover {
-  background: var(--color-accent-hover);
+  background: var(--btn-primary-hover);
 }
 
 @media (hover: none) and (pointer: coarse) {
@@ -234,6 +234,12 @@
 @media (max-width: 767px) {
   html.is-menu-open .site-chat {
     --chat-bottom: calc(calc(16px * var(--scale)) + var(--menu-cta-h) + calc(16px * var(--scale)) + var(--safe-bottom));
+  }
+
+  /* На вузьких екранах FAB перекривав пункти меню (QA 320px). У меню є телефон і CTA — ховаємо кнопку чату, поки меню відкрите. */
+  html.is-menu-open .site-chat__fab {
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .site-chat__panel {

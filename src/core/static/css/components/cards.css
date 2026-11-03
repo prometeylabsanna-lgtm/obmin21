@@ -90,7 +90,7 @@
   height: calc(8px * var(--scale));
   margin-top: calc(7px * var(--scale));
   border-radius: 50%;
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
 }
 
 .review-card__head {
@@ -129,7 +129,7 @@
   height: calc(48px * var(--scale));
   border-radius: 50%;
   background: var(--color-surface);
-  color: var(--color-accent);
+  color: var(--link);
   display: flex;
   align-items: center;
   justify-content: center;

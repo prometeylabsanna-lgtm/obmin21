@@ -3,10 +3,23 @@
   --scale: 1;
   --color-bg: #ffffff;
   --color-text: #052145;
-  --color-text-muted: #b3b4b6;
-  --color-text-soft: #8a909c;
+  /* Контраст WCAG AA (Design Lead 03.11): вторинний текст 6.05:1 на білому. */
+  --ink: #052145;
+  --ink-muted: #5c6370;
+  --ink-subtle: #7b828f; /* лише large-текст/disabled, межі полів, іконки */
+  --ink-on-dark-muted: #b3b4b6; /* вторинний текст на navy (футер) */
+  --color-text-muted: var(--ink-muted);
+  --color-text-soft: var(--ink-muted);
+  --placeholder: var(--ink-muted);
+  --border-ui: var(--ink-subtle);
+  --border-decor: #eef0f3;
+  --link: #8f5c1f; /* 5.65:1 */
+  --accent-large: #b87b2c; /* 3.55:1 — лише ≥24px або ≥18.66px bold */
+  --btn-primary-bg: #8f5c1f;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #7d5019;
   --color-border: #eef0f3;
-  --color-border-soft: #d5d9df;
+  --color-border-soft: var(--border-ui);
   --color-surface: #f4f5f7;
   --color-surface-alt: #f9fafb;
 
@@ -21,8 +34,8 @@
   --color-navy-mid: #1c3350;
   --color-navy-hover: #1c2f5c;
   --color-footer: #052145;
-  --color-down: #e05a3c;
-  --color-up: #2f9b6a;
+  --color-down: #b0372a;
+  --color-up: #237a52;
 
   --font-display: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-body: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;

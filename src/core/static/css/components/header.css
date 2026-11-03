@@ -38,7 +38,7 @@
 }
 
 .site-header__nav a:hover {
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 .site-header__actions {
@@ -57,12 +57,12 @@
 }
 
 .site-header__phone:hover {
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 .site-header__cta {
   display: none;
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
   color: var(--color-accent-ink);
   font-weight: 600;
   font-size: calc(16px * var(--scale));
@@ -74,7 +74,7 @@
 }
 
 .site-header__cta:hover {
-  background: var(--color-accent-hover);
+  background: var(--btn-primary-hover);
   color: var(--color-accent-ink);
 }
 
@@ -83,7 +83,7 @@
   height: calc(50px * var(--scale));
   border: 0;
   border-radius: calc(8px * var(--scale));
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -180,7 +180,7 @@
 
 .city-select__option:hover,
 .city-select__option.is-active {
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 .mobile-menu {
@@ -221,7 +221,7 @@
   height: calc(54px * var(--scale));
   border: 0;
   border-radius: calc(8px * var(--scale));
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -250,7 +250,7 @@
 }
 
 .mobile-menu__nav a:hover {
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 .mobile-menu__bottom {

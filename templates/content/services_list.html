@@ -112,11 +112,11 @@
       <button type="button" class="slider-nav__btn" data-slider-next aria-label="Далі"><svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M1.5 1.5L7 7l-5.5 5.5" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
     </div>
   </div>
-  <div class="articles-track" data-slider="articles">
+  <div class="articles-track" data-slider="articles" tabindex="0" role="region" aria-label="Статті">
     {% for post in news_posts %}{% if post|shows_in_exchange %}
     <article class="article-slide">
       {% mode_field post 'title' as post_title %}{% mode_field post 'excerpt' as post_excerpt %}
-      <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}">
+      <a class="article-slide__media" href="{% url 'blog:post_detail' post.slug %}" tabindex="-1" aria-hidden="true">
         {% if post.image_url %}
         <img src="{{ post.image_url }}" alt="{{ post_title }}"{% if post.image_width %} width="{{ post.image_width }}" height="{{ post.image_height }}"{% endif %} loading="lazy" decoding="async">
         {% endif %}

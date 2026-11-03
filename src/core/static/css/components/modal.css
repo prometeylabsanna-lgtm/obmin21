@@ -115,7 +115,7 @@
 }
 
 .modal__title .accent {
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 .modal__lead {
@@ -369,7 +369,7 @@
   padding: 0;
   font-family: inherit;
   font-size: calc(13px * var(--scale));
-  color: var(--color-accent);
+  color: var(--link);
   cursor: pointer;
   touch-action: manipulation;
 }

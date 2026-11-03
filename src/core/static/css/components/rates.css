@@ -61,7 +61,7 @@
   background: #fff;
   background-clip: border-box;
   box-shadow: none;
-  color: var(--color-accent);
+  color: var(--link);
   font-weight: 500;
 }
 
@@ -183,7 +183,7 @@
 .rates-table__empty {
   padding: calc(32px * var(--scale)) 0;
   text-align: center;
-  color: #b3b4b6;
+  color: var(--ink-muted);
   font-size: calc(15px * var(--scale));
 }
 
@@ -200,7 +200,7 @@
   align-items: center;
   gap: calc(10px * var(--scale));
   font-size: calc(13px * var(--scale));
-  color: #b3b4b6;
+  color: var(--ink-muted);
 }
 
 .page-hero--rates {
@@ -226,7 +226,7 @@
   display: flex;
   align-items: center;
   gap: calc(6px * var(--scale));
-  color: #b3b4b6;
+  color: var(--ink-muted);
   font-size: calc(13px * var(--scale));
   flex: none;
 }
@@ -357,7 +357,7 @@
   margin: 0;
   font-size: calc(15px * var(--scale));
   line-height: 1.5;
-  color: #8a909c;
+  color: var(--ink-muted);
   max-width: calc(440px * var(--scale));
 }
 

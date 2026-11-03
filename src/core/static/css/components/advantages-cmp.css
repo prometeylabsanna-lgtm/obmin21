@@ -48,7 +48,7 @@
 
 .cmp-adv__badge {
   border: 1px solid var(--color-accent);
-  color: var(--color-accent);
+  color: var(--link);
   border-radius: calc(20px * var(--scale));
   padding: calc(5px * var(--scale)) calc(12px * var(--scale));
   font-size: calc(12px * var(--scale));
@@ -71,7 +71,7 @@
   padding-bottom: calc(22px * var(--scale));
   font-size: calc(20px * var(--scale));
   font-weight: 600;
-  color: #8a909c;
+  color: var(--ink-muted);
 }
 
 .cmp-adv__list {
@@ -109,7 +109,7 @@
 }
 
 .cmp-adv__ok {
-  background: var(--color-accent);
+  background: var(--btn-primary-bg);
 }
 
 .cmp-adv__no {
@@ -123,7 +123,7 @@
 }
 
 .cmp-adv__k--muted {
-  color: #8a909c;
+  color: var(--ink-muted);
 }
 
 .cmp-adv__list strong {
@@ -167,7 +167,7 @@
   height: calc(22px * var(--scale));
   margin-top: 2px;
   border-radius: 50%;
-  background-color: var(--color-accent);
+  background-color: var(--btn-primary-bg);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23fff' fill='none' stroke-width='1.6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
@@ -215,7 +215,7 @@
 }
 
 .cmp-adv__html--them span {
-  color: #8a909c;
+  color: var(--ink-muted);
 }
 
 .cmp-adv__html--them strong {

@@ -40,7 +40,7 @@
 }
 
 .site-footer__heading {
-  color: var(--color-text-muted);
+  color: var(--ink-on-dark-muted);
   font-size: calc(17px * var(--scale));
   font-weight: 400;
   margin-bottom: calc(16px * var(--scale));
@@ -115,7 +115,7 @@
   padding-right: calc(calc(128px * var(--scale)) + env(safe-area-inset-right, 0px));
   border-top: 1px solid rgba(255, 255, 255, 0.35);
   font-size: calc(13px * var(--scale));
-  color: var(--color-text-muted);
+  color: var(--ink-on-dark-muted);
 }
 
 .site-footer__copy,

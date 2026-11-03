@@ -2,7 +2,7 @@
   padding: calc(8px * var(--scale)) 0 0;
   font-size: calc(13px * var(--scale));
   line-height: 1;
-  color: #b3b4b6;
+  color: var(--ink-muted);
 }
 
 .breadcrumbs__list {
@@ -32,11 +32,11 @@
 }
 
 .breadcrumbs a {
-  color: #b3b4b6;
+  color: var(--ink-muted);
 }
 
 .breadcrumbs a:hover {
-  color: var(--color-accent);
+  color: var(--link);
 }
 
 .breadcrumbs__current {

@@ -8,7 +8,7 @@
     {% mode_field post 'title' as post_title %}{% if post.image_url %}<img class="article-banner__img" src="{{ post.image_url }}" alt="{{ post_title }}"{% if post.image_width %} width="{{ post.image_width }}" height="{{ post.image_height }}"{% endif %} decoding="async" fetchpriority="high">{% endif %}
     <div class="article-banner__shade" aria-hidden="true"></div>
     <div class="article-banner__copy">
-      {% if eo %}{% if art.layout_mode.h1a or art.layout_mode.h1b %}<h1 class="article-banner__title">{{ art.layout_mode.h1a }}{% if art.layout_mode.h1b %} <span class="u-accent">{{ art.layout_mode.h1b }}</span>{% endif %}</h1>{% endif %}{% else %}<h1 class="article-banner__title">{{ art.h1a }}{% if art.h1b %} <span class="u-accent">{{ art.h1b }}</span>{% endif %}</h1>{% endif %}
+      {% if eo %}{% if art.layout_mode.h1a or art.layout_mode.h1b %}<h1 class="article-banner__title">{{ art.layout_mode.h1a }}{% if art.layout_mode.h1b %} <span class="u-accent">{{ art.layout_mode.h1b }}</span>{% endif %}</h1>{% endif %}{% else %}<h1 class="article-banner__title">{% if art.h1a or art.h1b %}{{ art.h1a }}{% else %}{{ post.title }}{% endif %}{% if art.h1b %} <span class="u-accent">{{ art.h1b }}</span>{% endif %}</h1>{% endif %}
       <div class="article-banner__meta">
         <span>Обмін21</span>
         <span class="article-banner__dot" aria-hidden="true"></span>

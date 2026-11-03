@@ -14,7 +14,7 @@
 
 .contacts-hero__lead {
   margin: calc(20px * var(--scale)) 0 0;
-  color: #b3b4b6;
+  color: var(--ink-muted);
   font-size: calc(17px * var(--scale));
   line-height: 1.5;
   max-width: calc(520px * var(--scale));
@@ -52,7 +52,7 @@
 
 .contacts-card__label {
   font-size: calc(14px * var(--scale));
-  color: #8a909c;
+  color: var(--ink-muted);
 }
 
 .contacts-card__value {
@@ -68,7 +68,7 @@
 .contacts-card__hint {
   margin-top: calc(6px * var(--scale));
   font-size: calc(14px * var(--scale));
-  color: #b3b4b6;
+  color: var(--ink-muted);
   line-height: 1.4;
 }
 
@@ -154,7 +154,7 @@
   overflow-wrap: anywhere;
   margin-top: calc(4px * var(--scale));
   font-size: calc(14px * var(--scale));
-  color: #8a909c;
+  color: var(--ink-muted);
 }
 
 .contacts-map__item.is-active .contacts-map__item-addr {
@@ -208,7 +208,7 @@
   min-width: 0;
   overflow-wrap: anywhere;
   font-size: calc(14px * var(--scale));
-  color: #8a909c;
+  color: var(--ink-muted);
 }
 
 .contacts-map__card-link {
@@ -216,13 +216,13 @@
   display: inline-flex;
   align-items: center;
   gap: calc(10px * var(--scale));
-  color: var(--color-accent);
+  color: var(--link);
   font-weight: 500;
   font-size: calc(15px * var(--scale));
 }
 
 .contacts-map__card-link:hover {
-  color: var(--color-accent-hover);
+  color: var(--btn-primary-hover);
 }
 
 @media (min-width: 768px) {
