@@ -21,12 +21,14 @@
 .legal-page__nav {
   display: flex;
   flex-wrap: nowrap;
-  gap: calc(8px * var(--scale));
+  gap: var(--space-2);
   margin-top: calc(24px * var(--scale));
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
+  min-width: 0;
+  max-width: 100%;
   padding-bottom: 2px;
 }
 
@@ -39,8 +41,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(38px * var(--scale));
-  padding: 0 calc(18px * var(--scale));
+  min-height: var(--touch-min);
+  padding: var(--space-2) var(--space-4);
   border-radius: calc(19px * var(--scale));
   border: 1px solid var(--color-border-soft);
   background: transparent;

@@ -178,6 +178,23 @@
   .page-hero__updated {
     width: 100%;
   }
+
+  .rates-tabs {
+    grid-auto-rows: minmax(var(--touch-min), auto);
+  }
+
+  .rates-tabs__btn,
+  .rates-tabs__btn.is-active,
+  .rates-tabs__btn[aria-selected="true"] {
+    height: auto;
+    min-height: var(--touch-min);
+    max-height: none;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .rates-page-card {
+    margin-top: var(--space-4);
+  }
 }
 
 .rates-table__empty {

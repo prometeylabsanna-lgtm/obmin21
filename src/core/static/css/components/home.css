@@ -125,7 +125,7 @@
   max-height: calc(40px * var(--scale));
   min-width: 0;
   margin: 0;
-  padding: 0;
+  padding: var(--space-2) var(--space-4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,6 +162,21 @@
   box-shadow: none;
   color: var(--link);
   font-weight: 500;
+}
+
+@media (max-width: 767px) {
+  .hero__rates .rates-tabs {
+    grid-auto-rows: minmax(var(--touch-min), auto);
+  }
+
+  .hero__rates .rates-tabs__btn,
+  .hero__rates .rates-tabs__btn.is-active,
+  .hero__rates .rates-tabs__btn[aria-selected="true"] {
+    height: auto;
+    min-height: var(--touch-min);
+    max-height: none;
+    padding: var(--space-3) var(--space-4);
+  }
 }
 
 .hero__rates .rates-stage {
