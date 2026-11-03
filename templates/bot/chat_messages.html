@@ -1,6 +1,6 @@
 {% load bot_html %}
 {% for msg in messages %}
-<article class="site-chat__msg site-chat__msg--{{ msg.role }}" data-chat-msg>
+<article class="site-chat__msg site-chat__msg--{{ msg.role }}" data-chat-msg{% if success_msg_id and msg.id == success_msg_id %} data-qa="lead-success" data-lead-id="{{ success_lead_id }}"{% endif %}>
   <div class="site-chat__bubble">
     {% if msg.role == 'bot' %}{{ msg.text|bot_html }}{% else %}{{ msg.text }}{% endif %}
   </div>

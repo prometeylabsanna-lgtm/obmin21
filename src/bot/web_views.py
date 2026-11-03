@@ -9,6 +9,7 @@ from src.bot.models import ChatMessage
 from src.bot.outbox import Outgoing
 from src.bot.web_identity import ensure_web_chat_id, web_from_user
 from src.core.phones import pop_phone_request, push_phone_request
+from src.leads.models import ExchangeRequest
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +69,24 @@ def _store_replies(chat_id: str, replies: list[Outgoing]) -> list[ChatMessage]:
     return saved
 
 
+def _last_lead_id(chat_id: str) -> int:
+    last = (
+        ExchangeRequest.objects.filter(telegram_chat_id=str(chat_id))
+        .order_by('-id').values_list('id', flat=True).first()
+    )
+    return last or 0
+
+
+def _fresh_context(chat_id: str, before: int, user_msg, bot_msgs) -> dict:
+    """lead-success лише у свіжому фрагменті, де саме зараз створено заявку (рівно 1 раз)."""
+    ctx = {'messages': [user_msg, *bot_msgs]}
+    lead_id = _last_lead_id(chat_id)
+    if lead_id > before and bot_msgs:
+        ctx['success_msg_id'] = bot_msgs[0].id
+        ctx['success_lead_id'] = lead_id
+    return ctx
+
+
 @require_http_methods(['GET'])
 def chat_log(request):
     chat_id = ensure_web_chat_id(request)
@@ -98,13 +117,14 @@ def chat_send(request):
             'messages': [_store(chat_id, ChatMessage.Role.BOT, 'Забагато запитів. Зачекайте хвилину.')],
         })
     user_msg = _store(chat_id, ChatMessage.Role.USER, text)
+    before = _last_lead_id(chat_id)
     try:
         replies = _call_with_phone(request, lambda: handle_text(user, text))
     except Exception:
         logger.exception('Web chat text failed')
         replies = [Outgoing(html='Сталася помилка. Спробуйте /start')]
     bot_msgs = _store_replies(chat_id, replies)
-    return render(request, 'bot/chat_messages.html', {'messages': [user_msg, *bot_msgs]})
+    return render(request, 'bot/chat_messages.html', _fresh_context(chat_id, before, user_msg, bot_msgs))
 
 
 @require_POST
@@ -120,10 +140,11 @@ def chat_callback(request):
         })
     label = (request.POST.get('label') or data)[:80]
     user_msg = _store(chat_id, ChatMessage.Role.USER, label)
+    before = _last_lead_id(chat_id)
     try:
         replies = _call_with_phone(request, lambda: handle_callback(user, data))
     except Exception:
         logger.exception('Web chat callback failed')
         replies = [Outgoing(html='Сталася помилка. Спробуйте /start')]
     bot_msgs = _store_replies(chat_id, replies)
-    return render(request, 'bot/chat_messages.html', {'messages': [user_msg, *bot_msgs]})
+    return render(request, 'bot/chat_messages.html', _fresh_context(chat_id, before, user_msg, bot_msgs))

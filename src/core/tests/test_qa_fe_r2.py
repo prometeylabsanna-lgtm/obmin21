@@ -82,3 +82,65 @@ class CoverSizeTests(TestCase):
                 start = css.index(sel)
                 block = css[start:css.index('}', start)]
                 self.assertRegex(block, r'\n\s*(height|aspect-ratio):', sel)
+
+
+class ChatLeadSuccessMarkerTests(TestCase):
+    """CP4: data-qa="lead-success" рівно 1 раз — лише у свіжій відповіді, де створено заявку."""
+
+    MARK = 'data-qa="lead-success"'
+
+    def setUp(self):
+        from src.core.tests.test_qa_2026_11_03 import _fixtures
+
+        cache.clear()
+        SiteSettings.load()
+        self.city, self.branch, self.pair = _fixtures('cp4')
+
+    def _confirm(self, user, data):
+        from src.bot.outbox import Outgoing
+        from src.bot.services import submit_exchange, upsert_profile
+
+        profile = upsert_profile(user)
+        obj = submit_exchange(profile.chat_id, profile, {
+            'city_id': self.city.pk, 'pair_id': self.pair.pk, 'direction': 'sell',
+            'amount_give': '100', 'branch_id': self.branch.pk,
+            'name': 'Іван Тест', 'phone': '+380991112233',
+        })
+        return [Outgoing(html=f'Курс зафіксовано до {obj.expires_at}.'), Outgoing(html='Меню')]
+
+    def _post_confirm(self):
+        from unittest.mock import patch
+
+        with patch('src.leads.services.notify_new_lead'), \
+                patch('src.bot.web_views.handle_callback', side_effect=self._confirm):
+            return self.client.post(reverse('bot:chat_callback'), {'data': 'ex:confirm', 'label': 'Так'})
+
+    def test_success_has_exactly_one_marker(self):
+        from src.leads.models import ExchangeRequest
+
+        html = self._post_confirm().content.decode()
+        self.assertEqual(html.count(self.MARK), 1)
+        lead = ExchangeRequest.objects.get()
+        self.assertIn(f'data-lead-id="{lead.pk}"', html)
+        marked = re.search(r'<article[^>]*lead-success[^>]*>(.*?)</article>', html, re.S).group(1)
+        self.assertIn('Курс зафіксовано', marked)
+
+    def test_intermediate_step_has_no_marker(self):
+        html = self.client.post(reverse('bot:chat_send'), {'text': 'курси'}).content.decode()
+        self.assertEqual(html.count(self.MARK), 0)
+
+    def test_error_has_no_marker(self):
+        from unittest.mock import patch
+
+        with patch('src.bot.web_views.handle_callback', side_effect=ValueError('boom')):
+            html = self.client.post(reverse('bot:chat_callback'), {'data': 'ex:confirm'}).content.decode()
+        self.assertIn('Сталася помилка', html)
+        self.assertEqual(html.count(self.MARK), 0)
+
+    def test_history_and_next_step_do_not_repeat_marker(self):
+        self._post_confirm()
+        history = self.client.get(reverse('bot:chat_log')).content.decode()
+        self.assertIn('Курс зафіксовано', history)
+        self.assertEqual(history.count(self.MARK), 0)
+        nxt = self.client.post(reverse('bot:chat_send'), {'text': 'курси'}).content.decode()
+        self.assertEqual(nxt.count(self.MARK), 0)
