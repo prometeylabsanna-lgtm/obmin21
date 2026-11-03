@@ -77,3 +77,23 @@ class RawTagTests(R2Base):
         r = self.client.get(reverse('blog:post_detail', kwargs={'slug': post.slug}))
         self.assertNotContains(r, '&lt;p&gt;')
         self.assertContains(r, 'Курс долара залишається')
+
+
+class FormatBodyListTests(TestCase):
+    def test_dash_lines_become_grouped_list_escaped(self):
+        from src.core.templatetags.content_format import format_body
+        out = format_body(
+            'Оптимальний розподіл валют\n\nТекст абзацу.\n\n'
+            '- Долар — <b>основа</b>\n\n- Євро — для ЄС\n- Гривня\n\nКінець.'
+        )
+        self.assertIn(
+            '<ul class="detail-page__list"><li>Долар — &lt;b&gt;основа&lt;/b&gt;</li>'
+            '<li>Євро — для ЄС</li><li>Гривня</li></ul><p>Кінець.</p>', out)
+        self.assertEqual(out.count('<ul'), 1)
+        self.assertNotIn('subhead">- ', out)
+        self.assertIn('<h2 class="detail-page__subhead">Оптимальний розподіл валют</h2>', out)
+
+    def test_plain_body_in_article_renders_list(self):
+        from src.core.templatetags.content_format import rich_html
+        out = rich_html('Вступ.\n\n- Один\n- Два')
+        self.assertIn('<ul class="detail-page__list"><li>Один</li><li>Два</li></ul>', out)

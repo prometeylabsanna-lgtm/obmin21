@@ -134,25 +134,54 @@ def rich_html(value):
     return format_body(text)
 
 
+_LIST_ITEM_RE = re.compile(r'^[-•–]\s+(.*)$')
+
+
 @register.filter(name='format_body')
 def format_body(value):
-    """Split plain text into paragraphs; short standalone lines become subheads."""
+    """Plain text → paragraphs; short standalone lines become subheads;
+    lines starting with '- ' become <ul><li> (consecutive lines grouped,
+    also across blank lines). All text is escaped via mark_brand."""
     if not value:
         return ''
     blocks = re.split(r'\n\s*\n', str(value).strip())
     parts = []
+    items = []
+
+    def flush_list():
+        if items:
+            lis = ''.join(f'<li>{mark_brand(it)}</li>' for it in items)
+            parts.append(f'<ul class="detail-page__list">{lis}</ul>')
+            items.clear()
+
     for block in blocks:
         lines = [ln.strip() for ln in block.split('\n') if ln.strip()]
         if not lines:
             continue
-        if len(lines) == 1 and _is_heading(lines[0]):
-            parts.append(
-                f'<h2 class="detail-page__subhead">{mark_brand(lines[0])}</h2>'
-            )
-            continue
-        inner = '<br>'.join(mark_brand(ln) for ln in lines)
-        parts.append(f'<p>{inner}</p>')
+        para = []
+        for ln in lines:
+            m = _LIST_ITEM_RE.match(ln)
+            if m and m.group(1).strip():
+                if para:
+                    flush_list()
+                    parts.append(_block(para))
+                    para = []
+                items.append(m.group(1).strip())
+            else:
+                if items and not para:
+                    flush_list()
+                para.append(ln)
+        if para:
+            flush_list()
+            parts.append(_block(para))
+    flush_list()
     return mark_safe(''.join(parts))
+
+
+def _block(lines):
+    if len(lines) == 1 and _is_heading(lines[0]):
+        return f'<h2 class="detail-page__subhead">{mark_brand(lines[0])}</h2>'
+    return '<p>' + '<br>'.join(mark_brand(ln) for ln in lines) + '</p>'
 
 
 def _paragraph(inner: str) -> str:

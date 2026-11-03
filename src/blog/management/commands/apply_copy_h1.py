@@ -38,6 +38,11 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--csv', default=str(DEFAULT_CSV))
         parser.add_argument('--apply', action='store_true')
+        parser.add_argument('--slug', default='', help='Process only this slug.')
+        parser.add_argument(
+            '--force', action='store_true',
+            help='Overwrite existing h1a/h1b (requires --slug).',
+        )
 
     def handle(self, *args, **opts):
         path = Path(opts['csv'])
@@ -46,6 +51,14 @@ class Command(BaseCommand):
         with path.open(encoding='utf-8-sig', newline='') as fh:
             rows = list(csv.DictReader(fh))
         apply = opts['apply']
+        only = (opts.get('slug') or '').strip()
+        force = opts.get('force')
+        if force and not only:
+            raise CommandError('--force requires --slug')
+        if only:
+            rows = [r for r in rows if (r.get('slug') or '').strip() == only]
+            if not rows:
+                raise CommandError(f'slug not in CSV: {only}')
         applied = skipped = 0
         with transaction.atomic():
             for row in rows:
@@ -69,7 +82,8 @@ class Command(BaseCommand):
                 changes = {}
                 for key, value in zip(KEYS, (h1a, h1b)):
                     have = data.get(key)
-                    if value and not (isinstance(have, str) and have.strip()):
+                    filled = isinstance(have, str) and have.strip()
+                    if value and (not filled or (force and have.strip() != value)):
                         changes[key] = value
                 if not changes:
                     skipped += 1

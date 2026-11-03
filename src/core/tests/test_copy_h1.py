@@ -72,3 +72,20 @@ class ApplyCopyH1Tests(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.context['art']['layout_mode']['h1a'], 'Долар чи євро:')
         self.assertContains(r, 'Долар чи євро: <span class="u-accent">у чому зберігати</span>', html=False)
+
+
+class ApplyCopyH1ForceTests(ApplyCopyH1Tests):
+    def test_force_single_slug_overwrites_only_that_slug(self):
+        a = self._post('a', layout_mode={'h1a': 'Старе', 'h1b': 'хвіст'})
+        b = self._post('b', layout_mode={'h1a': 'Своє B'})
+        path = _csv([['a', 'published', 'Нове', 'хвіст'], ['b', 'published', 'B', 'b2']])
+        out = self._run(path, '--slug', 'a', '--force', '--apply')
+        self.assertIn('applied: applied=1 skipped=0', out)
+        a.refresh_from_db(); b.refresh_from_db()
+        self.assertEqual(a.layout_mode, {'h1a': 'Нове', 'h1b': 'хвіст'})
+        self.assertEqual(b.layout_mode, {'h1a': 'Своє B'})
+
+    def test_force_without_slug_is_rejected(self):
+        from django.core.management.base import CommandError
+        with self.assertRaises(CommandError):
+            self._run(_csv([]), '--force')
