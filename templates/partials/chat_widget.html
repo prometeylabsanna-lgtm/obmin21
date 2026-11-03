@@ -30,6 +30,10 @@
     <form class="site-chat__form" data-chat-form hx-post="{% url 'bot:chat_send' %}" hx-target="#site-chat-log" hx-swap="beforeend" hx-disabled-elt="find button[type=submit]">
       <label class="site-chat__sr" for="site-chat-input">Повідомлення</label>
       <input id="site-chat-input" class="site-chat__input" name="text" type="text" maxlength="2000" autocomplete="off" enterkeyhint="send" placeholder="Напишіть повідомлення" data-chat-input>
+      <div class="form__hp-wrap" aria-hidden="true">
+        <label for="site-chat-website">Website</label>
+        <input id="site-chat-website" class="form__hp" type="text" name="website" tabindex="-1" autocomplete="off" value="">
+      </div>
       <button type="submit" class="site-chat__send" aria-label="Надіслати">Надіслати</button>
     </form>
     <form hidden data-chat-cb-form hx-post="{% url 'bot:chat_callback' %}" hx-target="#site-chat-log" hx-swap="beforeend">

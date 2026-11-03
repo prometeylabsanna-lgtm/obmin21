@@ -131,6 +131,18 @@ class WebChatTests(TestCase):
         )
         self.assertEqual(cb.status_code, 200)
 
+    def test_send_honeypot_rejected(self):
+        from src.bot.models import ChatMessage
+
+        self.client.get(reverse('bot:chat_log'))
+        before = ChatMessage.objects.count()
+        send = self.client.post(
+            reverse('bot:chat_send'),
+            {'text': 'курси', 'website': 'http://spam.example'},
+        )
+        self.assertEqual(send.status_code, 200)
+        self.assertEqual(ChatMessage.objects.count(), before)
+
 
 @override_settings(TELEGRAM_BOT_TOKEN='bot-tok')
 class BotClientChatIdTests(TestCase):

@@ -86,6 +86,9 @@ def chat_send(request):
     chat_id = ensure_web_chat_id(request)
     user = web_from_user(request)
     text = (request.POST.get('text') or '').strip()[:2000]
+    if request.POST.get('website'):
+        # Honeypot заповнений — бот. Мовчки нічого не зберігаємо.
+        return render(request, 'bot/chat_messages.html', {'messages': []})
     if not text:
         return render(request, 'bot/chat_messages.html', {'messages': []})
     if not _rate_ok(chat_id) or not allow_request(
