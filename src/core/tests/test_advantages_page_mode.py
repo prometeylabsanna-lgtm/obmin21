@@ -26,6 +26,7 @@ from src.content.advantages_mode_copy import (
     iter_mode_targets,
 )
 from src.content.models import AdvantagesPage, CookiePage, OfferPage, PrivacyPage
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.core.exchange_fields import MODE_FIELD_HELP, resolved_text
 from src.core.exchange_mode import mode_text
 from src.core.exchange_stopwords import STOP_WORDS, matches_stop_words
@@ -116,8 +117,8 @@ class AdvantagesPageModeTests(TestCase):
             why_coins='advantages/coins.png',
             why_coins_mode='',
         )
-        written = fill_advantages_page_mode(apps, None)
-        again = fill_advantages_page_mode(apps, None)
+        written = fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)
+        again = fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertEqual(again, {})
         self.assertEqual(set(written) - {'stat_1_text_mode'}, set(text_modes))
@@ -154,7 +155,7 @@ class AdvantagesPageModeTests(TestCase):
         self.page.why_lead_mode = 'Свій лід обміну готівки'
         self.page.cmp_btn_mode = 'Своя кнопка'
         self.page.save(update_fields=['why_lead_mode', 'cmp_btn_mode'])
-        fill_advantages_page_mode(apps, None)
+        fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertEqual(self.page.why_lead_mode, 'Свій лід обміну готівки')
         self.assertEqual(self.page.cmp_btn_mode, 'Своя кнопка')
@@ -175,7 +176,7 @@ class AdvantagesPageModeTests(TestCase):
             'why_3_text',
             'why_3_text_mode',
         ])
-        written = fill_advantages_page_mode(apps, None)
+        written = fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertEqual(written['stat_2_text_mode'], advantage_default('stat_2_text'))
         self.assertEqual(self.page.stat_2_text_mode, advantage_default('stat_2_text'))
@@ -204,7 +205,7 @@ class AdvantagesPageModeTests(TestCase):
             why_coins='advantages/crypto-btc.png',
             why_coins_mode='',
         )
-        written = fill_advantages_page_mode(apps, None)
+        written = fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertNotIn('why_banner_mode', written)
         self.assertNotIn('why_coins_mode', written)
@@ -216,7 +217,7 @@ class AdvantagesPageModeTests(TestCase):
             why_coins='advantages/office-desk.jpg',
             why_coins_mode='',
         )
-        written = fill_advantages_page_mode(apps, None)
+        written = fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertEqual(written['why_banner_mode'], 'advantages/branch-hall.jpg')
         self.assertEqual(written['why_coins_mode'], 'advantages/office-desk.jpg')
@@ -226,7 +227,7 @@ class AdvantagesPageModeTests(TestCase):
             why_banner='advantages/other-hall.jpg',
             why_banner_mode='advantages/kept-hall.jpg',
         )
-        fill_advantages_page_mode(apps, None)
+        fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertEqual(self.page.why_banner_mode.name, 'advantages/kept-hall.jpg')
 
@@ -296,7 +297,7 @@ class AdvantagesPageModeTests(TestCase):
             'stat_2_text_mode',
             'why_lead_mode',
         ])
-        written = fill_stat_1_text_mode(apps, None)
+        written = fill_stat_1_text_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertEqual(written, {'stat_1_text_mode': STAT_1_TEXT_MODE})
         self.assertEqual(self.page.stat_1_text_mode, STAT_1_TEXT_MODE)
@@ -305,23 +306,23 @@ class AdvantagesPageModeTests(TestCase):
         self.assertEqual(self.page.stat_2_text_mode, '')
         self.assertEqual(self.page.why_lead_mode, '')
         self.assertFalse(getattr(self.page, 'exchange_safe', False))
-        self.assertEqual(fill_stat_1_text_mode(apps, None), {})
+        self.assertEqual(fill_stat_1_text_mode(apps, SEED_FILL_CONTEXT), {})
 
         self.page.stat_1_text_mode = 'Свій текст про готівкових клієнтів'
         self.page.save(update_fields=['stat_1_text_mode'])
-        self.assertEqual(fill_stat_1_text_mode(apps, None), {})
+        self.assertEqual(fill_stat_1_text_mode(apps, SEED_FILL_CONTEXT), {})
         self.page.refresh_from_db()
         self.assertEqual(self.page.stat_1_text_mode, 'Свій текст про готівкових клієнтів')
 
         self.page.stat_1_text_mode = '   '
         self.page.save(update_fields=['stat_1_text_mode'])
-        written = fill_stat_1_text_mode(apps, None)
+        written = fill_stat_1_text_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertEqual(written['stat_1_text_mode'], STAT_1_TEXT_MODE)
         self.assertEqual(self.page.stat_1_text_mode, STAT_1_TEXT_MODE)
 
         AdvantagesPage.objects.filter(pk=1).delete()
-        self.assertEqual(fill_stat_1_text_mode(apps, None), {})
+        self.assertEqual(fill_stat_1_text_mode(apps, SEED_FILL_CONTEXT), {})
 
         migration = next((
             _ROOT / 'src/content/migrations'
@@ -333,7 +334,7 @@ class AdvantagesPageModeTests(TestCase):
         self.assertIn("('content', '0028_advantages_page_mode_fields')", content)
         self.assertIn('fill_stat_1_text_mode', content)
         self.assertIn('noop_reverse', content)
-        self.assertIn('fill_stat_1_text_mode(apps, None)', seed)
+        self.assertIn('fill_stat_1_text_mode(apps, SEED_FILL_CONTEXT)', seed)
         self.assertNotIn('exchange_safe', content)
         self.assertNotIn('exchange_safe', seed)
 
@@ -356,8 +357,8 @@ class AdvantagesPageModeTests(TestCase):
         self.assertNotIn('body_mode', content)
         for source in (content, seed, copy_src):
             self.assertNotIn('exchange_safe', source)
-        self.assertIn('fill_advantages_page_mode(apps, None)', seed)
+        self.assertIn('fill_advantages_page_mode(apps, SEED_FILL_CONTEXT)', seed)
 
     def test_missing_page_is_left_alone(self):
         AdvantagesPage.objects.filter(pk=1).delete()
-        self.assertEqual(fill_advantages_page_mode(apps, None), {})
+        self.assertEqual(fill_advantages_page_mode(apps, SEED_FILL_CONTEXT), {})

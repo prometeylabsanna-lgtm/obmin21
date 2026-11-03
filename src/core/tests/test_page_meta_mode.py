@@ -25,6 +25,7 @@ from src.content.page_meta_mode import (
     is_exchange_service,
 )
 from src.content.service_blocks import SERVICE_BLOCK_DEFAULTS
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.core.exchange_stopwords import matches_stop_words
 from src.core.tests.test_services_page_mode import load_filter_stopwords
 from src.rates.models import CurrencyPair
@@ -221,8 +222,8 @@ class PageMetaModeTests(TestCase):
             seo_description='Опис',
         )
 
-        fill_page_meta_mode(apps, None)
-        fill_fiat_pair_mode(apps, None)
+        fill_page_meta_mode(apps, SEED_FILL_CONTEXT)
+        fill_fiat_pair_mode(apps, SEED_FILL_CONTEXT)
         fill_page_meta_mode(apps, None)
         fill_fiat_pair_mode(apps, None)
 
@@ -269,8 +270,8 @@ class PageMetaModeTests(TestCase):
         ServicesPage.objects.filter(pk=1).update(title_mode='Свій заголовок')
         usd.seo_title_mode = 'Свій курс'
         usd.save(update_fields=['seo_title_mode'])
-        fill_page_meta_mode(apps, None)
-        fill_fiat_pair_mode(apps, None)
+        fill_page_meta_mode(apps, SEED_FILL_CONTEXT)
+        fill_fiat_pair_mode(apps, SEED_FILL_CONTEXT)
         page = ServicesPage.objects.get(pk=1)
         usd.refresh_from_db()
         self.assertEqual(page.title_mode, 'Свій заголовок')
@@ -303,5 +304,5 @@ class PageMetaModeTests(TestCase):
             self.assertNotIn("name='exchange_safe'", source)
             self.assertNotIn('exchange_safe =', source)
             self.assertNotIn("['exchange_safe']", source)
-        self.assertIn('fill_page_meta_mode(apps, None)', seed)
-        self.assertIn('fill_fiat_pair_mode(apps, None)', seed)
+        self.assertIn('fill_page_meta_mode(apps, SEED_FILL_CONTEXT)', seed)
+        self.assertIn('fill_fiat_pair_mode(apps, SEED_FILL_CONTEXT)', seed)

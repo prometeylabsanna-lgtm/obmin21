@@ -85,4 +85,4 @@ class BannerSuffixBlankTests(TestCase):
             instance=city,
         )
         self.assertFalse(posted.is_valid())
-        self.assertIn(STALE_BANNER_MESSAGE, posted.errors.as_json())
+        self.assertIn(STALE_BANNER_MESSAGE, posted.non_field_errors())

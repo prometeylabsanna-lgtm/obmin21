@@ -13,6 +13,7 @@ from src.content.stage3_fill import (
     fill_services_page_mode,
 )
 from src.core.exchange_fields import resolved_text
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.core.models import SiteSettings
 
 _ENV = 'EXCHANGE_ONLY_MODE'
@@ -66,7 +67,7 @@ class ServicesPageModeTests(TestCase):
         self.page.hero_text_mode = ''
         self.page.seo_description_mode = ''
         self.page.save(update_fields=['hero_text_mode', 'seo_description_mode'])
-        fill_services_page_mode(apps, None)
+        fill_services_page_mode(apps, SEED_FILL_CONTEXT)
         self.page.refresh_from_db()
         self.assertEqual(
             self.page.hero_text_mode,

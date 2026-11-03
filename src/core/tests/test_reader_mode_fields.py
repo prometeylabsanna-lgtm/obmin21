@@ -309,6 +309,6 @@ class ReaderModeFieldTests(TestCase):
         self.assertIn('name_mode', network)
         for source in (content, network):
             self.assertNotIn('exchange_safe', source)
-        self.assertIn('fill_reader_mode_fields(apps, None)', seed)
-        self.assertIn('fill_city_name_mode(apps, None)', seed)
+        self.assertIn('fill_reader_mode_fields(apps, SEED_FILL_CONTEXT)', seed)
+        self.assertIn('fill_city_name_mode(apps, SEED_FILL_CONTEXT)', seed)
         self.assertNotIn('exchange_safe', seed)

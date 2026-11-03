@@ -156,9 +156,15 @@ class CityBranchHomeSeoModeTests(TestCase):
         fill_articles_lead(apps, None)
         home.refresh_from_db()
         services.refresh_from_db()
-        self.assertEqual(home.seo_block_title_mode, '')
-        self.assertEqual(home.seo_block_body_mode, '')
-        self.assertEqual(home.articles_lead, '')
+        self.assertEqual(
+            home.seo_block_title_mode,
+            HOME_SEO_MODE_COPY['seo_block_title_mode'],
+        )
+        self.assertEqual(
+            home.seo_block_body_mode,
+            HOME_SEO_MODE_COPY['seo_block_body_mode'],
+        )
+        self.assertEqual(home.articles_lead, SERVICES_MENTION_LEAD)
         self.assertEqual(services.intro, 'Інтро яке не можна затерти')
         home.articles_lead = 'Свій лід'
         home.seo_block_body_mode = 'Свій SEO текст'
@@ -255,8 +261,8 @@ class CityBranchHomeSeoModeTests(TestCase):
         seed = (_ROOT / 'src/core/management/commands/seed_demo.py').read_text(
             encoding='utf-8',
         )
-        self.assertIn('fill_articles_lead(apps, None)', seed)
-        self.assertIn('fill_city_banner_seo_mode(apps, None)', seed)
+        self.assertIn('fill_articles_lead(apps, SEED_FILL_CONTEXT)', seed)
+        self.assertIn('fill_city_banner_seo_mode(apps, SEED_FILL_CONTEXT)', seed)
         self.assertNotIn('home.articles_lead =', seed)
         self.assertIn("if not (services_page.intro or '').strip():", seed)
         home = HomePage.objects.get(pk=1)
@@ -267,7 +273,7 @@ class CityBranchHomeSeoModeTests(TestCase):
         home = HomePage.objects.get(pk=1)
         home.articles_lead = ''
         home.save(update_fields=['articles_lead'])
-        fill_articles_lead(apps, None)
+        fill_articles_lead(apps, SEED_FILL_CONTEXT)
         home.refresh_from_db()
         self.assertEqual(home.articles_lead, _POSLUHY_LEAD)
         services = ServicesPage.load()

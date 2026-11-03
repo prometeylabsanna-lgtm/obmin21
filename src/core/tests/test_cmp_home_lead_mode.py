@@ -27,6 +27,7 @@ from src.content.home_copy import (
 )
 from src.content.models import AdvantagesPage, HomePage
 from src.content.stage3_fill import fill_cmp_and_home_lead_mode
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.core.models import SiteSettings
 
 _ENV = 'EXCHANGE_ONLY_MODE'
@@ -197,7 +198,7 @@ class CmpHomeLeadModeTests(TestCase):
             'articles_lead_mode',
         ])
 
-        fill_cmp_and_home_lead_mode(apps, None)
+        fill_cmp_and_home_lead_mode(apps, SEED_FILL_CONTEXT)
         fill_cmp_and_home_lead_mode(apps, None)
         page.refresh_from_db()
         home.refresh_from_db()
@@ -216,7 +217,7 @@ class CmpHomeLeadModeTests(TestCase):
         home.services_lead_mode = 'Свій режим послуг'
         home.articles_lead_mode = 'Свій режим статей'
         home.save(update_fields=['services_lead_mode', 'articles_lead_mode'])
-        fill_cmp_and_home_lead_mode(apps, None)
+        fill_cmp_and_home_lead_mode(apps, SEED_FILL_CONTEXT)
         page.refresh_from_db()
         home.refresh_from_db()
         self.assertEqual(page.cmp_us_html_mode, '<ul><li>редактор</li></ul>')

@@ -18,6 +18,7 @@ from src.content.legal_copy import (
     apply_legal_replacements,
 )
 from src.content.models import CookiePage, OfferPage, PrivacyPage
+from src.core.deploy_seed import SEED_FILL_CONTEXT
 from src.core.models import SiteSettings
 from src.core.tests.test_services_page_mode import load_filter_stopwords
 
@@ -68,7 +69,7 @@ class LegalPageCopyTests(TestCase):
 
     def test_replacement_is_idempotent_and_keeps_editor_text(self):
         pages = self._load_old_pages()
-        apply_legal_replacements(apps, None)
+        apply_legal_replacements(apps, SEED_FILL_CONTEXT)
         for key, page, cleaned in pages:
             page.refresh_from_db()
             self.assertEqual(page.body, cleaned)
@@ -79,7 +80,7 @@ class LegalPageCopyTests(TestCase):
             key: model.objects.get(pk=1).body
             for _url_name, model, key, _cleaned in _PAGES
         }
-        apply_legal_replacements(apps, None)
+        apply_legal_replacements(apps, SEED_FILL_CONTEXT)
         for key, body in snapshot.items():
             model = dict((item[2], item[1]) for item in _PAGES)[key]
             self.assertEqual(model.objects.get(pk=1).body, body)
@@ -87,7 +88,7 @@ class LegalPageCopyTests(TestCase):
         privacy = PrivacyPage.objects.get(pk=1)
         privacy.body = 'Окремий абзац, який залишив редактор.'
         privacy.save(update_fields=['body'])
-        apply_legal_replacements(apps, None)
+        apply_legal_replacements(apps, SEED_FILL_CONTEXT)
         privacy.refresh_from_db()
         self.assertEqual(privacy.body, 'Окремий абзац, який залишив редактор.')
 
@@ -99,7 +100,7 @@ class LegalPageCopyTests(TestCase):
         self.assertFalse(matches_stop_words(OFFER_BODY))
         self.assertFalse(matches_stop_words(COOKIE_BODY))
         self._load_old_pages()
-        apply_legal_replacements(apps, None)
+        apply_legal_replacements(apps, SEED_FILL_CONTEXT)
 
         for enabled in (False, True):
             self._mode(enabled)

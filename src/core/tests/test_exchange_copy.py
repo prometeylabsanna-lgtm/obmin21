@@ -64,7 +64,7 @@ class Stage3CopyTests(TestCase):
 
     def test_fill_service_blocks_and_second_run_keeps_them(self):
         service = self._service()
-        fill_content_copy(apps, None)
+        fill_content_copy(apps, SEED_FILL_CONTEXT)
         service.refresh_from_db()
         default = SERVICE_BLOCK_DEFAULTS['obmin-valyut']
         self.assertEqual(service.block_text, default['text'])
@@ -136,12 +136,12 @@ class Stage3CopyTests(TestCase):
     def test_fill_article_layout_is_idempotent(self):
         slug = 'kurs-dolara-2027'
         post = self._post(slug)
-        fill_article_layouts(apps, None)
+        fill_article_layouts(apps, SEED_FILL_CONTEXT)
         post.refresh_from_db()
         self.assertEqual(post.layout['h1a'], BY_SLUG[slug]['h1a'])
         self.assertEqual(post.layout['sections'], BY_SLUG[slug]['sections'])
         snapshot = copy.deepcopy(post.layout)
-        fill_article_layouts(apps, None)
+        fill_article_layouts(apps, SEED_FILL_CONTEXT)
         post.refresh_from_db()
         self.assertEqual(post.layout, snapshot)
         post.layout = {
