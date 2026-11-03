@@ -2,6 +2,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
+from src.blog.article_data import _parse_layout
 from src.blog.models import Category, Post
 from src.blog.selectors import category_is_public, get_published_posts, visible_categories
 from src.content.models import BlogPage
@@ -131,7 +132,19 @@ def post_list(request, category_slug=None):
 def _layout_mode(post, layout, request):
     if not exchange_only(request):
         return layout
-    return _mode_value(post, layout, request, None)
+    shown = _mode_value(post, layout, request, None)
+    # Explicit exchange-only copy stored in Post.layout_mode is mode text.
+    own = _parse_layout(getattr(post, 'layout_mode', None)) or {}
+    for key in _MODE_LAYOUT_TEXT_KEYS:
+        value = own.get(key)
+        if isinstance(value, str) and value.strip():
+            shown[key] = value.strip()
+    if own.get('sections'):
+        shown['sections'] = layout.get('sections') or []
+    return shown
+
+
+_MODE_LAYOUT_TEXT_KEYS = ('h1a', 'h1b', 'lead', 'read', 'fig_cap')
 
 
 def _mode_value(post, value, request, key):
