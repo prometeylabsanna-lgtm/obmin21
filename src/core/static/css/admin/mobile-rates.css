@@ -1,62 +1,118 @@
 /* Мобільний список валютних пар: горизонтальний скрол, тінь країв, перша колонка видима. */
 
 @media (max-width: 767px) {
-  body.app-rates.model-currencypair.change-list #changelist,
+  @property --rates-left-hint {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 1;
+  }
+
+  @property --rates-right-hint {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 1;
+  }
+
+  /* Не обнуляти margin і не лишати max-width:100% на #changelist:
+     Unfold .-mx-4 має вийти за px-4 сторінки, інакше пошук і таблиця зсуваються вправо. */
+  body.app-rates.model-currencypair.change-list #changelist {
+    min-width: 0;
+    max-width: none;
+  }
+
   body.app-rates.model-currencypair.change-list #changelist-form {
-    margin-left: 0;
-    margin-right: 0;
     min-width: 0;
     max-width: 100%;
-    transform: none;
   }
 
   body.app-rates.model-currencypair.change-list #changelist :has(> #result_list) {
-    --rates-scroll-cover: #ffffff;
     --rates-scroll-shadow: rgba(5, 33, 69, 0.34);
     box-sizing: border-box;
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(100%, max-content);
+    grid-template-rows: auto;
     direction: ltr;
     position: relative;
-    left: 0;
     width: 100%;
     max-width: 100%;
     min-width: 0;
     margin: 0;
     padding-left: 0;
     padding-right: 0;
-    transform: none;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
     border: 1px solid var(--color-base-300, #c5d0de);
-    background-color: var(--rates-scroll-cover);
-    background-image:
-      linear-gradient(to right, var(--rates-scroll-cover) 42%, rgba(255, 255, 255, 0)),
-      linear-gradient(to left, var(--rates-scroll-cover) 42%, rgba(255, 255, 255, 0)),
-      radial-gradient(farthest-side at 0 50%, var(--rates-scroll-shadow), rgba(5, 33, 69, 0)),
-      radial-gradient(farthest-side at 100% 50%, var(--rates-scroll-shadow), rgba(5, 33, 69, 0));
-    background-repeat: no-repeat;
-    background-position: left center, right center, left center, right center;
-    background-size: 40px 100%, 40px 100%, 16px 100%, 16px 100%;
-    background-attachment: local, local, scroll, scroll;
-    background-origin: padding-box;
-    background-clip: padding-box;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    body.app-rates.model-currencypair.change-list #changelist :has(> #result_list) {
+      animation-name: rates-scroll-hint-left, rates-scroll-hint-right;
+      animation-duration: auto, auto;
+      animation-timing-function: linear, linear;
+      animation-fill-mode: both, both;
+      animation-timeline: scroll(self inline), scroll(self inline);
+      animation-range-start: 0px, calc(100% - 20px);
+      animation-range-end: 20px, 100%;
+    }
   }
 
   html.dark body.app-rates.model-currencypair.change-list #changelist :has(> #result_list) {
-    --rates-scroll-cover: var(--color-base-900, #052145);
     --rates-scroll-shadow: rgba(0, 0, 0, 0.72);
     border-color: var(--color-base-700, #1c3350);
-    background-color: var(--rates-scroll-cover);
-    background-image:
-      linear-gradient(to right, var(--rates-scroll-cover) 42%, rgba(5, 33, 69, 0)),
-      linear-gradient(to left, var(--rates-scroll-cover) 42%, rgba(5, 33, 69, 0)),
-      radial-gradient(farthest-side at 0 50%, var(--rates-scroll-shadow), rgba(0, 0, 0, 0)),
-      radial-gradient(farthest-side at 100% 50%, var(--rates-scroll-shadow), rgba(0, 0, 0, 0));
+  }
+
+  body.app-rates.model-currencypair.change-list #changelist :has(> #result_list)::before,
+  body.app-rates.model-currencypair.change-list #changelist :has(> #result_list)::after {
+    content: "";
+    grid-area: 1 / 1;
+    position: -webkit-sticky;
+    position: sticky;
+    z-index: 3;
+    align-self: stretch;
+    justify-self: start;
+    width: 16px;
+    pointer-events: none;
+  }
+
+  body.app-rates.model-currencypair.change-list #changelist :has(> #result_list)::before {
+    left: 0;
+    opacity: var(--rates-left-hint, 1);
+    background: linear-gradient(to right, var(--rates-scroll-shadow), transparent);
+  }
+
+  body.app-rates.model-currencypair.change-list #changelist :has(> #result_list)::after {
+    right: 0;
+    margin-left: auto;
+    opacity: var(--rates-right-hint, 1);
+    background: linear-gradient(to left, var(--rates-scroll-shadow), transparent);
+  }
+
+  @keyframes rates-scroll-hint-left {
+    from {
+      --rates-left-hint: 0;
+    }
+
+    to {
+      --rates-left-hint: 1;
+    }
+  }
+
+  @keyframes rates-scroll-hint-right {
+    from {
+      --rates-right-hint: 1;
+    }
+
+    to {
+      --rates-right-hint: 0;
+    }
   }
 
   body.app-rates.model-currencypair.change-list #result_list {
+    grid-area: 1 / 1;
+    position: relative;
+    z-index: 1;
     direction: ltr;
     float: none;
     margin: 0;
@@ -65,17 +121,6 @@
     min-width: 100%;
     max-width: none;
     border-spacing: 0;
-    background-color: transparent;
-    background-image: none;
-  }
-
-  body.app-rates.model-currencypair.change-list #result_list thead,
-  body.app-rates.model-currencypair.change-list #result_list tbody,
-  body.app-rates.model-currencypair.change-list #result_list tr,
-  body.app-rates.model-currencypair.change-list #result_list th,
-  body.app-rates.model-currencypair.change-list #result_list td {
-    background-color: transparent;
-    background-image: none;
   }
 
   body.app-rates.model-currencypair.change-list #result_list th,
