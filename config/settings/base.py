@@ -187,6 +187,7 @@ UNFOLD = {
         lambda request: static('css/admin/mobile-inlines.css') + '?v=1',
         lambda request: static('css/admin/mode-accordion.css') + '?v=1',
         lambda request: static('css/admin/mobile-a11y.css') + '?v=1',
+        lambda request: static('css/admin/mobile-dark.css') + '?v=1',
         lambda request: static('css/admin/mobile-lists.css') + '?v=1',
     ],
     'SCRIPTS': [

@@ -1,0 +1,205 @@
+/* Темна адмінка Unfold (клас dark на html). Світла тема не змінюється,
+   крім вирівнювання картки індексу застосунку до 767px. */
+
+/* 1. TinyMCE (skin oxide). Хром стилізується тут; документ усередині iframe
+   зовнішній CSS не бачить, тому область набору лишається світлою і
+   інвертується фільтром: чорний текст на білому стає світлим на темному. */
+
+html.dark .tox.tox-tinymce {
+  border-color: var(--color-base-700, #1c3350);
+  background-color: var(--color-base-900, #052145);
+}
+
+html.dark .tox .tox-editor-header,
+html.dark .tox.tox-tinymce--toolbar-sticky-on .tox-editor-header,
+html.dark .tox .tox-toolbar,
+html.dark .tox .tox-toolbar__primary,
+html.dark .tox .tox-toolbar__overflow,
+html.dark .tox .tox-toolbar-overlord {
+  background-color: var(--color-base-800, #0a2a4a);
+  background-image: none;
+}
+
+html.dark .tox .tox-tbtn {
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-tbtn svg {
+  fill: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-tbtn:hover,
+html.dark .tox .tox-tbtn:focus,
+html.dark .tox .tox-tbtn:active,
+html.dark .tox .tox-tbtn--enabled,
+html.dark .tox .tox-tbtn--enabled:hover,
+html.dark .tox .tox-tbtn--enabled:focus,
+html.dark .tox .tox-tbtn--enabled:active {
+  background-color: var(--color-base-700, #1c3350);
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-tbtn:hover svg,
+html.dark .tox .tox-tbtn:focus svg,
+html.dark .tox .tox-tbtn:active svg,
+html.dark .tox .tox-tbtn--enabled svg,
+html.dark .tox .tox-tbtn--enabled:hover svg,
+html.dark .tox .tox-tbtn--enabled:focus svg,
+html.dark .tox .tox-tbtn--enabled:active svg {
+  fill: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-statusbar {
+  background-color: var(--color-base-900, #052145);
+  border-top-color: var(--color-base-700, #1c3350);
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-statusbar a,
+html.dark .tox .tox-statusbar__path-item,
+html.dark .tox .tox-statusbar__wordcount,
+html.dark .tox .tox-statusbar__text-container {
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-menu,
+html.dark .tox .tox-collection {
+  background-color: var(--color-base-800, #0a2a4a);
+  border-color: var(--color-base-700, #1c3350);
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-collection__group {
+  border-color: var(--color-base-700, #1c3350);
+}
+
+html.dark .tox .tox-collection__item {
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-collection--list .tox-collection__item--active,
+html.dark .tox .tox-collection--list .tox-collection__item--enabled,
+html.dark .tox .tox-collection--toolbar .tox-collection__item--active,
+html.dark .tox .tox-collection--toolbar .tox-collection__item--enabled {
+  background-color: var(--color-base-700, #1c3350);
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-collection__item-caret svg {
+  fill: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .tox .tox-edit-area,
+html.dark .tox .tox-edit-area__iframe {
+  background-color: #ffffff;
+}
+
+/* Зображення у вмісті в темному редакторі виглядають інвертованими,
+   відтінок зберігається (hue-rotate). Збережений HTML не змінюється. */
+html.dark .tox .tox-edit-area__iframe {
+  color-scheme: light;
+  -webkit-filter: invert(1) hue-rotate(180deg);
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* 2. Файл у темній темі: кнопка cms-image і нативний input.
+   Текст назви — --color-font-default-dark (#fff) на base-900 (#052145), контраст ≈ 16:1. */
+
+html.dark .cms-image__pick-btn {
+  background-color: var(--color-base-800, #0a2a4a);
+  border-color: var(--color-base-700, #1c3350);
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark .cms-image__pick:hover .cms-image__pick-btn,
+html.dark .cms-image__pick-btn:hover,
+html.dark .cms-image__pick:active .cms-image__pick-btn,
+html.dark .cms-image__pick-btn:active {
+  background-color: var(--color-base-700, #1c3350);
+}
+
+html.dark .cms-image__pick-name {
+  color: var(--color-font-default-dark, #ffffff);
+}
+
+html.dark input[type="file"] {
+  color: var(--color-font-default-dark, #ffffff);
+  -webkit-text-fill-color: var(--color-font-default-dark, #ffffff);
+  color-scheme: dark;
+  background-color: var(--color-base-900, #052145);
+  border-color: var(--color-base-700, #1c3350);
+}
+
+/* Окремі списки: Firefox відкидає правило з невідомим
+   ::-webkit-file-upload-button, а iOS Safari його ще читає.
+   appearance скидаємо, бо інакше WebKit лишає білу системну кнопку.
+   padding потрібен: preflight Unfold ставить padding: 0. */
+html.dark input[type="file"]::file-selector-button {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--color-base-800, #0a2a4a);
+  color: var(--color-font-default-dark, #ffffff);
+  -webkit-text-fill-color: currentColor;
+  border: 1px solid var(--color-base-700, #1c3350);
+  border-radius: var(--border-radius, 6px);
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+}
+
+html.dark input[type="file"]::-webkit-file-upload-button {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--color-base-800, #0a2a4a);
+  color: var(--color-font-default-dark, #ffffff);
+  -webkit-text-fill-color: currentColor;
+  border: 1px solid var(--color-base-700, #1c3350);
+  border-radius: var(--border-radius, 6px);
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+}
+
+html.dark input[type="file"]::file-selector-button:active {
+  background-color: var(--color-base-700, #1c3350);
+  color: var(--color-font-default-dark, #ffffff);
+  -webkit-text-fill-color: currentColor;
+  border-color: var(--color-base-300);
+}
+
+html.dark input[type="file"]::-webkit-file-upload-button:active {
+  background-color: var(--color-base-700, #1c3350);
+  color: var(--color-font-default-dark, #ffffff);
+  -webkit-text-fill-color: currentColor;
+  border-color: var(--color-base-300);
+}
+
+/* На iOS :hover залипає після тапу — лише для fine pointer. */
+@media (hover: hover) and (pointer: fine) {
+  html.dark input[type="file"]::file-selector-button:hover {
+    background-color: var(--color-base-700, #1c3350);
+    color: var(--color-font-default-dark, #ffffff);
+    -webkit-text-fill-color: currentColor;
+    border-color: var(--color-base-300);
+  }
+
+  html.dark input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: var(--color-base-700, #1c3350);
+    color: var(--color-font-default-dark, #ffffff);
+    -webkit-text-fill-color: currentColor;
+    border-color: var(--color-base-300);
+  }
+}
+
+/* 3. Індекс застосунку (/admin/<app>/). У Unfold body має лише клас app-<label>,
+   без app-index і без dashboard (dashboard — інша розмітка, без цього ряду).
+   Ряд .flex.flex-row.-mx-4 має від’ємний margin-inline на 1rem і вкладений px-4,
+   щоб картка збігалася з #content. До 767px mobile.css ставить .flex { max-width: 100% },
+   тож ряд не росте на 2rem: його зсуває вліво, а права межа лишається коротшою на 32px
+   (жолоб 48px проти 16px). Тут ширина знову 100% + 2rem; від 768px, зокрема 1440, без змін. */
+
+@media (max-width: 767px) {
+  html body[class*="app-"]:not([class*="model-"]):not(.change-list):not(.change-form):not(.delete-confirmation) #content > .flex.flex-row.-mx-4 {
+    box-sizing: border-box;
+    width: calc(100% + (var(--spacing, 0.25rem) * 8));
+    max-width: none;
+  }
+}
