@@ -18,7 +18,11 @@ def get_default_city():
 def get_city_branches(city):
     if city is None:
         return Branch.objects.none()
-    return city.branches.filter(is_active=True).prefetch_related('opening_hours')
+    return (
+        city.branches.filter(is_active=True)
+        .select_related('city')
+        .prefetch_related('opening_hours')
+    )
 
 
 def get_visible_branches():

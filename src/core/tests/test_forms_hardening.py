@@ -83,7 +83,7 @@ class ContactFormPhoneTests(TestCase):
 class FormRateLimitTests(TestCase):
     def setUp(self):
         cache.clear()
-        City.objects.create(name='Київ', slug='kyiv-rl', phone='+380992222222')
+        City.objects.create(name='Київ', slug='kyiv-rl')
 
     def test_review_contact_limited_to_three_chat_per_dialog(self):
         review_url = reverse('reviews:review_submit')

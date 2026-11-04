@@ -48,7 +48,6 @@ class HomeMapTemplateTests(TestCase):
         return City.objects.create(
             name='Одеса',
             slug='odesa-map',
-            phone='+380481112233',
             sort_order=0,
         )
 

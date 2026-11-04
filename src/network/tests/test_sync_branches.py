@@ -25,7 +25,7 @@ _NEW_CITY_NAMES = (
 def _snapshot():
     cities = list(
         City.objects.order_by('pk').values(
-            'pk', 'name', 'slug', 'phone', 'is_active', 'sort_order', 'name_mode',
+            'pk', 'name', 'slug', 'is_active', 'sort_order', 'name_mode',
         ),
     )
     branches = list(
@@ -92,7 +92,6 @@ class SyncBranchesTests(TestCase):
         kyiv = City.objects.create(
             name='Київ',
             slug='kyiv',
-            phone='+380441112233',
             is_active=True,
             sort_order=5,
         )
@@ -123,7 +122,6 @@ class SyncBranchesTests(TestCase):
         kharkiv = City.objects.create(
             name='Харків',
             slug='kharkiv',
-            phone='+38057777',
             is_active=True,
         )
         first = Branch.objects.create(
@@ -136,7 +134,6 @@ class SyncBranchesTests(TestCase):
         poltava = City.objects.create(
             name='Полтава',
             slug='poltava',
-            phone='+38053222',
             is_active=True,
         )
         removed = Branch.objects.create(
@@ -184,7 +181,6 @@ class SyncBranchesTests(TestCase):
             1,
         )
         kyiv.refresh_from_db()
-        self.assertEqual(kyiv.phone, '+380441112233')
         self.assertTrue(kyiv.is_active)
 
         first.refresh_from_db()
@@ -216,7 +212,6 @@ class SyncBranchesTests(TestCase):
         lutsk = City.objects.get(slug='lutsk')
         self.assertEqual(lutsk.name, 'Луцьк')
         self.assertEqual(lutsk.name_mode, 'Луцьк')
-        self.assertEqual(lutsk.phone, '')
         self.assertEqual(lutsk.name_in, 'у Луцьку')
         self.assertEqual(
             Branch.objects.filter(is_active=True).count(),
@@ -258,7 +253,7 @@ class SyncBranchesTests(TestCase):
         self.assertFalse(City.objects.filter(slug='lutsk').exists())
 
     def test_same_address_keeps_coords_and_custom_maps(self):
-        lviv = City.objects.create(name='Львів', slug='lviv', phone='380')
+        lviv = City.objects.create(name='Львів', slug='lviv')
         branch = Branch.objects.create(
             city=lviv,
             address='вул.  Степана Бандери,   35',
@@ -270,7 +265,7 @@ class SyncBranchesTests(TestCase):
             map_url='https://maps.example/custom-pin',
             map_embed_url='https://www.google.com/maps/embed?pb=keep',
         )
-        named = City.objects.create(name='Луцьк', slug='luck-legacy', phone='222')
+        named = City.objects.create(name='Луцьк', slug='luck-legacy')
         legacy = Branch.objects.create(
             city=named,
             address='стара',
@@ -291,7 +286,6 @@ class SyncBranchesTests(TestCase):
         named.refresh_from_db()
         legacy.refresh_from_db()
         self.assertEqual(named.slug, 'luck-legacy')
-        self.assertEqual(named.phone, '222')
         self.assertEqual(legacy.address, 'вул. Ковельська, 3/3')
         self.assertEqual(legacy.phone, '222')
         self.assertEqual(legacy.hours, '8-20')

@@ -272,7 +272,6 @@ def _apply(apps, dry_run):
                 kwargs = {
                     'name': sample.city_name,
                     'slug': slug,
-                    'phone': '',
                     'is_active': True,
                     'sort_order': sample.city_sort,
                 }

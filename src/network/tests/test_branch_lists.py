@@ -18,10 +18,10 @@ class BranchListTests(TestCase):
         page.show_map = True
         page.save(update_fields=['show_map'])
         cls.kyiv = City.objects.create(
-            name='Київ', slug='kyiv-list', phone='+380441112233', sort_order=0,
+            name='Київ', slug='kyiv-list', sort_order=0,
         )
         cls.kharkiv = City.objects.create(
-            name='Харків', slug='kharkiv-list', phone='+380991112233', sort_order=1,
+            name='Харків', slug='kharkiv-list', sort_order=1,
         )
         cls.kyiv_branch = Branch.objects.create(
             city=cls.kyiv,

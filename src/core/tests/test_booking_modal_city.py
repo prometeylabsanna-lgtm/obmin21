@@ -24,24 +24,22 @@ class BookingModalCityTests(TestCase):
         self.kyiv = City.objects.create(
             name='Київ',
             slug='kyiv',
-            phone='+380441111111',
             sort_order=0,
         )
         self.kharkiv = City.objects.create(
             name='Харків',
             slug='kharkiv',
-            phone='+380442222222',
             sort_order=1,
         )
         Branch.objects.create(
             city=self.kyiv,
             address='Київ, вул. 1',
-            phone=self.kyiv.phone,
+            phone='+380441111111',
         )
         Branch.objects.create(
             city=self.kharkiv,
             address='Харків, вул. 2',
-            phone=self.kharkiv.phone,
+            phone='+380442222222',
         )
         self.usd = CurrencyPair.objects.create(
             code='USD',

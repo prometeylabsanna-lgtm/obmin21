@@ -38,7 +38,7 @@ class BannerCityAdmin(CitySectionAdmin):
 class MapCityAdmin(CitySectionAdmin):
     fieldsets = (
         ('Обрати місто', {'fields': ('city_switch',)}),
-        ('Місто', {'fields': ('name', 'name_mode', 'phone')}),
+        ('Місто', {'fields': ('name', 'name_mode')}),
     )
 
 
@@ -47,7 +47,7 @@ class ContactCityAdmin(CitySectionAdmin):
     inlines = [BranchInline]
     fieldsets = (
         ('Обрати місто', {'fields': ('city_switch',)}),
-        ('Контакти міста', {'fields': ('name', 'name_mode', 'phone')}),
+        ('Контакти міста', {'fields': ('name', 'name_mode')}),
     )
 
 
@@ -63,6 +63,7 @@ class BranchAdmin(ListUnfoldAdmin):
         'address',
         'hours',
         'phone',
+        'telegram',
         'map_embed_url',
         'is_active',
         'sort_order',
@@ -76,13 +77,12 @@ class BranchAdmin(ListUnfoldAdmin):
 
 @admin.register(City)
 class CityAdmin(ListUnfoldAdmin):
-    list_display = ('name', 'phone', 'is_active', 'sort_order')
+    list_display = ('name', 'is_active', 'sort_order')
     list_editable = ('is_active', 'sort_order')
     search_fields = ('name',)
     fields = (
         'name',
         'name_mode',
-        'phone',
         'is_active',
         'sort_order',
         'seo_title',

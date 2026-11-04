@@ -49,7 +49,6 @@ class EdgeLayoutTests(TestCase):
         city = City.objects.create(
             name='Черкаси',
             slug='cherkasy-empty',
-            phone='',
             sort_order=0,
         )
         pages = (
@@ -70,7 +69,6 @@ class EdgeLayoutTests(TestCase):
         city = City.objects.create(
             name='Луцьк',
             slug='lutsk-nocoords',
-            phone='',
             sort_order=0,
         )
         branch = Branch.objects.create(
@@ -109,7 +107,7 @@ class EdgeLayoutTests(TestCase):
         self.assertTrue(link.group(1).startswith('https://'))
 
     def test_city_without_quotes_has_empty_state(self):
-        City.objects.create(name='Рівне', slug='rivne-norates', phone='', sort_order=0)
+        City.objects.create(name='Рівне', slug='rivne-norates', sort_order=0)
         for url in (reverse('core:home'), reverse('rates:rates_page')):
             html = self._clean(url)
             self.assertIn('Немає курсів для цієї вкладки', html, url)
@@ -117,7 +115,7 @@ class EdgeLayoutTests(TestCase):
             self.assertNotIn('rates-table__row', html, url)
 
     def test_missing_images_do_not_render_empty_src(self):
-        city = City.objects.create(name='Тернопіль', slug='ternopil-img', phone='', sort_order=0)
+        city = City.objects.create(name='Тернопіль', slug='ternopil-img', sort_order=0)
         self.assertFalse(city.banner_image)
         pair = CurrencyPair.objects.create(code='USD', name='Долар', slug='usd-edge')
         self.assertFalse(pair.flag_image)
@@ -151,7 +149,6 @@ class EdgeLayoutTests(TestCase):
         city = City.objects.create(
             name=_LONG,
             slug='dovha-nazva',
-            phone='',
             sort_order=0,
         )
         Branch.objects.create(

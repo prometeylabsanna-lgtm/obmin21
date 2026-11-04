@@ -164,14 +164,17 @@ def _filled(value, fallback):
     return text if text else (fallback or '')
 
 
-def slides_for_home(page):
+def slides_for_home(page, request=None):
     from django.urls import reverse
 
     from src.core.models import SiteSettings
-    from src.core.phones import safe_telegram_url
+    from src.core.phones import get_contacts, safe_telegram_url
 
-    site = SiteSettings.load()
-    telegram = safe_telegram_url(site.telegram_url)
+    if request is not None:
+        telegram = get_contacts(request)['telegram_url']
+    else:
+        site = SiteSettings.load()
+        telegram = safe_telegram_url(site.telegram_url)
     hrefs = {
         LINK_RATES: reverse('rates:rates_page'),
         LINK_SERVICES: reverse('content:services'),

@@ -8,13 +8,7 @@
 
   <section class="site-chat__panel" id="site-chat-panel" aria-label="Онлайн-чат Обмін21" hidden>
     <header class="site-chat__head">
-      <div class="site-chat__brand">
-        <div class="site-chat__title">Обмін21</div>
-        <div class="site-chat__status">Онлайн-бот</div>
-        {% if active_phone and phone_href %}
-        <a class="site-chat__phone" href="tel:{{ phone_href }}">{{ active_phone }}</a>
-        {% endif %}
-      </div>
+      {% include 'partials/chat_brand.html' %}
       <button type="button" class="site-chat__close" data-chat-close aria-label="Закрити чат">
         <svg width="18" height="18" viewBox="0 0 22 22" aria-hidden="true"><path d="M2 2l18 18M20 2L2 20" stroke="currentColor" stroke-width="2"></path></svg>
       </button>

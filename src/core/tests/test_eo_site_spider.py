@@ -176,7 +176,6 @@ class ExchangeOnlySiteSpiderTests(TestCase):
         city = City.objects.create(
             name='Львів',
             slug='lviv',
-            phone='+380441112233',
             sort_order=0,
         )
         _poison_mode_fields(city)

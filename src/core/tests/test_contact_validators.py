@@ -52,7 +52,6 @@ class ContactValidatorsModelTest(TestCase):
 
     def test_invalid_phone_rejected(self):
         cases = [
-            ('City', City(name='X', slug='x-inv', phone='abc')),
             ('Branch', self._branch(phone='abc')),
             ('SiteSettings', SiteSettings(default_phone='abc')),
             ('ContactsPage', ContactsPage(phone='abc')),
@@ -74,10 +73,6 @@ class ContactValidatorsModelTest(TestCase):
                 branch = self._branch(phone=raw)
                 branch.full_clean()
                 self.assertEqual(branch.phone, expected)
-
-                city = City(name='C', slug=f'c-val-{index}', phone=raw)
-                city.full_clean()
-                self.assertEqual(city.phone, expected)
 
                 site = SiteSettings(default_phone=raw)
                 site.full_clean()

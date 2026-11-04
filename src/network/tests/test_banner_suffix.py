@@ -52,7 +52,6 @@ class BannerSuffixBlankTests(TestCase):
         city = City.objects.create(
             name='Київ',
             slug='kyiv-home-suffix',
-            phone='+380441112233',
             banner_suffix='',
         )
         self.client.post(reverse('network:set_city'), {'city': city.slug})

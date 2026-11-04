@@ -84,7 +84,6 @@ class FrontendModeTests(TestCase):
         self.city = City.objects.create(
             name='FE-CITY',
             slug='fe-city',
-            phone='+380441112233',
             seo_title='FE-CITY-SEO',
             seo_description='FE-CITY-SEOD',
             banner_title='FE-BANNER-TITLE',

@@ -50,7 +50,6 @@ class SitePhoneTests(TestCase):
         return City.objects.create(
             name='Львів',
             slug=slug,
-            phone=phone,
             sort_order=sort_order,
         )
 
@@ -69,6 +68,20 @@ class SitePhoneTests(TestCase):
         session.save()
         self.client.cookies[settings.CITY_COOKIE_NAME] = city.slug
         self.client.cookies[settings.BRANCH_COOKIE_NAME] = str(branch.pk)
+
+    def _select_city(self, city):
+        session = self.client.session
+        session.pop('city_slug', None)
+        session.pop('branch_id', None)
+        session.save()
+        self.client.cookies[settings.CITY_COOKIE_NAME] = city.slug
+
+    def _ask_branches(self, city):
+        self.client.post(reverse('bot:chat_send'), {'text': 'відділення'})
+        return self.client.post(
+            reverse('bot:chat_callback'),
+            {'data': f'c:b:{city.pk}', 'label': city.name},
+        )
 
     def _assert_tels(self, html, tel, label):
         found = _tels(html)
@@ -93,7 +106,8 @@ class SitePhoneTests(TestCase):
     def test_single_branch_phone_everywhere(self):
         tel = phone_tel(_BRANCH_PHONE)
         city = self._city('lviv-one-branch', _CITY_PHONE)
-        self._branch(city, _BRANCH_PHONE)
+        branch = self._branch(city, _BRANCH_PHONE)
+        self._select(city, branch)
         Service.objects.create(
             title='Обмін валют',
             slug='obmin-valyut-phone',
@@ -121,7 +135,7 @@ class SitePhoneTests(TestCase):
             self.assertNotIn(_CITY_PHONE, body, name)
             self.assertNotIn(_DEFAULT_PHONE, body, name)
 
-        chat = self.client.post(reverse('bot:chat_send'), {'text': 'відділення'})
+        chat = self._ask_branches(city)
         self.assertEqual(chat.status_code, 200)
         transcript = chat.content.decode()
         self.assertIn(_BRANCH_PHONE, transcript)
@@ -131,9 +145,10 @@ class SitePhoneTests(TestCase):
 
     def test_bot_branch_phone_label_from_texts(self):
         city = self._city('lviv-texts-phone', _CITY_PHONE)
-        self._branch(city, _BRANCH_PHONE)
+        branch = self._branch(city, _BRANCH_PHONE)
+        self._select(city, branch)
         with patch.object(texts, 'PHONE_LABEL', 'Підпис:'):
-            chat = self.client.post(reverse('bot:chat_send'), {'text': 'відділення'})
+            chat = self._ask_branches(city)
         self.assertEqual(chat.status_code, 200)
         transcript = chat.content.decode()
         self.assertIn('Підпис:', transcript)
@@ -170,6 +185,7 @@ class SitePhoneTests(TestCase):
         city = self._city('lviv-sort-order', _CITY_PHONE)
         self._branch(city, _BRANCH_B, sort_order=5, address='вул. Пізніше, 5')
         self._branch(city, _BRANCH_A, sort_order=1, address='вул. Перше, 1')
+        self._select_city(city)
         tel = phone_tel(_BRANCH_A)
         home = self._page('core:home')
         self._assert_chrome(home, tel, _BRANCH_A, 'sort')
@@ -182,29 +198,18 @@ class SitePhoneTests(TestCase):
     def test_fallbacks_city_then_default(self):
         city = self._city('lviv-fallback', _CITY_PHONE)
         branch = self._branch(city, '')
-        city_tel = phone_tel(_CITY_PHONE)
-        home = self._page('core:home')
-        self._assert_chrome(home, city_tel, _CITY_PHONE, 'city')
-        self.assertNotIn(phone_tel(_BRANCH_PHONE), home)
-        self.assertNotIn(phone_tel(_DEFAULT_PHONE), home)
-        popup = self._page('leads:contact_modal')
-        self._assert_tels(popup, city_tel, 'popup-city')
-        self.assertIn(_CITY_PHONE, popup)
-        self.assertNotIn(_DEFAULT_PHONE, popup)
-
-        branch.phone = '   '
-        branch.save(update_fields=['phone'])
-        city.phone = ''
-        city.save(update_fields=['phone'])
-        cache.clear()
+        self._select(city, branch)
         default_tel = phone_tel(_DEFAULT_PHONE)
         home = self._page('core:home')
         self._assert_chrome(home, default_tel, _DEFAULT_PHONE, 'default')
-        self.assertNotIn(city_tel, home)
-        popup = self._page('leads:calc_modal')
+        self.assertNotIn(phone_tel(_CITY_PHONE), home)
+        self.assertNotIn(phone_tel(_BRANCH_PHONE), home)
+        popup = self._page('leads:contact_modal')
         self._assert_tels(popup, default_tel, 'popup-default')
         self.assertIn(_DEFAULT_PHONE, popup)
         self.assertNotIn(_CITY_PHONE, popup)
+        self.assertIn('https://t.me/obmin21', popup)
+        self.assertIn('@obmin21', popup)
 
     def test_services_consult_hidden_without_phone(self):
         site = SiteSettings.load()

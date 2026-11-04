@@ -31,7 +31,9 @@ class CityMiddleware:
             '',
         )
         request.city = city
-        request.city_branches = list(city.branches.filter(is_active=True)) if city else []
+        request.city_branches = list(
+            city.branches.filter(is_active=True).select_related('city'),
+        ) if city else []
         request.active_branch = pick_active_branch(city, branch_id)
         if request.active_branch is not None:
             request.session['branch_id'] = request.active_branch.pk

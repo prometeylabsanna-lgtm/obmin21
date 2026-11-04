@@ -61,3 +61,56 @@ def normalize_telegram_handle(value):
     if not name:
         return ''
     return f'@{name}'
+
+
+_TG_USER_MSG = (
+    'Вкажіть нік Telegram: 5–32 символи (латиниця, цифри та _), '
+    'або @нік, або посилання t.me/нік чи telegram.me/нік.'
+)
+_TG_USER = re.compile(r'^[A-Za-z0-9_]{5,32}$')
+_TG_HOSTS = frozenset({'t.me', 'telegram.me'})
+
+
+def normalize_telegram_username(value):
+    """Нік для відділення. Порожнє лишається порожнім. Інакше ValidationError українською."""
+    raw = (value or '').strip()
+    if not raw:
+        return ''
+    if any(ch.isspace() or ord(ch) < 32 for ch in raw):
+        raise ValidationError(_TG_USER_MSG)
+    name = _telegram_username_from(raw)
+    if not _TG_USER.fullmatch(name or ''):
+        raise ValidationError(_TG_USER_MSG)
+    return name
+
+
+def _telegram_username_from(raw):
+    if raw.startswith('@'):
+        rest = raw[1:]
+        if any(mark in rest for mark in ('/', '?', '#', '@')):
+            raise ValidationError(_TG_USER_MSG)
+        return rest
+    lower = raw.lower()
+    looks_like_url = (
+        '://' in raw
+        or lower.startswith('t.me/')
+        or lower.startswith('telegram.me/')
+    )
+    if not looks_like_url:
+        return raw
+    url = raw if '://' in raw else f'https://{raw}'
+    parsed = urlparse(url)
+    scheme = (parsed.scheme or '').lower()
+    host = (parsed.hostname or '').lower()
+    if host.startswith('www.'):
+        host = host[4:]
+    if scheme not in {'http', 'https'} or host not in _TG_HOSTS:
+        raise ValidationError(_TG_USER_MSG)
+    if parsed.username or parsed.password or parsed.port not in (None, 80, 443):
+        raise ValidationError(_TG_USER_MSG)
+    if parsed.query or parsed.fragment:
+        raise ValidationError(_TG_USER_MSG)
+    segments = [part for part in (parsed.path or '').split('/') if part]
+    if len(segments) != 1:
+        raise ValidationError(_TG_USER_MSG)
+    return segments[0]

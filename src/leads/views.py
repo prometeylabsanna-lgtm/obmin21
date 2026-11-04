@@ -6,9 +6,8 @@ from django.views.decorators.http import require_http_methods
 
 from src.core.exchange_mode import is_exchange_only, mode_text
 from src.core.exchange_stopwords import matches_stop_words
-from src.core.models import SiteSettings
 from src.core.timefmt import local_fmt
-from src.core.phones import resolve_site_phone, safe_telegram_url
+from src.core.phones import get_contacts
 from src.leads.forms import ContactMessageForm, ExchangeRequestForm
 from src.leads.services import create_contact_message, create_exchange_request
 from src.network.models import Branch
@@ -159,9 +158,7 @@ def _modal_context(request, form=None):
         chosen = Branch.objects.filter(pk=raw_branch, is_active=True).select_related('city').first()
         if chosen and chosen.city_id:
             selected_city = chosen.city
-    site = SiteSettings.load()
-    phone, phone_href = resolve_site_phone(request, site)
-    telegram_url = safe_telegram_url(site.telegram_url)
+    contacts = get_contacts(request)
     if form is None:
         form = ExchangeRequestForm(city=city, initial={
             'pair': resolved_pair.pk if resolved_pair else None,
@@ -181,23 +178,21 @@ def _modal_context(request, form=None):
         'booking_places': places,
         'booking_city_id': selected_city.pk if selected_city else '',
         'booking_direct': request.method != 'POST' and request.GET.get('direct') == '1',
-        'phone_display': phone,
-        'phone_tel': phone_href,
-        'telegram_url': telegram_url,
-        'telegram_handle': telegram_nick(telegram_url),
+        'phone_display': contacts['phone'],
+        'phone_tel': contacts['phone_href'],
+        'telegram_url': contacts['telegram_url'],
+        'telegram_handle': contacts['telegram_display'],
     }
 
 
 def _render_contact_modal(request):
-    site = SiteSettings.load()
-    phone, phone_href = resolve_site_phone(request, site)
-    telegram_url = safe_telegram_url(site.telegram_url)
+    contacts = get_contacts(request)
     context = _contact_modal_copy(request)
     context.update({
-        'phone_display': phone,
-        'phone_tel': phone_href,
-        'telegram_url': telegram_url,
-        'telegram_nick': telegram_nick(telegram_url),
+        'phone_display': contacts['phone'],
+        'phone_tel': contacts['phone_href'],
+        'telegram_url': contacts['telegram_url'],
+        'telegram_nick': contacts['telegram_display'],
     })
     return render(request, 'partials/modal_contact.html', context)
 

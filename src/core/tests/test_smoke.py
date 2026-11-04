@@ -15,24 +15,22 @@ class Obmin21SmokeTests(TestCase):
         cls.city_a = City.objects.create(
             name='Харків',
             slug='kharkiv',
-            phone='+380991111111',
             sort_order=0,
         )
         cls.city_b = City.objects.create(
             name='Київ',
             slug='kyiv',
-            phone='+380992222222',
             sort_order=1,
         )
         cls.branch_a = Branch.objects.create(
             city=cls.city_a,
             address='Харків, вул. 1',
-            phone=cls.city_a.phone,
+            phone='+380991111111',
         )
         cls.branch_b = Branch.objects.create(
             city=cls.city_b,
             address='Київ, вул. 2',
-            phone=cls.city_b.phone,
+            phone='+380992222222',
         )
         cls.pair = CurrencyPair.objects.create(
             code='USD',
@@ -129,7 +127,7 @@ class Obmin21SmokeTests(TestCase):
 
     def test_footer_uses_city_phone(self):
         resp = self.client.get(reverse('core:home'))
-        self.assertContains(resp, self.city_a.phone)
+        self.assertContains(resp, self.branch_a.phone)
         self.assertNotContains(resp, '+38(044)444 44 44')
 
     def test_csrf_required_on_contact(self):

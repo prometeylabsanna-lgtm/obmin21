@@ -60,7 +60,6 @@ class HomeBranchFragmentTests(TestCase):
         return City.objects.create(
             name=name,
             slug=slug,
-            phone=phone,
             sort_order=sort_order,
         )
 

@@ -76,7 +76,7 @@ class ContactModalTests(TestCase):
         cache.clear()
 
     def _city(self, slug, phone):
-        return City.objects.create(name='Львів', slug=slug, phone=phone, sort_order=0)
+        return City.objects.create(name='Львів', slug=slug, sort_order=0)
 
     def _branch(self, city, phone):
         return Branch.objects.create(
@@ -100,8 +100,8 @@ class ContactModalTests(TestCase):
 
     def test_modal_shows_settings_phone_and_telegram_nick(self):
         self._settings(_PHONE, _TELEGRAM)
-        city = self._city('lviv-contact', '')
-        self._branch(city, '')
+        Branch.objects.update(is_active=False)
+        City.objects.update(is_active=False)
         html = self._html()
         self.assertIn(f'href="tel:{phone_tel(_PHONE)}"', html)
         self.assertIn(_PHONE, html)
@@ -145,7 +145,8 @@ class ContactModalTests(TestCase):
     def test_branch_phone_before_city_and_default(self):
         self._settings(_PHONE, _TELEGRAM)
         city = self._city('lviv-branch-phone', _CITY_PHONE)
-        self._branch(city, _BRANCH_PHONE)
+        branch = self._branch(city, _BRANCH_PHONE)
+        self._choose(city, branch)
         html = self._html()
         self.assertIn(f'href="tel:{phone_tel(_BRANCH_PHONE)}"', html)
         self.assertIn(_BRANCH_PHONE, html)
@@ -173,33 +174,30 @@ class ContactModalTests(TestCase):
     def test_empty_branch_uses_city_then_default(self):
         self._settings(_PHONE, _TELEGRAM)
         city = self._city('lviv-fallback-phone', _CITY_PHONE)
-        self._branch(city, '')
-        html = self._html()
-        self.assertIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
-        self.assertIn(_CITY_PHONE, html)
-        self.assertNotIn(f'href="tel:{phone_tel(_PHONE)}"', html)
-
-        city.phone = ''
-        city.save()
-        cache.clear()
+        branch = self._branch(city, '')
+        self._choose(city, branch)
         html = self._html()
         self.assertIn(f'href="tel:{phone_tel(_PHONE)}"', html)
         self.assertIn(_PHONE, html)
         self.assertNotIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
+        self.assertIn('https://t.me/obmin21', html)
+        self.assertIn('@obmin21', html)
 
     def test_city_phone_when_branch_empty(self):
         self._settings(_PHONE, _TELEGRAM)
         city = self._city('lviv-city-phone', _CITY_PHONE)
-        self._branch(city, '')
+        branch = self._branch(city, '')
+        self._choose(city, branch)
         html = self._html()
-        self.assertIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
-        self.assertIn(_CITY_PHONE, html)
-        self.assertNotIn(f'href="tel:{phone_tel(_PHONE)}"', html)
+        self.assertIn(f'href="tel:{phone_tel(_PHONE)}"', html)
+        self.assertIn(_PHONE, html)
+        self.assertNotIn(f'href="tel:{phone_tel(_CITY_PHONE)}"', html)
+        self.assertIn('@obmin21', html)
 
     def test_empty_phone_omits_tel(self):
         self._settings('', _TELEGRAM)
-        city = self._city('lviv-no-phone', '')
-        self._branch(city, '   ')
+        Branch.objects.update(is_active=False)
+        City.objects.update(is_active=False)
         html = self._html()
         self.assertNotIn('tel:', html)
         self.assertNotIn('contact-card--phone', html)
@@ -208,6 +206,8 @@ class ContactModalTests(TestCase):
 
     def test_empty_telegram_omits_tme(self):
         self._settings(_PHONE, '')
+        Branch.objects.update(is_active=False)
+        City.objects.update(is_active=False)
         html = self._html()
         self.assertNotIn('t.me', html.lower())
         self.assertNotIn('contact-card--telegram', html)

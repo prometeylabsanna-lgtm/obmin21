@@ -39,13 +39,12 @@ class NoOldRequestFormTests(TestCase):
         self.city = City.objects.create(
             name='Львів',
             slug='lviv',
-            phone='+380321112233',
             sort_order=0,
         )
         Branch.objects.create(
             city=self.city,
             address='вул. Липова, 4',
-            phone=self.city.phone,
+            phone='+380321112233',
         )
         self.pair = CurrencyPair.objects.create(
             code='USD',

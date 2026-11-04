@@ -45,8 +45,8 @@ class ClearPlaceholderCoordsTests(TestCase):
         self.assertIs(operation.reverse_code, migrations.RunPython.noop)
 
     def test_clears_placeholder_keeps_other_coords_and_is_idempotent(self):
-        city = City.objects.create(name='Київ', slug='kyiv-coords', phone='+380')
-        other = City.objects.create(name='Львів', slug='lviv-coords', phone='+380')
+        city = City.objects.create(name='Київ', slug='kyiv-coords')
+        other = City.objects.create(name='Львів', slug='lviv-coords')
         rows = {
             'placeholder': Branch.objects.create(
                 city=city,
@@ -181,8 +181,8 @@ class SeedPlaceholderCoordsTests(TestCase):
         self.assertNotIn('50.4472', seed)
         self.assertNotIn('30.5215', seed)
 
-        kharkiv = City.objects.create(name='Харків', slug='kharkiv', phone='old')
-        lviv = City.objects.create(name='Львів', slug='lviv', phone='old')
+        kharkiv = City.objects.create(name='Харків', slug='kharkiv')
+        lviv = City.objects.create(name='Львів', slug='lviv')
         placeholder = Branch.objects.create(
             city=kharkiv,
             address='тимчасова',

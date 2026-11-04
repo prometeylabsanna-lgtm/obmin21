@@ -8,6 +8,7 @@ urlpatterns = [
     path('posluhy/', views.services_list, name='services'),
     path('perevahy/', views.advantages_page, name='advantages'),
     path('kontakty/', views.contacts_page, name='contacts'),
+    path('htmx/contacts-cards/', views.contacts_cards, name='contacts_cards'),
     path('faq/', views.faq_page, name='faq'),
     path(
         'polityka-konfidentsiynosti/',

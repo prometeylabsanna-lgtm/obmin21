@@ -1,6 +1,8 @@
 from types import SimpleNamespace
 
 from django.shortcuts import render
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_GET
 
 from src.blog.selectors import get_published_posts
 from src.content.faq_defaults import public_faq_items
@@ -93,6 +95,14 @@ def advantages_page(request):
     }
     ctx.update(_shared_blocks())
     return render(request, 'content/advantages.html', ctx)
+
+
+@require_GET
+@never_cache
+def contacts_cards(request):
+    return render(request, 'partials/contacts_cards.html', {
+        'page': ContactsPage.load(),
+    })
 
 
 def contacts_page(request):

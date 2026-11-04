@@ -1,7 +1,6 @@
 from src.bot import keyboards, services, texts
 from src.bot.handlers.common import send_menu
-from src.core.models import SiteSettings
-from src.core.phones import bound_phone_request, resolve_site_phone
+from src.core.phones import bound_phone_request, get_contacts
 
 
 def start_branches(bot, chat_id: int, profile) -> None:
@@ -25,14 +24,14 @@ def start_branches(bot, chat_id: int, profile) -> None:
 def _contact_line(city):
     request = bound_phone_request()
     if request is None:
-        phone = str(getattr(city, 'phone', '') or '').strip()
-        if not phone:
-            return ''
-        return f'{texts.PHONE_CITY_LABEL} {phone}'
-    display, _href = resolve_site_phone(request, SiteSettings.load())
-    if not display:
         return ''
-    return f'{texts.PHONE_LABEL} {display}'
+    contacts = get_contacts(request)
+    lines = []
+    if contacts['phone']:
+        lines.append(f'{texts.PHONE_LABEL} {contacts["phone"]}')
+    if contacts['telegram_display']:
+        lines.append(f'Telegram: {contacts["telegram_display"]}')
+    return '\n'.join(lines)
 
 
 def after_city(bot, chat_id: int, profile, city) -> None:

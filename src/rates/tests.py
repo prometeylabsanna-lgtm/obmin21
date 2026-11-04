@@ -18,7 +18,7 @@ from src.rates.services import ensure_city_quotes
 
 class CityQuoteVisibilityTests(TestCase):
     def setUp(self):
-        self.city = City.objects.create(name='Київ', slug='kyiv-rates', phone='+380441112233')
+        self.city = City.objects.create(name='Київ', slug='kyiv-rates')
         self.usd = CurrencyPair.objects.create(code='USD', name='Долар', slug='usd-uah', sort_order=0)
         self.eur = CurrencyPair.objects.create(code='EUR', name='Євро', slug='eur-uah', sort_order=1)
         self.pln = CurrencyPair.objects.create(code='PLN', name='Злотий', slug='pln-uah', sort_order=2)
@@ -103,7 +103,7 @@ class PublicRatesRespectCityActiveTests(TestCase):
         SiteSettings.load()
         HomePage.load()
         RatesPage.load()
-        cls.city = City.objects.create(name='Київ', slug='kyiv-public-rates', phone='+380441112233')
+        cls.city = City.objects.create(name='Київ', slug='kyiv-public-rates')
         usd = CurrencyPair.objects.create(code='USD', name='Долар', slug='usd-pub', sort_order=0)
         pln = CurrencyPair.objects.create(code='PLN', name='Злотий', slug='pln-pub', sort_order=1)
         cross = CurrencyPair.objects.create(code='EURUSD', name='Євро/долар', slug='eurusd-pub', sort_order=2)

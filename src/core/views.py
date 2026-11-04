@@ -120,7 +120,7 @@ class HomeView(TemplateView):
             'news_posts': list(get_published_posts()[:10]),
             'home_reviews': get_published_reviews(8),
             'home_stats': _home_stat_cards(page, self.request),
-            'promo_slides': slides_for_home(page),
+            'promo_slides': slides_for_home(page, self.request),
         })
         return ctx
 

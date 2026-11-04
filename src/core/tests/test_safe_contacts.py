@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from src.core.models import SiteSettings
 from src.core.phones import phone_tel, safe_telegram_url
-from src.network.models import City
+from src.network.models import Branch, City
 
 _PAGES = (
     'core:home',
@@ -42,7 +42,6 @@ class EmptyContactLinksTests(TestCase):
         self.city = City.objects.create(
             name='Львів',
             slug='lviv-empty-links',
-            phone='',
             sort_order=0,
         )
 
@@ -54,9 +53,10 @@ class EmptyContactLinksTests(TestCase):
         site.default_phone = ''
         site.telegram_url = telegram
         site.save()
-        self.city.phone = phone
-        self.city.save()
+        Branch.objects.update(is_active=False)
+        City.objects.update(is_active=False)
         cache.clear()
+        self.assertIn(phone, ('', 'abc'))
 
     def test_blank_telegram_and_phone_are_omitted(self):
         pages = [reverse(name) for name in _PAGES]

@@ -46,10 +46,10 @@ class NotificationBackendTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.city = City.objects.create(
-            name='Харків', slug='kharkiv-notify', phone='+380991111111', sort_order=0,
+            name='Харків', slug='kharkiv-notify', sort_order=0,
         )
         cls.branch = Branch.objects.create(
-            city=cls.city, address='Харків, вул. 1', phone=cls.city.phone,
+            city=cls.city, address='Харків, вул. 1', phone='+380991111111',
         )
         cls.pair = CurrencyPair.objects.create(code='USD', name='Долар', slug='usd-uah-notify')
         Quote.objects.create(

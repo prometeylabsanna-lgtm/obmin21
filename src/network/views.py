@@ -59,7 +59,7 @@ def set_city(request):
 
     if request.headers.get('HX-Request'):
         phone, phone_href = resolve_site_phone(request, SiteSettings.load())
-        response = render(request, 'partials/city_chrome.html', {
+        response = render(request, 'partials/city_switch.html', {
             'active_city': city,
             'active_branch': branch,
             'active_phone': phone,

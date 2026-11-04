@@ -7,7 +7,7 @@ from src.content.visit_steps import VisitSteps, minutes_phrase
 from src.core.breadcrumbs import breadcrumbs_for_request
 from src.core.exchange_mode import exchange_only
 from src.core.models import SiteSettings
-from src.core.phones import resolve_site_phone, safe_telegram_url
+from src.core.phones import get_contacts
 from src.core.site_chrome import footer_columns, header_cta, header_menu, site_icons
 from src.core.theme import URL_THEME_MAP, theme_version
 
@@ -15,7 +15,7 @@ from src.core.theme import URL_THEME_MAP, theme_version
 def site_chrome(request):
     settings = SiteSettings.load()
     city = getattr(request, 'city', None)
-    phone, phone_href = resolve_site_phone(request, settings)
+    contacts = get_contacts(request, settings)
     services = list(Service.objects.filter(is_active=True).visible()[:6])
 
     gtm_id = getattr(django_settings, 'GTM_ID', '') or ''
@@ -23,9 +23,11 @@ def site_chrome(request):
         'gtm_id': gtm_id if re.fullmatch(r'GTM-[A-Z0-9]+', gtm_id) else '',
         'site_settings': settings,
         'active_city': city,
-        'active_phone': phone,
-        'phone_href': phone_href,
-        'telegram_href': safe_telegram_url(settings.telegram_url),
+        'active_phone': contacts['phone'],
+        'phone_href': contacts['phone_href'],
+        'telegram_href': contacts['telegram_url'],
+        'telegram_display': contacts['telegram_display'],
+        'site_contacts': contacts,
         'cities': getattr(request, 'cities', []),
         'city_branches': getattr(request, 'city_branches', []),
         'list_branches': getattr(request, 'list_branches', []),

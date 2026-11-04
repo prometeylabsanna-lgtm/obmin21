@@ -3,7 +3,11 @@ from urllib.parse import quote_plus, urlparse
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
-from src.core.contact_validators import display_ua_phone, validate_ua_phone_or_blank
+from src.core.contact_validators import (
+    display_ua_phone,
+    normalize_telegram_username,
+    validate_ua_phone_or_blank,
+)
 from src.core.exchange_fields import mode_char
 from src.network.hours import WEEKDAYS
 
@@ -104,12 +108,6 @@ class City(models.Model):
     name = models.CharField('Назва', max_length=80)
     name_mode = mode_char('Назва для режиму «Лише обмін»', 80)
     slug = models.SlugField('Код у посиланні', unique=True, max_length=80)
-    phone = models.CharField(
-        'Телефон',
-        max_length=32,
-        blank=True,
-        validators=[validate_ua_phone_or_blank],
-    )
     is_active = models.BooleanField('Активне', default=True)
     sort_order = models.PositiveIntegerField('Порядок', default=0)
     seo_title = models.CharField('Назва для SEO', max_length=160, blank=True)
@@ -204,10 +202,6 @@ class City(models.Model):
             return static_image(name)
         return static_image('images/hero-kyiv.jpg')
 
-    def clean(self):
-        super().clean()
-        self.phone = display_ua_phone(self.phone)
-
 
 class Branch(models.Model):
     city = models.ForeignKey(
@@ -238,6 +232,16 @@ class Branch(models.Model):
         max_length=32,
         blank=True,
         validators=[validate_ua_phone_or_blank],
+    )
+    telegram = models.CharField(
+        'Telegram',
+        max_length=255,
+        blank=True,
+        default='',
+        help_text=(
+            'Посилання t.me/нік або @нік. '
+            'Якщо порожньо — на сайті показується @obmin21.'
+        ),
     )
     lat = models.DecimalField('Широта', max_digits=9, decimal_places=6, null=True, blank=True)
     lng = models.DecimalField('Довгота', max_digits=9, decimal_places=6, null=True, blank=True)
@@ -303,9 +307,43 @@ class Branch(models.Model):
         super().clean()
         self.phone = display_ua_phone(self.phone)
         try:
+            self.telegram = normalize_telegram_username(self.telegram)
+        except ValidationError as exc:
+            raise ValidationError({'telegram': exc.messages}) from exc
+        try:
             validate_map_embed_url(self.map_embed_url)
         except ValidationError as exc:
             raise ValidationError({'map_embed_url': exc.messages}) from exc
+
+    def save(self, *args, **kwargs):
+        self.telegram = normalize_telegram_username(self.telegram)
+        super().save(*args, **kwargs)
+
+    @property
+    def telegram_username(self):
+        raw = (self.telegram or '').strip()
+        if not raw:
+            return ''
+        if raw.startswith('@') or '://' in raw or '/' in raw:
+            try:
+                return normalize_telegram_username(raw)
+            except ValidationError:
+                return ''
+        return raw
+
+    @property
+    def telegram_url(self):
+        name = self.telegram_username
+        if not name:
+            return ''
+        return f'https://t.me/{name}'
+
+    @property
+    def telegram_display(self):
+        name = self.telegram_username
+        if not name:
+            return ''
+        return f'@{name}'
 
     def map_route_url(self):
         if self.map_url:

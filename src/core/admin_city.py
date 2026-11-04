@@ -20,6 +20,7 @@ class BranchInline(StackedInline):
         'address',
         'hours',
         'phone',
+        'telegram',
         'map_embed_url',
         'is_active',
         'sort_order',

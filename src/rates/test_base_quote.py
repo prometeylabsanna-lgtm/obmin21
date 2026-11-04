@@ -13,7 +13,7 @@ from src.rates.selectors import get_quote, get_quotes_for_city
 
 class BaseQuoteTests(TestCase):
     def setUp(self):
-        self.city = City.objects.create(name='Львів', slug='lviv-base', phone='+380322223344')
+        self.city = City.objects.create(name='Львів', slug='lviv-base')
         self.pair = CurrencyPair.objects.create(
             code='USD',
             name='Долар',
@@ -83,7 +83,7 @@ class BaseQuoteTests(TestCase):
 
     def test_data_migration_matches_rates_and_activity(self):
         same = self._city_quote()
-        other_city = City.objects.create(name='Одеса', slug='odesa-base', phone='+380482223344')
+        other_city = City.objects.create(name='Одеса', slug='odesa-base')
         different = Quote.objects.create(
             pair=self.pair,
             board=RateBoard.RETAIL,
@@ -91,7 +91,7 @@ class BaseQuoteTests(TestCase):
             buy=Decimal('10.00'),
             sell=Decimal('11.00'),
         )
-        quiet = City.objects.create(name='Дніпро', slug='dnipro-base', phone='+380562223344')
+        quiet = City.objects.create(name='Дніпро', slug='dnipro-base')
         inactive = Quote.objects.create(
             pair=self.pair,
             board=RateBoard.RETAIL,
@@ -119,7 +119,7 @@ class QuoteInheritAdminTests(TestCase):
             password='pass-12345',
         )
         self.client.force_login(user)
-        self.city = City.objects.create(name='Харків', slug='kharkiv-base', phone='+380572223344')
+        self.city = City.objects.create(name='Харків', slug='kharkiv-base')
         self.pair = CurrencyPair.objects.create(
             code='EUR',
             name='Євро',

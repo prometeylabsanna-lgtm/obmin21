@@ -55,11 +55,11 @@ class HiddenHookTests(_ModeCase):
 class PublicFilterTests(_ModeCase):
     def setUp(self):
         super().setUp()
-        self.city = City.objects.create(name='Київ EO', slug='kyiv-eo', phone='+380441112233')
+        self.city = City.objects.create(name='Київ EO', slug='kyiv-eo')
         self.branch = Branch.objects.create(
             city=self.city,
             address='Київ, вул. Тестова, 1',
-            phone=self.city.phone,
+            phone='+380441112233',
         )
         self.usd = CurrencyPair.objects.create(
             code='USD',

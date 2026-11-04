@@ -256,7 +256,10 @@ def _same_as(site, request):
     for field in ('telegram_url', 'youtube_url', 'instagram_url', 'facebook_url'):
         value = str(getattr(site, field, '') or '').strip()
         if field == 'telegram_url':
-            value = safe_telegram_url(value)
+            from src.core.phones import get_contacts
+
+            chosen = get_contacts(request).get('telegram_url') if request is not None else ''
+            value = chosen or safe_telegram_url(value)
         if not value.startswith(('https://', 'http://')):
             continue
         value = value.split('#', 1)[0].split('?', 1)[0]

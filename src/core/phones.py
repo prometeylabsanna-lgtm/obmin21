@@ -67,24 +67,86 @@ def _text(value):
     return str(value or '').strip()
 
 
-def resolve_site_phone(request, settings):
-    """Телефон вибраного відділення, інакше міста, інакше загальний."""
+FALLBACK_TELEGRAM_USERNAME = 'obmin21'
+_CONTACTS_ATTR = '_obmin_contacts'
+
+
+def telegram_display_from_url(url):
+    raw = str(url or '').strip()
+    if not raw:
+        return ''
+    parsed = urlparse(raw)
+    segments = [part for part in (parsed.path or '').split('/') if part]
+    if not segments:
+        return ''
+    name = segments[-1].strip().lstrip('@')
+    if not name:
+        return ''
+    return f'@{name}'
+
+
+def get_contacts(request, settings=None):
+    """Контакти вибраного відділення. Один раз на запит.
+
+    phone / phone_href — телефон відділення, якщо він є.
+    Інакше загальний телефон SiteSettings.
+    telegram — нік відділення; якщо поле порожнє, @obmin21.
+    Без відділення Telegram береться із SiteSettings.
+    source: branch, якщо телефон із відділення, інакше global.
+    """
     if request is None:
         request = _phone_request.get()
-    display = ''
+    if request is not None:
+        cached = getattr(request, _CONTACTS_ATTR, None)
+        if cached is not None:
+            return cached
+    if settings is None:
+        from src.core.models import SiteSettings
+
+        settings = SiteSettings.load()
     branch = getattr(request, 'active_branch', None) if request is not None else None
+
+    phone = ''
+    source = 'global'
+    if branch is not None and _text(getattr(branch, 'phone', '')):
+        phone = _text(branch.phone)
+        source = 'branch'
+    elif settings is not None:
+        phone = _text(getattr(settings, 'default_phone', ''))
+
     if branch is not None:
-        display = _text(getattr(branch, 'phone', ''))
-    if not display and request is not None:
-        city = getattr(request, 'city', None)
-        if city is not None:
-            display = _text(getattr(city, 'phone', ''))
-    if not display and settings is not None:
-        display = _text(getattr(settings, 'default_phone', ''))
-    return display, phone_tel(display)
+        username = _text(getattr(branch, 'telegram_username', '') or getattr(branch, 'telegram', ''))
+        if username.startswith('@'):
+            username = username[1:]
+        if username:
+            telegram_url = f'https://t.me/{username}'
+            telegram_display = f'@{username}'
+        else:
+            telegram_url = f'https://t.me/{FALLBACK_TELEGRAM_USERNAME}'
+            telegram_display = f'@{FALLBACK_TELEGRAM_USERNAME}'
+    else:
+        telegram_url = safe_telegram_url(getattr(settings, 'telegram_url', ''))
+        telegram_display = telegram_display_from_url(telegram_url)
+
+    data = {
+        'phone': phone,
+        'phone_href': phone_tel(phone),
+        'telegram_url': telegram_url,
+        'telegram_display': telegram_display,
+        'source': source,
+    }
+    if request is not None:
+        setattr(request, _CONTACTS_ATTR, data)
+    return data
 
 
-def resolve_branch_phone(request, settings, branch=None):
+def resolve_site_phone(request, settings=None):
+    """Телефон вибраного відділення, інакше загальний."""
+    contacts = get_contacts(request, settings)
+    return contacts['phone'], contacts['phone_href']
+
+
+def resolve_branch_phone(request, settings=None, branch=None):
     """Те саме джерело, що resolve_site_phone."""
     return resolve_site_phone(request, settings)
 

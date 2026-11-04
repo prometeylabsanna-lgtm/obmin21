@@ -31,7 +31,7 @@ class FormatRateTests(TestCase):
 
 class QuoteSelectorTests(TestCase):
     def setUp(self):
-        self.city = City.objects.create(name='Київ', slug='kyiv', phone='+380992222222')
+        self.city = City.objects.create(name='Київ', slug='kyiv')
         self.ok = CurrencyPair.objects.create(code='USD', name='Долар', slug='usd-uah')
         self.bad = CurrencyPair.objects.create(code='HUF', name='Форинт', slug='huf-uah')
         Quote.objects.create(
@@ -61,10 +61,10 @@ class QuoteSelectorTests(TestCase):
 class ExchangeRequestHardeningTests(TestCase):
     def setUp(self):
         self.city = City.objects.create(
-            name='Харків', slug='kharkiv', phone='+380991111111', sort_order=0,
+            name='Харків', slug='kharkiv', sort_order=0,
         )
         self.branch = Branch.objects.create(
-            city=self.city, address='Харків, вул. 1', phone=self.city.phone,
+            city=self.city, address='Харків, вул. 1', phone='+380991111111',
         )
         self.pair = CurrencyPair.objects.create(code='USD', name='Долар', slug='usd-uah')
         Quote.objects.create(

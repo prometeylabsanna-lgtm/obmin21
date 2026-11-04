@@ -1,0 +1,36 @@
+{% if phone_href %}
+<a class="contacts-card" href="tel:{{ phone_href }}">
+  <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"></path></svg>
+  <div>
+    <div class="contacts-card__label">Телефон</div>
+    <div class="contacts-card__value">{{ active_phone }}</div>
+    <div class="contacts-card__hint">{{ page.phone_hint }}</div>
+  </div>
+</a>
+{% endif %}
+{% if telegram_href %}
+<a class="contacts-card" href="{{ telegram_href }}" target="_blank" rel="noopener">
+  <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3L2.5 10.2l6.8 2.4M21 3l-3.2 17.5-8.5-7.9M21 3L9.3 12.6v5.9l3.1-3.3"></path></svg>
+  <div>
+    <div class="contacts-card__label">Telegram</div>
+    <div class="contacts-card__value">{{ telegram_display }}</div>
+    <div class="contacts-card__hint">{{ page.telegram_hint }}</div>
+  </div>
+</a>
+{% endif %}
+<a class="contacts-card" href="mailto:{{ page.email }}">
+  <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3.5 6.5l8.5 6.5 8.5-6.5"></path></svg>
+  <div>
+    <div class="contacts-card__label">Email</div>
+    <div class="contacts-card__value">{{ page.email }}</div>
+    <div class="contacts-card__hint">{{ page.email_hint }}</div>
+  </div>
+</a>
+<a class="contacts-card" href="#branches">
+  <svg class="contacts-card__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#052145" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+  <div>
+    <div class="contacts-card__label">Графік роботи</div>
+    <div class="contacts-card__value">{{ page.hours }}</div>
+    <div class="contacts-card__hint">{{ page.hours_hint }}</div>
+  </div>
+</a>

@@ -509,7 +509,6 @@ class ExchangeOnlyServicesCityTemplateTests(ExchangeTemplateCase):
         self.city = City.objects.create(
             name='Львів',
             slug='lviv',
-            phone='+380671112233',
             banner_title=_BANNER_TITLE,
             banner_text=_BANNER_TEXT,
             banner_title_mode=_TITLE_MODE,

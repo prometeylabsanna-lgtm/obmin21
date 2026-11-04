@@ -1,0 +1,7 @@
+<div class="site-chat__brand" id="site-chat-brand"{% if oob %} hx-swap-oob="outerHTML"{% endif %}>
+  <div class="site-chat__title">Обмін21</div>
+  <div class="site-chat__status">Онлайн-бот</div>
+  {% if active_phone and phone_href %}
+  <a class="site-chat__phone" href="tel:{{ phone_href }}">{{ active_phone }}</a>
+  {% endif %}
+</div>

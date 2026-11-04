@@ -45,13 +45,12 @@ class NoRateTimersTests(TestCase):
         city = City.objects.create(
             name='Київ',
             slug='kyiv',
-            phone='+380441112233',
             sort_order=0,
         )
         Branch.objects.create(
             city=city,
             address='Київ, вул. 1',
-            phone=city.phone,
+            phone='+380441112233',
         )
         pair = CurrencyPair.objects.create(
             code='USD',

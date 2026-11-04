@@ -181,11 +181,12 @@ def format_branches(city: City) -> str:
         return ''
     lines = [f'Відділення, {city.name}:']
     for branch in branches:
-        phone = branch.phone or city.phone
+        phone = (branch.phone or '').strip()
         extra = f'\n{phone}' if phone else ''
+        handle = branch.telegram_display or '@obmin21'
         hours_text = branch.hours_display
         hours = f'\n{hours_text}' if hours_text else ''
-        lines.append(f'• {branch.address}{hours}{extra}')
+        lines.append(f'• {branch.address}{hours}{extra}\nTelegram: {handle}')
     return '\n'.join(lines)
 
 

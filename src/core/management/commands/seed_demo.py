@@ -355,7 +355,6 @@ class Command(BaseCommand):
                 slug=slug,
                 defaults={
                     'name': name,
-                    'phone': phone,
                     'is_active': True,
                     'sort_order': points[0].city_sort,
                 },
