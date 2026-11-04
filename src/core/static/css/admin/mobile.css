@@ -1,0 +1,423 @@
+/* Мобільна адмінка Unfold. Лише до 767px, десктоп не змінюється. */
+
+@media (max-width: 767px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  html body {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  html body #page,
+  html body #main,
+  html body #content,
+  html body #content-main,
+  html body #content-related,
+  html body #changelist,
+  html body #header-inner,
+  html body .container {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  html body #page,
+  html body #main {
+    overflow-x: clip;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  html body .w-screen {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  html body .whitespace-nowrap,
+  html body .truncate {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  html body #result_list .whitespace-nowrap,
+  html body #result_list .truncate,
+  html body [data-inline-type="tabular"] .whitespace-nowrap,
+  html body [data-inline-type="tabular"] .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  html body #main > .border-b .h-16 {
+    height: auto;
+    min-height: 4rem;
+  }
+
+  html body #header-inner,
+  html body #header-inner > .flex,
+  html body #header-inner .flex.w-full,
+  html body #header-inner h1,
+  html body #header-inner h1.whitespace-nowrap {
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    flex-wrap: wrap;
+    white-space: normal;
+    overflow: visible;
+    row-gap: 4px;
+  }
+
+  html body #header-inner h1 a,
+  html body #header-inner h1 span,
+  html body #header-inner .truncate,
+  html body #header-inner .ml-auto {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    flex-wrap: wrap;
+  }
+
+  html body .material-symbols-outlined {
+    display: inline-block;
+    max-width: 2em;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  html body #tabs-items,
+  html body .cms-seg-tabs,
+  html body .cms-board-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  html body #tabs-items > a,
+  html body .cms-seg-tabs a,
+  html body .cms-board-tabs__btn,
+  html body .cms-board-tabs a,
+  html body .cms-board-tabs button {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+    min-height: 44px;
+  }
+
+  html body.change-form .field-line,
+  html body.change-form .field-line.flex,
+  html body.change-form [data-inline-type="stacked"] .form-row,
+  html body.change-form .form-field {
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body.change-form .field-line > div,
+  html body.change-form .field-line .grow,
+  html body.change-form .field-line .flex,
+  html body.change-form .field-line .flex-row,
+  html body.change-form .field-line .flex-col,
+  html body.change-form .form-rows,
+  html body.change-form .aligned,
+  html body.change-form fieldset.module {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  html body.change-form .field-line .min-w-32,
+  html body.change-form .field-line .w-32,
+  html body.change-form .field-line .min-w-52,
+  html body.change-form .field-line .min-w-56,
+  html body.change-form .field-line .lg\:min-w-56,
+  html body.change-form .field-line .lg\:w-56,
+  html body.change-form .field-line .max-w-2xl,
+  html body.change-form .field-line .max-w-4xl,
+  html body.change-form .datetime,
+  html body.change-form .datetime .min-w-52 {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body.change-form label,
+  html body.change-form .field-line label,
+  html body label.whitespace-nowrap {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    float: none;
+    position: static;
+  }
+
+  html body.change-form .field-line input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="color"]):not([type="file"]),
+  html body.change-form .field-line select,
+  html body.change-form .field-line textarea,
+  html body.change-form .form-field input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="color"]):not([type="file"]),
+  html body.change-form .form-field select,
+  html body.change-form .form-field textarea,
+  html body.change-form .readonly,
+  html body.change-form .help,
+  html body.change-form .helptext,
+  html body.change-form .leading-relaxed,
+  html body.change-form .text-xs {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  html body.change-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="color"]):not([type="file"]),
+  html body.change-form select,
+  html body.change-form textarea,
+  html body #main input[type="text"],
+  html body #main input[type="url"],
+  html body #main input[type="email"],
+  html body #main input[type="number"],
+  html body #main input[type="search"],
+  html body #main input[type="password"],
+  html body #main select,
+  html body #main textarea {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  html body .related-widget-wrapper {
+    display: flex;
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  html body .related-widget-wrapper .ml-2 {
+    margin-left: 0;
+  }
+
+  html body .related-widget-wrapper > :first-child,
+  html body .related-widget-wrapper select,
+  html body .related-widget-wrapper .max-w-2xl,
+  html body .related-widget-wrapper .grow {
+    min-width: 0;
+    width: auto;
+    max-width: calc(100% - 2.75rem);
+    flex: 1 1 auto;
+  }
+
+  html body #main textarea {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  html body .selector,
+  html body .selector-available,
+  html body .selector-chosen,
+  html body .selector select {
+    float: none;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body .selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  html body .select2-container,
+  html body .formset .select2,
+  html body .select2.select2-container {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  html body.change-form [data-inline-type="stacked"],
+  html body.change-form [data-inline-type="stacked"] .formset-wrapper,
+  html body.change-form [data-inline-type="stacked"] .formset,
+  html body.change-form [data-inline-type="stacked"] .border {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  html body.change-list .overflow-x-auto,
+  html body.change-form [data-inline-type="tabular"] .formset-wrapper,
+  html body #content .overflow-x-auto:has(table),
+  html body #content .overflow-auto:has(> table) {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  html body #result_list,
+  html body.change-form [data-inline-type="tabular"] table.formset,
+  html body.change-form [data-inline-type="tabular"] table {
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+  }
+
+  html body .tox-tinymce,
+  html body .tox.tox-tinymce {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  html body #main img,
+  html body #main video,
+  html body #main iframe,
+  html body #main canvas,
+  html body #main svg,
+  html body .cms-image,
+  html body .cms-image__frame,
+  html body .cms-flag {
+    max-width: 100%;
+  }
+
+  html body #toolbar,
+  html body #toolbar form,
+  html body #changelist-search,
+  html body .cms-list-toolbar,
+  html body .cms-list-filters,
+  html body .cms-list-filter,
+  html body #changelist .result-list-wrapper,
+  html body #changelist .grow {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body #toolbar input,
+  html body #searchbar,
+  html body .cms-list-filter__select {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  html body a,
+  html body p,
+  html body li,
+  html body h1,
+  html body h2,
+  html body code,
+  html body pre,
+  html body .readonly,
+  html body .help,
+  html body .helptext {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  html body pre,
+  html body code {
+    white-space: pre-wrap;
+  }
+
+  html body #result_list a,
+  html body #result_list p,
+  html body #result_list code,
+  html body [data-inline-type="tabular"] a,
+  html body [data-inline-type="tabular"] p {
+    max-width: none;
+  }
+
+  html body #submit-row {
+    max-width: 100%;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  html body #submit-row .flex,
+  html body #content .h-\[38px\] {
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    min-height: 38px;
+    flex-wrap: wrap;
+  }
+
+  html body #nav-sidebar,
+  html body #nav-sidebar a,
+  html body #nav-sidebar-apps {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  html body #main form,
+  html body #main fieldset,
+  html body #main .form-rows,
+  html body #main .form-row,
+  html body #main .field-line,
+  html body #main .field-line > div,
+  html body #main .flex,
+  html body #main .max-w-2xl,
+  html body #main .max-w-4xl,
+  html body #main .max-w-5xl,
+  html body #main .min-w-52,
+  html body #main .min-w-56,
+  html body #main .min-w-32,
+  html body #main select,
+  html body #main .related-widget-wrapper,
+  html body #main .related-widget-wrapper > div,
+  html body #main .datetime,
+  html body #main .datetime > div {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body #main select {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body #main .related-widget-wrapper select,
+  html body #main .related-widget-wrapper .grow,
+  html body #main .related-widget-wrapper .max-w-2xl {
+    width: auto;
+    min-width: 0;
+    max-width: calc(100% - 2.75rem);
+    flex: 1 1 auto;
+  }
+
+  html body #result_list,
+  html body [data-inline-type="tabular"] table,
+  html body [data-inline-type="tabular"] .flex,
+  html body #result_list .flex {
+    max-width: none;
+  }
+}
