@@ -24,36 +24,99 @@
 
   function initSliders() {
     document.querySelectorAll('[data-slider-nav]').forEach(function (nav) {
+      if (nav.getAttribute('data-slider-bound') === '1') return;
       var name = nav.getAttribute('data-slider-nav');
+      if (!name) return;
       var track = document.querySelector('[data-slider="' + name + '"]');
       if (!track) return;
+      nav.setAttribute('data-slider-bound', '1');
+
       var prev = nav.querySelector('[data-slider-prev]');
       var next = nav.querySelector('[data-slider-next]');
 
       function step() {
         var card = track.querySelector('.review-slide, .article-slide, .svc-card');
         if (!card) return 300;
-        var gap = parseFloat(window.getComputedStyle(track).columnGap) || 20;
+        var styles = window.getComputedStyle(track);
+        var gap = parseFloat(styles.columnGap);
+        if (!(gap >= 0)) gap = parseFloat(styles.gap);
+        if (!(gap >= 0)) gap = 0;
         return card.getBoundingClientRect().width + gap;
       }
 
-      function sync() {
-        var max = track.scrollWidth - track.clientWidth - 4;
-        if (prev) prev.classList.toggle('is-active', track.scrollLeft > 8);
-        if (next) next.classList.toggle('is-active', track.scrollLeft < max);
+      function maxScroll() {
+        var layoutMax = Math.max(0, track.scrollWidth - track.clientWidth);
+        if (track.getAttribute('data-slider') !== 'articles') return layoutMax;
+        var cards = track.querySelectorAll('.article-slide');
+        if (!cards.length) return layoutMax;
+        var last = cards[cards.length - 1];
+        if (last.offsetParent !== track) return layoutMax;
+        var padRight = parseFloat(window.getComputedStyle(track).paddingRight) || 0;
+        var contentMax = last.offsetLeft + last.offsetWidth + padRight - track.clientWidth;
+        if (!(contentMax >= 0)) contentMax = 0;
+        return Math.min(layoutMax, contentMax);
+      }
+
+      function go(dir) {
+        var max = maxScroll();
+        var size = step();
+        if (!(size > 0)) return;
+        var index = Math.round(track.scrollLeft / size) + dir;
+        var maxIndex = Math.max(0, Math.round(max / size));
+        if (index < 0) index = 0;
+        if (index > maxIndex) index = maxIndex;
+        track.scrollTo({
+          left: Math.min(max, Math.max(0, index * size)),
+          behavior: 'smooth'
+        });
       }
 
       if (prev) {
         prev.addEventListener('click', function () {
-          track.scrollBy({ left: -step(), behavior: 'smooth' });
+          go(-1);
         });
       }
       if (next) {
         next.addEventListener('click', function () {
-          track.scrollBy({ left: step(), behavior: 'smooth' });
+          go(1);
         });
       }
-      track.addEventListener('scroll', sync, { passive: true });
+
+      if (track.getAttribute('data-slider-bound') === '1') return;
+      track.setAttribute('data-slider-bound', '1');
+
+      function sync() {
+        var limit = Math.max(0, maxScroll() - 4);
+        document.querySelectorAll('[data-slider-nav="' + name + '"]').forEach(function (item) {
+          var prevBtn = item.querySelector('[data-slider-prev]');
+          var nextBtn = item.querySelector('[data-slider-next]');
+          if (prevBtn) prevBtn.classList.toggle('is-active', track.scrollLeft > 8);
+          if (nextBtn) nextBtn.classList.toggle('is-active', track.scrollLeft < limit);
+        });
+      }
+
+      var endTimer = 0;
+      function clampToMax() {
+        var max = maxScroll();
+        if (track.scrollLeft > max) {
+          track.scrollTo({ left: max, behavior: 'auto' });
+        }
+      }
+
+      track.addEventListener('scroll', function () {
+        sync();
+        window.clearTimeout(endTimer);
+        endTimer = window.setTimeout(clampToMax, 120);
+      }, { passive: true });
+
+      if ('onscrollend' in window) {
+        track.addEventListener('scrollend', function () {
+          window.clearTimeout(endTimer);
+          clampToMax();
+          sync();
+        }, { passive: true });
+      }
+
       sync();
     });
   }

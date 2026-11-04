@@ -1011,6 +1011,14 @@
   margin-top: calc(48px * var(--scale));
 }
 
+.articles-section {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+  transform: none;
+  animation: none;
+}
+
 .reviews-section .slider-head {
   align-items: flex-end;
 }
@@ -1039,19 +1047,26 @@
   scrollbar-width: none;
 }
 
+/* Без scroll-behavior і -webkit-overflow-scrolling: у WebKit вони разом зі
+   scroll-snap mandatory зсувають картки вліво на кожен свайп. Плавність — у JS. */
 .articles-track {
   margin-top: calc(32px * var(--scale));
   display: flex;
+  align-items: stretch;
   gap: calc(12px * var(--scale));
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
   padding-bottom: calc(4px * var(--scale));
-  -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-  touch-action: pan-x;
+  touch-action: pan-x pan-y;
   scrollbar-width: none;
+  transform: none;
+  animation: none;
 }
 
 .reviews-track::-webkit-scrollbar,
@@ -1132,13 +1147,22 @@
 }
 
 .article-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-self: stretch;
   flex: 0 0 calc(50% - calc(6px * var(--scale)));
   min-width: 0;
   scroll-snap-align: start;
+  transform: none;
+  animation: none;
 }
 
 .article-slide__media {
   display: block;
+  width: 100%;
+  min-width: 0;
+  flex: none;
   height: calc(110px * var(--scale));
   overflow: hidden;
   border-radius: calc(4px * var(--scale));
@@ -1147,9 +1171,13 @@
 
 .article-slide__media img {
   width: 100%;
+  max-width: 100%;
   height: 100%;
+  min-width: 0;
   object-fit: cover;
   display: block;
+  transform: none;
+  animation: none;
 }
 
 .article-slide__title {
@@ -1165,6 +1193,8 @@
 
 .article-slide__text {
   margin: calc(8px * var(--scale)) 0 0;
+  min-width: 0;
+  max-width: 100%;
   color: var(--color-text-muted);
   font-size: calc(12px * var(--scale));
   line-height: 1.3;
@@ -1175,7 +1205,9 @@
 }
 
 .article-slide .link-accent {
-  margin-top: calc(12px * var(--scale));
+  margin-top: auto;
+  align-self: flex-start;
+  padding-top: calc(12px * var(--scale));
 }
 
 .articles-section .slider-nav--desk {
