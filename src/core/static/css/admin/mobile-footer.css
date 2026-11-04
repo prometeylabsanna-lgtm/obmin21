@@ -3,7 +3,7 @@
 
 /* Вкладки сторінки і секцій — лише до 767px. */
 @media (max-width: 767px) {
-  /* Рядок вкладок має мати визначену ширину, інакше iOS не прокручує flex-дитину. */
+  /* Обгортка на всю ширину екрана: на iOS Safari стовпчик не роздуває сторінку. */
   body.model-footersettings #main #tabs-wrapper {
     width: 100%;
     min-width: 0;
@@ -17,38 +17,41 @@
     width: 100%;
   }
 
+  /* Вкладки сторінки — стовпчик на всю ширину, без горизонтальної прокрутки. */
   body.model-footersettings #main #tabs-wrapper nav#tabs-items {
     display: flex;
+    flex-direction: column;
     flex-wrap: nowrap;
-    align-items: center;
+    align-items: stretch;
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    scrollbar-width: thin;
+    overflow: visible;
   }
 
+  /* Підпис переноситься в межах ширини. Активну вкладку лишають класи Unfold. */
   body.model-footersettings #main #tabs-items > a {
     flex: 0 0 auto;
-    width: max-content;
-    max-width: none;
-    min-width: max-content;
-    white-space: nowrap;
-    overflow: visible;
-    overflow-wrap: normal;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
     word-break: normal;
+    text-align: left;
+    justify-content: flex-start;
+    line-height: 1.35;
+    overflow: visible;
   }
 
-  /* Секції всередині fieldset: Контент / Оформлення. Текст не обрізати. */
+  /* Секції всередині fieldset: Контент / Оформлення — рівні колонки. */
   body.model-footersettings #main .cms-seg-tabs-wrap {
     width: 100%;
     min-width: 0;
     max-width: 100%;
   }
 
+  /* Ряд на всю ширину, без прокрутки. Колонки ділять місце порівну. */
   body.model-footersettings #main .cms-seg-tabs-wrap > nav.cms-seg-tabs {
     display: flex;
     flex-wrap: nowrap;
@@ -56,22 +59,18 @@
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    scrollbar-width: thin;
+    overflow: visible;
   }
 
   body.model-footersettings #main .cms-seg-tabs-wrap > nav.cms-seg-tabs > a {
-    flex: 0 0 auto;
-    width: max-content;
-    max-width: none;
-    min-width: max-content;
-    white-space: nowrap;
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    justify-content: center;
     overflow: visible;
-    overflow-wrap: normal;
-    word-break: normal;
   }
 }
 
