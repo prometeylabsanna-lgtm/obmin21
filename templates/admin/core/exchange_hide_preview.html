@@ -17,83 +17,125 @@
     <section class="exchange-hide__card">
         <h2>Сховані записи</h2>
         {% for group in report.groups %}
-            <h3>{{ group.title }}</h3>
-            {% if group.records %}
+            <details class="exchange-acc">
+                <summary class="exchange-acc__summary">
+                    <span class="exchange-acc__title">{{ group.title }}</span>
+                    <span class="exchange-acc__count">{{ group.records|length }}</span>
+                </summary>
+                <div class="exchange-acc__body">
+                    {% if group.records %}
+                        <ul class="exchange-hide__list">
+                            {% for row in group.records %}
+                                <li>
+                                    {% if row.admin_url %}
+                                        <a href="{{ row.admin_url }}">{{ row.label }}</a>
+                                    {% else %}
+                                        {{ row.label }}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Немає</p>
+                    {% endif %}
+                </div>
+            </details>
+        {% endfor %}
+    </section>
+
+    <details class="exchange-hide__card exchange-acc">
+        <summary class="exchange-acc__summary">
+            <span class="exchange-acc__title">Адреси, які стануть недоступними</span>
+            <span class="exchange-acc__count">{{ report.urls|length }}</span>
+        </summary>
+        <div class="exchange-acc__body">
+            <p>Ці адреси зараз відкриваються, а в режимі стануть тимчасово недоступними.</p>
+            {% if report.urls %}
                 <ul class="exchange-hide__list">
-                    {% for row in group.records %}
+                    {% for row in report.urls %}
+                        <li>{{ row.label }} — {{ row.url }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Немає</p>
+            {% endif %}
+        </div>
+    </details>
+
+    <details class="exchange-hide__card exchange-acc">
+        <summary class="exchange-acc__summary">
+            <span class="exchange-acc__title">Блоки, які зникнуть</span>
+            <span class="exchange-acc__count">{{ report.blocks|length }}</span>
+        </summary>
+        <div class="exchange-acc__body">
+            <p>Порожнє поле для режиму: блок не показується.</p>
+            {% if report.blocks %}
+                <ul class="exchange-hide__list">
+                    {% for row in report.blocks %}
                         <li>
-                            {% if row.admin_url %}
-                                <a href="{{ row.admin_url }}">{{ row.label }}</a>
-                            {% else %}
-                                {{ row.label }}
-                            {% endif %}
+                            {{ row.model_title }} — {{ row.object_label }} — {{ row.field_label }}
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
                 <p>Немає</p>
             {% endif %}
-        {% endfor %}
-    </section>
+        </div>
+    </details>
 
-    <section class="exchange-hide__card">
-        <h2>Адреси, які стануть недоступними</h2>
-        <p>Ці адреси зараз відкриваються, а в режимі стануть тимчасово недоступними.</p>
-        {% if report.urls %}
-            <ul class="exchange-hide__list">
-                {% for row in report.urls %}
-                    <li>{{ row.label }} — {{ row.url }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Немає</p>
-        {% endif %}
-    </section>
-
-    <section class="exchange-hide__card">
-        <h2>Блоки, які зникнуть</h2>
-        <p>Порожнє поле для режиму: блок не показується.</p>
-        {% if report.blocks %}
-            <ul class="exchange-hide__list">
-                {% for row in report.blocks %}
-                    <li>
-                        {{ row.model_title }} — {{ row.object_label }} — {{ row.field_label }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Немає</p>
-        {% endif %}
-    </section>
-
-    <section class="exchange-hide__card">
-        <h2>Попередження: стоп-слова в полях для режиму</h2>
-        {% include "admin/core/exchange_warning_list.html" with rows=report.mode_warnings %}
-    </section>
-    <section class="exchange-hide__card">
-        <h2>Попередження: стоп-слова в налаштуваннях</h2>
-        {% include "admin/core/exchange_warning_list.html" with rows=report.settings_warnings %}
-    </section>
-    <section class="exchange-hide__card">
-        <h2>Попередження: стоп-слова в містах</h2>
-        {% include "admin/core/exchange_warning_list.html" with rows=report.city_warnings %}
-    </section>
-    <section class="exchange-hide__card">
-        <h2>Попередження: стоп-слова у видимих статтях</h2>
-        {% include "admin/core/exchange_warning_list.html" with rows=report.post_warnings %}
-    </section>
-    <section class="exchange-hide__card">
-        <h2>Попередження: посилання з видимих статей на приховані</h2>
-        {% if report.links %}
-            <ul class="exchange-hide__list">
-                {% for row in report.links %}
-                    <li>{{ row.source }} → {{ row.target }}{% if row.url %} — {{ row.url }}{% endif %}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Немає</p>
-        {% endif %}
-    </section>
+    <details class="exchange-hide__card exchange-acc">
+        <summary class="exchange-acc__summary">
+            <span class="exchange-acc__title">Попередження: стоп-слова в полях для режиму</span>
+            <span class="exchange-acc__count">{{ report.mode_warnings|length }}</span>
+        </summary>
+        <div class="exchange-acc__body">
+            {% include "admin/core/exchange_warning_list.html" with rows=report.mode_warnings %}
+        </div>
+    </details>
+    <details class="exchange-hide__card exchange-acc">
+        <summary class="exchange-acc__summary">
+            <span class="exchange-acc__title">Попередження: стоп-слова в налаштуваннях</span>
+            <span class="exchange-acc__count">{{ report.settings_warnings|length }}</span>
+        </summary>
+        <div class="exchange-acc__body">
+            {% include "admin/core/exchange_warning_list.html" with rows=report.settings_warnings %}
+        </div>
+    </details>
+    <details class="exchange-hide__card exchange-acc">
+        <summary class="exchange-acc__summary">
+            <span class="exchange-acc__title">Попередження: стоп-слова в містах</span>
+            <span class="exchange-acc__count">{{ report.city_warnings|length }}</span>
+        </summary>
+        <div class="exchange-acc__body">
+            {% include "admin/core/exchange_warning_list.html" with rows=report.city_warnings %}
+        </div>
+    </details>
+    <details class="exchange-hide__card exchange-acc">
+        <summary class="exchange-acc__summary">
+            <span class="exchange-acc__title">Попередження: стоп-слова у видимих статтях</span>
+            <span class="exchange-acc__count">{{ report.post_warnings|length }}</span>
+        </summary>
+        <div class="exchange-acc__body">
+            {% include "admin/core/exchange_warning_list.html" with rows=report.post_warnings %}
+        </div>
+    </details>
+    <details class="exchange-hide__card exchange-acc">
+        <summary class="exchange-acc__summary">
+            <span class="exchange-acc__title">Попередження: посилання з видимих статей на приховані</span>
+            <span class="exchange-acc__count">{{ report.links|length }}</span>
+        </summary>
+        <div class="exchange-acc__body">
+            {% if report.links %}
+                <ul class="exchange-hide__list">
+                    {% for row in report.links %}
+                        <li>{{ row.source }} → {{ row.target }}{% if row.url %} — {{ row.url }}{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Немає</p>
+            {% endif %}
+        </div>
+    </details>
 
     {% if not exchange_mode_forced %}
         <form method="post" action="">

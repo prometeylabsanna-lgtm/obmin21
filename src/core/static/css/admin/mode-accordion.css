@@ -1,0 +1,198 @@
+.exchange-hide .exchange-acc {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  border: 1px solid var(--color-base-200);
+  border-radius: 12px;
+  color: var(--color-font-default-light, currentColor);
+}
+
+.exchange-hide .exchange-hide__card.exchange-acc {
+  padding: 0;
+  border-radius: 16px;
+}
+
+.dark .exchange-hide .exchange-acc {
+  border-color: var(--color-base-700);
+  color: var(--color-font-default-dark, currentColor);
+}
+
+.exchange-hide .exchange-hide__card > .exchange-acc + .exchange-acc {
+  margin-top: 8px;
+}
+
+/* .exchange-hide has a 16px flex gap; -8px leaves 8px between these accordions. */
+.exchange-hide > .exchange-acc + .exchange-acc {
+  margin-top: -8px;
+}
+
+.exchange-hide .exchange-acc__summary {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  list-style: none;
+  color: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.exchange-hide .exchange-hide__card.exchange-acc > .exchange-acc__summary {
+  border-radius: 16px;
+}
+
+.exchange-hide .exchange-acc__summary::-webkit-details-marker {
+  display: none;
+}
+
+.exchange-hide .exchange-acc__summary::marker {
+  content: "";
+}
+
+.exchange-hide .exchange-acc__summary:hover,
+.exchange-hide .exchange-acc__summary:active {
+  background: var(--color-base-100);
+  background: color-mix(in srgb, var(--color-base-900) 6%, var(--color-base-50));
+}
+
+.dark .exchange-hide .exchange-acc__summary:hover,
+.dark .exchange-hide .exchange-acc__summary:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.exchange-hide .exchange-acc__summary:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: -2px;
+}
+
+.exchange-hide .exchange-acc[open] > .exchange-acc__summary {
+  border-bottom: 1px solid var(--color-base-200);
+  border-radius: 12px 12px 0 0;
+}
+
+.exchange-hide .exchange-hide__card.exchange-acc[open] > .exchange-acc__summary {
+  border-radius: 16px 16px 0 0;
+}
+
+.dark .exchange-hide .exchange-acc[open] > .exchange-acc__summary {
+  border-bottom-color: var(--color-base-700);
+}
+
+.exchange-hide .exchange-acc__summary::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.12rem) rotate(45deg);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+.exchange-hide .exchange-acc[open] > .exchange-acc__summary::after {
+  transform: translateY(0.12rem) rotate(225deg);
+}
+
+.exchange-hide .exchange-acc__summary > * {
+  pointer-events: none;
+}
+
+.exchange-hide .exchange-acc__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.exchange-hide .exchange-acc__count {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid var(--color-base-200);
+  border-radius: 999px;
+  background: var(--color-base-100);
+  color: var(--color-font-default-light, currentColor);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.dark .exchange-hide .exchange-acc__count {
+  border-color: var(--color-base-700);
+  background: var(--color-base-800);
+  color: var(--color-font-default-dark, currentColor);
+}
+
+.exchange-hide .exchange-acc__body {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 10px 12px 12px;
+  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.exchange-hide .exchange-acc__body > :last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .exchange-hide .exchange-acc__summary {
+    padding: 10px;
+  }
+
+  .exchange-hide .exchange-acc__body {
+    padding: 8px 10px 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .exchange-hide .exchange-acc__title {
+    font-size: 18px;
+  }
+
+  .exchange-hide .exchange-acc__summary {
+    padding: 12px;
+  }
+
+  .exchange-hide .exchange-acc__body {
+    padding: 12px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .exchange-hide .exchange-acc,
+  .exchange-hide .exchange-acc__summary,
+  .exchange-hide .exchange-acc__title,
+  .exchange-hide .exchange-acc__body {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exchange-hide .exchange-acc__summary::after {
+    transition: none;
+  }
+}
