@@ -181,6 +181,7 @@ UNFOLD = {
         lambda request: static('css/admin/mobile.css') + '?v=1',
         lambda request: static('css/admin/mobile-city.css') + '?v=1',
         lambda request: static('css/admin/mobile-sidebar.css') + '?v=1',
+        lambda request: static('css/admin/mobile-footer.css') + '?v=2',
     ],
     'SCRIPTS': [
         lambda request: static('js/admin/cms_image_preview.js'),
