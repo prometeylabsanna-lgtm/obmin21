@@ -20,7 +20,7 @@ class RateBoard(models.TextChoices):
 
 
 class PairKind(models.TextChoices):
-    FIAT = 'fiat', 'Фіат'
+    FIAT = 'fiat', 'Готівкова валюта'
     CRYPTO = 'crypto', 'Крипто'
     METAL = 'metal', 'Метал'
     OTHER = 'other', 'Інше'
