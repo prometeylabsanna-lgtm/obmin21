@@ -1,0 +1,60 @@
+/* Довгі текстові поля change-form на мобільній адмінці. Десктоп (>=768px) не змінюється.
+   Кольори, рамка і тло беруться з класів віджета Unfold (bg-white, dark:bg-base-900,
+   border-base-200, dark:border-base-700) — тут їх не задаємо, щоб працювали light і dark. */
+
+@media (max-width: 767px) {
+  html body.change-form #main textarea {
+    field-sizing: content;
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  html body.change-form #main textarea.mobile-field-proxy:not(.hidden) {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    margin: 0;
+    box-sizing: border-box;
+    field-sizing: content;
+    font-size: 16px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    resize: none;
+    caret-color: currentColor;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  html body.change-form #main form input.mobile-field-source {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    min-width: 0;
+    max-width: 1px;
+    height: 1px;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+}
