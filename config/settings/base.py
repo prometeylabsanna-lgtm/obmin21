@@ -184,12 +184,14 @@ UNFOLD = {
         lambda request: static('css/admin/mobile-footer.css') + '?v=3',
         lambda request: static('css/admin/mobile-rates.css') + '?v=4',
         lambda request: static('css/admin/mobile-fields.css') + '?v=1',
+        lambda request: static('css/admin/mobile-inlines.css') + '?v=1',
         lambda request: static('css/admin/mobile-lists.css') + '?v=1',
     ],
     'SCRIPTS': [
         lambda request: static('js/admin/cms_image_preview.js'),
         lambda request: static('js/admin/mobile-lists.js') + '?v=1',
         lambda request: static('js/admin/mobile-fields.js') + '?v=1',
+        lambda request: static('js/admin/mobile-inlines.js') + '?v=1',
     ],
     'SIDEBAR': {
         'show_search': True,
