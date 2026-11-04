@@ -89,9 +89,9 @@ def get_contacts(request, settings=None):
     """Контакти вибраного відділення. Один раз на запит.
 
     phone / phone_href — телефон відділення, якщо він є.
-    Інакше загальний телефон SiteSettings.
-    telegram — нік відділення; якщо поле порожнє, @obmin21.
-    Без відділення Telegram береться із SiteSettings.
+    Інакше загальний телефон SiteSettings.default_phone.
+    telegram — нік відділення. Якщо поле порожнє або відділення не вибране,
+    завжди @obmin21 (https://t.me/obmin21), не посилання із SiteSettings.
     source: branch, якщо телефон із відділення, інакше global.
     """
     if request is None:
@@ -114,19 +114,17 @@ def get_contacts(request, settings=None):
     elif settings is not None:
         phone = _text(getattr(settings, 'default_phone', ''))
 
+    username = ''
     if branch is not None:
-        username = _text(getattr(branch, 'telegram_username', '') or getattr(branch, 'telegram', ''))
+        username = _text(
+            getattr(branch, 'telegram_username', '') or getattr(branch, 'telegram', ''),
+        )
         if username.startswith('@'):
             username = username[1:]
-        if username:
-            telegram_url = f'https://t.me/{username}'
-            telegram_display = f'@{username}'
-        else:
-            telegram_url = f'https://t.me/{FALLBACK_TELEGRAM_USERNAME}'
-            telegram_display = f'@{FALLBACK_TELEGRAM_USERNAME}'
-    else:
-        telegram_url = safe_telegram_url(getattr(settings, 'telegram_url', ''))
-        telegram_display = telegram_display_from_url(telegram_url)
+    if not username:
+        username = FALLBACK_TELEGRAM_USERNAME
+    telegram_url = f'https://t.me/{username}'
+    telegram_display = f'@{username}'
 
     data = {
         'phone': phone,

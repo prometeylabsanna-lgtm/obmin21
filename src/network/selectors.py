@@ -22,6 +22,7 @@ def get_city_branches(city):
         city.branches.filter(is_active=True)
         .select_related('city')
         .prefetch_related('opening_hours')
+        .order_by('sort_order', 'id')
     )
 
 

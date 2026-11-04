@@ -58,7 +58,7 @@ class EmptyContactLinksTests(TestCase):
         cache.clear()
         self.assertIn(phone, ('', 'abc'))
 
-    def test_blank_telegram_and_phone_are_omitted(self):
+    def test_without_branch_phone_omitted_telegram_is_obmin21(self):
         pages = [reverse(name) for name in _PAGES]
         pages.append(reverse('rates:rates_page') + '?board=crypto')
         for telegram in ('', 'https://t.me/'):
@@ -69,7 +69,7 @@ class EmptyContactLinksTests(TestCase):
                     html = response.content.decode()
                     label = f'{telegram!r} {phone!r} {url}'
                     self.assertEqual(response.status_code, 200, label)
-                    self.assertNotIn('https://t.me/', html, label)
-                    self.assertNotIn('t.me/obmin21', html, label)
+                    self.assertIn('https://t.me/obmin21', html, label)
+                    self.assertNotIn('href="https://t.me/"', html, label)
                     self.assertNotIn('href="tel:"', html, label)
                     self.assertNotIn('href="tel:abc"', html, label)

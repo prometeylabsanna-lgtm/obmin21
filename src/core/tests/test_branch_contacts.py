@@ -162,12 +162,15 @@ class BranchContactSelectionTests(TestCase):
         self.assertEqual(data['phone'], _GLOBAL)
         self.assertEqual(data['telegram_display'], '@cashier1')
 
-    def test_without_branch_uses_global_contacts(self):
+    def test_without_branch_phone_is_global_telegram_is_obmin21(self):
         data = get_contacts(self._request(None))
         self.assertEqual(data['source'], 'global')
         self.assertEqual(data['phone'], _GLOBAL)
-        self.assertEqual(data['telegram_url'], _GLOBAL_TG)
-        self.assertEqual(data['telegram_display'], '@Obmin_Desk')
+        self.assertEqual(data['phone_href'], '+380671112233')
+        self.assertEqual(data['telegram_url'], 'https://t.me/obmin21')
+        self.assertEqual(data['telegram_display'], '@obmin21')
+        self.assertNotEqual(data['telegram_url'], _GLOBAL_TG)
+        self.assertNotIn('Obmin_Desk', data['telegram_display'])
 
     def test_helper_is_cached_on_the_request(self):
         request = self._request(self.branch)
@@ -205,6 +208,107 @@ class BranchContactSelectionTests(TestCase):
         self.assertContains(second, _PHONE)
         self.assertNotContains(second, '+38 (044) 200-30-40')
 
+    def _footer(self, html):
+        start = html.find('id="footer-contacts"')
+        self.assertGreaterEqual(start, 0)
+        end = html.find('site-footer__bar', start)
+        if end < 0:
+            end = html.find('id="mobile-contacts"', start)
+        self.assertGreater(end, start)
+        return html[start:end]
+
+    def test_second_branch_contacts_in_modal_and_footer(self):
+        second_phone = '+38 (032) 222-22-22'
+        second = Branch.objects.create(
+            city=self.city,
+            address='вул. Друга, 9',
+            phone=second_phone,
+            telegram='seconddesk',
+            sort_order=1,
+        )
+        switched = self.client.post(
+            reverse('network:set_city'),
+            {'city': self.city.slug, 'branch': str(second.pk)},
+            HTTP_HX_REQUEST='true',
+        )
+        self.assertEqual(switched.status_code, 200)
+        self.assertEqual(self.client.session['branch_id'], second.pk)
+        self.assertEqual(
+            self.client.cookies[settings.BRANCH_COOKIE_NAME].value,
+            str(second.pk),
+        )
+        fragment = self._footer(switched.content.decode())
+        self.assertIn(second_phone, fragment)
+        self.assertIn('https://t.me/seconddesk', fragment)
+        self.assertNotIn(_PHONE, fragment)
+        self.assertNotIn('https://t.me/cashier1', fragment)
+
+        modal = self.client.get(reverse('leads:contact_modal'))
+        self.assertContains(modal, second_phone)
+        self.assertContains(modal, 'https://t.me/seconddesk')
+        self.assertContains(modal, '@seconddesk')
+        self.assertNotContains(modal, _PHONE)
+        self.assertNotContains(modal, 'https://t.me/cashier1')
+        self.assertNotContains(modal, '@cashier1')
+
+        home = self.client.get(reverse('core:home'))
+        footer = self._footer(home.content.decode())
+        self.assertIn(second_phone, footer)
+        self.assertIn('https://t.me/seconddesk', footer)
+        self.assertNotIn(_PHONE, footer)
+        self.assertNotIn('https://t.me/cashier1', footer)
+        self.assertEqual(self.client.session['branch_id'], second.pk)
+
+    def test_inactive_or_foreign_branch_falls_back_to_first(self):
+        inactive_phone = '+38 (032) 222-22-22'
+        Branch.objects.create(
+            city=self.city,
+            address='вул. Закрита, 3',
+            phone=inactive_phone,
+            telegram='closeddesk',
+            sort_order=1,
+            is_active=False,
+        )
+        other = City.objects.create(name='Дніпро', slug='dnipro-contacts', sort_order=5)
+        foreign = Branch.objects.create(
+            city=other,
+            address='вул. Чуже, 8',
+            phone='+38 (044) 999-99-99',
+            telegram='foreigndesk',
+            sort_order=0,
+        )
+        session = self.client.session
+        session['city_slug'] = self.city.slug
+        session['branch_id'] = foreign.pk
+        session.save()
+        modal = self.client.get(reverse('leads:contact_modal'))
+        self.assertContains(modal, _PHONE)
+        self.assertContains(modal, 'https://t.me/cashier1')
+        self.assertNotContains(modal, foreign.phone)
+        self.assertNotContains(modal, 'https://t.me/foreigndesk')
+        footer = self._footer(self.client.get(reverse('core:home')).content.decode())
+        self.assertIn(_PHONE, footer)
+        self.assertIn('https://t.me/cashier1', footer)
+        self.assertNotIn(foreign.phone, footer)
+        self.assertNotIn(inactive_phone, footer)
+
+    def test_pages_without_branch_use_obmin21_and_global_phone(self):
+        Branch.objects.update(is_active=False)
+        City.objects.update(is_active=False)
+        home = self.client.get(reverse('core:home'))
+        self.assertEqual(home.status_code, 200)
+        footer = self._footer(home.content.decode())
+        self.assertIn('https://t.me/obmin21', footer)
+        self.assertIn(_GLOBAL, footer)
+        self.assertNotIn(_GLOBAL_TG, footer)
+        self.assertNotIn('Obmin_Desk', footer)
+        modal = self.client.get(reverse('leads:contact_modal'))
+        self.assertContains(modal, 'https://t.me/obmin21')
+        self.assertContains(modal, '@obmin21')
+        self.assertContains(modal, _GLOBAL)
+        self.assertNotContains(modal, _GLOBAL_TG)
+        self.assertNotContains(modal, '@Obmin_Desk')
+
     def test_switch_updates_header_footer_and_mobile_contacts(self):
         response = self.client.post(
             reverse('network:set_city'),
@@ -229,11 +333,23 @@ class BranchContactSelectionTests(TestCase):
             'src.network.migrations.0019_branch_telegram_drop_city_phone',
         )
         described = [
-            (op.__class__.__name__, op.model_name, getattr(op, 'name', None))
+            (
+                op.__class__.__name__,
+                getattr(op, 'model_name', None),
+                getattr(op, 'name', None),
+            )
             for op in migration.Migration.operations
         ]
+        kinds = [kind for kind, _model, _name in described]
+        self.assertLess(kinds.index('RunPython'), kinds.index('RemoveField'))
         self.assertIn(('RemoveField', 'city', 'phone'), described)
         self.assertIn(('AddField', 'branch', 'telegram'), described)
+        self.assertTrue(any(
+            getattr(op, 'code', None).__name__ == 'copy_city_phone_to_branches'
+            and op.reverse_code.__name__ == 'noop'
+            for op in migration.Migration.operations
+            if getattr(op, 'code', None)
+        ))
         self.assertFalse(any(
             model == 'branch' and name == 'phone'
             for _kind, model, name in described

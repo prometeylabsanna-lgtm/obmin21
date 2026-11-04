@@ -98,15 +98,17 @@ class ContactModalTests(TestCase):
         self.assertEqual(response.status_code, 200)
         return response.content.decode()
 
-    def test_modal_shows_settings_phone_and_telegram_nick(self):
+    def test_modal_without_branch_uses_default_phone_and_obmin21(self):
         self._settings(_PHONE, _TELEGRAM)
         Branch.objects.update(is_active=False)
         City.objects.update(is_active=False)
         html = self._html()
         self.assertIn(f'href="tel:{phone_tel(_PHONE)}"', html)
         self.assertIn(_PHONE, html)
-        self.assertIn(f'href="{_TELEGRAM}"', html)
-        self.assertIn(_NICK, html)
+        self.assertIn('href="https://t.me/obmin21"', html)
+        self.assertIn('@obmin21', html)
+        self.assertNotIn(_TELEGRAM, html)
+        self.assertNotIn(_NICK, html)
         self.assertNotIn('@s<', html)
         self.assertNotIn('<form', html.lower())
         self.assertNotIn('<input', html.lower())
@@ -201,16 +203,19 @@ class ContactModalTests(TestCase):
         html = self._html()
         self.assertNotIn('tel:', html)
         self.assertNotIn('contact-card--phone', html)
-        self.assertIn(_TELEGRAM, html)
-        self.assertIn(_NICK, html)
+        self.assertIn('https://t.me/obmin21', html)
+        self.assertIn('@obmin21', html)
+        self.assertNotIn(_TELEGRAM, html)
+        self.assertNotIn(_NICK, html)
 
-    def test_empty_telegram_omits_tme(self):
+    def test_without_branch_keeps_obmin21_when_settings_telegram_empty(self):
         self._settings(_PHONE, '')
         Branch.objects.update(is_active=False)
         City.objects.update(is_active=False)
         html = self._html()
-        self.assertNotIn('t.me', html.lower())
-        self.assertNotIn('contact-card--telegram', html)
+        self.assertIn('https://t.me/obmin21', html)
+        self.assertIn('@obmin21', html)
+        self.assertIn('contact-card--telegram', html)
         self.assertIn(f'href="tel:{phone_tel(_PHONE)}"', html)
 
     def test_exchange_mode_has_no_stop_words(self):
