@@ -1,0 +1,104 @@
+/* Підвал сайту (FooterSettings): мобільні вкладки і дії в шапці.
+   Десктоп не змінюється. Кольори не чіпаємо. */
+
+/* Вкладки сторінки і секцій — лише до 767px. */
+@media (max-width: 767px) {
+  /* Рядок вкладок має мати визначену ширину, інакше iOS не прокручує flex-дитину. */
+  body.model-footersettings #main #tabs-wrapper {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    align-items: stretch;
+  }
+
+  body.model-footersettings #main #tabs-wrapper > div {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  body.model-footersettings #main #tabs-wrapper nav#tabs-items {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  body.model-footersettings #main #tabs-items > a {
+    flex: 0 0 auto;
+    width: max-content;
+    max-width: none;
+    min-width: max-content;
+    white-space: nowrap;
+    overflow: visible;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  /* Секції всередині fieldset: Контент / Оформлення. Текст не обрізати. */
+  body.model-footersettings #main .cms-seg-tabs-wrap {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  body.model-footersettings #main .cms-seg-tabs-wrap > nav.cms-seg-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  body.model-footersettings #main .cms-seg-tabs-wrap > nav.cms-seg-tabs > a {
+    flex: 0 0 auto;
+    width: max-content;
+    max-width: none;
+    min-width: max-content;
+    white-space: nowrap;
+    overflow: visible;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+}
+
+/* Дії об'єкта в шапці — до 1023px (межа Tailwind max-lg). */
+@media (max-width: 1023px) {
+  /* :first-of-type лишається надійним, якщо перед <a> є текстовий вузол шаблону. */
+  body.model-footersettings #main div[x-data*="showActions"] > a:first-child,
+  body.model-footersettings #main div[x-data*="showActions"] > a:first-of-type {
+    display: none;
+  }
+
+  /* Перебиває .hidden, .flex-col, .container, .mx-auto, .max-lg:absolute, .left-0, .right-0. */
+  body.model-footersettings #main div[x-data*="showActions"] > ul {
+    display: flex;
+    position: static;
+    inset: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  body.model-footersettings #main div[x-data*="showActions"] > ul > li {
+    flex: 0 0 auto;
+    width: auto;
+    margin-top: 0;
+  }
+}
