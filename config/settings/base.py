@@ -186,6 +186,7 @@ UNFOLD = {
         lambda request: static('css/admin/mobile-fields.css') + '?v=1',
         lambda request: static('css/admin/mobile-inlines.css') + '?v=1',
         lambda request: static('css/admin/mode-accordion.css') + '?v=1',
+        lambda request: static('css/admin/mobile-a11y.css') + '?v=1',
         lambda request: static('css/admin/mobile-lists.css') + '?v=1',
     ],
     'SCRIPTS': [
@@ -193,6 +194,7 @@ UNFOLD = {
         lambda request: static('js/admin/mobile-lists.js') + '?v=1',
         lambda request: static('js/admin/mobile-fields.js') + '?v=1',
         lambda request: static('js/admin/mobile-inlines.js') + '?v=1',
+        lambda request: static('css/admin/mobile-a11y.js') + '?v=1',
     ],
     'SIDEBAR': {
         'show_search': True,

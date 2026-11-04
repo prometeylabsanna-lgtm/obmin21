@@ -1,0 +1,80 @@
+/* Related-widget на вузькому екрані. Десктоп (>767px) не змінюється.
+   Unfold: div.flex-col > .related-widget-wrapper.flex.flex-row
+   > (.grow.relative.max-w-2xl > select | .selector) + div > div.ml-2.w-[38px] more_vert.
+   Картка поля — .form-rows.overflow-hidden. */
+
+@media (max-width: 767px) {
+  html body #main .field-line > .grow:has(> .w-full > .related-widget-wrapper),
+  html body #main .related-widget-wrapper {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  html body #main .related-widget-wrapper {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  html body #main .related-widget-wrapper > .grow,
+  html body #main .related-widget-wrapper > .max-w-2xl,
+  html body #main .related-widget-wrapper > .selector,
+  html body #main .related-widget-wrapper > :first-child {
+    flex: 1 1 0%;
+    width: auto;
+    min-width: 0;
+    max-width: calc(100% - 38px - 0.5rem);
+    box-sizing: border-box;
+  }
+
+  html body #main .related-widget-wrapper > .grow:only-child,
+  html body #main .related-widget-wrapper > .max-w-2xl:only-child,
+  html body #main .related-widget-wrapper > .selector:only-child,
+  html body #main .related-widget-wrapper > :only-child {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  html body #main .related-widget-wrapper > .grow select,
+  html body #main .related-widget-wrapper > .max-w-2xl select,
+  html body #main .related-widget-wrapper > :first-child select,
+  html body #main .related-widget-wrapper .selector-available,
+  html body #main .related-widget-wrapper .selector-chosen,
+  html body #main .related-widget-wrapper .selector select {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  html body #main .related-widget-wrapper > .selector {
+    align-items: stretch;
+  }
+
+  html body #main .related-widget-wrapper .ml-2 {
+    margin-left: 0;
+  }
+
+  html body #main .related-widget-wrapper > :last-child:not(:only-child) {
+    flex: 0 0 auto;
+    align-self: center;
+    width: auto;
+    min-width: 38px;
+    max-width: max-content;
+    margin-left: 0.5rem;
+    margin-right: 0;
+  }
+
+  html body #main .related-widget-wrapper:has(> .selector) {
+    align-items: flex-start;
+  }
+
+  html body #main .related-widget-wrapper:has(> .selector) > :last-child:not(:only-child) {
+    align-self: flex-start;
+  }
+}
