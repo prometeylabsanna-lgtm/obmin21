@@ -190,6 +190,7 @@ UNFOLD = {
         lambda request: static('css/admin/mobile-a11y.css') + '?v=1',
         lambda request: static('css/admin/mobile-dark.css') + '?v=2',
         lambda request: static('css/admin/mobile-lists.css') + '?v=2',
+        lambda request: static('css/admin/mobile-type.css') + '?v=1',
     ],
     'SCRIPTS': [
         lambda request: static('js/admin/tinymce-theme.js') + '?v=1',

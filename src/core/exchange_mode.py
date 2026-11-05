@@ -195,7 +195,7 @@ class ExchangeSafeMixin(models.Model):
         choices=ExchangeVisibility.choices,
         default=ExchangeVisibility.AUTO,
         help_text=(
-            'Авто — за типом: фіат і валютні матеріали видимі, '
+            'Авто — за типом: готівкова валюта і валютні матеріали видимі, '
             'крипто, метал, SWIFT і перекази приховані. '
             'Показувати і Приховати сильніші за тип і за стару галочку.'
         ),
