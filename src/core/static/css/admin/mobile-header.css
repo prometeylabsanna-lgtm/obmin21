@@ -1,0 +1,87 @@
+/* Шапка адмінки до 767px: крихти в один рядок, дії праворуч у тому ж рядку.
+   mobile.css змушує flex-wrap і white-space: normal — тут це перекрито
+   вужчим селектором. Еліпсис лише на тексті крихти. */
+
+@media (max-width: 767px) {
+  html body #header-inner,
+  html body #header-inner > .flex.items-center {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: row nowrap;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    column-gap: 8px;
+    row-gap: 0;
+    white-space: nowrap;
+  }
+
+  html body #header-inner > .flex.items-center > .grow {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: row nowrap;
+    align-items: center;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body #header-inner > .flex.items-center > .grow > :not(h1) {
+    flex: none;
+  }
+
+  html body #header-inner > .flex.items-center > .grow > h1 {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: row nowrap;
+    align-items: center;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    overflow: visible;
+    white-space: nowrap;
+    text-overflow: clip;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  html body #header-inner > .flex.items-center > .grow > h1 > a,
+  html body #header-inner > .flex.items-center > .grow > h1 > span:not(.material-symbols-outlined) {
+    display: block;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  html body #header-inner > .flex.items-center > .grow > h1 > .material-symbols-outlined {
+    flex: none;
+    align-self: center;
+    min-width: 1.25rem;
+    line-height: 1;
+  }
+
+  html body #header-inner > .flex.items-center > .ml-auto {
+    display: flex;
+    flex: none;
+    flex-flow: row nowrap;
+    align-items: center;
+    width: auto;
+    min-width: max-content;
+    max-width: max-content;
+    margin-left: auto;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  html body #header-inner > .flex.items-center > .ml-auto > * {
+    flex: none;
+  }
+}

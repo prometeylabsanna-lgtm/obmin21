@@ -11,6 +11,15 @@ html body #result_list input[name$="-position"] {
 }
 
 @media (max-width: 767px) {
+  /* mobile.css ставить #changelist і #main .flex { max-width: 100% }.
+     Unfold .-mx-4 тоді не додає ширину: блок зсувається вліво, а права межа
+     картки лишається ~48px від краю в’юпорта. У валютних пар це вже знято
+     в mobile-rates.css — те саме для решти changelist. */
+  html body.change-list #main #content #changelist {
+    min-width: 0;
+    max-width: none;
+  }
+
   html body.change-list #content #changelist .overflow-x-auto:has(> #result_list),
   html body.change-list #content .overflow-x-auto:has(> #result_list),
   html body.change-list #changelist .overflow-auto:has(> #result_list) {
