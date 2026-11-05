@@ -1,9 +1,8 @@
 /* Темна адмінка Unfold (клас dark на html). Світла тема не змінюється,
    крім вирівнювання картки індексу застосунку до 767px. */
 
-/* 1. TinyMCE (skin oxide). Хром стилізується тут; документ усередині iframe
-   зовнішній CSS не бачить, тому область набору лишається світлою і
-   інвертується фільтром: чорний текст на білому стає світлим на темному. */
+/* 1. TinyMCE. Скін oxide-dark і фон області набору ставить tinymce-theme.js.
+   Тут лише хром (тулбар, меню, статус) у тонах Unfold поверх oxide-dark. */
 
 html.dark .tox.tox-tinymce {
   border-color: var(--color-base-700, #1c3350);
@@ -87,19 +86,6 @@ html.dark .tox .tox-collection--toolbar .tox-collection__item--enabled {
 
 html.dark .tox .tox-collection__item-caret svg {
   fill: var(--color-font-default-dark, #ffffff);
-}
-
-html.dark .tox .tox-edit-area,
-html.dark .tox .tox-edit-area__iframe {
-  background-color: #ffffff;
-}
-
-/* Зображення у вмісті в темному редакторі виглядають інвертованими,
-   відтінок зберігається (hue-rotate). Збережений HTML не змінюється. */
-html.dark .tox .tox-edit-area__iframe {
-  color-scheme: light;
-  -webkit-filter: invert(1) hue-rotate(180deg);
-  filter: invert(1) hue-rotate(180deg);
 }
 
 /* 2. Файл у темній темі: кнопка cms-image і нативний input.

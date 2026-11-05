@@ -4,6 +4,7 @@
   max-width: 100%;
   min-width: 0;
   margin: 0;
+  overflow: visible;
   border: 1px solid var(--color-base-200);
   border-radius: 12px;
   color: var(--color-font-default-light, currentColor);
@@ -38,6 +39,7 @@
   min-width: 0;
   min-height: 44px;
   margin: 0;
+  overflow: visible;
   padding: 10px 12px;
   border-radius: 12px;
   list-style: none;
@@ -90,20 +92,30 @@
   border-bottom-color: var(--color-base-700);
 }
 
+/* Шеврон — квадрат із двома бордюрами, повернутий на 45°.
+   Успадкований line-height (~20px) вищий за сам квадрат, а translateY
+   виносив верхню половину за межу боксу; flex/summary і overflow-x:clip
+   на вузькому екрані обрізали саме її. Квадрат 1rem вміщує поворот,
+   scale тримає штрих усередині боксу, line-height: 0 прибирає рядок-обріз. */
 .exchange-hide .exchange-acc__summary::after {
   content: "";
   flex: 0 0 auto;
-  width: 0.45rem;
-  height: 0.45rem;
+  align-self: center;
+  box-sizing: border-box;
+  width: 1rem;
+  height: 1rem;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
-  transform: translateY(-0.12rem) rotate(45deg);
+  font-size: 0;
+  line-height: 0;
+  overflow: visible;
+  transform: rotate(45deg) scale(0.58);
   transform-origin: center;
   transition: transform 0.2s ease;
 }
 
 .exchange-hide .exchange-acc[open] > .exchange-acc__summary::after {
-  transform: translateY(0.12rem) rotate(225deg);
+  transform: rotate(225deg) scale(0.58);
 }
 
 .exchange-hide .exchange-acc__summary > * {
