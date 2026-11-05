@@ -179,7 +179,7 @@ UNFOLD = {
         lambda request: static('css/admin/cms_tabs.css') + '?v=1',
         lambda request: static('css/admin/exchange_only.css') + '?v=1',
         lambda request: static('css/admin/mobile.css') + '?v=1',
-        lambda request: static('css/admin/mobile-header.css') + '?v=1',
+        lambda request: static('css/admin/mobile-header.css') + '?v=2',
         lambda request: static('css/admin/mobile-city.css') + '?v=1',
         lambda request: static('css/admin/mobile-sidebar.css') + '?v=1',
         lambda request: static('css/admin/mobile-footer.css') + '?v=3',
@@ -198,7 +198,7 @@ UNFOLD = {
         lambda request: static('js/admin/mobile-lists.js') + '?v=1',
         lambda request: static('js/admin/mobile-fields.js') + '?v=1',
         lambda request: static('js/admin/mobile-inlines.js') + '?v=1',
-        lambda request: static('js/admin/mobile-header.js') + '?v=1',
+        lambda request: static('js/admin/mobile-header.js') + '?v=2',
         lambda request: static('css/admin/mobile-a11y.js') + '?v=1',
     ],
     'SIDEBAR': {
