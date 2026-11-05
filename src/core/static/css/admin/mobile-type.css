@@ -1,0 +1,120 @@
+/* Десктопні списки: колонка «Тип» лишається в видимій зоні таблиці.
+   До 1023px правила не діють, картки 360/390 не змінюються. */
+
+@media (min-width: 1024px) {
+  html body.change-list.model-currencypair #changelist #result_list thead th,
+  html body.change-list.model-service #changelist #result_list thead th,
+  html body.change-list.model-post #changelist #result_list thead th {
+    white-space: normal;
+  }
+
+  html body.change-list.model-currencypair #changelist #result_list thead th > .flex,
+  html body.change-list.model-service #changelist #result_list thead th > .flex,
+  html body.change-list.model-post #changelist #result_list thead th > .flex {
+    flex-wrap: wrap;
+    align-items: center;
+    min-width: 0;
+    column-gap: 4px;
+    row-gap: 2px;
+  }
+
+  html body.change-list.model-currencypair #changelist #result_list thead th .text,
+  html body.change-list.model-service #changelist #result_list thead th .text,
+  html body.change-list.model-post #changelist #result_list thead th .text {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+
+  html body.change-list.model-currencypair #changelist #result_list :is(
+    th.column-exchange_safe,
+    td.field-exchange_safe,
+    th.column-exchange_visibility,
+    td.field-exchange_visibility,
+    th.column-show_on_home,
+    td.field-show_on_home,
+    th.column-is_active,
+    td.field-is_active,
+    th.column-slug,
+    td.field-slug
+  ),
+  html body.change-list.model-service #changelist #result_list :is(
+    th.column-exchange_safe,
+    td.field-exchange_safe,
+    th.column-exchange_visibility,
+    td.field-exchange_visibility,
+    th.column-show_on_home,
+    td.field-show_on_home,
+    th.column-is_active,
+    td.field-is_active,
+    th.column-slug,
+    td.field-slug
+  ),
+  html body.change-list.model-post #changelist #result_list :is(
+    th.column-exchange_safe,
+    td.field-exchange_safe,
+    th.column-exchange_visibility,
+    td.field-exchange_visibility,
+    th.column-show_on_home,
+    td.field-show_on_home,
+    th.column-is_active,
+    td.field-is_active,
+    th.column-slug,
+    td.field-slug
+  ) {
+    box-sizing: border-box;
+    width: 8.5rem;
+    max-width: 8.5rem;
+  }
+
+  html body.change-list.model-currencypair #changelist #result_list :is(
+    th.column-exchange_safe,
+    th.column-exchange_visibility,
+    th.column-show_on_home,
+    th.column-is_active,
+    th.column-slug,
+    th.column-content_kind,
+    th.column-kind
+  ) .text,
+  html body.change-list.model-service #changelist #result_list :is(
+    th.column-exchange_safe,
+    th.column-exchange_visibility,
+    th.column-show_on_home,
+    th.column-is_active,
+    th.column-slug,
+    th.column-content_kind,
+    th.column-kind
+  ) .text,
+  html body.change-list.model-post #changelist #result_list :is(
+    th.column-exchange_safe,
+    th.column-exchange_visibility,
+    th.column-show_on_home,
+    th.column-is_active,
+    th.column-slug,
+    th.column-content_kind,
+    th.column-kind
+  ) .text {
+    max-width: 7.25rem;
+  }
+
+  html body.change-list.model-currencypair #changelist #result_list :is(td.field-kind, th.field-kind, td.field-content_kind, th.field-content_kind),
+  html body.change-list.model-service #changelist #result_list :is(td.field-kind, th.field-kind, td.field-content_kind, th.field-content_kind),
+  html body.change-list.model-post #changelist #result_list :is(td.field-kind, th.field-kind, td.field-content_kind, th.field-content_kind) {
+    box-sizing: border-box;
+    width: auto;
+    max-width: none;
+    min-width: max-content;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: normal;
+  }
+
+  html body.change-list.model-currencypair #changelist #result_list thead :is(th.column-kind, th.column-content_kind),
+  html body.change-list.model-service #changelist #result_list thead :is(th.column-kind, th.column-content_kind),
+  html body.change-list.model-post #changelist #result_list thead :is(th.column-kind, th.column-content_kind) {
+    width: auto;
+    max-width: none;
+    white-space: normal;
+  }
+}
