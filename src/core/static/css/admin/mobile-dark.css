@@ -1,7 +1,7 @@
 /* Темна адмінка Unfold (клас dark на html). Світла тема не змінюється,
    крім вирівнювання картки індексу застосунку до 767px. */
 
-/* 1. TinyMCE. Скін oxide-dark і фон області набору ставить tinymce-theme.js.
+/* 1. TinyMCE. Скін oxide-dark і фон області набору ставить editor-theme.js.
    Тут лише хром (тулбар, меню, статус) у тонах Unfold поверх oxide-dark. */
 
 html.dark .tox.tox-tinymce {

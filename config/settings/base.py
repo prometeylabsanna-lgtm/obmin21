@@ -193,7 +193,7 @@ UNFOLD = {
         lambda request: static('css/admin/mobile-type.css') + '?v=1',
     ],
     'SCRIPTS': [
-        lambda request: static('js/admin/tinymce-theme.js') + '?v=1',
+        lambda request: static('js/admin/editor-theme.js') + '?v=2',
         lambda request: static('js/admin/cms_image_preview.js'),
         lambda request: static('js/admin/mobile-lists.js') + '?v=1',
         lambda request: static('js/admin/mobile-fields.js') + '?v=1',
